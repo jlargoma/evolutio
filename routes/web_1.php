@@ -10,6 +10,7 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+
 Route::group(['middleware' => ['get.menu']], function () {
     Route::get('/', function () {           return view('dashboard.homepage'); });
 
@@ -118,10 +119,6 @@ Route::group(['middleware' => ['get.menu']], function () {
         });
     });
 });
-Route::group(['middleware' => ['auth','role:admin|limpieza|subadmin|recepcionista']], function () {
-  Route::get('/', 'HomeController@index')->name('home');
-  Route::get('/contabilidad', 'ContableController@index')->name('home');
-});
 Auth::routes();
-Route::get('/no-allowed','AppController@no_allowed');
-Route::get('403','AppController@no_allowed');
+
+Route::get('/home', 'HomeController@index')->name('home');
