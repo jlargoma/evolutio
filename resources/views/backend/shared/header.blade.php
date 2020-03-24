@@ -17,12 +17,9 @@
             </a>
             <div class="dropdown-menu dropdown-menu-right pt-0">
   
-              <div class="dropdown-header bg-light py-2"><strong>Settings</strong></div><a class="dropdown-item" href="#">
-                Perfil</a><a class="dropdown-item" href="#">
-                Settings</a><a class="dropdown-item" href="#">
-                <svg class="c-icon mr-2">
-                  <use xlink:href="{{ env('APP_URL', '') }}/icons/sprites/free.svg#cil-credit-card"></use>
-                </svg> 
+              <div class="dropdown-header bg-light py-2"><strong>Settings</strong></div>
+              <a class="dropdown-item" href="{{route('user.edit',Auth::id())}}">Perfil</a>
+              <a class="dropdown-item" href="{{route('user.edit',Auth::id())}}">Settings</a>
               <div class="dropdown-divider"></div>
                 <form action="/logout" method="POST"> @csrf <button type="submit" class="btn btn-ghost-dark btn-block">Logout</button></form></a>
             </div>

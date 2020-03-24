@@ -19640,3 +19640,10 @@ body {
   cursor: pointer;
 }
 
+.box {
+  background-color: white;
+  padding: 15px;
+  box-shadow: 1px 1px 9px #b5b5b5;
+  border-radius: 7px;
+}
+

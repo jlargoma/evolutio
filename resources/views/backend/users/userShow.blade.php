@@ -1,5 +1,4 @@
-@extends('dashboard.base')
-
+@extends('backend.base')
 @section('content')
 
         <div class="container-fluid">

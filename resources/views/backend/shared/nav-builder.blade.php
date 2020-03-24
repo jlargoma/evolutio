@@ -7,7 +7,7 @@
 $pathRequest = Request::path();
 $appMenus = [
     ['href'=>'/contabilidad','name'=>'contabilidad','icon'=>'cil-calculator'],
-    ['href'=>'/csv','name'=>'Cargar CSVs','icon'=>'cil-spreadsheet'],
+    ['href'=>'/importar','name'=>'Cargar CSVs','icon'=>'cil-spreadsheet'],
 ];
 
 

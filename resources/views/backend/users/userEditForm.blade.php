@@ -1,5 +1,4 @@
-@extends('dashboard.base')
-
+@extends('backend.base')
 @section('content')
 
         <div class="container-fluid">
@@ -11,9 +10,8 @@
                       <i class="fa fa-align-justify"></i> {{ __('Edit') }} {{ $user->name }}</div>
                     <div class="card-body">
                         <br>
-                        <form method="POST" action="/users/{{ $user->id }}">
+                        <form method="POST" action="{{ route('user.update',$user->id) }}">
                             @csrf
-                            @method('PUT')
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">
@@ -29,6 +27,30 @@
                                     <span class="input-group-text">@</span>
                                 </div>
                                 <input class="form-control" type="text" placeholder="{{ __('E-Mail Address') }}" name="email" value="{{ $user->email }}" required>
+                            </div>
+                            <div class="input-group mb-3">
+                              <div class="input-group-prepend">
+                                  <span class="input-group-text">Rol</span>
+                              </div>
+                              <select class="form-control" name="role">
+                                <option value="admin">Administrador</option>
+                              </select>
+                            </div>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="c-icon cil-lock-locked"></i>
+                                </span>
+                                </div>
+                                <input class="form-control" type="password" placeholder="{{ __('Password') }}" name="password">
+                            </div>
+                            <div class="input-group mb-4">
+                                <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="c-icon cil-lock-locked"></i>
+                                </span>
+                                </div>
+                                <input class="form-control" type="password" placeholder="{{ __('Confirm Password') }}" name="password_confirmation">
                             </div>
                             <button class="btn btn-block btn-success" type="submit">{{ __('Save') }}</button>
                             <a href="{{ route('users.index') }}" class="btn btn-block btn-primary">{{ __('Return') }}</a> 

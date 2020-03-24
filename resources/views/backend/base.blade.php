@@ -40,12 +40,11 @@
     <!-- Main styles for this application-->
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
     <link href="{{ asset('css/pace.min.css') }}" rel="stylesheet">
-
+    <link href="{{ assetV('fix/css/style.css') }}" rel="stylesheet">
     @yield('css')
-
-  
-
     <link href="{{ asset('css/coreui-chartjs.css') }}" rel="stylesheet">
+    <script src="{{ asset('fix/js/jquery-3.4.1.min.js') }}"></script>
+    
   </head>
 
 

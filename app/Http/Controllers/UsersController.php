@@ -16,7 +16,6 @@ class UsersController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('admin');
     }
 
     /**
@@ -28,7 +27,7 @@ class UsersController extends Controller
     {
         $you = auth()->user();
         $users = User::all();
-        return view('dashboard.admin.usersList', compact('users', 'you'));
+        return view('backend.users.usersList', compact('users', 'you'));
     }
 
     /**
@@ -40,7 +39,7 @@ class UsersController extends Controller
     public function show($id)
     {
         $user = User::find($id);
-        return view('dashboard.admin.userShow', compact( 'user' ));
+        return view('backend.users.userShow', compact( 'user' ));
     }
 
     /**
@@ -52,7 +51,7 @@ class UsersController extends Controller
     public function edit($id)
     {
         $user = User::find($id);
-        return view('dashboard.admin.userEditForm', compact('user'));
+        return view('backend.users.userEditForm', compact('user'));
     }
 
     /**
@@ -71,6 +70,14 @@ class UsersController extends Controller
         $user = User::find($id);
         $user->name       = $request->input('name');
         $user->email      = $request->input('email');
+        $user->role       = $request->input('role');
+        
+        $psw = $request->input('password',null);
+        if ($psw && $psw == $request->input('password_confirmation')){
+          $user->password =  bcrypt($psw);
+        }
+        
+        
         $user->save();
         $request->session()->flash('message', 'Successfully updated user');
         return redirect()->route('users.index');
@@ -85,9 +92,10 @@ class UsersController extends Controller
     public function destroy($id)
     {
         $user = User::find($id);
-        if($user){
-            $user->delete();
-        }
+       
+//        if($user){
+//            $user->delete();
+//        }
         return redirect()->route('users.index');
     }
 }
