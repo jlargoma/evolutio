@@ -20,6 +20,14 @@ function formatToImport($data) {
     return $lstMonths;
   }
 
+  function lstMonthsSpanish($min=true){
+    if ($min){
+      return['','Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sept', 'Oct', 'Nov', 'Dic'];
+    } else {
+      return ['','Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    }
+  }
+
   function getMonthsSpanish($m, $min = true) {
     if ($min) {
       $arrayMonth = ['', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sept', 'Oct', 'Nov', 'Dic'];
@@ -220,4 +228,35 @@ function assetV($uri){
   $uri_asset = asset($uri);
   $v = env('APP_VERSION','1.1');
   return $uri_asset.'?'.$v;
+}
+
+
+function convertSpanishDate($date) {
+  $aux = explode(',',$date);
+  if (isset($aux[1])){
+    $date = explode(' de ', $aux[1]);
+    if (count($date) == 3){
+      $day = intval($date[0]);
+      if ($day<10) $day = '0'.$day;
+      $months = lstMonthsSpanish(FALSE);
+      $month = array_search(trim($date[1]),$months);
+      if ($month<10) $month = '0'.$month;
+      
+      return intval($date[2]).'-'.$month.'-'.$day;
+    }
+  }
+  return '';
+}
+
+function rates_codes(){
+  return [
+    'TARIFA_CL1',  
+    'TARIFA_CL2',  
+    'TARIFA_PT1',  
+    'TARIFA_PT2',  
+    'TARIFA_FI',  
+    'FARIFA_NU',  
+    'TARIFA_SALGE',  
+    'TARIFA_SALIM'
+  ];
 }

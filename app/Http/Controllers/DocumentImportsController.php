@@ -121,7 +121,7 @@ class DocumentImportsController extends Controller
             'day' => $day,   
             'hour'  => isset($data[1]) ? formatToImport($data[1]) : null,  
             'instructor' => $instructor,   
-            'class' => $class,   
+            'class' => trim($class),   
             'numb'  => isset($data[4]) ? intval($data[4]) : null,  
             'cancels'  => isset($data[5]) ? intval($data[5]) : null,  
           ];
@@ -145,6 +145,7 @@ class DocumentImportsController extends Controller
         $oUser->name = $inst;
         $oUser->email = str_replace(' ','',$inst).'@evolutio';
         $oUser->role = 'teacher';
+        $oUser->password = rand().time();
         $oUser->save();
       }
       
@@ -156,6 +157,13 @@ class DocumentImportsController extends Controller
         if (isset($rateLst[$items['class']])){
           $rID = $rateLst[$items['class']][0];
           $rPrice = $rateLst[$items['class']][1];
+        }else{
+          
+          $new_rate = $this->setRates($items['class']);
+          $rateLst[$items['class']] = $new_rate;
+          $rID = $new_rate[0];
+          $rPrice = $new_rate[1];
+          dd($rID,$rPrice,$items['class'],$rateLst);
         }
         $to_insert[] = [
             'id_user' => $uID,
@@ -324,6 +332,21 @@ class DocumentImportsController extends Controller
       }
       
       return $rateLst;
+    }
+    
+    private function setRates($name) {
+      $rate = new \App\Models\Rates();
+      $rate->name = trim($name);
+      $rate->price = 99;
+      $rate->cost = 99;
+      $rate->max_pax = 99;
+      $rate->type = 1;
+      $rate->mode = 1;
+      $rate->status = 1;
+      $rate->order = 0;
+      
+      $rate->save();
+      return [$rate->id,$rate->cost];
     }
    
 }

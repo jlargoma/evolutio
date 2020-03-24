@@ -31,6 +31,16 @@ Route::group(['middleware' => ['auth','role:admin|limpieza|subadmin|recepcionist
     Route::get('/salarios', 'ContableController@index')->name('contabl.salarios');
     Route::get('/', 'ContableController@index')->name('contabl');
   });
+  /**
+ * TARIFAS 
+ */
+  Route::group(['prefix' => 'tarifas'], function () {
+    Route::post('/nueva', 'RatesController@create')->name('tarifas.nueva');
+    Route::post('/upd', 'RatesController@update')->name('tarifas.upd');
+    Route::delete('/del/{id}', 'RatesController@destroy')->name('tarifas.del');
+    Route::get('/', 'RatesController@index')->name('tarifas');
+  });
+  
   
   
   /* CSV */
