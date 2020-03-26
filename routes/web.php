@@ -19,6 +19,8 @@ Route::group(['middleware' => ['auth','role:admin|limpieza|subadmin|recepcionist
  */
   Route::group(['prefix' => 'user'], function () {
     Route::get('/edit/{id}', 'UsersController@edit')->name('user.edit');
+    Route::get('/new/', 'UsersController@new_user')->name('user.new');
+    Route::post('/store/', 'UsersController@store')->name('user.store');
     Route::post('/update/{id}', 'UsersController@update')->name('user.update');
     Route::DELETE('/destroy/{id}', 'UsersController@destroy')->name('users.destroy');
     Route::get('/', 'UsersController@index')->name('users.index');
@@ -27,21 +29,22 @@ Route::group(['middleware' => ['auth','role:admin|limpieza|subadmin|recepcionist
  * CONTABILIDAD 
  */
   Route::group(['prefix' => 'contabilidad'], function () {
-    Route::get('/ventas', 'ContableController@index')->name('contabl.ventas');
-    Route::get('/salarios', 'ContableController@index')->name('contabl.salarios');
+    Route::get('/ingresos', 'ContableController@sales')->name('contabl.ingresos');
+    Route::get('/salarios', 'ContableController@salarios')->name('contabl.salarios');
     Route::get('/', 'ContableController@index')->name('contabl');
   });
   /**
  * TARIFAS 
  */
   Route::group(['prefix' => 'tarifas'], function () {
-    Route::post('/nueva', 'RatesController@create')->name('tarifas.nueva');
+    Route::post('/create', 'RatesController@create')->name('tarifas.nueva');
     Route::post('/upd', 'RatesController@update')->name('tarifas.upd');
     Route::delete('/del/{id}', 'RatesController@destroy')->name('tarifas.del');
     Route::get('/', 'RatesController@index')->name('tarifas');
   });
   
-  
+  //YEARS
+  Route::post('/years/change', 'YearsController@changeActiveYear')->name('years.change');
   
   /* CSV */
   Route::get('/importar', 'DocumentImportsController@index');

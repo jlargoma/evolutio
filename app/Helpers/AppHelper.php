@@ -260,3 +260,21 @@ function rates_codes(){
     'TARIFA_SALIM'
   ];
 }
+function getUsrRole(){
+  global $uRole;
+  
+  if (isset($uRole) && !empty($uRole)) {
+    return $uRole;
+  }
+  
+  $uRole = Auth::user()->role;
+  return $uRole;
+}
+
+function moneda($mount,$cero=true){
+  if ($cero)  return number_format($mount, 0, ',', '.' ).' €';
+  
+  if ($mount>0) return number_format($mount, 0, ',', '.' ).' €';
+  return '--';
+  
+}

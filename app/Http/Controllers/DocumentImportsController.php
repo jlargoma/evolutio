@@ -8,6 +8,7 @@ use \Carbon\Carbon;
 use Auth;
 use App\User;
 use App\Models\Entrenadores;
+use App\Models\Clientes;
 use URL;
 use Illuminate\Support\Facades\Validator;
 
@@ -133,7 +134,7 @@ class DocumentImportsController extends Controller
         fclose($handle);
     }
 
-    $rateLst = $this->getRates();
+    $rateLst = \App\Models\Rates::getRatesBy_name();
     
     foreach ($insert as $inst => $data){
       /**
@@ -163,7 +164,7 @@ class DocumentImportsController extends Controller
           $rateLst[$items['class']] = $new_rate;
           $rID = $new_rate[0];
           $rPrice = $new_rate[1];
-          dd($rID,$rPrice,$items['class'],$rateLst);
+//          dd($rID,$rPrice,$items['class'],$rateLst);
         }
         $to_insert[] = [
             'id_user' => $uID,
@@ -270,16 +271,16 @@ class DocumentImportsController extends Controller
         fclose($handle);
     }
     
-    $rateLst = $this->getRates();
+    $rateLst = \App\Models\Rates::getRatesBy_name();    
     
     foreach ($insert as $email => $data){
     
       /**
        * Get or Create user
        */
-      $oUser = Entrenadores::where('email',$email)->first();
+      $oUser = Clientes::where('email',$email)->first();
       if (!$oUser){
-        $oUser = new Entrenadores();
+        $oUser = new Clientes();
         $oUser->name = $data[0]['name'];
         $oUser->telefono = $data[0]['phone'];
         $oUser->email = $email;
@@ -294,6 +295,10 @@ class DocumentImportsController extends Controller
         $rPrice = 0;
         if (isset($rateLst[$items['tarifa_g']])){
           $rID = $rateLst[$items['tarifa_g']][0];
+        }else{
+          $new_rate = $this->setRates($items['tarifa_g']);
+          $rateLst[$items['tarifa_g']] = $new_rate;
+          $rID = $new_rate[0];
         }
         
         $to_insert[] = [
@@ -324,15 +329,7 @@ class DocumentImportsController extends Controller
     }
     
     
-    private function getRates() {
-      $rates = \App\Models\Rates::all();
-      $rateLst = [];
-      foreach ($rates as $i){
-        $rateLst[$i->name] = [$i->id,$i->cost];
-      }
-      
-      return $rateLst;
-    }
+   
     
     private function setRates($name) {
       $rate = new \App\Models\Rates();

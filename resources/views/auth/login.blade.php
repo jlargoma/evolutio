@@ -1,6 +1,7 @@
-@extends('dashboard.authBase')
+@extends('backend.authBase')
 
 @section('content')
+<div class="section nopadding nomargin" style="width: 100%; height: 100%; position: absolute; left: 0; top: 0; background: url('{{ asset('fix/img/login.jpg') }}') center center no-repeat; background-size: cover;"></div>
 
     <div class="container">
       <div class="row justify-content-center">
@@ -9,7 +10,7 @@
             <div class="card p-4">
               <div class="card-body">
                 <h1>Login</h1>
-                <p class="text-muted">Sign In to your account</p>
+                <p class="text-muted">Ingresar</p>
                 <form method="POST" action="{{ route('login') }}">
                     @csrf
                     <div class="input-group mb-3">
@@ -44,7 +45,7 @@
                     </div>
                     </form>
                     <div class="col-6 text-right">
-                        <a href="{{ route('password.request') }}" class="btn btn-link px-0" type="button">{{ __('Forgot Your Password?') }}</a>
+                        <a href="{{ route('password.request') }}" class="btn btn-link px-0" type="button">{{ __('Olvidó su contraseña?') }}</a>
                     </div>
                     </div>
               </div>
@@ -52,9 +53,9 @@
             <div class="card text-white bg-primary py-5 d-md-down-none" style="width:44%">
               <div class="card-body text-center">
                 <div>
-                  <h2>Sign up</h2>
+                  <h2>Panel de Administración</h2>
                   <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                  @if (Route::has('password.request'))
+                  @if (Route::has('password.request') && false)
                     <a href="{{ route('register') }}" class="btn btn-primary active mt-3" type="button">{{ __('Register') }}</a>
                   @endif
                 </div>

@@ -7,8 +7,15 @@
               <div class="col-sm-12 col-md-12 ">
                 <div class="card">
                     <div class="card-header">
-                      <i class="fa fa-align-justify"></i>{{ __('Users') }}</div>
+                      <div class="pull-left">
+                      <i class="fa fa-align-justify"></i>{{ __('Users') }}
+                      </div>
+                      <div class="pull-right">
+                      <a href="{{route('user.new')}}" title="Nuevo usuario">Nuevo</a>
+                      </div>
+                    </div>
                     <div class="card-body">
+                      @include('flash-message')
                         <table class="table table-responsive-sm table-striped">
                         <thead>
                           <tr>

@@ -3,8 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Sales;
+use App\Models\Rates;
+use App\Models\CoachSessions;
+use Illuminate\Support\Facades\DB;
 
-class ContableController extends Controller
+
+class ContableController extends AppController
 {
     /**
      * Create a new controller instance.
@@ -23,278 +28,56 @@ class ContableController extends Controller
      */
     public function index()
     {
-        return view('backend.contabilidad.index');
+      $data = $this->prepareTables();
+      
+      return view('backend.contabilidad.index',$data);
     }
     
     
-        /**
-     */
-    public function salarioMes($year = '')
+    public function sales()
     {
-      $year = 2019;
-      if ($year == "") {
-            $date = Carbon::now();
-            $year = $date->format('Y');
-        }
+      $data = $this->prepareTables();
+      $year  = $data['year'];
+      $months_empty = $data['months_empty'];
+      unset($months_empty[0]);
+      $temporadas_month = [
+        ($year->year-2) => $data['months_empty'],
+        ($year->year-1) =>  $data['months_empty'],
+        ];
       
-        
-         
-      $rates = \App\Rates::all();
-      $rateLst = [];
-      $rateTipes = [];
-      foreach ($rates as $i){
-        $rateLst[$i->id] = $i->typeRate->id;
-        $rateTipes[$i->typeRate->id] = $i->typeRate->name;
-      }
-      
-//      dd($rateTipes);
-        
-      $lstMonths = lstMonths(Carbon::parse('first day of January '.$year),$year.'-12-31','Y-m');
-      $sessionsByYear = \App\CoachSessions::whereYear('date','=',$year)->get();
-      $byUsers = [];
-      if ($sessionsByYear){
-        foreach ($sessionsByYear as $item){
-          
-          $uID = $item['id_user'];
-          $id_rate = $item['id_rate'];
-          if (!isset($byUsers[$uID])){
-            $byUsers[$uID] = [
-                'total_sal' => 0,
-                'total_session' => 0,
-                'name'=>$item['name'],
-            ];
-            //by  type of rates
-            for($i=1;$i<4;$i++){
-              $byUsers[$uID]['tr_'.$i] = false;
-              $byUsers[$uID]['total_sal_'.$i] = 0;
-              $byUsers[$uID]['total_session_'.$i] = 0;
-            }
-          }
-          
-          $month = date('Y-m', strtotime($item['date']));
-          if (!isset($byUsers[$uID][$month])){
-            $byUsers[$uID][$month] = ['sal'=>0,'ses'=>0];
-          }
-          
-          if (!isset($rateLst[$id_rate])) continue;
-          
-          $tRate = $rateLst[$id_rate]; 
-          
-          if (!isset($byUsers[$uID][$month][$tRate])){
-             $byUsers[$uID][$month][$tRate] = ['sal'=>0,'ses'=>0];
-          }
-          $byUsers[$uID]['tr_'.$tRate] = true;
-          
-          $salary = round($item['numb']*$item['cost']);
-        
-          
-          $byUsers[$uID][$month]['ses'] += $item['numb'];
-          $byUsers[$uID][$month]['sal'] += $salary;
-          $byUsers[$uID][$month][$tRate]['ses'] += $item['numb'];
-          $byUsers[$uID][$month][$tRate]['sal'] += $salary;
-          $byUsers[$uID]['total_sal'] += $salary;
-          $byUsers[$uID]['total_session'] += $item['numb'];
-          $byUsers[$uID]['total_sal_'.$tRate] += $salary;
-          $byUsers[$uID]['total_session_'.$tRate] += $item['numb'];
-          
-     
-        }
-      }
-      
-      
-      /**
-       * Data to resume and grafics
-       */
-      
-      $resumeTable = DB::select(     
-              'SELECT id_rate,date,SUM(total) as total_cost '
-              . 'FROM `coach_sessions` '
-              . 'WHERE YEAR(date)=:year '
-              . 'GROUP BY id_rate,date'
-              , ['year' => $year]);
-      $resume = ['t_1'=>0,'t_2'=>0,'t_3'=>0];
-      if ($resumeTable){
-        foreach ($resumeTable as $item){
-          $dateK = date('Y-m', strtotime($item->date));
-          if (!isset($resume[$dateK])) 
-            $resume[$dateK] = ['total'=>0,'t_1'=>0,'t_2'=>0,'t_3'=>0];
-          
-          
-          $resume[$dateK]['total'] += $item->total_cost;
-          $id_rate = $item->id_rate;
-          if (!isset($rateLst[$id_rate])) continue;
-          
-          $tRate = $rateLst[$id_rate]; 
-          $resume[$dateK]['t_'.$tRate] += $item->total_cost;
-          $resume['t_'.$tRate] += $item->total_cost;
-        }
-      }
-      
-      //other years
-      $resumeTable = DB::select(     
-              'SELECT date,SUM(total) as total_cost '
-              . 'FROM `coach_sessions` '
-              . 'WHERE YEAR(date)=:year '
-              . 'GROUP BY id_rate,date'
-              , ['year' => $year-1]);
-      $resume_2 = [];
-      if ($resumeTable){
-        foreach ($resumeTable as $item){
-          $dateK = date('Y-m', strtotime($item->date));
-          if (!isset($resume_2[$dateK])) $resume_2[$dateK] = 0;
-          $resume_2[$dateK] += $item->total_cost;
-        }
-      }
-      //render the info to the grafic
-      $aux = '';
-      foreach ($lstMonths as $k=>$v){
-        if(isset($resume_2[$k]))
-          $aux .= "'" . round($resume_2[$k]) . "',";
-        else
-          $aux .="'0',";
-      }
-      $resume_2 = $aux;
-      
-      $resumeTable = DB::select(     
-              'SELECT date,SUM(total) as total_cost '
-              . 'FROM `coach_sessions` '
-              . 'WHERE YEAR(date)=:year '
-              . 'GROUP BY id_rate,date'
-              , ['year' => $year-2]);
-      $resume_3 = [];
-      if ($resumeTable){
-        foreach ($resumeTable as $item){
-          $dateK = date('Y-m', strtotime($item->date));
-          if (!isset($resume_3[$dateK])) $resume_3[$dateK] = 0;
-          
-          $resume_3[$dateK] += $item->total_cost;
-        }
-      }
-      //render the info to the grafic
-      $aux = '';
-      foreach ($lstMonths as $k=>$v){
-        if(isset($resume_3[$k]))
-          $aux .= "'" . round($resume_3[$k]) . "',";
-        else
-          $aux .="'0',";
-      }
-      $resume_3 = $aux;
-      
-
-       return view('admin.contabilidad.salarios',[
-           'year' => $year,
-           'byUsers' => $byUsers,
-           'rateTipes' => $rateTipes,
-           'year' => $year,
-           'lstMonths' => $lstMonths,
-           'resume' => $resume,
-           'resume_2' => $resume_2,
-           'resume_3' => $resume_3,
-           ]);
-    }
-    
-    public function ventasMes($year = '')
-    {
-//      $year = 2019;
-//      if ($year == "") {
-//            $year = $date->format('Y');
-//        }
-      
-      $date = Carbon::now();
-      $year = $date->format('Y');
-      $start = $date->copy()->subMonth(5);
-        
-         
-      $rates = \App\Rates::all();
-      $rateLst = [];
-      $rateTipes = [];
-      foreach ($rates as $i){
-        $rateLst[$i->id] = $i->typeRate->id;
-        $rateTipes[$i->typeRate->id] = $i->typeRate->name;
-      }
-      $lstMonths = lstMonths($start,$date,'Y-m');
-      
-      $salesTotal = 0;
-      $oSalesBy_type = Sales::select('type','date_emmit',DB::raw('SUM(total) AS sum_total'))
-              ->groupBy('type')->groupBy('date_emmit')->get();
-      $salesBy_type = [
-          'Tarifas'=>[
-              'percent'=>0,
-              'total'=>0,
-          ],
-          'Otros'=>[
-              'percent'=>0,
-              'total'=>0,
-          ],
-      ];
-      
-      if ($oSalesBy_type){
-        foreach ($oSalesBy_type as $s){
-          $type = $s->type;
-          $month = date('Y-m', strtotime($s->date_emmit));
-          if (!isset($salesBy_type[$type]['total'])){
-            $salesBy_type[$type]['total'] = 0;
-          }
-          if (!isset($salesBy_type[$type][$month])){
-            $salesBy_type[$type][$month] = 0;
-          }
-          
-          $salesBy_type[$type][$month] += $s->sum_total;
-          $salesBy_type[$type]['total'] += $s->sum_total;
-          $salesTotal += $s->sum_total;
-        }
-        
-        if ($salesTotal>0){
-          foreach ($salesBy_type as $k=>$s){
-            if (isset($salesBy_type[$k]['total']))
-              $salesBy_type[$k]['percent'] = ceil(($salesBy_type[$k]['total']/$salesTotal)*100);
+      foreach ($temporadas_month as $k=>$v){
+        $oSales =  Sales::whereYear('date_emmit', '=', $k)->get();
+        if ($oSales){
+          foreach ($oSales as $s){
+          $m = date('n', strtotime($s->date_emmit));
+          $temporadas_month[$k][$m] += $s->total;
           }
         }
-        
+       
       }
       
-      /**************************************************/
-      
-      $oSalesBy_tGroup = Sales::select('tarifa_g','date_emmit',DB::raw('SUM(total) AS sum_total'))
-              ->groupBy('tarifa_g')->groupBy('date_emmit')->get();
-      $salesBy_tGroup = [  ];
-            
-      if ($oSalesBy_tGroup){
-        foreach ($oSalesBy_tGroup as $s){
-          $type = $s->tarifa_g;
-          if (trim($type) == '') $type = '-';
-          
-          $month = date('Y-m', strtotime($s->date_emmit));
-          if (!isset($salesBy_tGroup[$type]['total'])){
-            $salesBy_tGroup[$type]['total'] = 0;
-          }
-          if (!isset($salesBy_tGroup[$type][$month])){
-            $salesBy_tGroup[$type][$month] = 0;
-          }
-          
-          $salesBy_tGroup[$type][$month] += $s->sum_total;
-          $salesBy_tGroup[$type]['total'] += $s->sum_total;
-          
-        }
-
-        foreach ($salesBy_tGroup as $k=>$s){
-          $salesBy_tGroup[$k]['percent'] = ceil(($salesBy_tGroup[$k]['total']/$salesTotal)*100);
-        }
-        
+      $temporadas_month[$year->year] = [];
+      foreach ($data['total_byMonth'] as $k=>$v){
+        if ($k != 0)   $temporadas_month[$year->year][$k] = $v;
       }
       
-      /**************************************************/
+      $data['temporadas_month'] = $temporadas_month;
+      $data['totalClientes'] = array_sum($data['clients_byMonth']);
+      
+      
+      
       
       $oSalesBy_TypePay = Sales::select('pay_from','date_emmit',DB::raw('SUM(total) AS sum_total'))
+              ->whereYear('date_emmit', '=', $year->year)
               ->groupBy('pay_from')->groupBy('date_emmit')->get();
       $salesBy_TypePay = [  ];
-      
+      $salesTotal = 0;
       if ($oSalesBy_TypePay){
         foreach ($oSalesBy_TypePay as $s){
           $type = $s->pay_from;
           if (trim($type) == '') $type = '-';
           
-          $month = date('Y-m', strtotime($s->date_emmit));
+          $month = date('n', strtotime($s->date_emmit));
           if (!isset($salesBy_TypePay[$type]['total'])){
             $salesBy_TypePay[$type]['total'] = 0;
           }
@@ -304,7 +87,7 @@ class ContableController extends Controller
           
           $salesBy_TypePay[$type][$month] += $s->sum_total;
           $salesBy_TypePay[$type]['total'] += $s->sum_total;
-          
+          $salesTotal += $s->sum_total;
         }
 
         foreach ($salesBy_TypePay as $k=>$s){
@@ -312,93 +95,265 @@ class ContableController extends Controller
         }
         
       }
+      $data['salesBy_TypePay'] = $salesBy_TypePay;
       
-      /**************************************************/
-      /**************************************************/
-      
-      $oSalesBy_FISIO = Sales::select('pay_from','date_emmit',DB::raw('SUM(total) AS sum_total'))
-              ->where('tarifa_g','FISIOTERAPIA')->groupBy('pay_from')->groupBy('date_emmit')->get();
-      $salesBy_FISIO = [  ];
-      $salesBy_FISIOTotal = 0;
-      
-      if ($oSalesBy_FISIO){
-        foreach ($oSalesBy_FISIO as $s){
-          $type = $s->pay_from;
-          if (trim($type) == '') $type = '-';
-          
-          $month = date('Y-m', strtotime($s->date_emmit));
-          if (!isset($salesBy_FISIO[$type]['total'])){
-            $salesBy_FISIO[$type]['total'] = 0;
-          }
-          if (!isset($salesBy_FISIO[$type][$month])){
-            $salesBy_FISIO[$type][$month] = 0;
-          }
-          
-          $salesBy_FISIO[$type][$month] += $s->sum_total;
-          $salesBy_FISIO[$type]['total'] += $s->sum_total;
-          $salesBy_FISIOTotal += $s->sum_total;
-          
-        }
+      return view('backend.contabilidad.sales',$data);
+    }
+    
+    
+    function prepareTables(){
+      $year = $this->getActiveYear();
+      $lstMonths = lstMonthsSpanish();
 
-        foreach ($salesBy_FISIO as $k=>$s){
-          $salesBy_FISIO[$k]['percent'] = round(($salesBy_FISIO[$k]['total']/$salesBy_FISIOTotal)*100,2);
+      $oSales = Sales::whereYear('date_emmit', '=', $year->year)->get();
+    
+      $aRates = Rates::getRatesNameBy_id();
+      $aRatesGroup = Rates::getRatesNameBy_type();
+      $aRateType = \App\Models\RateTypes::getNameBy_id();
+    
+      $months_empty = array();
+      for($i=0;$i<13;$i++) $months_empty[$i] = 0;
+      
+      $list_items = [];
+      $lstS_byMonth = [];
+      $total_byMonth = $months_empty;
+      $clients_byMonth = $months_empty;
+      $byPayType = [];
+      foreach ($aRates as $r=>$v){
+          $lstS[$r] = $months_empty;
+      }
+     
+      if ($oSales){
+        foreach ($oSales as $s){
+          if (!isset($lstS[$s->id_rate])) $lstS[$s->id_rate] = [];
+          
+          $m = date('n', strtotime($s->date_emmit));
+          
+          if (!isset($lstS[$s->id_rate][$m])){
+            $lstS[$s->id_rate][$m] = 0;
+            $lstS[$s->id_rate][0] = 0;
+          }
+          
+          $lstS[$s->id_rate][$m] += $s->total;
+          $lstS[$s->id_rate][0]  += $s->total;
+          $total_byMonth[$m] += $s->total;
+          
+          $clients_byMonth[$m]++;
+          
+          if (!isset($byPayType[$s->pay_from])) $byPayType[$s->pay_from] = 0;
+          
+          $byPayType[$s->pay_from] += $s->total;
+        }
+      }
+      
+      
+      $total_byMonth[0] = array_sum($total_byMonth);
+      if ($total_byMonth[0]<1)  $total_byMonth[0] = 1;
+      
+      $clients_byMonth[0] = array_sum($clients_byMonth);
+      if ($clients_byMonth[0]<1)  $clients_byMonth[0] = 1;
+      
+      
+      foreach ($aRatesGroup as $r=>$v){
+        $months_aux = $months_empty;
+        foreach ($v as $r2=>$v2){
+          if (isset($lstS[$r2])){
+            
+            foreach ($lstS[$r2] as $m=>$v3)   $months_aux[$m] += $v3;
+            
+            $list_items[$r][$r2] = $lstS[$r2];
+          }
+        }
+        
+        $list_items[$r]['totals'] = $months_aux;
+      }
+//      dd($list_items);
+      
+      /***********************/
+      /***  TEMPORADAS     ***/
+      $temporadas = [
+          ($year->year-2) => ['cuota'=>0,'otro'=>0],
+          ($year->year-1) => ['cuota'=>0,'otro'=>0],
+          ($year->year) => ['cuota'=>0,'otro'=>0],
+          ];
+      
+      foreach ($temporadas as $k=>$v){
+        $temporadas[$k]['cuota'] = Sales::whereYear('date_emmit', '=', $k)->where('type','Tarifas')->sum('total');
+        $temporadas[$k]['otro'] = Sales::whereYear('date_emmit', '=', $k)->where('type','Otros')->sum('total');
+      }
+      /***  TEMPORADAS     ***/
+      /***********************/
+      unset($lstMonths[0]);
+      
+      
+      $aColors = [];
+      $aColors[1] = '151, 187, 205';
+      $aColors[2] = '151, 187, 005';
+      $aColors[3] = '151, 087, 205';
+      $aColors[4] = '251, 187, 205';
+      return [
+        'temporadas' => $temporadas,
+        'lstMonths' => $lstMonths,
+        'months_empty' => $months_empty,
+        'year' => $year,
+        'aRates' => $aRates,
+        'aRateType' => $aRateType,
+        'aColors' => $aColors,
+        'lstSales' => $list_items,
+        'total_byMonth' => $total_byMonth,
+        'byPayType' => $byPayType,
+        'clients_byMonth' => $clients_byMonth
+        ];
+    
+    }
+    
+     
+    
+    public function salarios(){
+  
+      $year = $this->getActiveYear();
+      $lstMonths = lstMonthsSpanish();
+
+      $oObj = CoachSessions::whereYear('date', '=', $year->year)->where('cancels',0)->get();
+    
+      $aEntrenadores = \App\Models\Entrenadores::getRatesNameBy_id();
+      $aRatesTypes = \App\Models\RateTypes::getNameBy_id();
+      $aRatesGroup = Rates::getRatestypeBy_id();
+      $months_empty = array();
+      for($i=0;$i<13;$i++){
+        $months_empty[$i]  = 0;
+        $months_empty2[$i] = ['t'=>0,'c'=>0];
+      }
+     
+      
+      $lst_items = [];
+      $lst_byMonth = [];
+      $lst_byRate = [];
+      $byPayType = [];
+      $lst_byMonth = $months_empty;
+      foreach ($aEntrenadores as $k=>$v){
+        foreach ($aRatesTypes as $k2=>$v2){
+          $lst_items[$k][$k2] = $months_empty2;
         }
         
       }
       
-      
-      /**
-       * Grafics
-       */
-      $lstMonthsYear = lstMonths(Carbon::parse('first day of January '.$year),$year.'-12-31','m');
-      $resume = [];
-      for($i=0;$i<3;$i++){
-        $resumeTable = DB::select(     
-                'SELECT date_emmit,SUM(total) as total_cost '
-                . 'FROM `sales` '
-                . 'WHERE YEAR(date_emmit)=:year '
-                . 'GROUP BY date_emmit'
-                , ['year' => ($year-$i)]);
-        $resume_aux = [];
-        if ($resumeTable){
-          foreach ($resumeTable as $item){
-            $dateK = date('m', strtotime($item->date_emmit));
-            if (!isset($resume_aux[$dateK])) $resume_aux[$dateK] = 0;
-
-            $resume_aux[$dateK] += $item->total_cost;
-          }
+      foreach ($aRatesTypes as $k2=>$v2){
+          $lst_byRate[$k2] = $months_empty;
         }
-        //render the info to the grafic
-        $aux = '';
-        foreach ($lstMonthsYear as $k=>$v){
-          if(isset($resume_aux[$k]))
-            $aux .= "'" . round($resume_aux[$k]) . "',";
-          else
-            $aux .="'0',";
-        }
-        $resume[] = $aux;
         
-//        dd($resume_aux,$lstMonthsYear);
+      $total = 0;
+      if ($oObj){
+        foreach ($oObj as $obj){
+          
+          if (!isset($lst_items[$obj->id_user])){
+            continue;
+          }
+          $rateType = isset($aRatesGroup[$obj->id_rate]) ? $aRatesGroup[$obj->id_rate] : 4;
+          if (!isset($lst_items[$obj->id_user][$rateType])){
+            continue;
+          }
+          $m = date('n', strtotime($obj->date));
+//          if (!isset($lst_items[$obj->id_user][$obj->id_rate][$m])){
+//            $lst_items[$obj->id_user][$obj->id_rate][$m] = ['t'=>0,'c'=>0];
+//          }
+          $lst_items[$obj->id_user][$rateType][$m]['t'] += $obj->total;
+          $lst_items[$obj->id_user][$rateType][$m]['c'] += $obj->numb;
+          $lst_byRate[$rateType][$m] += $obj->total;
+          $lst_byMonth[$m] += $obj->total;
+          $total += $obj->total;
+        }
       }
       
      
+
+      $totals = [];
+      foreach ($lst_items as $user=>$rates){
+        
+        $totals[$user] = $months_empty2;
+        $aux_c = $aux_t = 0;
+        foreach ($rates as $rate=>$months){
+          $aux_r_c = $aux_r_t = 0;
+          foreach ($months as $k=>$v){
+            $totals[$user][$k]['t'] += $v['t'];
+            $totals[$user][$k]['c'] += $v['c'];
+            $aux_c += $v['c'];
+            $aux_t += $v['t'];
+            $aux_r_c += $v['c'];
+            $aux_r_t += $v['t'];
+          }
+          
+          $lst_items[$user][$rate][0]['c'] = $aux_r_c;
+          $lst_items[$user][$rate][0]['t'] = $aux_r_t;
+        
+        }
+        $totals[$user][0]['c'] = $aux_c;
+        $totals[$user][0]['t'] = $aux_t;
+        
+      }
+
+      $lst_byMonth[0] = array_sum($lst_byMonth);
+      if ($lst_byMonth[0]<1)  $lst_byMonth[0] = 1;
       
-//      dd($resume);
+      foreach ($lst_byRate as $r=>$v){
+        $lst_byRate[$r][0] = array_sum($lst_byRate[$r]);
+        if ($lst_byRate[$r][0]<1)  $lst_byRate[$r][0] = 1;
+      }
       
-      return view('admin.contabilidad.ventas.index',[
-           'year' => $year,
-           'rateTipes' => $rateTipes,
-           'year' => $year,
-           'lstMonths' => $lstMonths,
-           'lstMonthsYear' => $lstMonthsYear,
-           'resume' => $resume,
-           'salesTotal' => $salesTotal,
-           'salesBy_type' => $salesBy_type,
-           'salesBy_tGroup' => $salesBy_tGroup,
-           'salesBy_TypePay' => $salesBy_TypePay,
-           'salesBy_FISIO' => $salesBy_FISIO,
+      if ($total<1)  $total = 1;
+//      dd($lst_byMonth);
+//      dd($aEntrenadores,$totals);
       
-           ]);
+      $lst_byRate[0] = array_sum($lst_byRate);
+      if ($lst_byRate[0]<1)  $lst_byRate[0] = 1;
+      
+      
+      /***********************/
+      /***  TEMPORADAS     ***/
+      $temporadas = [
+          ($year->year-2) => $months_empty,
+          ($year->year-1) => $months_empty,
+          ];
+      
+      foreach ($temporadas as $k=>$v){
+        $oObj = CoachSessions::whereYear('date', '=', $k)->where('cancels',0)->get();
+        if ($oObj){
+          foreach ($oObj as $obj){
+            $m = date('n', strtotime($obj->date));
+            $temporadas[$k][$m] += $obj->total;
+          }
+        }
+      }
+      
+      $temporadas[$year->year] = $lst_byMonth;
+      foreach ($temporadas as $k=>$v){
+        unset($temporadas[$k][0]);
+      }
+      
+      /***  TEMPORADAS     ***/
+      /***********************/
+      unset($lstMonths[0]);
+     
+      
+      $aColors = [];
+      $aColors[1] = '151, 187, 205';
+      $aColors[2] = '151, 187, 005';
+      $aColors[3] = '151, 087, 205';
+      $aColors[4] = '251, 187, 205';
+      $data = [
+        'temporadas' => $temporadas,
+        'lstMonths' => $lstMonths,
+        'months_empty' => $months_empty,
+        'year' => $year,
+        'aRateType' => $aRatesTypes,
+        'aEntrenadores' => $aEntrenadores,
+        'aColors' => $aColors,
+        'lst_items' => $lst_items,
+        'totals' => $totals,
+        'total' => $total,
+        'lst_byRate' => $lst_byRate,
+        ];
+      return view('backend.contabilidad.salarios',$data);
     }
     
 }

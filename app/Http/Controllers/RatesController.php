@@ -6,14 +6,14 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use \Carbon\Carbon;
 use App\Models\Rates;
-use App\Models\TypesRate;
+use App\Models\RateTypes;
 
 class RatesController extends Controller {
 
   public function index() {
     return view('backend.rates.index', [
         'rates' => Rates::where('status', 1)->orderBy('order', 'asc')->orderBy('name', 'asc')->get(),
-        'services' => TypesRate::all(),
+        'services' => RateTypes::all(),
         'lstCodes' => rates_codes()
     ]);
   }
@@ -21,7 +21,7 @@ class RatesController extends Controller {
   public function newRate() {
     return view('backend.rates.new', [
         'taxes' => Rates::all(),
-        'typesRate' => \App\TypesRate::all(),
+        'typesRate' => \App\RateTypes::all(),
     ]);
   }
 
@@ -38,32 +38,17 @@ class RatesController extends Controller {
     $rates->tarifa = $request->input('tarifa');
 
     if ($rates->save()) {
-
-      $stripe = new Stripe;
-      $stripe = Stripe::make(HomeController::$stripe['key']);
-
-      $plan = $stripe->plans()->create([
-          'id' => $rates->id . "-" . strtolower($rates->name),
-          'name' => $rates->name,
-          'amount' => floatval($rates->price),
-          'currency' => 'EUR',
-          'interval' => 'month',
-          'interval_count' => $rates->mode,
-      ]);
-
-      $rates->planStripe = $plan['id'];
-      $rates->save();
-
-
-      return redirect()->action('RatesController@index');
+      return redirect()->back()->with('success','Tarifa creada.');
     }
+    
+    return redirect()->back()->with('warning','Tarifa no creada.');
   }
 
   public function actualizar($id) {
 
     return view('backend.rates.update', [
         'rate' => Rates::find($id),
-        'typesRate' => \App\TypesRate::all(),
+        'typesRate' => \App\RateTypes::all(),
     ]);
   }
 

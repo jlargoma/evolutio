@@ -8,8 +8,15 @@
       <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
         <div class="card">
           <div class="card-header">
-            <i class="fa fa-align-justify"></i>{{ __('Tarifas') }}</div>
+            <div class="pull-left">
+              <i class="fa fa-align-justify"></i>{{ __('Tarifas') }}
+            </div>
+            <div class="pull-right">
+              <button class="btn btn-secondary mb-1" type="button" data-toggle="modal" data-target="#newRate">Nueva</button>
+            </div>
+          </div>
           <div class="card-body">
+            
             @include('flash-message')
             <table class="table table-responsive-sm table-striped">
               <thead>
@@ -93,6 +100,22 @@
     </div>
   </div>
 </div>
+
+<!-- /.modal-->
+<div class="modal fade" id="newRate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Nueva Tarifa</h4>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      </div>
+      @include('backend.rates.new')
+    </div>
+    <!-- /.modal-content-->
+  </div>
+  <!-- /.modal-dialog-->
+</div>
+<!-- /.modal-->
 
 @endsection
 

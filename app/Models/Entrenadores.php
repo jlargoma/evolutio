@@ -12,4 +12,14 @@ class Entrenadores extends Model
     protected $dates = [
         'deleted_at'
     ];
+    
+    static function getRatesNameBy_id() {
+      $obj = self::all();
+      $rLst = [];
+      foreach ($obj as $i){
+        $rLst[$i->id] = $i->name;
+      }
+      
+      return $rLst;
+    }
 }

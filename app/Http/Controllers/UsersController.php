@@ -53,6 +53,43 @@ class UsersController extends Controller
         $user = User::find($id);
         return view('backend.users.userEditForm', compact('user'));
     }
+    
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function new_user()
+    {
+      return view('backend.users.userNewForm');
+    }
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+      $validatedData = $request->validate([
+            'name'       => 'required|min:1|max:256',
+            'email'      => 'required|email|unique:users|max:256',
+            'password'      => 'required|min:8',
+            'password_confirm' => 'required|same:password'  
+        ]);
+      $user = new User();
+      $user->name       = $request->input('name');
+      $user->email      = $request->input('email');
+      $user->role       = $request->input('role');
+      $psw = $request->input('password',null);
+      $user->password =  bcrypt($psw);
+
+
+      $user->save();
+      $request->session()->flash('message', 'Successfully updated user');
+      return redirect()->route('users.index');
+    }
 
     /**
      * Update the specified resource in storage.
@@ -65,7 +102,7 @@ class UsersController extends Controller
     {
         $validatedData = $request->validate([
             'name'       => 'required|min:1|max:256',
-            'email'      => 'required|email|max:256'
+            'email'      => 'required|email|unique:users|max:256'
         ]);
         $user = User::find($id);
         $user->name       = $request->input('name');

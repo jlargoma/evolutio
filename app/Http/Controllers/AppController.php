@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Years;
 
 class AppController extends Controller
 {
@@ -26,4 +27,13 @@ class AppController extends Controller
     }
      
     function no_allowed() {return view('errors.403');}
+    
+    /**
+     * @return mixed
+     */
+    protected static function getActiveYear()
+    {
+        $activeYear = Years::where('active', 1)->first();
+        return $activeYear;
+    }
 }
