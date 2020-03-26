@@ -102,8 +102,14 @@ class UsersController extends Controller
     {
         $validatedData = $request->validate([
             'name'       => 'required|min:1|max:256',
-            'email'      => 'required|email|unique:users|max:256'
+            'email'      => 'required|email|max:256',
         ]);
+        
+        $mailExist = User::where('email',$request->input('email'))->where('id','!=',$id)->first();
+        if($mailExist){
+          return redirect()->back()->with('error','El mail no está disponible.');
+        }
+        
         $user = User::find($id);
         $user->name       = $request->input('name');
         $user->email      = $request->input('email');

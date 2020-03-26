@@ -64,6 +64,7 @@
                                 </ul>
                             </div>
                         @endif
+                        @include('flash-message')
                     </div>
                 </div>
               </div>
