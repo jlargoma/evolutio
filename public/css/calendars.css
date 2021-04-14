@@ -1,0 +1,116 @@
+    .table-calendar thead{
+        background-color: #5c90d2;
+        color: #FFF;
+    }
+    .table-calendar thead th {
+    padding: 3px !important;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+    .table-calendar tbody td {
+    padding: 1px !important;
+    text-align: center;
+    }
+.table-calendar tbody td.time {
+    border: 1px solid #ddd;
+    width: 30px;
+    color: #000;
+}
+.table-calendar tbody td.editDate{
+    max-width: 0px !important;
+}
+
+.table-calendar tbody td.editDate div {
+    max-width: 100px;
+    display: inline-block;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #FFF;
+    padding: 3px;
+    font-weight: 800;
+    margin-right: 4px;
+    white-space: nowrap;
+    cursor: pointer;
+}
+.table-calendar tbody td.editDate div span.no-pay{
+    background-color: red;
+    height: 8px;
+    width: 8px;
+    display: inline-block;
+    border-radius: 50%;
+    margin-right: 3px;
+}
+.table-calendar tbody td.editDate div span.detail{
+    position: fixed;
+    display: none;
+        width: 150px;
+    min-height: 25px;
+    background-color: #000000ab;
+    padding: 7px;
+    white-space: normal;
+}
+.table-calendar tbody td.editDate div:hover span.detail{
+    display: block;
+}
+.table-calendar .addDate {cursor: pointer;}
+.table-calendar .addDate:hover {background-color: #5c90d2; color: #FFF;}
+ul.selectDate {
+    padding: 0;
+    width: 100%;
+    margin: 1em auto;
+    text-align: center;
+}
+ul.selectDate li {
+    list-style: none;
+    display: inline-block;
+    padding: 7px;
+    border-radius: 7px;
+    color: #FFF;
+    background-color: #45c37b;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+ul.selectDate li:hover,
+ul.selectDate li.active {
+    background-color: #5c90d2 !important;
+    font-weight: bold;
+}
+ul.selectType,
+ul.coachsFilter {
+    padding: 0;
+    width: 100%;
+    margin: 1em auto;
+    text-align: center;
+}
+ul.selectType li,
+ul.coachsFilter li {
+    list-style: none;
+    display: inline-block;
+    padding: 11px;
+    border-radius: 7px;
+    margin: 0 1em;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+ul.selectType li.select_0,
+ul.coachsFilter li.select_0 {
+    background-color: grey;
+    color: #FFF;
+}
+ul.selectType li:hover,
+ul.coachsFilter li:hover,
+ul.coachsFilter li.active,
+ul.selectType li.active {
+    /*box-shadow: inset 2px 1px 3px 1px #353535;*/
+    border-bottom: 5px solid #45c37b;
+    /*font-weight: bold;*/
+}
+
+.js-dataTable-citas tr .showInform{
+    cursor: pointer;
+}
+.js-dataTable-citas tr .showInform:hover{
+    font-weight: bold;
+}

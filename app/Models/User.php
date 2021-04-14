@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use DB;
 
 class User extends Authenticatable
 {
@@ -40,4 +41,20 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    
+    public function rates() {
+    return $this->hasMany('\App\Models\UserRates', 'id_user', 'id');
+  }
+
+  public function charges() {
+    return $this->hasMany('\App\Models\Charges', 'id_user', 'id');
+  }
+
+  public function rateCoach() {
+    return $this->hasOne('\App\Models\CoachRates', 'id_user', 'id');
+  }
+  public function userCoach() {
+    return $this->hasOne('\App\Models\CoachUsers', 'id_user', 'id');
+  }
+
 }

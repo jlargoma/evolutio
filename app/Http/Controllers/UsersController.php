@@ -1,0 +1,398 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Http\Response;
+use App\Http\Requests;
+use \Carbon\Carbon;
+use Mail;
+use URL;
+use Cache;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Models\User;
+use App\Models\UserRates;
+use \App\Traits\EntrenadoresTraits;
+use \App\Traits\ClientesTraits;
+
+class UsersController extends Controller {
+
+    use EntrenadoresTraits,ClientesTraits;
+    
+    public function index() {
+
+        return view('/admin/usuarios/index', [
+            'users' => User::whereIn('role', [
+                'admin',
+                'administrativo'
+            ])->get(),
+            'date' => Carbon::now(),
+        ]);
+    }
+
+    
+
+    public function nueva() {
+        $url = URL::previous();
+        $role = 'user';
+        if (preg_match('/usuarios/i', $url)) {
+            $role = 'admin';
+        } elseif (preg_match('/clientes/i', $url)) {
+            $role = 'user';
+        } elseif (preg_match('/entrenadores/i', $url)) {
+            $role = 'teach';
+        } elseif (preg_match('/nutricion/i', $url)) {
+            $role = 'nutri';
+        }
+
+        $aCoachs = [];
+        $uCoach = null;
+        if ($role == 'user'){
+            $aCoachs = User::where('role','teach')->orderBy('name')->pluck('name','id')->toArray();
+        }
+        return view('/admin/usuarios/nueva', [
+            'rates' => \App\Models\Rates::orderBy('status', 'desc')->orderBy('name', 'asc')->get(),
+            'role' => $role,
+            'aCoachs' => $aCoachs,
+            'uCoach' => $uCoach,
+        ]);
+    }
+
+    public function create(Request $request) {
+
+        $issetUser = User::where('email', $request->input('email'))->get();
+        if (count($issetUser) > 0) {
+            return "email duplicado";
+        } else {
+            $newUser = new User();
+            $newUser->name = $request->input('name');
+            $newUser->email = $request->input('email');
+            $newUser->password = bcrypt($request->input('password'));
+            $newUser->remember_token = str_random(60);
+            $newUser->role = $request->input('role','user');
+            $newUser->telefono = $request->input('telefono');
+            $newUser->password = bcrypt($request->input('password'));
+
+            if ($newUser->save()) {
+                /***************************************/
+                $rateID = $request->input('id_rate');
+                if ($rateID>0){
+                    $oRate  = \App\Models\Rates::find($request->input('id_rate'));
+                    if ($oRate){
+                        $rateUser = new UserRates();
+                        $rateUser->id_user = $newUser->id;
+                        $rateUser->id_rate = $oRate->id;
+                        $rateUser->rate_year = date('Y');
+                        $rateUser->rate_month = date('m');
+                        $rateUser->save();
+                    }
+                }
+                /***************************************/
+                if ($newUser->role == 'user'){
+                    $uCoach = new \App\Models\CoachUsers();
+                    $uCoach->id_user = $newUser->id;
+                    $uCoach->id_coach = $request->input('u_coach',0);
+                    $uCoach->save();
+                }
+                /***************************************/
+                
+                $email = $newUser->email;
+                $role = $newUser->role;
+                switch ($role){
+                    case 'admin';
+                    case 'administrativo';
+                        return redirect('/admin/usuarios');
+                        break;
+                    case 'teach';
+                    case 'nutri';
+                    case 'fisio';
+                        return redirect('/admin/entrenadores');
+                        break;
+                    default :
+                        $sended = Mail::send('emails._create_user_email', ['user' => $newUser], function ($message) use ($email) {
+                                $message->subject('Registro de Usuario');
+                                $message->subject('Inscripción en Evolutio');
+                                $message->from('info@evolutio.fit', 'Inscripción Evolutio');
+                                $message->to($email);
+                            });
+                        if ($request->ajax()) return 'OK';
+                        return redirect('/admin/clientes');
+                        break;
+                }
+            }
+        }
+    }
+
+    public function actualizar($id) {
+        return view('/admin/usuarios/update', [
+            'rates' => \App\Models\Rates::all(),
+            'user' => User::find($id)
+        ]);
+    }
+
+    public function getMail($id) {
+        $oUser = User::find($id);
+        return ($oUser) ? $oUser->email : '';
+    }
+    public function getList() {
+        return \App\User::where('role','user')
+                ->where('status',1)
+                ->orderBy('name','ASC')->pluck('name','id')->toArray();
+        
+    }
+    public function delete($id) {
+        User::find($id)->delete();
+        return redirect('/admin/usuarios');
+    }
+
+    public function update(Request $request) {
+        $rates = $request->input('id_rates');
+
+        $id = $request->input('id');
+        $userToUpdate = User::find($id);
+        $userToUpdate->name = $request->input('name');
+        $userToUpdate->email = $request->input('email');
+        $userToUpdate->role = $request->input('role','user');
+
+        if ($request->input('password'))
+            $userToUpdate->password = bcrypt($request->input('password'));
+
+        $userToUpdate->telefono = $request->input('telefono');
+
+        if ($userToUpdate->role == 'user') {
+            if (!empty($rates)) {
+                $oldRates = UserRates::where('id_user', $userToUpdate->id)
+                        ->whereMonth('created_at', '=', date('m'))
+                        ->whereYear('created_at', '=', date('Y'))
+                        ->get();
+
+                if (count($oldRates) > 0) {
+                    foreach ($oldRates as $key => $oldRate) {
+                        $oldRate->delete();
+                    }
+                }
+
+                $rateUser = new UserRates();
+                $rateUser->id_user = $userToUpdate->id;
+                $rateUser->id_rate = $rates;
+                $rateUser->save();
+            }
+            /***************************************/
+            $uCoach = \App\CoachUsers::where('id_user',$id)->first();
+            if (!$uCoach){
+                $uCoach = new \App\CoachUsers();
+                $uCoach->id_user = $id;
+            }
+                $uCoach->id_coach = $request->input('u_coach',-1);
+                $uCoach->save();
+            /***************************************/
+        }
+
+        if ($userToUpdate->role == 'teach' || $userToUpdate->role == 'fisio' || $userToUpdate->role == 'nutri') {
+            $userToUpdate->iban = $request->input('iban');
+            $userToUpdate->ss = $request->input('ss');
+            $CoachRates = \App\Models\CoachRates::where('id_user', $userToUpdate->id)->get();
+
+            if (count($CoachRates) > 0) {
+                $CoachRates[0]->salary = $request->input('salario_base');
+                $CoachRates[0]->ppc = $request->input('ppc');
+                $CoachRates[0]->save();
+            } else {
+                $CoachRates = new \App\Models\CoachRates();
+                $CoachRates->id_user = $userToUpdate->id;
+                $CoachRates->salary = $request->input('salario_base');
+                $CoachRates->ppc = $request->input('ppc');
+                $CoachRates->save();
+            }
+        }
+
+        if ($userToUpdate->save()) {
+            if ($userToUpdate->role == 'admin') {
+
+                return redirect('/admin/usuarios');
+            } elseif ($userToUpdate->role == 'teach' || $userToUpdate->role == 'fisio' || $userToUpdate->role == 'nutri') {
+
+                return redirect('/admin/entrenadores');
+            } else {
+
+                return redirect()->back()->with('success','Cliente actualizado');
+            }
+        }
+    }
+
+    public function disable($id) {
+        $usuario = User::find($id);
+        $usuario->status = 0;
+        if ($usuario->save()) {
+            if ($usuario->role == 'admin') {
+                return redirect('/admin/usuarios');
+            } elseif ($usuario->role == 'teach' || $usuario->role == 'teacher') {
+                return redirect('/admin/entrenadores');
+            } else {
+                 return redirect('/admin/clientes');
+            }
+        }
+    }
+
+    public function activate($id) {
+        $usuario = User::find($id);
+        $usuario->status = 1;
+        if ($usuario->save()) {
+
+            if ($usuario->role == 'admin') {
+
+                return redirect('/admin/usuarios');
+            } elseif ($usuario->role == 'teach' || $usuario->role == 'teacher')  {
+
+                return redirect('/admin/entrenadores');
+            } else {
+
+                 return redirect('/admin/clientes');
+//                echo "ACTUALIZADO";
+            }
+        }
+    }
+    public function actualizarUsuario($id) {
+
+        return view('/admin/usuarios/_form', [
+            'rates' => \App\Models\Rates::all(),
+            'user' => User::find($id)
+        ]);
+    }
+    
+    public function sendEmailEntrenadores($id) {
+        
+        # _info_trainers_email
+         $trainer = User::find($id);
+         $emailTrainer = $trainer->email;
+         $sended = Mail::send('emails._info_trainers_email', ['user' => $trainer], function ($message) use ($emailTrainer){
+             $message->subject('Registro de Usuario');
+             $message->subject('Inscripción en Evolutio');
+             $message->from('info@evolutio.fit', 'Inscripción Evolutio');
+             $message->to($emailTrainer);
+             // $message->to('info@evolutio.fit')->cc('iankurosaki17@gmail.com')->cc('jlargo@mksport.es');
+         });
+         if ($sended) {
+             return "Correo enviado a ".$emailTrainer;
+         }
+          
+         return "No se pudo enviar el correo a ".$emailTrainer;
+    }
+
+    public function duplicateRatesUser($date = "") {
+        $date = Carbon::now();
+        $users = User::where('role', 'user')->get();
+
+        foreach ($users as $user) {
+            $oldRatesUser = UserRates::where('id_user', $user->id)
+                    ->whereMonth('created_at', '=', $date->copy()->format('m'))
+                    ->whereYear('created_at', '=', $date->copy()->format('Y'))
+                    ->get();
+            echo "Cliente: " . $user->name . "<br>";
+            $total_tarifas_cliente = count($oldRatesUser);
+            echo "Tarifas encontradas para este cliente (" . $total_tarifas_cliente . ") en el mes de " . $date->copy()
+                    ->format('m') . " : <br>";
+            if ($total_tarifas_cliente > 0) {
+                foreach ($oldRatesUser as $oldRateUser) {
+                    echo $oldRateUser->rate->name . " ";
+                    if ($oldRateUser->rate->type != 4 || !preg_match('/BONO/i', $oldRateUser->rate->name)) {
+                        if ($oldRateUser->rate->mode <= 1) {
+                            $actualDate = $date->copy()->addMonth();
+                            $isRateExistNow = UserRates::where('id_user', $user->id)
+                                    ->where('id_rate', $oldRateUser->id_rate)
+                                    ->whereMonth('created_at', '=', $actualDate->copy()
+                                            ->format('m'))
+                                    ->whereYear('created_at', '=', $actualDate->copy()
+                                            ->format('Y'))
+                                    ->get();
+
+                            if (count($isRateExistNow) == 0) {
+                                $newRateUser = new UserRates();
+                                $newRateUser->id_user = $oldRateUser->id_user;
+                                $newRateUser->id_rate = $oldRateUser->id_rate;
+                                $newRateUser->created_at = $actualDate->copy()->startOfMonth();
+                                $newRateUser->updated_at = $actualDate->copy()->startOfMonth();
+                                $newRateUser->save(['timestamps' => false]);
+
+                                echo "Duplicada para el mes de " . $actualDate->copy()->format('m') . "!!<br>";
+                            } else {
+                                echo "Ya existe la tarifa<br>";
+                            }
+                        } else {
+                            echo "ya pago, la tarifa No es mensual";
+                        }
+                    } else {
+                        echo "La tarifa no se cobra de forma mensual";
+                    }
+
+                    echo "<br>";
+                }
+            }
+
+            echo "<br><br><br>";
+        }
+    }
+
+    public function informRate(Request $request) {
+        //_informRateUser
+        $rate = \App\Models\Rates::find($request->idRate);
+        $userRates = UserRates::where('id_user', $request->idUser)->where('id_rate', $request->idRate)
+                        ->orderBy('created_at', 'desc')->get();
+        if ($rate->type == 4) {
+
+            if (count($userRates) > 0) {
+                $userRateCreated = $userRates[0]->created_at;
+            }
+
+            $dateCreatedUserRate = Carbon::createFromFormat('Y-m-d H:i:s', $userRateCreated);
+            $classes = \App\Assistance::where('id_user', $request->idUser)
+                    ->where('date_assistance', ">", $dateCreatedUserRate->copy()
+                            ->format('Y-m-d H:i:s'))
+                    ->get();
+        } else {
+            $classes = \App\Assistance::where('id_user', $request->idUser)
+                    ->whereYear('date_assistance', "=", date('Y'))
+                    ->whereMonth('date_assistance', "=", date('m'))
+                    ->get();
+        }
+
+        return view('/admin/usuarios/_informRateUser', [
+            'classes' => $classes,
+            'rate' => $rate,
+            'userRates' => $userRates,
+        ]);
+    }
+
+    public static function getPendingPaymentByMonth($date) {
+        $pendiente = 0;
+        $users = User::where('role', 'user')->where('status', 1)->get();
+        $month = date('m', strtotime($date));
+        $year = date('Y', strtotime($date));
+
+        $ratesLst = \App\Models\Rates::all()->pluck('price', 'id')->toArray();
+        $users = User::where('role', 'user')->where('status', 1)
+                ->join('users_rates', 'users.id', '=', 'users_rates.id_user')
+                ->whereYear('users_rates.created_at', '=', $year)
+                ->whereMonth('users_rates.created_at', '=', $month)
+                ->get();
+
+        foreach ($users as $user) {
+            if (isset($ratesLst[$user->id_rate])) {
+                $cobro = \App\Charges::where('id_user', $user->id)
+                        ->where('id_rate', $user->id_rate)
+                        ->whereYear('date_payment', '=', $year)
+                        ->whereMonth('date_payment', '=', $month)
+                        ->count();
+
+                if ($cobro == 0) {
+                    $pendiente += $ratesLst[$user->id_rate];
+                }
+            }
+        }
+
+        return $pendiente . "€";
+    }
+
+
+}
