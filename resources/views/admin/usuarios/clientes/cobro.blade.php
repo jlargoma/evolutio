@@ -28,9 +28,9 @@
                 <div class="col-md-4 col-xs-6">
                     <label for="type_payment">Forma de pago</label>
                     <select class="form-control" name="type_payment" id="type_payment">
-                        <option value="cash">Efectivo</option>
-                        <option value="card">Banco</option>
-                        <option value="banco">Tarjeta</option>
+                            <option value="cash">Efectivo</option>
+                            <option value="banco">Banco</option>
+                            <option value="card">Tarjeta</option>
                     </select>
                 </div>
                 <div class="col-md-4 col-xs-6 push-20">
@@ -45,13 +45,20 @@
                 </div>
             </div>
             <div style="clear: both;"></div>
+            @include('admin.usuarios.clientes.forms.stripeBox')
+            <div style="clear: both;"></div>
             <div class="col-md-12 text-center push-20">
-                <div class="col-md-6 col-xs-12">
+                <div class="col-md-4 col-xs-12">
                     <button class="btn btn-lg btn-success" type="submit" id="submitFormPayment">
                         Cobrar
                     </button>
                 </div>
-                <div class="col-md-6 col-xs-12">
+                <div class="col-md-4 col-xs-12">
+                    <a class="btn btn-lg btn-success" href="{{ $pStripe}}" target="_black">
+                        Link Stripe
+                    </a>
+                </div>
+                <div class="col-md-4 col-xs-12">
                     <a class="btn btn-lg btn-danger"
                        href="{{ url('/admin/rates/unassigned')}}/<?php echo $user->id; ?>/<?php echo $rate->id; ?>/<?php echo $date; ?>">
                         Desasignar
@@ -81,18 +88,25 @@
     });
 
     $('#type_payment').change(function (e) {
-      var value = $("#type_payment option:selected").text();
-      console.log(value);
-
-      if (value == "Tarjeta") {
-        $('#content-payment').show();
-        $('.form-toPayment').attr('id', 'paymentForm');
-      } else {
-        $('#content-payment').hide();
-        $('.form-toPayment').removeAttr('id');
-      }
+        var value = $("#type_payment option:selected").val();
+        if (value == "card") {
+            $('#stripeBox').show();
+            $('.form-toPayment').attr('id', 'paymentForm');
+        } else {
+            $('#stripeBox').hide();
+            $('.form-toPayment').removeAttr('id');
+        }
 
     });
+    <?php if ($card):?>
+        $('#card-element').hide();
+        $('#changeCreditCard').on('click', function(){
+            $('#cardExists').hide();
+            $('#cardLoaded').val(0);
+            $('#card-element').show();
+            $(".new_cc").prop('required',true);
+        });
+    <?php endif;?>
   });
 </script>
 @endsection

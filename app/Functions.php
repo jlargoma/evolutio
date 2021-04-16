@@ -176,3 +176,102 @@ return \Illuminate\Support\Str::limit($txt,$limit,$end);
 function str_random($limit=40){
     return Str::random($limit);
 }
+function slugify($text)
+{
+  // replace non letter or digits by -
+  $text = preg_replace('~[^\pL\d]+~u', '-', $text);
+
+  // transliterate
+  $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+
+  // remove unwanted characters
+  $text = preg_replace('~[^-\w]+~', '', $text);
+
+  // trim
+  $text = trim($text, '-');
+
+  // remove duplicate -
+  $text = preg_replace('~-+~', '-', $text);
+
+  // lowercase
+  $text = strtolower($text);
+
+  if (empty($text)) {
+    return 'n-a';
+  }
+
+  return $text;
+}
+
+function desencriptID($text){
+
+    $text = trim($text);
+    $char_list = "GHIJKLMNOPQRSTUVWXYZ";
+    $char_salt = "ABCDEFabcdef";
+    $text_len = strlen($text);
+    $result = "";
+
+    for($i = 0; $i < $text_len; $i++)
+    {
+      if (strpos($char_salt, $text[$i]) !== FALSE){
+        $result = $text[$i].$result;
+      } else {
+        $aux = strpos($char_list, $text[$i]);
+        if ($aux > 9){
+          $result = ($aux-10).$result;
+        } else {
+          $result = $aux.$result;
+        }
+      }
+    }
+    $id = hexdec($result);
+    $cantControl = strlen($result);
+    if (substr($text,-1) == $cantControl) return $id/217;
+    if (substr($text,-2) == $cantControl) return $id/217;
+    return 'null';
+}
+
+function encriptID($data){
+    $text = strtoupper(dechex($data*217));
+    $char_list = "GHIJKLMNOPQRSTUVWXYZ";
+    $char_salt = "ABCDEFabcdef";
+    $text_len = strlen($text);
+    $result = "";
+
+    for($i = 0; $i < $text_len; $i++)
+    {
+      if (strpos($char_salt, $text[$i]) !== FALSE){
+        $result = $text[$i].$result;
+      } else {
+        if (($i%2) == 0){
+          $result = $char_list[$text[$i]+10].$result;
+        } else {
+          $result = $char_list[$text[$i]].$result;
+        }
+      }
+    }
+    
+    $length = strlen($result);
+    $newVal = '';
+    for ($i=0; $i<$length; $i++) {
+      $newVal .= (rand(0, 117)). $result[$i];
+    }
+    return ($newVal).$length;
+}
+
+function getKeyControl($id){
+  $aux = md5($id);
+  return strtoupper(preg_replace('/[0-9]/','', $aux)).intval(preg_replace('/[a-z]/','', $aux));
+}
+function payMethod($i = null){
+    $lst = [
+        'cash'=>'Efectivo',
+        'card'=>'Tarjeta',
+        'banck'=>'Banco',
+        ];
+    
+    if ($i){
+        return isset($lst[$i]) ? $lst[$i] : 'Otro';
+    }
+    return $lst;
+}

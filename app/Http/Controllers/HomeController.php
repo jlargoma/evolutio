@@ -14,15 +14,7 @@ use URL;
 use Stripe;
 class HomeController extends Controller
 {
-    static  $stripe = [
-                // 'key'             => 'rk_live_1QvGiwvoTPRXCIEM0ePIKecR',
-                // 'publishable_key' => 'pk_live_XPLvRlI3aKmDeiwywkAwFrcI',
-                // 'secret_key'      => 'sk_live_IKKqp9ObSMZktn62hDH0kHRn'
 
-                'key'             => 'rk_test_SszsklZljt1tnqsHjScpd7Go',
-                'publishable_key' => 'pk_test_iQaDbH08XNk9rDivw5sN9RdH',
-                'secret_key'      => 'sk_test_Wae7inTZLxWESVzDGZPk4FKO'
-            ];
     public function index(Request $request)
     {
         $user   = Auth::user();

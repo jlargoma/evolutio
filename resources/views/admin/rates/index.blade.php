@@ -29,6 +29,7 @@
                 <th class="text-center" style="background-color: #46c37b; width: 90px;">Nº Ses<span class="hidden-xs hidden-sm">ion / sem</span></th>
                 <th class="text-center" style="background-color: #46c37b">Tipo</th>
                 <th class="text-center" style="background-color: #46c37b">Tipo Pago</th>
+                <th class="text-center" style="background-color: #46c37b">Stripe</th>
                 <th class="text-center" style="background-color: #46c37b;min-width: 10%;">Acciones</th>
               </tr>
             </thead>
@@ -74,6 +75,9 @@
 
                       <?php endfor; ?>
                     </select>
+                  </td>
+                  <td class="text-center">
+                    <input type="text" class="form-control editables plan-<?php echo $rate->id ?>"  data-id="<?php echo $rate->id; ?>" value="<?php echo $rate->planStripe; ?>" />
                   </td>
                   <td class="text-center">
                     <div class="btn-group">
@@ -195,22 +199,20 @@
 
 
     $('.editables').change(function (event) {
-      var id = $(this).attr('data-id');
-
-      var name = $('.name-rate-' + id).val();
-      var price = $('.price-rate-' + id).val();
-      var max_pax = $('.maxPax-rate-' + id).val();
-      var type = $('.type-rate-' + id).val();
-      var mode = $('.mode-' + id).val();
-      var orden = $('.orden-' + id).val();
-      var tarifa = $('.code-rate-' + id).val();
-      var cost = $('.cost-rate-' + id).val();
-
-      $.get('/admin/tarifas/update/', 
-        {id: id, name: name, price: price, max_pax: max_pax, type: type, mode: mode, orden: orden,tarifa:tarifa,cost:cost},
-        function (data) {
-//        alert(data);
-      });
+            
+        var id = $(this).attr('data-id');
+        var data= {
+            id: id,
+            name: $('.name-rate-' + id).val(),
+            price: $('.price-rate-' + id).val(),
+            max_pax: $('.maxPax-rate-' + id).val(),
+            type: $('.type-rate-' + id).val(),
+            mode: $('.mode-' + id).val(),
+            cost:$('.cost-rate-' + id).val(),
+            plan:$('.plan-' + id).val(),
+        };
+        
+      $.get('/admin/tarifas/update/', data);
     });
   });
 </script>

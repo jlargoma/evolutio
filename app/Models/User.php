@@ -7,10 +7,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use DB;
+use Laravel\Cashier\Billable;
+use Laravel\Cashier\Subscription;
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
+    use Billable;
 
     /**
      * The attributes that are mass assignable.
@@ -57,4 +60,24 @@ class User extends Authenticatable
     return $this->hasOne('\App\Models\CoachUsers', 'id_user', 'id');
   }
 
+  
+  /**********************************************************************/
+  /////////  user_meta //////////////
+  public function setMetaContent($key,$content) {
+    DB::table('user_meta')
+    ->updateOrInsert(
+        ['user_id' => $this->id, 'meta_key' => $key],
+        ['meta_value' => $content]
+    );
+  }
+  public function getMetaContent($key) {
+    
+    $oMeta = DB::table('user_meta')
+            ->where('user_id',$this->id)->where('meta_key',$key)->first();
+    
+    if ($oMeta) {
+      return $oMeta->meta_value;
+    }
+    return null;
+  }
 }

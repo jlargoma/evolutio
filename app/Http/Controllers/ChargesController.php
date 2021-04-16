@@ -53,42 +53,129 @@ class ChargesController extends Controller {
         }
     }
 
-    public function cobrar(Request $request) {
+    public function cobrar(Request $req) {
 
-        $month = $request->input('fecha_pago', null);
+        $month = $req->input('fecha_pago', null);
         if ($month)
             $time = strtotime($month);
         else
             $time = time();
 
-        $uID = $request->input('id_user', null);
-        $rID = $request->input('id_rate', null);
-        $tpay = ($request->input('type_payment') == "card") ? "banco" : $request->input('type_payment', 'cash');
-        $value = $request->input('importe', 0);
-        $disc = $request->input('discount', '0');
+        $uID = $req->input('id_user', null);
+        $rID = $req->input('id_rate', null);
+        $tpay = $req->input('type_payment','cash');
+        $value = $req->input('importe', 0);
+        $disc = $req->input('discount', '0');
         
 
-        $resp = $this->generateePayment($time, $uID, $rID, $tpay, $value, $disc);
+        $idStripe=null;$cStripe=null;
+        if ($tpay == 'card'){
+            $cc_number = $req->input('cc_number', null);
+            $cc_expide_mm = $req->input('cc_expide_mm', null);
+            $cc_expide_yy = $req->input('cc_expide_yy', null);
+            $cc_cvc = $req->input('cc_cvc', null);
+            $cardLoaded = $req->input('cardLoaded', null);
+            $oUser = \App\Models\User::find($uID);
+            $sStripe = new \App\Services\StripeService();
 
+            /***********************************/
+            /** GUARDAR TARJETA **/
+            /***********************************/
+            if ($cardLoaded == 0){
+                $validate = \App\Services\StripeCardValidation::validate($req);
+                if ($validate !== 'OK'){
+                    return redirect()->back()
+                            ->withErrors($validate)
+                            ->withInput();
+                }
+            
+                $resp = $sStripe->subscription_changeCard($oUser, $cc_number, $cc_expide_mm, $cc_expide_yy, $cc_cvc);
+                if ( $resp != 'updated'){
+                    return redirect()->back()
+                            ->withErrors([$resp])
+                            ->withInput();
+                }
+            }
+            /***********************************/
+            /** COBRAR POR STRIPE **/
+            /***********************************/
+            $resp = $sStripe->automaticCharge($oUser,round($value*100));
+            if ( $resp[0] != 'OK'){
+                return redirect()->back()
+                        ->withErrors([$resp[1]])
+                        ->withInput();
+            }
+            $idStripe = $resp[1];
+            $cStripe = $resp[2];
+        }
+        $resp = $this->generateePayment($time, $uID, $rID, $tpay, $value, $disc,$idStripe,$cStripe);
+       
         if ($resp[0] == 'error') {
             return redirect()->back()->withErrors([$resp[1]]);
         }
         return redirect()->back()->with('success', $resp[1]);
     }
 
-    public function chargeUser(Request $request) {
-        $month = $request->input('date_payment', null);
+    public function chargeUser(Request $req) {
+        
+        $month = $req->input('date_payment', null);
+        $operation = $req->input('operation', 'all');
         if ($month)
             $time = strtotime($month);
         else
             $time = time();
-        $uID = $request->input('id_user', null);
-        $rID = $request->input('id_rate', null);
-        $tpay = ($request->input('type_payment') == "card") ? "banco" : $request->input('type_payment', 'cash');
-        $value = $request->input('importe', 0);
-        $disc = $request->input('discount', 0);
-
-        $resp = $this->generateePayment($time, $uID, $rID, $tpay, $value, $disc);
+        $uID = $req->input('id_user', null);
+        $rID = $req->input('id_rate', null);
+        $tpay = $req->input('type_payment','cash');
+        $value = $req->input('importe', 0);
+        $disc = $req->input('discount', 0);
+        /************************************************************/
+        $resp = ['error','Error al procesar su cobro'];
+        if ($operation == 'all'){
+            $idStripe=null;$cStripe=null;
+            if ($tpay == 'card'){
+                 
+                $cc_number = $req->input('cc_number', null);
+                $cc_expide_mm = $req->input('cc_expide_mm', null);
+                $cc_expide_yy = $req->input('cc_expide_yy', null);
+                $cc_cvc = $req->input('cc_cvc', null);
+                $cardLoaded = $req->input('cardLoaded', null);
+                $oUser = \App\Models\User::find($uID);
+                $sStripe = new \App\Services\StripeService();
+                
+                /***********************************/
+                /** GUARDAR TARJETA **/
+                /***********************************/
+                if ($cardLoaded == 0){
+                    $validate = \App\Services\StripeCardValidation::validate($req);
+                    if ($validate !== 'OK'){
+                        return redirect()->back()
+                                ->withErrors($validator)
+                                ->withInput();
+                    }
+                    $resp = $sStripe->subscription_changeCard($oUser, $cc_number, $cc_expide_mm, $cc_expide_yy, $cc_cvc);
+                    if ( $resp != 'updated'){
+                        return redirect()->back()
+                                ->withErrors([$resp])
+                                ->withInput();
+                    }
+                }
+                /***********************************/
+                /** COBRAR POR STRIPE **/
+                /***********************************/
+                $resp = $sStripe->automaticCharge($oUser,round($value*100));
+                if ( $resp[0] != 'OK'){
+                    return redirect()->back()
+                            ->withErrors([$resp[1]])
+                            ->withInput();
+                }
+                $idStripe = $resp[1];
+                $cStripe = $resp[2];
+            }
+            $resp = $this->generateePayment($time, $uID, $rID, $tpay, $value, $disc,$idStripe,$cStripe);
+        }
+        if ($operation == 'stripe')
+            $resp = $this->generateStripeLink($time, $uID, $rID, $tpay, $value, $disc);
 
         if ($resp[0] == 'error') {
             return redirect()->back()->withErrors([$resp[1]]);
@@ -96,8 +183,12 @@ class ChargesController extends Controller {
         return redirect()->back()->with('success', $resp[1]);
     }
 
-    private function generateePayment($time, $uID, $rID, $tpay, $value, $disc=0) {
-
+    public static function savePaymentRate($time, $uID, $rID, $tpay, $value, $disc,$idStripe,$cStripe){
+        $objet = new ChargesController();
+        return $objet->generateePayment($time, $uID, $rID, $tpay, $value, $disc,$idStripe,$cStripe);
+    }
+            
+    function generateePayment($time, $uID, $rID, $tpay, $value, $disc=0,$idStripe=null,$cStripe=null) {
         $month = date('Y-m-d', $time);
         $oUser = \App\Models\User::find($uID);
         if (!$oUser)
@@ -125,14 +216,17 @@ class ChargesController extends Controller {
             $oCobro->import = $value;
             $oCobro->discount = $disc;
             $oCobro->type_rate = $oRate->type;
+            $oCobro->id_stripe = $idStripe;
+            $oCobro->customer_stripe = $cStripe;
             $oCobro->save();
 
-            /*             * ************************************************** */
+            /**************************************************** */
 
             $oUserRate = UserRates::where('id_user', $oUser->id)
                     ->where('id_rate', $oRate->id)
                     ->where('rate_month', date('n', $time))
                     ->where('rate_year', date('Y', $time))
+                    ->whereNull('id_charges')
                     ->first();
             if ($oUserRate) {
                 $oUserRate->id_charges = $oCobro->id;
@@ -146,9 +240,16 @@ class ChargesController extends Controller {
                 $newRate->id_charges = $oCobro->id;
                 $newRate->save();
             }
-            /*             * ************************************************ */
-            if ($tpay == "cash") {
-
+            /**************************************************/
+            //Next month
+            $time = strtotime($month . ' +1 month');
+            $month = date('Y-m-d', $time);
+            $value = 0; //solo se factura el primer mes
+            $disc = 0; //solo se factura el primer mes
+        }
+        //END PAYMENTS MONTH
+        
+        if ($tpay == "cash") {
 //                    $cashBox              = new \App\CashBox();
 //                    $cashBox->concept     = "COBRO DE TARIFA";
 //                    $cashBox->import      = (float) $oCobro->import;
@@ -160,10 +261,43 @@ class ChargesController extends Controller {
 //                    $oldBalance = \App\CashBox::orderBy('id', 'desc')->get();
 //                    $cashBox->balance = (float) $oldBalance[0]->balance + (float) $oCobro->import;
 //                    $cashBox->save();
-                $statusPayment = "Pago realizado correctamente, por caja";
-            } else {
-                $statusPayment = "Pago realizado correctamente, por stripe/Banco";
+
             }
+            
+        $statusPayment = 'Pago realizado correctamente, por ' . payMethod($tpay);
+        /*************************************************************/
+        MailController::sendEmailPayRate($dataMail, $oUser, $oRate);
+        return ['OK', $statusPayment];
+    }
+
+    function generateStripeLink($time, $uID, $rID, $tpay, $importe, $disc=0,$idStripe=null,$cStripe=null) {
+
+        $month = date('Y-m-d', $time);
+        $oUser = \App\Models\User::find($uID);
+        if (!$oUser)
+            return ['error', 'Usuario no encontrado'];
+
+
+        $oRate = Rates::find($rID);
+        if (!$oRate)
+            return ['error', 'Tarifa no encontrada'];
+        $dataMail = [
+            'fecha_pago' => $month,
+            'type_payment' => $tpay,
+            'importe' => $importe,
+        ];
+        if(!$disc) $disc = 0;
+        //BEGIN PAYMENTS MONTH
+        for ($i = 0; $i < $oRate->mode; $i++) {
+                //si no tenia asignada la tarifa del mes
+                $newRate = new UserRates();
+                $newRate->id_user = $oUser->id;
+                $newRate->id_rate = $oRate->id;
+                $newRate->rate_year = date('Y', $time);
+                $newRate->rate_month = date('n', $time);
+                $newRate->id_charges = null;
+                $newRate->save();
+            /************************************************** */
             //Next month
             $time = strtotime($month . ' +1 month');
             $month = date('Y-m-d', $time);
@@ -171,14 +305,17 @@ class ChargesController extends Controller {
             $disc = 0; //solo se factura el primer mes
         }
         //END PAYMENTS MONTH
-
-
-
-        /*         * ************************************************************ */
-        MailController::sendEmailPayRate($dataMail, $oUser, $oRate);
-        return ['OK', $statusPayment];
+        /************************************************************** */
+        
+        $data = [date('Y', $time),date('m', $time),$uID,$importe*100,$rID];
+        $sStripe = new \App\Services\StripeService();
+        $pStripe = url($sStripe->getPaymentLink('rate',$data));
+        
+        MailController::sendEmailPayRateByStripe($dataMail, $oUser, $oRate,$pStripe);
+        return ['OK', 'Se ha enviado un email con el link de pago'];
     }
 
+    
     public function getPriceTax(Request $request) {
         $tax = Rates::find($request->idTax);
         return $tax->price;

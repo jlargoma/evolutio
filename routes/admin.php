@@ -1,15 +1,13 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
-
-Route::auth();
+Auth::routes();
 Route::get('', function () {
     return redirect('admin/clientes');
 });
 /* Admin routes */
 Route::get('/unauthorized', 'AdminController@unauthorized');
 Route::post('/changeActiveYear', 'HomeController@changeActiveYear')->name('years.change');
+
 
 Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
 
@@ -95,6 +93,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
     Route::get('/tarifas/actualizar/{id}', 'RatesController@actualizar');
     Route::get('/tarifas/update', 'RatesController@update');
     Route::get('/tarifas/delete/{id}', 'RatesController@delete');
+    Route::get('/tarifas/stripe/{id}', 'RatesController@createStripe');
     Route::get('/rates/unassigned/{idUser}/{idRate}/{date}', 'RatesController@unassignedRate');
     
     
@@ -123,6 +122,9 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::get('/informes/cierre-diario/{month?}/{day?}', 'InformesController@informeCierreDiario');
   Route::get('/informes/cajas', 'InformesController@informeCaja');
   
+  Route::get('', function () {
+    return redirect('admin/clientes');
+});
 });
 
 Route::group(['middleware' => ['auth','admin'], 'prefix' => ''], function () {

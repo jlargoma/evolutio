@@ -74,8 +74,8 @@
                         if (isset($uRates[$i][$user->id])):
                             foreach ($uRates[$i][$user->id] as $rate):
                                 $cobro = false;
-                                if(isset($uCobros[$i][$user->id.'-'.$rate->id])){
-                                    $cobro = $uCobros[$i][$user->id.'-'.$rate->id];
+                                if(isset($uCobros[$i][$rate->charge])){
+                                    $cobro = $uCobros[$i][$rate->charge];
                                 }
                                 ?>
                                 @if($cobro)

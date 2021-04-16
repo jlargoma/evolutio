@@ -53,31 +53,15 @@ class RatesController extends Controller {
   public function update(Request $request) {
 
     $id = $request->input('id');
-    $rateUpadate = Rates::find($id);
-    $rateUpadate->name = $request->input('name');
-    $rateUpadate->max_pax = $request->input('max_pax');
-    $rateUpadate->type = $request->input('type');
-    $rateUpadate->price = $request->input('price');
-    $rateUpadate->mode = $request->input('mode');
-    $rateUpadate->order = $request->input('order');
-    $rateUpadate->cost = $request->input('cost');
-    $rateUpadate->tarifa = $request->input('tarifa');
-    if ($rateUpadate->save()) {
-
-
-//      if ($rateUpadate->planStripe != "") {
-//        $stripe = new Stripe;
-//        $stripe = Stripe::make(HomeController::$stripe['key']);
-//
-//        $plan = $stripe->plans()->update($rateUpadate->planStripe, [
-//            'name' => $rateUpadate->name,
-//                // 'amount'               => floatval($rateUpadate->price),
-//                // 'currency'             => 'EUR',
-//                // 'interval'             => 'month',
-//                // 'interval_count'       => $rateUpadate->mode,
-//        ]);
-//      }
-
+    $oRates = Rates::find($id);
+    $oRates->name = $request->input('name');
+    $oRates->max_pax = $request->input('max_pax');
+    $oRates->type = $request->input('type');
+    $oRates->price = $request->input('price');
+    $oRates->mode = $request->input('mode');
+    $oRates->cost = $request->input('cost');
+    $oRates->planStripe = $request->input('plan');
+    if ($oRates->save()) {
       echo "Cambiada!!";
     }
   }
@@ -111,6 +95,18 @@ class RatesController extends Controller {
     if ($userRate->delete()) {
       return redirect()->back()->with('success','Servicio removido para el perdiodo '.$date);
     }
+  }
+  
+  
+  function createStripe($id){
+      $oRates = Rates::find($id);
+      if ($oRates && $oRates->id == $id){
+          $name = slugify($oRates->name);
+          $oRates->planStripe = $id.'-'.$name;
+          $oRates->save();
+          return redirect()->back()->with('success','Código Stripe creado. Por favor, cree el producto con el ID '.$oRates->planStripe.' en su cuenta de Stripe');
+      }
+      return redirect()->back()->withErrors(['Tarifa no encontrada']);
   }
 
 }

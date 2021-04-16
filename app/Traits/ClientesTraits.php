@@ -95,29 +95,35 @@ trait ClientesTraits {
             if ($cobros && count($cobros)>0){  
             
                 foreach ($cobros as $cobro) {
-                    $aCobros[$cobro->id_user.'-'.$cobro->id_rate] = $cobro;
+                    $aCobros[$cobro->id] = $cobro;
                 }
             }
             foreach ($uRates as $item){
                 if (isset($aRates[$item->id_rate])) {
+                    $aux = $aRates[$item->id_rate];
+                    $iRate =   (object)[
+                                    'price' => $aux->price,
+                                    'id'    => $aux->id,
+                                    'charge'    => $item->id_charges,
+                                ];
                     if (isset($ratesAsign[$item->id_user])){
-                        $ratesAsign[$item->id_user][] = $aRates[$item->id_rate];
+                        $ratesAsign[$item->id_user][] = $iRate;
                     } else {
-                        $ratesAsign[$item->id_user] = [$aRates[$item->id_rate]];
+                        $ratesAsign[$item->id_user] = [$iRate];
                     }
-                    if (!isset($aCobros[$item->id_user.'-'.$item->id_rate]))
+                    if (!isset($aCobros[$item->id_charges]))
                     $pendiente += $aRates[$item->id_rate]->price;
                 }
 
             }
             
         }
-        
+
         return [$ratesAsign,$pendiente,$aCobros];
     }
 
     public function clienteRateCharge($date,$id_user,$importe,$rate){
-        $user    = User::find($id_user);
+        $oUser = User::find($id_user);
         
         $aux = explode('-', $date);
         if (count($aux) == 2){
@@ -137,13 +143,32 @@ trait ClientesTraits {
         if (!$uRates){
             return view('admin.popup_msg',['msg'=>'Servicio no asignada']);
         }
+        /******************************/
+        /** STRIPE              ******/
+        $data = [$year,$month,$id_user,$importe*100,$rate];
+        $sStripe = new \App\Services\StripeService();
+        $pStripe = $sStripe->getPaymentLink('rate',$data);
+        $card = null;
+        $paymentMethod = $oUser->paymentMethods()->first();
+        if ($paymentMethod){
+            $aux = $paymentMethod->toArray();
+            $card['brand'] = $aux['card']['brand'];
+            $card['exp_month'] = $aux['card']['exp_month'];
+            $card['exp_year'] = $aux['card']['exp_year'];
+            $card['last4'] = $aux['card']['last4'];
+        }
+        
+        /** STRIPE              ******/
+        /******************************/
         return view('/admin/usuarios/clientes/cobro', [
                 'rate'    => Rates::find($rate),
                 'date'    => $date,
-                'user'    => $user,
+                'user'    => $oUser,
                 'importe' => $importe,
                 'year'    => $year,
                 'month'   => $month,
+                'pStripe' => $pStripe,
+                'card' => $card,
         ]);
     }
         
@@ -361,11 +386,23 @@ trait ClientesTraits {
         
             
     public function rateCharge(Request $request) {
-        $stripe = StripeController::$stripe;
+        $stripe = null;
+        $oUser = User::find($request->id_user);
+                
+        $card = null;
+        $paymentMethod = $oUser->paymentMethods()->first();
+        if ($paymentMethod){
+            $aux = $paymentMethod->toArray();
+            $card['brand'] = $aux['card']['brand'];
+            $card['exp_month'] = $aux['card']['exp_month'];
+            $card['exp_year'] = $aux['card']['exp_year'];
+            $card['last4'] = $aux['card']['last4'];
+        }
         return view('admin.usuarios.clientes._rate_charge', [
-            'user' => User::find($request->id_user),
+            'user'  => $oUser,
             'rates' => Rates::orderBy('status', 'desc')->orderBy('name', 'asc')->get(),
-            'stripe' => $stripe
+            'stripe'=> $stripe,
+            'card'  => $card
         ]);
     }
     public function addNotes(Request $request) {

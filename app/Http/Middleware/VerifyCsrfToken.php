@@ -14,5 +14,6 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         '/offert/payment/bono',
         '/changeActiveYear',
+        'stripe/*',
     ];
 }

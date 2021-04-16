@@ -73,8 +73,8 @@
                         <label for="type_payment">Forma de pago</label>
                         <select class="form-control" name="type_payment" id="type_payment">
                             <option value="cash">Efectivo</option>
-                            <option value="card">Banco</option>
-                            <option value="banco">Tarjeta</option>
+                            <option value="banco">Banco</option>
+                            <option value="card">Tarjeta</option>
                         </select>
                     </div>
 
@@ -89,8 +89,8 @@
                 <label class="css-input css-radio css-radio-lg css-radio-primary push-10-r">
                     <input type="radio" name="operation" checked="" value="all"><span></span> Asignar & cobrar
                 </label>
-                <label class="css-input css-radio css-radio-lg css-radio-primary hidden">
-                    <input type="radio" name="operation" value="charge"><span></span> Cobrar
+                <label class="css-input css-radio css-radio-lg css-radio-primary">
+                    <input type="radio" name="operation" value="stripe"><span></span> Enviar link Stripe por mail
                 </label>
             </div>
             <div class="col-xs-6  push-20">
@@ -101,25 +101,7 @@
                     <input id="importeFinal" type="text" name="importe" class="form-control"/>
                 </div>
             </div>
-            <div class="col-md-12" id="content-payment" style="display: none;">
-                <div class="row alert alert-info fade in alert-dismissable"
-                     style="margin-top: 30px; background-color: #daeffd!important;">
-
-                    <div class="row">
-                        <div class="form-row col-xs-12 push-20">
-                            <label for="card-element">
-                                Datos de la tarjeta
-                            </label>
-                            <div id="card-element">
-                                <!-- a Stripe Element will be inserted here. -->
-                            </div>
-
-                            <!-- Used to display form errors -->
-                            <div id="card-errors" role="alert"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @include('admin.usuarios.clientes.forms.stripeBox')
             <div class="col-md-12 text-center push-20">
                 <button class="btn btn-lg btn-success" type="submit" id="submitFormPayment">
                     Cobrar
@@ -165,18 +147,43 @@ $(document).ready(function () {
     });
 
     $('#type_payment').change(function (e) {
-        var value = $("#type_payment option:selected").text();
-        console.log(value);
-
-        if (value == "Tarjeta") {
-            $('#content-payment').show();
-            $('.form-toPayment').attr('id', 'paymentForm');
+        var value = $("#type_payment option:selected").val();
+        if (value == "card") {
+            var operation = $('input[type=radio][name=operation]:checked').val();
+            if (operation != 'stripe'){
+                $('#stripeBox').show();
+                $('.form-toPayment').attr('id', 'paymentForm');
+            }
         } else {
-            $('#content-payment').hide();
+            $('#stripeBox').hide();
             $('.form-toPayment').removeAttr('id');
         }
 
     });
+    
+    $('input[type=radio][name=operation]').change(function() {
+        if (this.value == 'stripe') {
+           $(".new_cc").prop('required',true);
+           $('#stripeBox').hide();
+        }
+        else{
+            if($("#type_payment option:selected").val() == 'card'){
+                $(".new_cc").prop('required',true);
+                $('#stripeBox').show();
+            }
+        }
+    });
+    
+    <?php if ($card):?>
+        $('#card-element').hide();
+        $('#changeCreditCard').on('click', function(){
+            $('#cardExists').hide();
+            $('#cardLoaded').val(0);
+            $('#card-element').show();
+            $(".new_cc").prop('required',true);
+        });
+    <?php endif;?>
+                            
 });
 </script>
 @endsection

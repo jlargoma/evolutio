@@ -56,5 +56,28 @@ class MailController extends Controller
 
 		return ($sended) ? true : false;
 	}
+        
+        public static function sendEmailPayRateByStripe($data,$oUser,$oRate,$pStripe)
+	{
+
+		$date        = Carbon::createFromFormat('Y-m-d', $data['fecha_pago']);
+		$typePayment = $data['type_payment'];
+		$importe     = $data['importe'];
+		$email       = $oUser->email;
+
+		$sended = Mail::send('emails._payment_rateStripe', [
+			'user'        => $oUser,
+			'date'        => $date,
+			'rate'        => $oRate,
+			'importe'     => $importe,
+			'pStripe'     => $pStripe
+		], function ($message) use ($email) {
+			$message->subject('Solicitud de pago evolutio');
+			$message->from(config('mail.from.address'), config('mail.from.name'));
+			$message->to($email);
+		});
+
+		return ($sended) ? true : false;
+	}
 
 }
