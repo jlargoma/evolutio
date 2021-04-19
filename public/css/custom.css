@@ -18,6 +18,24 @@ h3{
 .mt-1{margin-top: 1em;}
 .mt-2{margin-top: 2em;}
 .mt-3{margin-top: 3em;}
+.mr-1{margin-right: 1em;}
+.mr-2{margin-right: 2em;}
+.ml-1{margin-left: 1em;}
+.ml-2{margin-left: 2em;}
+.my-1{margin: 1em auto;}
+#stripeBox{
+    margin: 1em auto;
+}
+#stripeBox .disabled{
+    width: 100%;
+    position: absolute;
+    height: 100%;
+    background-color: #00000052;
+    z-index: 99;
+    left: 0;
+    top: 0;
+    display: none;
+}
 .box-shadow{
   box-shadow: 3px 3px 4px #a9a9a9;
 }
@@ -148,9 +166,22 @@ line-height: 19px;
 
 iframe{
     max-width: 100%;
-    min-height: 70vh;
+    min-height: 85vh;
     border: none;
     width: 1420px;
+}
+
+.loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    padding: 15%;
+    background-color: #333333a1;
+    color: #FFF;
+    font-size: 2em;
 }
 @media(max-width:991px) {
   .table-fixed th.static{

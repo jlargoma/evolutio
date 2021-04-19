@@ -15,6 +15,10 @@ $(document).ready(function () {
     $('.reload').on('click',function(){location.reload();});
 
 
+$('form').on('submit', function(){
+$('body').append('<div class="loading"><i class="fa fa-spinner fa-spin"></i><br/>Enviando</div>');
+});
+
 });
 
 $(window).click(function () {

@@ -1,21 +1,3 @@
-<div class="modal fade" id="modal-add-date"  role="dialog" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-dialog-popin">
-        <div class="modal-content">
-            <div class="block block-themed block-transparent remove-margin-b">
-                <div class="block-header bg-primary-dark">
-                    <ul class="block-options">
-                        <li>
-                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
-                        </li>
-                    </ul>
-                </div>
-                <div class="row block-content" id="content-add-date">
-
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 <div class="modal fade in" id="modal_newUser" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
@@ -52,7 +34,7 @@
         </div>
     </div>
 </div>
-<div class="modal  fade in" id="modalHorarios" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+<div class="modal  fade in" id="modalIfrm" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
   <div class="modal-dialog modal-md">
     <div class="modal-content">
       <div class="block block-themed block-transparent remove-margin-b">

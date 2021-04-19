@@ -41,6 +41,7 @@ class ChargesController extends Controller {
             return redirect()->back()->withErrors(['cobro no encontrado']);
         }
         if ($request->input('deleted')) {
+            UserRates::where('id_charges',$id)->update(['id_charges' => null]);
             $charge->delete();
             return redirect()->back()->with('success', 'cobro Eliminado');
         } else {
@@ -92,7 +93,7 @@ class ChargesController extends Controller {
                 $resp = $sStripe->subscription_changeCard($oUser, $cc_number, $cc_expide_mm, $cc_expide_yy, $cc_cvc);
                 if ( $resp != 'updated'){
                     return redirect()->back()
-                            ->withErrors([$resp])
+                            ->withErrors($resp)
                             ->withInput();
                 }
             }
@@ -150,7 +151,7 @@ class ChargesController extends Controller {
                     $validate = \App\Services\StripeCardValidation::validate($req);
                     if ($validate !== 'OK'){
                         return redirect()->back()
-                                ->withErrors($validator)
+                                ->withErrors($validate)
                                 ->withInput();
                     }
                     $resp = $sStripe->subscription_changeCard($oUser, $cc_number, $cc_expide_mm, $cc_expide_yy, $cc_cvc);
@@ -166,7 +167,7 @@ class ChargesController extends Controller {
                 $resp = $sStripe->automaticCharge($oUser,round($value*100));
                 if ( $resp[0] != 'OK'){
                     return redirect()->back()
-                            ->withErrors([$resp[1]])
+                            ->withErrors([$resp])
                             ->withInput();
                 }
                 $idStripe = $resp[1];
@@ -319,6 +320,63 @@ class ChargesController extends Controller {
     public function getPriceTax(Request $request) {
         $tax = Rates::find($request->idTax);
         return $tax->price;
+    }
+    
+    public function sendCobroMail(Request $request) {
+        $tax = Rates::find($request->idTax);
+        $time = strtotime($request->input('date'));
+        $uID = ($request->input('id_user'));
+        $importe = ($request->input('importe'));
+        $rID = ($request->input('id_rate'));
+        $u_email = ($request->input('u_email'));
+        $u_phone = ($request->input('u_phone'));
+        $type = ($request->input('type'));
+
+        $oUser = \App\Models\User::find($uID);
+        if (!$oUser)
+            return ['error', 'Usuario no encontrado'];
+
+
+        $oRate = Rates::find($rID);
+        if (!$oRate)
+            return ['error', 'Tarifa no encontrada'];
+        
+        if ($oUser->email != $u_email){
+            $oUser->email = $u_email;
+            $oUser->save();
+        }
+        if (!empty($u_phone) && $oUser->telefono != $u_phone){
+            $oUser->telefono = $u_phone;
+            $oUser->save();
+        }
+        
+        $data = [date('Y', $time),date('m', $time),$uID,$importe*100,$rID];
+        $sStripe = new \App\Services\StripeService();
+        $pStripe = url($sStripe->getPaymentLink('rate',$data));
+        
+        switch ($type){
+            case 'mail':
+                $dataMail = [
+                    'fecha_pago' => date('Y-m-d', $time),
+                    'type_payment' => 'card',
+                    'importe' => $importe,
+                ];
+                
+                MailController::sendEmailPayRateByStripe($dataMail, $oUser, $oRate,$pStripe);
+                return response()->json(['OK', 'Se ha enviado un email con el link de pago']);
+                break;
+            case 'wsp':
+                $msg = 'Te adjuntamos el enlace para el pago de **'.$oRate->name.'** en Evolutio '.$pStripe;
+                return response()->json(['OK',$msg]);
+                break;
+            case 'copy':
+                $msg = 'Te adjuntamos el enlace para el pago de '.$oRate->name.' en Evolutio '.$pStripe;
+                return response()->json(['OK',$msg]);
+                break;
+        }
+            
+        return response()->json(['error','error']);
+
     }
 
 }

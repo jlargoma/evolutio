@@ -19,25 +19,36 @@
         Listado de Servicios
       </h3>
       <div class="block-content">
-        <?php if (count($newRates) > 0): ?>
+        <?php if (count($services) > 0): ?>
           <table class="table table-bordered table-striped js-dataTable-full table-header-bg">
             <thead>
               <tr>
                 <th class="text-center hidden-xs hidden-sm" style="background-color: #46c37b; width: 60px;">id</th>
-                <th class="text-center" style="background-color: #46c37b; min-width: 280px;">Nombre</th>
+                <th class="text-center" style="background-color: #46c37b">Familia</th>
+                <th class="text-center" style="background-color: #46c37b; min-width: 280px;">Servicio</th>
                 <th class="text-center" style="background-color: #46c37b; width: 90px;">Precio</th>
                 <th class="text-center" style="background-color: #46c37b; width: 90px;">Nº Ses<span class="hidden-xs hidden-sm">ion / sem</span></th>
-                <th class="text-center" style="background-color: #46c37b">Tipo</th>
-                <th class="text-center" style="background-color: #46c37b">Tipo Pago</th>
-                <th class="text-center" style="background-color: #46c37b">Stripe</th>
+                <th class="text-center" style="background-color: #46c37b">Periodicidad</th>
+                <th class="text-center" style="background-color: #46c37b">SUBFAMILIA</th>
                 <th class="text-center" style="background-color: #46c37b;min-width: 10%;">Acciones</th>
               </tr>
             </thead>
             <tbody>	
-              <?php $lstCodes = rates_codes(); ?>
-              <?php foreach ($newRates as $rate): ?>
+              <?php foreach ($services as $tRate=>$serv): ?>
+              <?php foreach ($serv as $rate): ?>
                 <tr>
                   <td class="text-center hidden-xs hidden-sm"><?php echo $rate->id ?></td>
+                  <td class="text-center ">
+                    <select class="form-control editables type-rate-<?php echo $rate->id ?>" data-id="<?php echo $rate->id; ?>">
+                      <?php foreach ($types as $k=>$v): ?>
+                        <option value="<?php echo $k ?>" <?php if ($k == $rate->type) {
+                            echo "selected";
+                          } ?>>
+                        <?php echo $v ?>
+                        </option>
+                    <?php endforeach ?>
+                    </select>
+                  </td>
                   <td class="text-center">
                     <input type="text" class="form-control editables name-rate-<?php echo $rate->id ?>"  data-id="<?php echo $rate->id; ?>" value="<?php echo $rate->name; ?>" />
                   </td>
@@ -47,17 +58,7 @@
                   <td class="text-center ">
                     <input type="text" class="form-control editables maxPax-rate-<?php echo $rate->id ?>" data-id="<?php echo $rate->id; ?>" value="<?php echo $rate->max_pax; ?>" />
                   </td>
-                  <td class="text-center ">
-                    <select class="form-control editables type-rate-<?php echo $rate->id ?>" data-id="<?php echo $rate->id; ?>">
-                      <?php foreach ($types as $t): ?>
-                        <option value="<?php echo $t->id ?>" <?php if ($t->id == $rate->type) {
-                            echo "selected";
-                          } ?>>
-                        <?php echo $t->name ?>
-                        </option>
-                    <?php endforeach ?>
-                    </select>
-                  </td>
+                  
                   <td class="text-center ">
                     <select class="form-control editables mode-<?php echo $rate->id ?>" data-id="<?php echo $rate->id; ?>">
                       <option>----</option>
@@ -76,8 +77,8 @@
                       <?php endfor; ?>
                     </select>
                   </td>
-                  <td class="text-center">
-                    <input type="text" class="form-control editables plan-<?php echo $rate->id ?>"  data-id="<?php echo $rate->id; ?>" value="<?php echo $rate->planStripe; ?>" />
+                  <td class="text-center ">
+                    <input type="text" class="form-control editables subfamily-<?php echo $rate->id ?>" data-id="<?php echo $rate->id; ?>" value="<?php echo $rate->subfamily; ?>" />
                   </td>
                   <td class="text-center">
                     <div class="btn-group">
@@ -88,6 +89,7 @@
                     </div>
                   </td>
                 </tr>
+  <?php endforeach ?>
   <?php endforeach ?>
             </tbody>
           </table>
@@ -135,8 +137,8 @@
                     <?php echo $rate->max_pax; ?>
                   </td>
                   <td class="text-center ">
-                      <?php foreach ($types as $t): ?>
-                        <?php if ($t->id == $rate->type) echo $t->name ?>
+                      <?php foreach ($types as $k=>$v): ?>
+                        <?php if ($k == $rate->type) echo $v ?>
                       <?php endforeach ?>
                   </td>
                   <td class="text-center ">
@@ -209,7 +211,7 @@
             type: $('.type-rate-' + id).val(),
             mode: $('.mode-' + id).val(),
             cost:$('.cost-rate-' + id).val(),
-            plan:$('.plan-' + id).val(),
+            subfamily:$('.subfamily-' + id).val(),
         };
         
       $.get('/admin/tarifas/update/', data);

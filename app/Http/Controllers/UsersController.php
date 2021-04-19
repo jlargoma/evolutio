@@ -133,7 +133,11 @@ class UsersController extends Controller {
 
     public function getMail($id) {
         $oUser = User::find($id);
-        return ($oUser) ? $oUser->email : '';
+        if ($oUser){
+            return [$oUser->email,$oUser->telefono];
+        }
+        return ['',''];
+//        return ($oUser) ? $oUser->email : '';
     }
     public function getList() {
         return \App\User::where('role','user')
@@ -179,12 +183,12 @@ class UsersController extends Controller {
                 $rateUser->save();
             }
             /***************************************/
-            $uCoach = \App\CoachUsers::where('id_user',$id)->first();
+            $uCoach = \App\Models\CoachUsers::where('id_user',$id)->first();
             if (!$uCoach){
-                $uCoach = new \App\CoachUsers();
+                $uCoach = new \App\Models\CoachUsers();
                 $uCoach->id_user = $id;
             }
-                $uCoach->id_coach = $request->input('u_coach',-1);
+                $uCoach->id_coach = intval($request->input('u_coach',-1));
                 $uCoach->save();
             /***************************************/
         }

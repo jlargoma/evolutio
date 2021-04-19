@@ -44,15 +44,16 @@
                 <select class="form-control" id="id_rate" name="id_rate" style="width: 100%; cursor: pointer"
                         placeholder="Seleccione tarifas.." required="">
                     <option></option>
-                    <?php foreach ($rates as $rate): ?>
-                        <?php if ($rate->status == 1): ?>
-                            <?php $class = "green" ?>
-                        <?php else: ?>
-                            <?php $class = "blue" ?>
+                    <?php 
+                        $old = old('id_rate');var_dump(old());
+                        foreach ($rates as $rate):
+                            $class = ($rate->status == 1) ? 'green' : 'blue';
+                            $sel = ($rate->id == $old) ? 'selected' : '';
+                        ?>
 
-                        <?php endif ?>
-
-                        <option value="<?php echo $rate->id ?>" data-price="<?php echo $rate->price ?>"
+                        <option value="<?php echo $rate->id ?>" 
+                                data-price="<?php echo $rate->price ?>"
+                                {{$sel}}
                                 class="<?php echo $class; ?>">
                                     <?php echo $rate->name ?>
                         </option>
@@ -63,7 +64,7 @@
             <div class="col-xs-12 col-md-6 push-20">
                 <label for="date_payment">Fecha de cobro</label>
                 <input class="js-datepicker form-control" type="text" id="date_payment" name="date_payment"
-                       data-date-format="dd-mm-yyyy" placeholder="dd-mm-yyyy" value="<?php echo date('d-m-Y') ?>"
+                       data-date-format="dd-mm-yyyy" placeholder="dd-mm-yyyy" value="{{ old('date_payment',date('d-m-Y'))}}"
                        style="cursor: pointer;" required="">
             </div>
 
@@ -71,42 +72,44 @@
                 <div class="row push-20">
                     <div class="col-xs-6 push-20">
                         <label for="type_payment">Forma de pago</label>
+                        <?php $old = old('type_payment'); ?>
                         <select class="form-control" name="type_payment" id="type_payment">
-                            <option value="cash">Efectivo</option>
-                            <option value="banco">Banco</option>
-                            <option value="card">Tarjeta</option>
+                            <option value="card" <?php if ($old == 'card') echo 'selected'; ?>>Tarjeta</option>
+                            <option value="cash" <?php if ($old == 'cash') echo 'selected'; ?>>Efectivo</option>
+                            <option value="banco" <?php if ($old == 'banco') echo 'selected'; ?>>Banco</option>
                         </select>
+                        @include('admin.blocks.stripeBox')
                     </div>
 
                     <div class="col-xs-6 push-20">
+                        <div>
                         <label for="type_payment">% DTO:</label>
-                        <input type="text" id="discount" name="discount"  class="form-control only-number"/>
+                        <input type="text" id="discount" name="discount"  class="form-control only-number" value="{{ old('discount') }}"/>
+                        </div>
+                        <div class="mt-2">
+                        <label class="css-input css-radio css-radio-lg css-radio-primary push-10-r">
+                            <input type="radio" name="operation" checked="" value="all"><span></span> Asignar & cobrar
+                        </label>
+                        <label class="css-input css-radio css-radio-lg css-radio-primary">
+                            <input type="radio" name="operation" value="stripe"><span></span> Enviar link Stripe por mail
+                        </label>
+                        </div>
+                        <div class="mt-2">
+                            <h3 class="pull-left mr-2">Total</h3>
+                            <div class="pull-left">
+                            <input id="importeFinal" type="text" name="importe" class="form-control" value="{{ old('importe') }}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-2">
+                        <button class="btn btn-lg btn-success" type="submit" id="submitFormPayment">
+                            Cobrar
+                        </button>
                     </div>
                 </div>
                 <input type="hidden" id="importeCobrar">
             </div>
-            <div class="col-xs-6 push-20">
-                <label class="css-input css-radio css-radio-lg css-radio-primary push-10-r">
-                    <input type="radio" name="operation" checked="" value="all"><span></span> Asignar & cobrar
-                </label>
-                <label class="css-input css-radio css-radio-lg css-radio-primary">
-                    <input type="radio" name="operation" value="stripe"><span></span> Enviar link Stripe por mail
-                </label>
-            </div>
-            <div class="col-xs-6  push-20">
-                <div class="col-md-3">
-                    <h3>Total</h3>
-                </div>
-                <div class="col-md-9">
-                    <input id="importeFinal" type="text" name="importe" class="form-control"/>
-                </div>
-            </div>
-            @include('admin.usuarios.clientes.forms.stripeBox')
-            <div class="col-md-12 text-center push-20">
-                <button class="btn btn-lg btn-success" type="submit" id="submitFormPayment">
-                    Cobrar
-                </button>
-            </div>
+                
         </div>
     </form>
 </div>
@@ -146,44 +149,8 @@ $(document).ready(function () {
         }
     });
 
-    $('#type_payment').change(function (e) {
-        var value = $("#type_payment option:selected").val();
-        if (value == "card") {
-            var operation = $('input[type=radio][name=operation]:checked').val();
-            if (operation != 'stripe'){
-                $('#stripeBox').show();
-                $('.form-toPayment').attr('id', 'paymentForm');
-            }
-        } else {
-            $('#stripeBox').hide();
-            $('.form-toPayment').removeAttr('id');
-        }
 
-    });
-    
-    $('input[type=radio][name=operation]').change(function() {
-        if (this.value == 'stripe') {
-           $(".new_cc").prop('required',true);
-           $('#stripeBox').hide();
-        }
-        else{
-            if($("#type_payment option:selected").val() == 'card'){
-                $(".new_cc").prop('required',true);
-                $('#stripeBox').show();
-            }
-        }
-    });
-    
-    <?php if ($card):?>
-        $('#card-element').hide();
-        $('#changeCreditCard').on('click', function(){
-            $('#cardExists').hide();
-            $('#cardLoaded').val(0);
-            $('#card-element').show();
-            $(".new_cc").prop('required',true);
-        });
-    <?php endif;?>
-                            
 });
 </script>
+@include('admin.blocks.cardScripts')
 @endsection

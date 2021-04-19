@@ -145,9 +145,10 @@ trait ClientesTraits {
         }
         /******************************/
         /** STRIPE              ******/
-        $data = [$year,$month,$id_user,$importe*100,$rate];
-        $sStripe = new \App\Services\StripeService();
-        $pStripe = $sStripe->getPaymentLink('rate',$data);
+//        $data = [$year,$month,$id_user,$importe*100,$rate];
+//        $sStripe = new \App\Services\StripeService();
+//        $pStripe = $sStripe->getPaymentLink('rate',$data);
+        $pStripe = null;
         $card = null;
         $paymentMethod = $oUser->paymentMethods()->first();
         if ($paymentMethod){

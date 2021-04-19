@@ -136,7 +136,8 @@ class DatesController extends Controller {
                     });
 
             /*             * ************************************************************** */
-            return redirect()->back();
+//            return redirect()->back();
+            return redirect('/admin/citas-nutricion/edit/'.$oObj->id);
         }
     }
 
@@ -282,10 +283,10 @@ class DatesController extends Controller {
         }
     }
 
-    public function chargeAdvanced(Request $request) {
+    public function chargeAdvanced(Request $req) {
 
-        $ajax = $request->ajax();
-        $oDates = Dates::find($request->idDate);
+        $ajax = $req->ajax();
+        $oDates = Dates::find($req->idDate);
         if (!$oDates) {
             if ($ajax)
                 return "Cita no encontada";
@@ -295,8 +296,8 @@ class DatesController extends Controller {
 
         $oUser = $oDates->user;
         $service = $oDates->service;
-        $oRate = Rates::find($request->input('id_rate'));
-        $payType = $request->input('type');
+        $oRate = Rates::find($req->input('id_rate'));
+        $payType = $req->input('type');
 
         if (!$oRate) {
             if ($ajax)
@@ -305,50 +306,58 @@ class DatesController extends Controller {
                 return redirect()->back()->with(['error' => 'Tarifa no encontada']);
         }
 
-        if ($request->input('type') == 5) { //invitado
+        if ($payType == 'inv') { //invitado
             $oDates->status = 1;
             $oDates->charged = 2;
         } else {
-
-            //Asignamos y cobramos la tarifa que nos envia.
-            $oCobro = new \App\Models\Charges();
-            $oCobro->id_user = $oUser->id;
-            $oCobro->date_payment = date('Y-m-d');
-            $oCobro->id_rate = $oRate->id;
-            $oCobro->type_payment = ($payType == 4) ? 'banco' : 'cash';
-            $oCobro->type = 1;
-            $oCobro->import = $request->input('importe');
-            $oCobro->discount = 0;
-            $oCobro->type_rate = $oRate->type;
-            $oCobro->save();
-
-            $userRate = new UserRates();
-            $userRate->id_user = $oUser->id;
-            $userRate->id_rate = $oRate->id;
-            $userRate->rate_year = date('Y', strtotime($oDates->date));
-            $userRate->rate_month = date('m', strtotime($oDates->date));
-            $userRate->id_charges = $oCobro->id;
-            $userRate->active = 0;
-            $userRate->save();
-
-            if ($payType == 3) {
-
-                $cashBox = new \App\Models\CashBox();
-                $cashBox->concept = 'Cobro ' . $oRate->name . ' :' . $oUser->name;
-                $cashBox->import = (float) $oCobro->import;
-                $cashBox->date = date('Y-m-d');
-                $cashBox->comment = "";
-                $cashBox->PayFor = "";
-                $cashBox->typePayment = "INGRESO";
-                $cashBox->type = "INGRESO";
-                $oldBalance = \App\Models\CashBox::orderBy('id', 'desc')->first();
-                if ($oldBalance)
-                    $cashBox->balance = (float) $oldBalance->balance + (float) $oCobro->import;
-                else
-                    $cashBox->balance = (float) $oCobro->import;
-                $cashBox->save();
+            $value = $req->input('importe');
+            $idStripe=null;$cStripe=null;
+            if ($payType == 'card'){
+                 
+                $cc_number = $req->input('cc_number', null);
+                $cc_expide_mm = $req->input('cc_expide_mm', null);
+                $cc_expide_yy = $req->input('cc_expide_yy', null);
+                $cc_cvc = $req->input('cc_cvc', null);
+                $cardLoaded = $req->input('cardLoaded', null);
+                $sStripe = new \App\Services\StripeService();
+                
+                /***********************************/
+                /** GUARDAR TARJETA **/
+                /***********************************/
+                if ($cardLoaded == 0){
+                    $validate = \App\Services\StripeCardValidation::validate($req);
+                    if ($validate !== 'OK'){
+                        return redirect()->back()
+                                ->withErrors($validate)
+                                ->withInput();
+                    }
+                    $resp = $sStripe->subscription_changeCard($oUser, $cc_number, $cc_expide_mm, $cc_expide_yy, $cc_cvc);
+                    if ( $resp != 'updated'){
+                        return redirect()->back()
+                                ->withErrors([$resp])
+                                ->withInput();
+                    }
+                }
+                /***********************************/
+                /** COBRAR POR STRIPE **/
+                /***********************************/
+                $resp = $sStripe->automaticCharge($oUser,round($value*100));
+                if ( $resp[0] != 'OK'){
+                    return redirect()->back()
+                            ->withErrors([$resp])
+                            ->withInput();
+                }
+                $idStripe = $resp[1];
+                $cStripe = $resp[2];
             }
-
+            $response = ChargesController::savePaymentRate(
+                    strtotime($oDates->date), $oUser->id, $oRate->id, 
+                    $payType, $value, 0,$idStripe,$cStripe);
+            if ($response[0] != 'OK'){
+                return redirect()->back()
+                            ->withErrors([$response[1]])
+                            ->withInput();
+            }
             // Actualizamos la cita
             $oDates->status = 1;
             $oDates->charged = 1;

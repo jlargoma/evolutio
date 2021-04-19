@@ -31,7 +31,7 @@
                 </option>
               <?php endforeach ?>
             </select>
-            <label for="name">Bloque Asignado</label>
+            <label for="name">Familia</label>
           </div>
         </div>
       </div>
@@ -50,7 +50,7 @@
                 </option>
               <?php endfor ?>
             </select>
-            <label for="mode">Modo Mensualidad</label>
+            <label for="mode">PERIODICIDAD</label>
           </div>
         </div>
         
@@ -62,8 +62,8 @@
         </div>
         <div class="col-md-3">
           <div class="form-material">
-            <input class="form-control only-numbres" type="text" id="cost" name="cost" required>
-            <label for="nombre">Costo / Sesión</label>
+            <label for="nombre">Nº SESION / SEM</label>
+            <input class="form-control only-numbres" type="text" id="max_pax" name="max_pax" required>
           </div>
         </div>
       </div>

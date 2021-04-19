@@ -134,6 +134,8 @@ class NutriController extends Controller {
             'id_user' => -1,
             'id_coach' => -1,
             'email' => '',
+            'phone' => '',
+            'card' => null,
             'id' => -1,
             'charged' => 0,
             'price' => 0,
@@ -173,7 +175,8 @@ class NutriController extends Controller {
         $oDate = Dates::find($id);
         if ($oDate) {
             $date = explode(' ', $oDate->date);
-            $user = $oDate->user()->first();
+            $oUser = $oDate->user()->first();
+            if (!$oUser) die('Usuario eliminado');
             $oServicios = Rates::getByTypeRate('nutri');
             $price = 0;
             if ($oServicios){
@@ -181,14 +184,27 @@ class NutriController extends Controller {
                     if($s->id == $oDate->id_rate)
                         $price = $s->price;
             }
+            
+            $card = null;
+            $paymentMethod = $oUser->paymentMethods()->first();
+            if ($paymentMethod){
+                $aux = $paymentMethod->toArray();
+                $card['brand'] = $aux['card']['brand'];
+                $card['exp_month'] = $aux['card']['exp_month'];
+                $card['exp_year'] = $aux['card']['exp_year'];
+                $card['last4'] = $aux['card']['last4'];
+            }
+        
             return view('nutricion.form', [
                 'date' => date('d-m-Y', strtotime($date[0])),
                 'time' => intval($date[1]),
                 'id_serv' => $oDate->id_rate,
                 'id_user' => $oDate->id_user,
                 'id_coach' => $oDate->id_coach,
-                'email' => $user->email,
+                'email' => $oUser->email,
+                'phone' => $oUser->telefono,
                 'price' => $price,
+                'card' => $card,
                 'id' => $oDate->id,
                 'charged' => $oDate->charged,
                 'services' => $oServicios,

@@ -59,15 +59,7 @@ class StripeService {
                     'currency' => 'eur'
             ));
         } catch (\Exception $ex) {
-            if (isset($ex->stripeCode))
-                switch ($ex->stripeCode){
-                    case 'token_already_used':
-                        return 'No puedes usar un token de Stripe más de una vez';
-                    default:
-                        return 'Error al procesar su pago';
-                }
-                
-            return $ex->getMessage();
+            return $this->codesErrors($ex->getStripeCode());
         }
     }
   
@@ -96,7 +88,7 @@ class StripeService {
       }
       return ['error','Ocurrió un error al procesar su Tarjeta. Por favor, intentelo nuevamente.'];
     } catch (\Exception $ex) {
-      return 'error';
+            return $this->codesErrors($ex->getStripeCode());
     }
   }
     
@@ -126,28 +118,7 @@ class StripeService {
       }
       return ['error','Ocurrió un error al procesar su Tarjeta. Por favor, intentelo nuevamente.'];
     } catch (\Exception $ex) {
-        $error = 'Ocurrió un error al procesar su Tarjeta. Por favor, intentelo nuevamente.';
-        switch ($ex->getStripeCode()) {
-            case "parameter_invalid_integer":
-              $error = "Monto a cobrar inválido";
-              break;
-            case "incorrect_number":
-              $error = "Número de tarjeta inválido";
-              break;
-            case "invalid_number":
-              $error = "Número de tarjeta inválido";
-              break;
-            case "invalid_expiry_month":
-              $error = "Mes de vencimiento inválido";
-              break;
-            case "invalid_expiry_year":
-              $error = "Año de vencimiento inválido";
-              break;
-            case "invalid_cvc":
-              $error = "Código de seguridad inválido";
-              break;
-          }
-      return ['error',$error];
+      return $this->codesErrors($ex->getStripeCode());
     }
   }
     
@@ -183,30 +154,44 @@ class StripeService {
         $oUser->updateDefaultPaymentMethodFromStripe();
         return 'updated';//'Tarjeta de crédito actualizada';
     } catch (\Exception $ex) {
-      $error = 'Ocurrió un error al procesar su Tarjeta. Por favor, intentelo nuevamente.';
-      dd($ex);
-      switch ($ex->getStripeCode()) {
-        case "parameter_invalid_integer":
-            $error = "Monto a cobrar inválido";
-            break;
-        case "incorrect_number":
-          $error = "Número de tarjeta inválido";
-          break;
-        case "invalid_number":
-          $error = "Número de tarjeta inválido";
-          break;
-        case "invalid_expiry_month":
-          $error = "Mes de vencimiento inválido";
-          break;
-        case "invalid_expiry_year":
-          $error = "Año de vencimiento inválido";
-          break;
-        case "invalid_cvc":
-          $error = "Código de seguridad inválido";
-          break;
-      }
-      dd($error);
-      return back()->withErrors([$error]);
+      return $this->codesErrors($ex->getStripeCode());
     }
+  }
+  
+  private function codesErrors($stripeCode) {
+//      dd($stripeCode);
+      switch ($stripeCode) {
+            case 'token_already_used':
+                $error = 'No puedes usar un token de Stripe más de una vez';
+            case "parameter_invalid_integer":
+                $error = "Monto a cobrar inválido";
+                break;
+            case "incorrect_number":
+                $error = "Número de tarjeta inválido";
+                break;
+            case "invalid_number":
+                $error = "Número de tarjeta inválido";
+                break;
+            case "invalid_expiry_month":
+                $error = "Mes de vencimiento inválido";
+                break;
+            case "invalid_expiry_year":
+                $error = "Año de vencimiento inválido";
+                break;
+            case "expired_card":
+                $error = "Tarjeta expirada";
+                break;
+            case "card_declined":
+                $error = "Tarjeta rechazada";
+                break;
+            case "invalid_cvc":
+            case "incorrect_cvc":
+                $error = "Código de seguridad inválido";
+                break;
+            default:
+                $error = 'Ocurrió un error al procesar su Tarjeta. Por favor, intentelo nuevamente.';
+//                $error = 'Error al procesar su pago';
+        }
+        return $error;
   }
 }

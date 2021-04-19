@@ -16,13 +16,12 @@
     <input type="hidden" id="id_tax" name="id_tax" class="form-control" value="<?php echo $rate->id; ?>" />	 
     <div class="row">
         <div class="col-md-4">
-            <label>Tipo</label><br/>
-            <label class="css-input css-radio css-radio-lg css-radio-primary push-10-r">
-                <input type="radio" name="type_payment" value="banco" @if ($charge->type_payment == "banco") checked="checked" @endif><span></span> Tarjeta
-            </label>
-            <label class="css-input css-radio css-radio-lg css-radio-primary">
-                <input type="radio" name="type_payment" value="cash" @if ($charge->type_payment == "cash") checked="checked" @endif><span></span> Efectivo
-            </label>
+            <label for="type_payment">Forma de pago</label>
+            <select class="form-control" name="type_payment" id="type_payment">
+                    <option value="card" @if ($charge->type_payment == "card") selected @endif>Tarjeta</option>
+                    <option value="cash" @if ($charge->type_payment == "cash") selected @endif>Efectivo</option>
+                    <option value="banco" @if ($charge->type_payment == "banco") selected @endif>Banco</option>
+            </select>
         </div>
         <div class="col-md-4">
             <label>Dto</label>

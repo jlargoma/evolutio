@@ -1,9 +1,11 @@
+@extends('layouts.popup')
+@section('content')
 <link rel="stylesheet" href="{{ asset('admin-css/assets/js/plugins/select2/select2.min.css') }}">
 <link rel="stylesheet" href="{{ asset('admin-css/assets/js/plugins/select2/select2-bootstrap.min.css') }}">
 <link rel="stylesheet" href="{{ asset('admin-css/assets/js/plugins/bootstrap-datepicker/bootstrap-datepicker3.min.css') }}">
-<link rel="stylesheet" href="{{ asset('admin-css/assets/js/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css') }}">
+<link rel="stylesheet" href="{{ asset('css/custom.css') }}">
 
-<div class="col-xs-12 bg-white">
+<div>
     <h2 class="text-center"><?php echo ($id > 0) ? 'Editar Cita' : 'Nueva Cita' ?></h2>
     <div class="row">
         <form action="{{ url('/admin/citas/create') }}" method="post" id="formEdit">
@@ -13,7 +15,7 @@
             <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
             <input type="hidden" name="date_type" value="nutri">
             <div class="col-xs-12 form-group push-20">
-                <div class="col-xs-12 col-md-6 push-20">
+                <div class="col-xs-12 col-md-4 push-20">
                     <label for="id_user">
                         @if($id<1) 
                         <i class="fa fa-plus" id="newUser"></i>
@@ -29,9 +31,13 @@
                         <?php endforeach ?>
                     </select>
                 </div>
-                <div class="col-xs-12 col-md-6 push-20">
+                <div class="col-xs-12 col-md-4 push-20">
                     <label for="id_email">Email</label>
                     <input class="form-control" type="email" id="NC_email" name="email" placeholder="email" value="{{$email}}"/>
+                </div>
+                <div class="col-xs-12 col-md-4 push-20">
+                    <label for="id_email">Teléfono</label>
+                    <input class="form-control" type="text" id="NC_phone" name="phone" placeholder="email" value="{{$phone}}"/>
                 </div>
             </div>
             <div class=" col-xs-12 form-group push-20">
@@ -122,14 +128,20 @@
     </div>
 </div>
 </div>
-
+@endsection
+@section('scripts')
+<script src="{{asset('/admin-css/assets/js/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
+<script src="{{asset('/admin-css/assets/js/plugins/bootstrap-datetimepicker/moment.min.js')}}"></script>
+<script src="{{asset('/admin-css/assets/js/plugins/select2/select2.full.min.js')}}"></script>
 <script type="text/javascript">
-    jQuery(function () {
-        App.initHelpers(['datepicker', 'select2', 'datetimepicker']);
+jQuery(function () {
+    App.initHelpers(['datepicker', 'select2']);
+
         $("#id_user").change(function() {
             var id = $(this).val();
             $.get('/admin/get-mail/' + id, function(data) {
-                $('#NC_email').val(data);
+                $('#NC_email').val(data[0]);
+                $('#NC_phone').val(data[1]);
             });
         });
         
@@ -146,7 +158,7 @@
                     location.assign("/admin/citas/delete/{{$id}}");
             });
 
-
+            
         @else
             $('#newUser').click(function (e) {
                 e.preventDefault();
@@ -165,3 +177,7 @@
     });
 
 </script>
+ @if ($id > 0)
+@include('admin.blocks.cardScripts')
+ @endif
+@endsection

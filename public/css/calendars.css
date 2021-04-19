@@ -43,7 +43,7 @@
 .table-calendar tbody td.editDate div span.detail{
     position: fixed;
     display: none;
-        width: 150px;
+    width: 150px;
     min-height: 25px;
     background-color: #000000ab;
     padding: 7px;

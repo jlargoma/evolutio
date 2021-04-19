@@ -8,13 +8,21 @@ use \Carbon\Carbon;
 use Stripe;
 use App\Models\Rates;
 use App\Models\TypesRate;
+use App\Models\UserRates;
 
 class RatesController extends Controller {
 
   public function index() {
+      
+    $types = TypesRate::orderBy('t_orden')->pluck('name','id');
+    $serv=[];
+    foreach ($types as $k=>$v){
+        $serv[$k] = Rates::where('status', 1)->where('type',$k)->orderBy('name')->get();
+    }
+//      dd($serv,$types);
     return view('/admin/rates/index', [
-        'types' => TypesRate::all(),
-        'newRates' => Rates::where('status', 1)->orderBy('order', 'asc')->orderBy('name', 'asc')->get(),
+        'types' => $types,
+        'services' => $serv,
         'oldRates' => Rates::where('status', 0)->orderBy('order', 'asc')->orderBy('name', 'asc')->get(),
     ]);
   }
@@ -34,11 +42,11 @@ class RatesController extends Controller {
     $rates->type = $request->input('type');
     $rates->price = $request->input('price');
     $rates->mode = $request->input('mode');
-    $rates->status = $request->input('status');
-    $rates->cost = $request->input('cost');
+    $rates->status = 1;
+    $rates->cost = 0; //$request->input('cost');
     $rates->tarifa = $request->input('tarifa');
     $rates->order = 99;
-
+    $rates->save();
     return redirect()->back()->with(['success'=>'Servicio agregado']);
   }
 
@@ -60,7 +68,8 @@ class RatesController extends Controller {
     $oRates->price = $request->input('price');
     $oRates->mode = $request->input('mode');
     $oRates->cost = $request->input('cost');
-    $oRates->planStripe = $request->input('plan');
+    $oRates->subfamily = $request->input('subfamily');
+//    $oRates->planStripe = $request->input('plan');
     if ($oRates->save()) {
       echo "Cambiada!!";
     }
@@ -95,18 +104,6 @@ class RatesController extends Controller {
     if ($userRate->delete()) {
       return redirect()->back()->with('success','Servicio removido para el perdiodo '.$date);
     }
-  }
-  
-  
-  function createStripe($id){
-      $oRates = Rates::find($id);
-      if ($oRates && $oRates->id == $id){
-          $name = slugify($oRates->name);
-          $oRates->planStripe = $id.'-'.$name;
-          $oRates->save();
-          return redirect()->back()->with('success','Código Stripe creado. Por favor, cree el producto con el ID '.$oRates->planStripe.' en su cuenta de Stripe');
-      }
-      return redirect()->back()->withErrors(['Tarifa no encontrada']);
   }
 
 }
