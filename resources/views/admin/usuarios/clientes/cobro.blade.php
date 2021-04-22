@@ -137,7 +137,22 @@
             $(".new_cc").prop('required',true);
         });
     <?php endif;?>
-        
+    
+     function detectMob() {
+    const toMatch = [
+        /Android/i,
+        /webOS/i,
+        /iPhone/i,
+        /iPad/i,
+        /iPod/i,
+        /BlackBerry/i,
+        /Windows Phone/i
+    ];
+//alert(navigator.userAgent);
+    return toMatch.some((toMatchItem) => {
+        return navigator.userAgent.match(toMatchItem);
+    });
+}
         
     $('.btnStripe').on('click', function(){
         var type = $(this).data('t');
@@ -157,7 +172,11 @@
                             alert(data[1]);
                         }
                         if (type == 'wsp'){
-                            var url = 'https://web.whatsapp.com/send?phone='+$('#u_phone').val()+'&text='+encodeURI(data[1]);
+                            if (detectMob()){
+                                var url = 'whatsapp://send?text='+encodeURI(data[1]);
+                            } else {
+                                var url = 'https://web.whatsapp.com/send?phone='+$('#u_phone').val()+'&text='+encodeURI(data[1]);
+                            }
                             const newWindow = window.open(url, '_blank', 'noopener,noreferrer')
                             if (newWindow) newWindow.opener = null
                         }

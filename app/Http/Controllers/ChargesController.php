@@ -378,5 +378,62 @@ class ChargesController extends Controller {
         return response()->json(['error','error']);
 
     }
+    
+    
+    
+    public function sendCobroGral(Request $request) {
+        $dID = $request->input('idDate');
+        
+        $oDate = \App\Models\Dates::find($dID);
+        if (!$oDate || $oDate->id != $dID) {
+            return response()->json(['error','Cita No encontrada']);
+        }
+        
+        $coach = $oDate->coach;
+        $importe = ($request->input('importe'));
+        $u_email = ($request->input('u_email'));
+        $u_phone = ($request->input('u_phone'));
+        $type = ($request->input('type'));
+        $oUser = $oDate->user;
+        if (!$oUser)
+            return ['error', 'Usuario no encontrado'];
+
+        $oRate = $oDate->service;
+        if (!$oRate)
+            return ['error', 'Servicio no encontrado'];
+        
+        if (!empty($u_email) && $oUser->email != $u_email){
+            $oUser->email = $u_email;
+            $oUser->save();
+        }
+        if (!empty($u_phone) && $oUser->telefono != $u_phone){
+            $oUser->telefono = $u_phone;
+            $oUser->save();
+        }
+        
+        $data = [$dID,$oUser->id,$importe*100,$oRate->id];
+        $sStripe = new \App\Services\StripeService();
+        $pStripe = url($sStripe->getPaymentLink('nutri',$data));
+        
+        switch ($type){
+            case 'mail':
+              
+                
+                MailController::sendEmailPayDateByStripe($oDate, $oUser, $oRate,$coach,$pStripe,$importe);
+                return response()->json(['OK', 'Se ha enviado un email con el link de pago']);
+                break;
+            case 'wsp':
+                $msg = 'Te adjuntamos el enlace para el pago de **'.$oRate->name.'** en Evolutio '.$pStripe;
+                return response()->json(['OK',$msg]);
+                break;
+            case 'copy':
+                $msg = 'Te adjuntamos el enlace para el pago de '.$oRate->name.' en Evolutio '.$pStripe;
+                return response()->json(['OK',$msg]);
+                break;
+        }
+            
+        return response()->json(['error','error']);
+
+    }
 
 }

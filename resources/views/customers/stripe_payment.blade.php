@@ -24,6 +24,13 @@
                     @endif
 
     <h3>{{moneda(($amount/100),true,2)}}</h3>
+    @if($items)
+    <ul>
+       @foreach($items as $i)
+       <li>{{$i}}</li>
+       @endforeach
+    </ul>
+    @endif
     <form action="/pago" method="POST">
         <input type="hidden" name="data_1" value="{{$type}}">
         <input type="hidden" name="data_2" value="{{$token}}">
@@ -34,6 +41,7 @@
             data-key="{{ $keyStripe }}"
             data-amount="{{$amount}}"
             data-name="Pago"
+            data-label="Pagar"
             data-description="{{$name}}"
             data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
             data-locale="auto">

@@ -79,5 +79,29 @@ class MailController extends Controller
 
 		return ($sended) ? true : false;
 	}
+        
+        public static function sendEmailPayDateByStripe($oDate, $oUser, $oRate,$oCoach,$pStripe,$importe)
+	{
+            $email    = $oUser->email;
+            $dateTime = strtotime($oDate->date);
+            $day = date('d',$dateTime).' de '.getMonthSpanish(date('j',$dateTime));
+            $hour = date('H:i',$dateTime);
+            $sended = Mail::send('emails._payment_citaStripe', [
+                    'user'    => $oUser,
+                    'obj'     => $oDate,
+                    'rate'    => $oRate,
+                    'importe' => $importe,
+                    'oCoach'  => $oCoach,
+                    'pStripe' => $pStripe,
+                    'hour'    => $hour,
+                    'day'     => $day,
+            ], function ($message) use ($email) {
+                    $message->subject('Solicitud de pago evolutio');
+                    $message->from(config('mail.from.address'), config('mail.from.name'));
+                    $message->to($email);
+            });
+
+            return ($sended) ? true : false;
+	}
 
 }

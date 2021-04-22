@@ -18,23 +18,44 @@ class CustomerController extends Controller {
     public function pagoSimple($type, $token = null, $control = null) {
         $amount = 1500;
         $name = '';
+        $item = null;
         $sStripe = new \App\Services\StripeService();
         $data = $sStripe->getPaymentLinkData($type, $token, $control);
         if (!$data)
             die('error');
         if (count($data) == 2) {
+           
             $typeKey = $data[0];
             $data = $data[1];
             switch ($typeKey) {
                 case 'rate': //$year,$month,$id_user,$importe*100,$rate
                     $oRate = \App\Models\Rates::find($data[4]);
-
                     /** @Todo Controlar si ya está pagado */
                     $name = 'Pago de la cuota de '
                             . $oRate->name
                             . ' del mes de ' . getMonthSpanish($data[1], false);
                     $name .= ' del ' . $data[0];
                     $amount = round($data[3]);
+                    break;
+                case 'nutri': //$dID,$oUser->id,$importe*100,$oRate->id;
+                    $oDate = \App\Models\Dates::find($data[0]);
+                    $dateTime = strtotime($oDate->date);
+                    $day = date('d',$dateTime).' de '.getMonthSpanish(date('j',$dateTime));
+                    $hour = date('H:i',$dateTime);
+                    $oRate = $oDate->service;
+                    $oCoach = $oDate->coach;
+                    /** @Todo Controlar si ya está pagado */
+                    $name = 'Pago de su cida de ';
+                    $items = [];
+                    if ($oDate->date_type == 'nutri'){
+                        $name .= ' Nutrición ';
+                        $items[] = 'Nutricionista:'.$oCoach->name;  
+                        $items[] = 'Servicio:'.$oRate->name; 
+                        $items[] = 'Fecha:'.$day; 
+                        $items[] = 'Hora:'.$hour; 
+                    }
+                   
+                    $amount = round($data[2]);
                     break;
             }
         }
@@ -44,7 +65,8 @@ class CustomerController extends Controller {
             'name' => $name,
             'type' => $type,
             'token' => $token,
-            'control' => $control
+            'control' => $control,
+            'items' =>$items
         ]);
     }
 
@@ -72,6 +94,22 @@ class CustomerController extends Controller {
                 $name .= ' del ' . $data[0];
                 $amount = round($data[3]);
                 break;
+            case 'nutri': //$dID,$oUser->id,$importe*100,$oRate->id;
+                    $oDate = \App\Models\Dates::find($data[0]);
+                    $dateTime = strtotime($oDate->date);
+                    $day = date('d',$dateTime).' de '.getMonthSpanish(date('j',$dateTime));
+                    $hour = date('H:i',$dateTime);
+                    $oRate = $oDate->service;
+                    /** @Todo Controlar si ya está pagado */
+                    $name = 'Pago de su cida de ';
+                    $items = [];
+                    if ($oDate->date_type == 'nutri'){
+                        $name .= ' Nutrición ';
+                    }
+                    $name .= ' ('.$oRate->name.') ';
+                    $name .= 'para el día '.$day.' a las '.$hour.'hrs';
+                    $amount = round($data[2]);
+                    break;
         }
 
         $stripeResp = $sStripe->pagoSimple($amount, $request->all());
@@ -91,6 +129,31 @@ class CustomerController extends Controller {
         $response = ['', ''];
         switch ($type) {
             case 'rate': //$year,$month,$id_user,$importe*100,$rate
+                $time = strtotime($data[0] . '-' . $data[1] . '-01');
+                $response = ChargesController::savePaymentRate(
+                                $time, $data[2], $data[4], 'card', $amount, 0, $idPaid, $idCust
+                );
+                break;
+            case 'nutri': //$dID,$oUser->id,$importe*100,$oRate->id;
+                $oDate = \App\Models\Dates::find($data[0]);
+                $response = ChargesController::savePaymentRate(
+                    strtotime($oDates->date), $oUser->id, $oRate->id, 
+                    $payType, $value, 0,$idStripe,$cStripe);
+            if ($response[0] != 'OK'){
+                return redirect()->back()
+                            ->withErrors([$response[1]])
+                            ->withInput();
+            }
+            // Actualizamos la cita
+            $oDates->status = 1;
+            $oDates->charged = 1;
+            $oDates->save();        
+                    
+                    
+                    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                    
+                    
+                    
                 $time = strtotime($data[0] . '-' . $data[1] . '-01');
                 $response = ChargesController::savePaymentRate(
                                 $time, $data[2], $data[4], 'card', $amount, 0, $idPaid, $idCust
