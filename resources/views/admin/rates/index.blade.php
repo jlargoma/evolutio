@@ -25,11 +25,11 @@
               <tr>
                 <th class="text-center hidden-xs hidden-sm" style="background-color: #46c37b; width: 60px;">id</th>
                 <th class="text-center" style="background-color: #46c37b">Familia</th>
+                <th class="text-center" style="background-color: #46c37b">SUBFAMILIA</th>
                 <th class="text-center" style="background-color: #46c37b; min-width: 280px;">Servicio</th>
                 <th class="text-center" style="background-color: #46c37b; width: 90px;">Precio</th>
                 <th class="text-center" style="background-color: #46c37b; width: 90px;">Nº Ses<span class="hidden-xs hidden-sm">ion / sem</span></th>
                 <th class="text-center" style="background-color: #46c37b">Periodicidad</th>
-                <th class="text-center" style="background-color: #46c37b">SUBFAMILIA</th>
                 <th class="text-center" style="background-color: #46c37b;min-width: 10%;">Acciones</th>
               </tr>
             </thead>
@@ -42,6 +42,18 @@
                     <select class="form-control editables type-rate-<?php echo $rate->id ?>" data-id="<?php echo $rate->id; ?>">
                       <?php foreach ($types as $k=>$v): ?>
                         <option value="<?php echo $k ?>" <?php if ($k == $rate->type) {
+                            echo "selected";
+                          } ?>>
+                        <?php echo $v ?>
+                        </option>
+                    <?php endforeach ?>
+                    </select>
+                  </td>
+                  <td class="text-center ">
+                    <select class="form-control editables subfamily-<?php echo $rate->id ?>" data-id="<?php echo $rate->id; ?>">
+                      <option value="">---</option>
+                      <?php foreach ($subfamily as $k=>$v): ?>
+                        <option value="<?php echo $k ?>" <?php if ($k == $rate->subfamily) {
                             echo "selected";
                           } ?>>
                         <?php echo $v ?>
@@ -77,9 +89,7 @@
                       <?php endfor; ?>
                     </select>
                   </td>
-                  <td class="text-center ">
-                    <input type="text" class="form-control editables subfamily-<?php echo $rate->id ?>" data-id="<?php echo $rate->id; ?>" value="<?php echo $rate->subfamily; ?>" />
-                  </td>
+                
                   <td class="text-center">
                     <div class="btn-group">
                       <!--  -->

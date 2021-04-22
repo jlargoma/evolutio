@@ -33,17 +33,18 @@ class UsersController extends Controller {
 
     
 
-    public function nueva() {
+    public function nueva($role=null) {
         $url = URL::previous();
-        $role = 'user';
-        if (preg_match('/usuarios/i', $url)) {
-            $role = 'admin';
-        } elseif (preg_match('/clientes/i', $url)) {
-            $role = 'user';
-        } elseif (preg_match('/entrenadores/i', $url)) {
-            $role = 'teach';
-        } elseif (preg_match('/nutricion/i', $url)) {
-            $role = 'nutri';
+        if (!$role){
+          if (preg_match('/usuarios/i', $url)) {
+              $role = 'admin';
+          } elseif (preg_match('/clientes/i', $url)) {
+              $role = 'user';
+          } elseif (preg_match('/entrenadores/i', $url)) {
+              $role = 'teach';
+          } elseif (preg_match('/nutricion/i', $url)) {
+              $role = 'nutri';
+          }
         }
 
         $aCoachs = [];
@@ -60,7 +61,6 @@ class UsersController extends Controller {
     }
 
     public function create(Request $request) {
-
         $issetUser = User::where('email', $request->input('email'))->get();
         if (count($issetUser) > 0) {
             return "email duplicado";
@@ -122,6 +122,7 @@ class UsersController extends Controller {
                 }
             }
         }
+        if ($request->ajax()) return 'error';
     }
 
     public function actualizar($id) {

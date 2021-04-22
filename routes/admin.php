@@ -42,7 +42,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
     /* Usuarios */
     Route::get('/usuarios', 'UsersController@index');
     
-    Route::get('/usuarios/new', 'UsersController@nueva');
+    Route::get('/usuarios/new/{role?}', 'UsersController@nueva');
     Route::post('/usuarios/create', 'UsersController@create');
     Route::get('/usuarios/actualizar/{id}', 'UsersController@actualizar');
     Route::any('/usuarios/delete/{id}', 'UsersController@delete');

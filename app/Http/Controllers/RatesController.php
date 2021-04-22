@@ -23,6 +23,7 @@ class RatesController extends Controller {
     return view('/admin/rates/index', [
         'types' => $types,
         'services' => $serv,
+        'subfamily' => TypesRate::subfamily(),
         'oldRates' => Rates::where('status', 0)->orderBy('order', 'asc')->orderBy('name', 'asc')->get(),
     ]);
   }
@@ -31,6 +32,7 @@ class RatesController extends Controller {
     return view('/admin/rates/new', [
         'taxes' => Rates::all(),
         'typesRate' => TypesRate::all(),
+        'subtype' => TypesRate::subfamily(),
     ]);
   }
 
@@ -45,6 +47,7 @@ class RatesController extends Controller {
     $rates->status = 1;
     $rates->cost = 0; //$request->input('cost');
     $rates->tarifa = $request->input('tarifa');
+    $rates->subfamily = $request->input('subfamily');
     $rates->order = 99;
     $rates->save();
     return redirect()->back()->with(['success'=>'Servicio agregado']);

@@ -15,13 +15,13 @@
       <input type="hidden" name="status" value="100">
       <input type="hidden" name="status" value="1">
       <div class="row  mx-1em">
-        <div class="col-md-6 mx-1em">
+        <div class="col-md-4 mx-1em">
           <div class="form-material">
             <input class="form-control" type="text" id="name" name="name" required>
             <label for="nombre">Nombre del Servicio</label>
           </div>
         </div>
-        <div class="col-md-6 mx-1em">
+        <div class="col-md-4 mx-1em">
           <div class="form-material">
             <select class="js-select2 form-control" id="type" name="type" style="width: 100%;" data-placeholder="Tipo de tarifa..." required>
               <option></option>
@@ -32,6 +32,19 @@
               <?php endforeach ?>
             </select>
             <label for="name">Familia</label>
+          </div>
+        </div>
+        <div class="col-md-4 mx-1em">
+          <div class="form-material">
+            <select class="form-control" id="subfamily" name="subfamily">
+              <option></option>
+              <?php foreach ($subtype as $k=>$v): ?>
+                <option value="<?php echo $k ?>">
+                  <?php echo $v ?>
+                </option>
+              <?php endforeach ?>
+            </select>
+            <label for="name">Sub-Familia</label>
           </div>
         </div>
       </div>

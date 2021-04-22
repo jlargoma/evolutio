@@ -127,6 +127,23 @@
         @endif
     </div>
 </div>
+<div class="modal fade in" id="modal_newUser" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="block block-themed block-transparent remove-margin-b">
+                <div class="block-header bg-primary-dark">
+                    <ul class="block-options">
+                        <li>
+                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="row block-content" id="content-new-user">
+
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
 @section('scripts')
@@ -162,8 +179,7 @@ jQuery(function () {
         @else
             $('#newUser').click(function (e) {
                 e.preventDefault();
-                $('#content-new-user').empty().load('/admin/usuarios/new');
-                $('#modal-add-date').modal('hide');
+                $('#content-new-user').empty().load('/admin/usuarios/new/user');
                 $('#modal_newUser').modal();
             });
         @endif
@@ -173,6 +189,22 @@ jQuery(function () {
            var id = $(this).attr('data-idUser');
            $('#ifrCliente').attr('src','/admin/usuarios/informe/' + id);
 
+        });
+        
+        $('#modal_newUser').on('submit','#form-new',function(event){
+            event.preventDefault();
+           // Get some values from elements on the page:
+            var $form = $( this );
+            var url       = $form.attr( "action" );
+            // Send the data using post
+            var posting = $.post( url, $form.serialize() ).done(function( data ) {
+                if (data == 'OK'){
+                  location.reload();
+                } else {
+                    alert(data);
+                }
+            });
+        //    
         });
     });
 
