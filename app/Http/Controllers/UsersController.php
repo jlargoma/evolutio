@@ -272,17 +272,13 @@ class UsersController extends Controller {
          $trainer = User::find($id);
          $emailTrainer = $trainer->email;
          $sended = Mail::send('emails._info_trainers_email', ['user' => $trainer], function ($message) use ($emailTrainer){
-             $message->subject('Registro de Usuario');
-             $message->subject('Inscripción en Evolutio');
-             $message->from('info@evolutio.fit', 'Inscripción Evolutio');
-             $message->to($emailTrainer);
-             // $message->to('info@evolutio.fit')->cc('iankurosaki17@gmail.com')->cc('jlargo@mksport.es');
+            $message->subject('Registro de Usuario');
+			$message->from(config('mail.from.address'), config('mail.from.name'));
+			$message->to($emailTrainer);
          });
-         if ($sended) {
-             return "Correo enviado a ".$emailTrainer;
-         }
-          
-         return "No se pudo enviar el correo a ".$emailTrainer;
+
+         return "Correo enviado a ".$emailTrainer;
+//         return "No se pudo enviar el correo a ".$emailTrainer;
     }
 
     public function duplicateRatesUser($date = "") {
