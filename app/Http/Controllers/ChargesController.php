@@ -56,17 +56,19 @@ class ChargesController extends Controller {
 
     public function cobrar(Request $req) {
 
-        $month = $req->input('fecha_pago', null);
-        if ($month)
-            $time = strtotime($month);
-        else
-            $time = time();
-
-        $uID = $req->input('id_user', null);
-        $rID = $req->input('id_rate', null);
-        $tpay = $req->input('type_payment','cash');
-        $value = $req->input('importe', 0);
-        $disc = $req->input('discount', '0');
+      $id_uRate = $req->input('id_uRate', null);
+      $uRate = UserRates::find($id_uRate);
+      
+      if (!$uRate) {
+        return redirect()->back()->withErrors(['Tarifa no encontrada']);
+      }
+      
+      $time = strtotime($uRate->rate_year.'/'.$uRate->rate_month.'/01');
+      $uID = $uRate->id_user;
+      $rID = $uRate->id_rate;
+      $tpay = $req->input('type_payment','cash');
+      $value = $req->input('importe', 0);
+      $disc = $req->input('discount', '0');
         
 
         $idStripe=null;$cStripe=null;
@@ -289,19 +291,20 @@ class ChargesController extends Controller {
         ];
         if(!$disc) $disc = 0;
         //BEGIN PAYMENTS MONTH
+        $auxTime = $time;
         for ($i = 0; $i < $oRate->mode; $i++) {
                 //si no tenia asignada la tarifa del mes
                 $newRate = new UserRates();
                 $newRate->id_user = $oUser->id;
                 $newRate->id_rate = $oRate->id;
-                $newRate->rate_year = date('Y', $time);
-                $newRate->rate_month = date('n', $time);
+                $newRate->rate_year = date('Y', $auxTime);
+                $newRate->rate_month = date('n', $auxTime);
                 $newRate->id_charges = null;
                 $newRate->save();
             /************************************************** */
             //Next month
-            $time = strtotime($month . ' +1 month');
-            $month = date('Y-m-d', $time);
+            $auxTime = strtotime($month . ' +1 month');
+            $month = date('Y-m-d', $auxTime);
             $value = 0; //solo se factura el primer mes
             $disc = 0; //solo se factura el primer mes
         }
@@ -323,21 +326,22 @@ class ChargesController extends Controller {
     }
     
     public function sendCobroMail(Request $request) {
-        $tax = Rates::find($request->idTax);
-        $time = strtotime($request->input('date'));
-        $uID = ($request->input('id_user'));
+        $uRate = UserRates::find($request->input('u_rate'));
+        if (!$uRate){
+          return ['error', 'Tarifa no encontrada'];
+        }
+        
+        $time = strtotime($uRate->rate_year.'/'.$uRate->rate_month.'/01');
         $importe = ($request->input('importe'));
-        $rID = ($request->input('id_rate'));
         $u_email = ($request->input('u_email'));
         $u_phone = ($request->input('u_phone'));
         $type = ($request->input('type'));
 
-        $oUser = \App\Models\User::find($uID);
+        $oUser = $uRate->user;
         if (!$oUser)
             return ['error', 'Usuario no encontrado'];
 
-
-        $oRate = Rates::find($rID);
+        $oRate = $uRate->rate;
         if (!$oRate)
             return ['error', 'Tarifa no encontrada'];
         
@@ -350,7 +354,7 @@ class ChargesController extends Controller {
             $oUser->save();
         }
         
-        $data = [date('Y', $time),date('m', $time),$uID,$importe*100,$rID];
+        $data = [date('Y', $time),date('m', $time),$oUser->id,$importe*100,$oRate->id];
         $sStripe = new \App\Services\StripeService();
         $pStripe = url($sStripe->getPaymentLink('rate',$data));
         

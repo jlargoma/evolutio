@@ -10,10 +10,8 @@
 
     <form class="form-toPayment" method="post" action="{{ url('/admin/cobros/cobrar') }}">
         <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
-        <input type="hidden" name="id_user" value="<?php echo $user->id; ?>">
+        <input type="hidden" name="id_uRate" value="<?php echo $uRate; ?>">
         <input type="hidden" id="importeCobrar" value="<?php echo $rate->price; ?>">
-        <input type="hidden" id="fecha_pago" name="fecha_pago" value="<?php echo $year.'-'.$month.'-01'; ?>">
-        <input type="hidden" id="id_rate" name="id_rate" value="<?php echo $rate->id; ?>"/>
         <div class="col-xs-12">
             <div class="col-md-12 push-20">
                 <h2 class="text-center font-w300">
@@ -46,7 +44,7 @@
                         </div>
                         <div class="col-xs-6">
                             <a class="btn btn-lg btn-danger"
-                                href="{{ url('/admin/rates/unassigned')}}/<?php echo $user->id; ?>/<?php echo $rate->id; ?>/<?php echo $date; ?>">
+                                href="{{ url('/admin/rates/unassigned')}}/<?php echo $uRate; ?>">
                                 Desasignar
                             </a>
                         </div>
@@ -158,9 +156,7 @@
         var type = $(this).data('t');
         var posting = $.post( '/admin/send/cobro-mail', { 
                             _token: '{{csrf_token()}}',
-                            id_rate: '{{$rate->id}}',
-                            id_user: '{{$user->id}}',
-                            date: '{{$year.'-'.$month.'-01'}}',
+                            u_rate: '{{$uRate}}',
                             u_email: $('#u_email').val(),
                             u_phone: $('#u_phone').val(),
                             importe: $('#importeFinal').val(),
@@ -200,4 +196,5 @@
         
   });
 </script>
+@include('admin.blocks.cardScripts')
 @endsection

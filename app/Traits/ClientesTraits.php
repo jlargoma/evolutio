@@ -122,27 +122,14 @@ trait ClientesTraits {
         return [$ratesAsign,$pendiente,$aCobros];
     }
 
-    public function clienteRateCharge($date,$id_user,$importe,$rate){
-        $oUser = User::find($id_user);
-        
-        $aux = explode('-', $date);
-        if (count($aux) == 2){
-            $year  = $aux[0];
-            $month = $aux[1];
-        } else {
-            $year = getYearActive();
-            $month = date('m');
-        }
-        
-        
-        $uRates = UserRates::where('id_user',$id_user)
-            ->where('rate_year',$year)
-            ->where('rate_month',$month)
-            ->where('id_rate',$rate)
-            ->first();
-        if (!$uRates){
-            return view('admin.popup_msg',['msg'=>'Servicio no asignada']);
-        }
+    public function clienteRateCharge($uRateID){
+      $uRates = UserRates::find($uRateID);
+      
+      if (!$uRates){
+        return view('admin.popup_msg',['msg'=>'Servicio no asignada']);
+      }
+      $oUser = $uRates->user;
+      $oRates = $uRates->rate;
         /******************************/
         /** STRIPE              ******/
 //        $data = [$year,$month,$id_user,$importe*100,$rate];
@@ -162,14 +149,14 @@ trait ClientesTraits {
         /** STRIPE              ******/
         /******************************/
         return view('/admin/usuarios/clientes/cobro', [
-                'rate'    => Rates::find($rate),
-                'date'    => $date,
+                'rate'    => $oRates,
                 'user'    => $oUser,
-                'importe' => $importe,
-                'year'    => $year,
-                'month'   => $month,
+                'importe' => $oRates->price,
+                'year'    => $uRates->rate_year,
+                'month'   => $uRates->rate_month,
                 'pStripe' => $pStripe,
-                'card' => $card,
+                'card'    => $card,
+                'uRate'   => $uRates->id,
         ]);
     }
         
@@ -229,16 +216,23 @@ trait ClientesTraits {
                         if (!isset($uLstRates[$idRate][$v->rate_month]))
                             $uLstRates[$idRate][$v->rate_month] = [];
 
-                        $uLstRates[$idRate][$v->rate_month][] = $auxCharges;
+                        $uLstRates[$idRate][$v->rate_month][] = [
+                            'price' =>$auxCharges->import,
+                            'id' =>$v->id,
+                            'paid'=>true,
+                            'cid'=>$auxCharges->id
+                          ];;
                         $totalUser[$v->rate_month] += $auxCharges->import;
                     } else {
-                       if (!isset($uLstRatesNoPay[$idRate][$v->rate_month]))
-                            $uLstRatesNoPay[$idRate][$v->rate_month] = [];
-                       $uLstRatesNoPay[$idRate][$v->rate_month][] = [
+                       if (!isset($uLstRates[$idRate][$v->rate_month]))
+                            $uLstRates[$idRate][$v->rate_month] = [];
+                       
+                       $uLstRates[$idRate][$v->rate_month][] = [
                             'price' =>$rate->price,
-                            'id' =>$v->id_rate,
-                            'date' => $v->rate_year.'-'.$v->rate_month,
-                               ];
+                            'id' =>$v->id,
+                            'paid'=>false,
+                           'cid'=>-1
+                          ];
                        $totalUserNPay[$v->rate_month] += $rate->price;
                     }
                     

@@ -80,20 +80,14 @@
 
         $('.openEditCobro').on('click', function (e) {
             e.preventDefault();
-            var charge_id = $(this).attr('data-charge');
-            var rate_id = $(this).attr('data-rate');
-            $('#ifrCliente').attr('src','/admin/update/cobro/' + charge_id);
+            var cobro_id = $(this).data('id');
+            $('#ifrCliente').attr('src','/admin/update/cobro/' + cobro_id);
             $('#modalCliente').modal('show');
         });
         $('.openCobro').on('click',function (e) {
             e.preventDefault();
-
-            var dateCobro = $(this).attr('data-dateCobro');
-            var id_user = $(this).attr('data-idUser');
-            var importe = $(this).attr('data-import');
-            var rate = $(this).attr('data-rate');
-
-            $('#ifrCliente').attr('src','/admin/clientes/generar-cobro/' + dateCobro + '/' + id_user + '/' + importe + '/' + rate);
+            var rate = $(this).data('rate');
+            $('#ifrCliente').attr('src','/admin/clientes/generar-cobro/' + rate);
             $('#modalCliente').modal('show');
         });
         $('.editNote').on('click',function (e) {

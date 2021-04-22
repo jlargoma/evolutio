@@ -12,12 +12,12 @@ Route::post('/changeActiveYear', 'HomeController@changeActiveYear')->name('years
 Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
 
     /* Clientes */
-    Route::get('/clientes/generar-cobro/{date}/{id_user}/{importe}/{rate}', 'UsersController@clienteRateCharge');
+    Route::get('/clientes/generar-cobro/{rate}', 'UsersController@clienteRateCharge');
     Route::get('/clientes/{month?}', 'UsersController@clientes');
     Route::get('/get-mail/{id?}', 'UsersController@getMail');
 //    Route::get('/get-list', 'UsersController@getList');
     Route::get('/clientes-export', 'UsersController@exportClients');
-    Route::get('/clientes-unassigned/{idUser}/{idRate}/{date}', 'RatesController@unassignedRate');
+    Route::get('/clientes-unassigned/{idUserRate}', 'RatesController@unassignedRate');
     Route::post('/add-service', 'UsersController@addRate');
     Route::get('/usuarios/informe/{id}', 'UsersController@informe');
     Route::post('/usuarios/notes', 'UsersController@addNotes');
@@ -94,7 +94,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
     Route::get('/tarifas/update', 'RatesController@update');
     Route::get('/tarifas/delete/{id}', 'RatesController@delete');
     Route::get('/tarifas/stripe/{id}', 'RatesController@createStripe');
-    Route::get('/rates/unassigned/{idUser}/{idRate}/{date}', 'RatesController@unassignedRate');
+    Route::get('/rates/unassigned/{idUserRate}', 'RatesController@unassignedRate');
     
     
     /* Facturacion */

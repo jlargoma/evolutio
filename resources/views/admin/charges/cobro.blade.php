@@ -47,6 +47,8 @@
         <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
         <input type="hidden" name="id_user" value="<?php echo $user->id; ?>">
         <input type="hidden" id="importeCobrar" value="<?php echo $rate->price; ?>">
+        <h1>En construcción</h1>
+          
         <div class="col-xs-12">
             <div class="col-md-12 push-20">
                 <h2 class="text-center font-w300">

@@ -90,20 +90,12 @@ class RatesController extends Controller {
     }
   }
 
-  public function unassignedRate($idUser, $idRate, $date) {
-    $aDate = explode('-', $date);
-    if (count($aDate) != 2){
-        return redirect()->back()->withErrors(['Periodo inválido']);
-    }
-    $userRate = UserRates::where('id_user', $idUser)
-                    ->where('id_rate', $idRate)
-                    ->where('rate_year',$aDate[0])
-                    ->where('rate_month',$aDate[1])
-                    ->orderBy('created_at', 'DESC')->first();
-
+  public function unassignedRate($idUserRate) {
+    $userRate = UserRates::find($idUserRate);
     if (!$userRate){
         return redirect()->back()->withErrors(['Tarifa no encontrada']);
     }
+    $date = getMonthSpanish($userRate->rate_month).' '.$userRate->rate_year;
     if ($userRate->delete()) {
       return redirect()->back()->with('success','Servicio removido para el perdiodo '.$date);
     }

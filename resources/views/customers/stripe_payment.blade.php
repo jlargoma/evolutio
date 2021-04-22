@@ -40,11 +40,13 @@
             src="https://checkout.stripe.com/checkout.js" class="stripe-button"
             data-key="{{ $keyStripe }}"
             data-amount="{{$amount}}"
-            data-name="Pago"
+            data-currency="eur"
+            data-name="{{config('app.name')}}"
             data-label="Pagar"
-            data-description="{{$name}}"
+            data-description="{{$name}} ({{moneda(($amount/100),true,2)}})"
             data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
-            data-locale="auto">
+            data-locale="auto"
+            data-email="{{$email}}" >
         </script>
     </form>
                 </div>

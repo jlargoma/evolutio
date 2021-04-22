@@ -97,7 +97,7 @@
         <div class=" col-xs-12 form-group push-20">
             <div class="col-xs-12 text-center">
                 @if($id>0)   
-                <button class="btn btn-lg btn-user" data-toggle="modal" data-target="#modalCliente" type="button" data-idUser="{{$id_user}}">
+                <button class="btn btn-lg btn-user" type="button" data-idUser="{{$id_user}}">
                     Ficha Usuario
                 </button>
                 @endif
@@ -187,7 +187,7 @@ jQuery(function () {
         $('.btn-user').click(function (e) {
            e.preventDefault();
            var id = $(this).attr('data-idUser');
-           $('#ifrCliente').attr('src','/admin/usuarios/informe/' + id);
+           location.href = '/admin/usuarios/informe/' + id;
 
         });
         
