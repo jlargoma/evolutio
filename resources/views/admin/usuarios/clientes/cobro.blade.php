@@ -159,6 +159,7 @@
                             u_rate: '{{$uRate}}',
                             u_email: $('#u_email').val(),
                             u_phone: $('#u_phone').val(),
+                            discount: $('#discount').val(),
                             importe: $('#importeFinal').val(),
                             type: type
                             });

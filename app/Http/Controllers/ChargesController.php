@@ -311,7 +311,7 @@ class ChargesController extends Controller {
         //END PAYMENTS MONTH
         /************************************************************** */
         
-        $data = [date('Y', $time),date('m', $time),$uID,$importe*100,$rID];
+        $data = [date('Y', $time),date('m', $time),$uID,$importe*100,$rID,$disc];
         $sStripe = new \App\Services\StripeService();
         $pStripe = url($sStripe->getPaymentLink('rate',$data));
         
@@ -336,7 +336,7 @@ class ChargesController extends Controller {
         $u_email = ($request->input('u_email'));
         $u_phone = ($request->input('u_phone'));
         $type = ($request->input('type'));
-
+        $disc = $request->input('discount', 0);
         $oUser = $uRate->user;
         if (!$oUser)
             return ['error', 'Usuario no encontrado'];
@@ -354,7 +354,7 @@ class ChargesController extends Controller {
             $oUser->save();
         }
         
-        $data = [date('Y', $time),date('m', $time),$oUser->id,$importe*100,$oRate->id];
+        $data = [date('Y', $time),date('m', $time),$oUser->id,$importe*100,$oRate->id,$disc];
         $sStripe = new \App\Services\StripeService();
         $pStripe = url($sStripe->getPaymentLink('rate',$data));
         

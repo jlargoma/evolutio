@@ -24,6 +24,9 @@
                     @endif
 
     <h3>{{moneda(($amount/100),true,2)}}</h3>
+    @if($disc)
+    <b>Descuento del {{$disc}}%</b>
+    @endif
     @if($items)
     <ul>
        @foreach($items as $i)

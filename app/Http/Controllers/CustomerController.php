@@ -22,6 +22,8 @@ class CustomerController extends Controller {
     $sStripe = new \App\Services\StripeService();
     $data = $sStripe->getPaymentLinkData($type, $token, $control);
     if (!$data) die('error');
+      
+    $disc = null;
     if (count($data) == 2) {
 
       $typeKey = $data[0];
@@ -36,6 +38,7 @@ class CustomerController extends Controller {
           $name .= ' del ' . $data[0];
           $amount = round($data[3]);
           $oUser = User::find($data[2]);
+          $disc = $data[5];
           break;
         case 'nutri': //$dID,$oUser->id,$importe*100,$oRate->id;
           $oDate = \App\Models\Dates::find($data[0]);
@@ -68,6 +71,7 @@ class CustomerController extends Controller {
         'token' => $token,
         'control' => $control,
         'items' => $items,
+        'disc'=>$disc,
         'email' => $oUser->email,
     ]);
   }
@@ -79,6 +83,7 @@ class CustomerController extends Controller {
     $control = $request->input('data_3');
     $sStripe = new \App\Services\StripeService();
     $data = $sStripe->getPaymentLinkData($type, $token, $control);
+    $disc = 0;
     if (!$data)
       return redirect()->back()->withErrors(['Error al efectuar el pago (1)']);
 
@@ -96,6 +101,7 @@ class CustomerController extends Controller {
                 . ' del mes de ' . getMonthSpanish($data[1], false);
         $name .= ' del ' . $data[0];
         $amount = round($data[3]);
+        $disc = $data[5];
         break;
       case 'nutri': //$dID,$oUser->id,$importe*100,$oRate->id;
         $oDate = \App\Models\Dates::find($data[0]);
@@ -137,14 +143,14 @@ class CustomerController extends Controller {
       case 'rate': //$year,$month,$id_user,$importe*100,$rate
         $time = strtotime($data[0] . '-' . $data[1] . '-01');
         $response = ChargesController::savePaymentRate(
-                        $time, $data[2], $data[4], 'card', $amount, 0, $idPaid, $idCust
+                        $time, $data[2], $data[4], 'card', $amount, $disc, $idPaid, $idCust
         );
         break;
       case 'nutri': //$dID,$oUser->id,$importe*100,$oRate->id;
         $oDate = \App\Models\Dates::find($data[0]);
         $response = ChargesController::savePaymentRate(
                         time(), $oDate->id_user, $oDate->id_rate,
-                        'card', $amount, 0, $idPaid, $idCust);
+                        'card', $amount, $disc, $idPaid, $idCust);
         if ($response[0] != 'OK') {
           return redirect()->back()
                           ->withErrors([$response[1]])
