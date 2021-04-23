@@ -122,6 +122,7 @@ class ChargesController extends Controller {
     public function chargeUser(Request $req) {
         
         $month = $req->input('date_payment', null);
+        $stripe_email = $req->input('stripe_email', null);
         $operation = $req->input('operation', 'all');
         if ($month)
             $time = strtotime($month);
@@ -177,8 +178,14 @@ class ChargesController extends Controller {
             }
             $resp = $this->generateePayment($time, $uID, $rID, $tpay, $value, $disc,$idStripe,$cStripe);
         }
-        if ($operation == 'stripe')
+        if ($operation == 'stripe'){
+          $oUser = \App\Models\User::find($uID);
+          if ($oUser->email != $stripe_email){
+            $oUser->email = $stripe_email;
+            $oUser->save();
+          }
             $resp = $this->generateStripeLink($time, $uID, $rID, $tpay, $value, $disc);
+        }
 
         if ($resp[0] == 'error') {
             return redirect()->back()->withErrors([$resp[1]]);

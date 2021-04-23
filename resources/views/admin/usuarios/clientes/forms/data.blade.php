@@ -26,21 +26,7 @@
       <label for="password">Contraseña</label>
     </div>
   </div>
-  <div class="col-md-6 ">
-    <div class="form-material">
-      <label for="role">Entrenador Personal</label>
-      <select class="form-control" id="u_coach" name="u_coach" style="width: 100%;" data-placeholder="Seleccione un entrenador">
-        <option> -- </option>
-        <?php
-        foreach ($aCoachs as $k => $v) {
-          $selected = ($k == $coachID) ? 'selected' : '';
-          echo '<option value="' . $k . '" ' . $selected . '>' . $v . '</option>';
-        }
-        ?>
-      </select>
-    </div>
-  </div>
-  <div class="col-md-6  text-center">
+  <div class="col-md-6 mt-1">
     <button class="btn btn-success" type="submit">
       <i class="fa fa-floppy-o" aria-hidden="true"></i> Actualizar
     </button>

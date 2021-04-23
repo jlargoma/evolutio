@@ -109,6 +109,19 @@
             $(this).closest('form').attr('action','/admin/usuarios/del-note').submit();
         });
         
+        $('#id_rateSubscr').on('change',function (e) {
+          var data = $(this).find(':selected').data('t');
+          console.log(data);
+          if (data == 'pt'){
+            $('#rateCoach').removeClass('disabled');
+            $('#id_rateCoach').attr('disabled',false);
+          }
+          else {
+            $('#rateCoach').addClass('disabled');
+            $('#id_rateCoach').val('').attr('disabled',true);
+          }
+        });
+        
         
         
         
@@ -142,6 +155,9 @@
     width: 325px;
     padding: 5px;
     margin: 1em auto;
+}
+#id_rateCoach:disabled{
+  background-color: #d0d0d0;
 }
 </style>
 @endsection

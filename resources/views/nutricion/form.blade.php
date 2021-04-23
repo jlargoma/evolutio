@@ -89,7 +89,7 @@
                 </div>
             </div>
         </form>
-        <div class="col-xs-12 form-group push-20">
+        <div class="col-xs-12 form-group alert alert-info">
             @if($charged != 1)
             @include('nutricion.cobrar')
             @endif

@@ -59,6 +59,9 @@ class User extends Authenticatable
   public function userCoach() {
     return $this->hasOne('\App\Models\CoachUsers', 'id_user', 'id');
   }
+  public function suscriptions() {
+    return $this->hasMany('\App\Models\UsersSuscriptions', 'id_user', 'id');
+  }
 
   
   /**********************************************************************/

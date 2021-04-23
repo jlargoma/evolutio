@@ -32,6 +32,7 @@
         -webkit-transition: box-shadow 150ms ease !important;
         transition: box-shadow 150ms ease !important;
     }
+    .stripeEmail{display: none;}
 </style>
 <div class="content" >
     <h2 class="text-center push-20"> ASIGNAR Y GENERAR COBRO PARA <?php echo strtoupper($user->name) ?></h2>
@@ -87,12 +88,16 @@
                         <input type="text" id="discount" name="discount"  class="form-control only-number" value="{{ old('discount') }}"/>
                         </div>
                         <div class="mt-2">
-                        <label class="css-input css-radio css-radio-lg css-radio-primary push-10-r">
-                            <input type="radio" name="operation" checked="" value="all"><span></span> Asignar & cobrar
-                        </label>
-                        <label class="css-input css-radio css-radio-lg css-radio-primary">
-                            <input type="radio" name="operation" value="stripe"><span></span> Enviar link Stripe por mail
-                        </label>
+                          <label class="css-input css-radio css-radio-lg css-radio-primary push-10-r">
+                              <input type="radio" name="operation" checked="" value="all"><span></span> Asignar & cobrar
+                          </label>
+                          <label class="css-input css-radio css-radio-lg css-radio-primary">
+                              <input type="radio" name="operation" value="stripe"><span></span> Enviar link Stripe por mail
+                          </label>
+                        </div>
+                        <div class="mt-2 stripeEmail" >
+                        <label for="email">email:</label>
+                        <input type="email" id="stripe_email" name="stripe_email"  class="form-control" value="{{ $user->email }}"/>
                         </div>
                         <div class="mt-2">
                             <h3 class="pull-left mr-2">Total</h3>
@@ -148,6 +153,16 @@ $(document).ready(function () {
             e.preventDefault();
         }
     });
+
+    $('input[type=radio][name=operation]').change(function () {
+        if (this.value == 'stripe') {
+            $(".stripeEmail").show();
+        } else {
+            $(".stripeEmail").hide();
+        }
+    });
+
+
 
 
 });

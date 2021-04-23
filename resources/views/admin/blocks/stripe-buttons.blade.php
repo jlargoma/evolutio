@@ -3,18 +3,18 @@
     <hr>
     <h4 class=" my-1">Generar Link Pago Único Stripe</h4>
 </div>
-<div class="col-xs-4">
-    <button type="button" class="btn btn-default btnStripe" data-t="mail">
+<div class="col-xs-6 col-md-4">
+    <button type="button" class="btn btn-default btnStripe my-1" data-t="mail">
         <i class="fa fa-envelope"></i> Enviar Mail
     </button>
 </div>
-<div class="col-xs-4">
-    <button type="button" class="btn btn-default btnStripe" data-t="wsp">
+<div class="col-xs-6 col-md-4">
+    <button type="button" class="btn btn-default btnStripe my-1" data-t="wsp">
         <i class="fa fa-whatsapp"></i> Enviar WSP 
     </button>
 </div>
-<div class="col-xs-4">
-    <button type="button" class="btn btn-default btnStripe" data-t="copy">
+<div class="col-xs-6 col-md-4">
+    <button type="button" class="btn btn-default btnStripe my-1" data-t="copy">
         <i class="fa fa-copy"></i> Copiar link Stripe
     </button>
 </div>

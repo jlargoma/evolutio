@@ -244,18 +244,11 @@ trait ClientesTraits {
         
         $uCurrentRates = [];
                 
-        $aRatesID = Rates::join('types_rate','rates.type','=','types_rate.id')
-                ->whereIn('types_rate.type',['gral','pt'])->pluck('rates.id');
-        $cUserRates = UserRates::where('id_user',$userID)
-                ->where('active',1)
-                ->whereIn('id_rate',$aRatesID)->get();
-        if ($cUserRates){
-            foreach ($cUserRates as $k=>$v){
-                if (isset($aRates[$v->id_rate]))
-                $uCurrentRates[$v->id_rate] = $aRates[$v->id_rate];
-            }
-        }       
+        $oRatesSubsc = Rates::select('rates.*','types_rate.type')
+                ->join('types_rate','rates.type','=','types_rate.id')
+                ->whereIn('types_rate.type',['gral','pt'])->get();
         
+        $subscrLst = $user->suscriptions;
         /*********************************************************/
         $aCoachs = User::where('role','teach')->orderBy('name')->pluck('name','id')->toArray();
         $allCoachs = User::all()->pluck('name','id')->toArray();
@@ -273,7 +266,8 @@ trait ClientesTraits {
             'uLstRatesNoPay' => $uLstRatesNoPay,
             'totalUser' => $totalUser,
             'totalUserNPay' => $totalUserNPay,
-            'uCurrentRates' => $uCurrentRates,
+            'subscrLst' => $subscrLst,
+            'subscrRates' => $oRatesSubsc,
             'months' => $months,
             'year' => $year,
             'user' => $user,
@@ -287,9 +281,9 @@ trait ClientesTraits {
         ]);
     }
 
-    public function addRate(Request $request) {
+    public function addSubscr(Request $request) {
         $uID = $request->input('id');
-	$rID = $request->input('id_rate');
+        $rID = $request->input('id_rate');
         $oUser = User::find($uID);
         $oRate = Rates::find($rID);
         if (!$oUser){
@@ -305,8 +299,32 @@ trait ClientesTraits {
         $oObj->rate_year = date('Y');
         $oObj->rate_month = date('m');
         $oObj->save();
+        
+        $oObj = new \App\Models\UsersSuscriptions();
+        $oObj->id_user = $uID;
+        $oObj->id_rate = $rID;
+        $oObj->id_coach = $request->input('id_rateCoach');
+        $oObj->save();
                     
         return redirect('/admin/usuarios/informe/'.$uID.'/servic')->with('success',$oRate->name.' asignado a '.$oUser->name.'.');
+    }
+    /**
+     * Remove subscription
+     * @param Request $request
+     */
+    public function rmSubscr($uID,$id) {
+        $oObj = \App\Models\UsersSuscriptions::find($id);
+        if (!$oObj || $oObj->id_user != $uID){
+            return redirect('/admin/usuarios/informe/'.$uID.'/servic')->withErrors(['Servicio no encontrada']);
+        }
+        $oRate = $oObj->rate;
+        $oObj->delete();
+        $msg = ' Se eliminó la suscripción.';
+        if ($oRate){
+          $msg = 'Se eliminó la suscripción a '.$oRate->name.'.';
+        }
+        return redirect('/admin/usuarios/informe/'.$uID.'/servic')->with('success',$msg);
+
     }
     
     public function unassignedMontly($idUser, $idRate, $date) {
