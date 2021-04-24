@@ -307,7 +307,7 @@ class NutriController extends Controller {
         return view('nutricion.listado', $rslt);
     }
 
-    public function informeNutricion($uID) {
+    public function informe($uID) {
         $year = getYearActive();
         $user = User::find($uID);
         $servic = TypesRate::where('type', 'nutri')->pluck('name', 'id');

@@ -27,7 +27,7 @@
                     </ul>
                     </div>
                     <div class="col-xs-2 mx-1em">
-                        <button class="btn btn-horarios" data-toggle="modal" data-target="#modalHorarios">Horarios</button>
+                        <button class="btn btn-horarios" data-toggle="modal" data-target="#modalIfrm">Horarios</button>
                     </div>
                 <div class="col-xs-10">
                 <ul class="selectDate">
@@ -90,14 +90,21 @@ $('.addDate').click(function(event){
     event.preventDefault();
     dateForm = $(this).data('date');
     timeForm = $(this).data('time');
-    $('#content-add-date').load('/admin/citas-fisioterapia/create/'+dateForm+'/'+timeForm);
-    $('#modal-add-date').modal();
+    $('#ifrModal').attr('src','/admin/citas-fisioterapia/create/'+dateForm+'/'+timeForm);
+    $('#modalIfrm').modal();
 });
 $('.editDate').on('click','div',function(event){
     event.preventDefault();
     var id = $(this).data('id');
-    $('#content-add-date').load('/admin/citas-fisioterapia/edit/'+id);
-    $('#modal-add-date').modal();
+    $('#ifrModal').attr('src','/admin/citas-fisioterapia/edit/'+id);
+    $('#modalIfrm').modal();
+});
+$('.editDate').on('mouseover',function(event){
+    var obj = $(this).find('.detail');
+    
+    obj.css('top', (event.screenY-110));
+    obj.css('left', (event.pageX-100));
+    
 });
 $('.selectDate').on('click','li',function(event){
     event.preventDefault();

@@ -71,14 +71,14 @@
                         $import = $v['price'];
                         if ($v['paid']):
                           ?>
-                          <div class="label label-success openEditCobro" data-id="<?php echo $v['cid'] ?>">
+                          <div class="label label-success openEditCobro" data-id="<?php echo $v['cid'] ?>" data-appointment='<?php echo $v['appointment']; ?>'>
                             {{$import}} €
                           </div>
                           <?php
                           $totalServiceUser += $import;
                         else:
                           ?>
-                          <div class="label label-danger openCobro" data-rate="<?php echo $v['id'] ?>">
+                  <div class="label label-danger openCobro" data-rate="<?php echo $v['id'] ?>" data-appointment='<?php echo $v['appointment']; ?>'>
                             {{$import}} €
                           </div>
                           <?php

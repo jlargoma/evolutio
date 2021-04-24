@@ -130,9 +130,10 @@ $('#modal_newUser').on('submit','#form-new',function(event){
 
 $('.js-dataTable-citas').on('click','.showInform',function(event){
     event.preventDefault();
-    var id = $(this).data('iduser');
+    var id = $(this).data('id');
     $('#ifrCliente').attr('src','/admin/usuarios/informe/' + id);
     $('#modalCliente').modal();
 });
+
 </script>
 @endsection

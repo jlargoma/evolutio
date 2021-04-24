@@ -87,6 +87,11 @@
         $('.openCobro').on('click',function (e) {
             e.preventDefault();
             var rate = $(this).data('rate');
+             var appointment = $(this).data('appointment');
+            if (appointment>0){
+              alert('Las citas se deben abonar en el calendario'); return;
+            }
+
             $('#ifrCliente').attr('src','/admin/clientes/generar-cobro/' + rate);
             $('#modalCliente').modal('show');
         });

@@ -95,10 +95,11 @@ class DatesController extends Controller {
         } else {
             $oObj = new Dates();
         }
+        $type=$request->input('date_type');
         $oObj->id_rate = $request->input('id_rate');
         $oObj->id_user = $id_user;
         $oObj->id_coach = $id_coach;
-        $oObj->date_type = $request->input('date_type');
+        $oObj->date_type = $type;
         $oObj->date = $date;
         $oObj->created_at = $date;
         if (!$ID) {
@@ -137,152 +138,12 @@ class DatesController extends Controller {
 
             /*             * ************************************************************** */
 //            return redirect()->back();
-            return redirect('/admin/citas-nutricion/edit/'.$oObj->id);
+          if ($type == 'nutri') return redirect('/admin/citas-nutricion/edit/'.$oObj->id);
+          if ($type == 'fisio') return redirect('/admin/citas-fisioterapia/edit/'.$oObj->id);
         }
     }
 
-    public function chargeaaaaaaaaaaaas(Request $request) {
-        switch ($request->input('type')) {
-            case 1: //si el cobro es mediante bono
-                $date = Dates::find($request->input('idDate'));
-                $dayDate = Carbon::createFromFormat('Y-m-d H:i:s', $date->date);
-                $user = $date->user;
-                $service = $date->service;
-
-                $classe = Classes::where('type_rate', $service->id)->get();
-                $scheduleSelected = Schedules::where('type', $service->id)->where('hour', $dayDate->copy()->format('H'))->get();
-                /* Apuntamos la clase en la base de asistencias */
-                $newAssitance = new Assistance();
-                $newAssitance->id_user = $user->id;
-                $newAssitance->id_schedule = $scheduleSelected[0]->id;
-                $newAssitance->date_assistance = $dayDate->copy()->format('Y-m-d H:i:s');
-                // $newAssitance->save();
-
-                /* Apuntamos la clase al coach */
-                $newCoachClasses = new CoachClasses();
-                $newCoachClasses->id_class = $classe[0]->id;
-                $newCoachClasses->id_user = $date->id_coach;
-                $newCoachClasses->date = $dayDate->copy()->format('Y-m-d H:i:s');
-                // $newCoachClasses->save();
-                // Actualizamos la cita
-                $date->status = 1;
-                $date->charged = 1;
-
-                if ($newAssitance->save() && $newCoachClasses->save() && $date->save()) {
-                    return redirect()->back();
-                }
-                break;
-
-            case 2:
-
-                $date = Dates::find($request->input('idDate'));
-                $dayDate = Carbon::createFromFormat('Y-m-d H:i:s', $date->date);
-                $user = $date->user;
-                $service = $date->service;
-                $rate = Rates::find($request->input('id_rate'));
-
-                $classe = Classes::where('type_rate', $service->id)->get();
-                $scheduleSelected = Schedules::where('type', $service->id)
-                        ->where('hour', $dayDate->copy()->format('G'))
-                        ->where('day', $dayDate->copy()->format('N'))
-                        ->get();
-
-                /* Apuntamos la clase en la base de asistencias */
-                $newAssitance = new Assistance();
-                $newAssitance->id_user = $user->id;
-                foreach ($scheduleSelected as $key => $value) {
-                    $newAssitance->id_schedule = $value->id;
-                }
-                $newAssitance->date_assistance = $dayDate->copy()->format('Y-m-d H:i:s');
-
-                /* Apuntamos la clase al coach */
-                $newCoachClasses = new CoachClasses();
-                $newCoachClasses->id_class = $classe[0]->id;
-                $newCoachClasses->id_user = $date->id_coach;
-                $newCoachClasses->date = $dayDate->copy()->format('Y-m-d H:i:s');
-
-                //Asignamos y cobramos la tarifa que nos envia.
-
-
-                $cobro = new \App\Models\Charges();
-                $cobro->id_user = $user->id;
-                $cobro->date_payment = $dayDate->copy()->format('Y-m-d');
-                $cobro->id_rate = $rate->id;
-                $cobro->type_payment = $request->input('type_pay');
-                $cobro->type = 1;
-                $cobro->import = $rate->price;
-                $cobro->discount = 0;
-                $cobro->type_rate = $rate->type;
-
-                $userRate = new UserRates();
-                $userRate->id_user = $user->id;
-                $userRate->id_rate = $rate->id;
-                $userRate->created_at = $dayDate->copy()->format('Y-m-d');
-                $userRate->updated_at = $dayDate->copy()->format('Y-m-d');
-
-                if ($request->input('type_pay') == "cash") {
-
-                    $cashBox = new \App\Models\CashBox();
-                    $cashBox->concept = 'Cobro de cita';
-                    $cashBox->import = (float) $cobro->import;
-                    $cashBox->date = $dayDate->copy('Y-m-d');
-                    $cashBox->comment = 'Cobro ' . $rate->name . ' :' . $user->name;
-
-                    $cashBox->typePayment = "INGRESO";
-                    $cashBox->type = "INGRESO";
-                    $oldBalance = \App\Models\CashBox::orderBy('id', 'desc')->get();
-
-                    $cashBox->balance = (float) $oldBalance[0]->balance + (float) $cobro->import;
-                }
-                // Actualizamos la cita
-                $date->status = 1;
-                $date->charged = 1;
-
-                if ($newAssitance->save() && $newCoachClasses->save() && $date->save() && $cobro->save() && $userRate->save() && $cashBox->save()) {
-                    return redirect()->back();
-                    // echo "METALICO";
-                    // die();
-                }
-
-                break;
-
-            case 3:
-
-                $date = Dates::find($request->input('idDate'));
-
-                $dayDate = Carbon::createFromFormat('Y-m-d H:i:s', $date->date);
-                $user = $date->user;
-                $service = $date->service;
-                $rate = Rates::find($request->input('id_rate'));
-
-                $classe = Classes::where('type_rate', $service->id)->get();
-                $scheduleSelected = Schedules::where('type', $service->id)
-                        ->where('hour', $dayDate->copy()->format('G'))
-                        ->where('day', $dayDate->copy()->format('N'))
-                        ->get();
-                /* Apuntamos la clase en la base de asistencias */
-                $newAssitance = new Assistance();
-                $newAssitance->id_user = $user->id;
-                foreach ($scheduleSelected as $key => $value) {
-                    $newAssitance->id_schedule = $value->id;
-                }
-                $newAssitance->date_assistance = $dayDate->copy()->format('Y-m-d H:i:s');
-
-                /* Apuntamos la clase al coach */
-                $newCoachClasses = new CoachClasses();
-                $newCoachClasses->id_class = $classe[0]->id;
-                $newCoachClasses->id_user = $date->id_coach;
-                $newCoachClasses->date = $dayDate->copy()->format('Y-m-d H:i:s');
-                $date->status = 1;
-                $date->charged = 1;
-
-                if ($newCoachClasses->save() && $date->save() && $newAssitance->save()) {
-                    return redirect()->back();
-                }
-                break;
-        }
-    }
-
+  
     public function chargeAdvanced(Request $req) {
 
         $ajax = $req->ajax();
@@ -350,17 +211,48 @@ class DatesController extends Controller {
                 $idStripe = $resp[1];
                 $cStripe = $resp[2];
             }
-            $response = ChargesController::savePaymentRate(
-                    strtotime($oDates->date), $oUser->id, $oRate->id, 
-                    $payType, $value, 0,$idStripe,$cStripe);
-            if ($response[0] != 'OK'){
-                return redirect()->back()
-                            ->withErrors([$response[1]])
-                            ->withInput();
+            
+            /*******************************************/
+            //Save payment
+            $time = strtotime($oDates->date);
+            $oCobro = new \App\Models\Charges();
+            $oCobro->id_user = $oUser->id;
+            $oCobro->date_payment = date('Y-m-d',$time);
+            $oCobro->id_rate = $oRate->id;
+            $oCobro->type_payment = $payType;
+            $oCobro->type = 1;
+            $oCobro->import = $value;
+            $oCobro->discount = 0;
+            $oCobro->type_rate = $oRate->type;
+            $oCobro->id_stripe = $idStripe;
+            $oCobro->customer_stripe = $cStripe;
+            $oCobro->save();
+            
+            /*--------------------------------*/
+            $oUserRate = UserRates::where('id_appointment', $oDates->id)->first();
+            if (!$oUserRate) {
+            //si no tenia asignada la tarifa del mes
+              $oUserRate = new UserRates();
+              $oUserRate->id_user = $oUser->id;
+              $oUserRate->id_rate = $oRate->id;
+              $oUserRate->rate_year = date('Y',$time);
+              $oUserRate->rate_month = date('n',$time);
+              $oUserRate->id_charges = $oCobro->id;
+              $oUserRate->id_appointment = $oDates->id;
             }
+            $oUserRate->id_charges = $oCobro->id;
+            $oUserRate->save();
+            /*******************************************/
+            $dataMail = [
+                  'fecha_pago' => date('Y-m-d'),
+                  'type_payment' => $payType,
+                  'importe' => $value,
+              ];
+            MailController::sendEmailPayRate($dataMail, $oUser, $oRate);
             // Actualizamos la cita
             $oDates->status = 1;
             $oDates->charged = 1;
+            $oDates->id_charges = $oCobro->id;
         }
 
         if ($oDates->save()) {

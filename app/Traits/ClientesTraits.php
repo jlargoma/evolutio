@@ -220,7 +220,8 @@ trait ClientesTraits {
                             'price' =>$auxCharges->import,
                             'id' =>$v->id,
                             'paid'=>true,
-                            'cid'=>$auxCharges->id
+                            'cid'=>$auxCharges->id,
+                            'appointment'=>$v->id_appointment
                           ];;
                         $totalUser[$v->rate_month] += $auxCharges->import;
                     } else {
@@ -231,7 +232,8 @@ trait ClientesTraits {
                             'price' =>$rate->price,
                             'id' =>$v->id,
                             'paid'=>false,
-                           'cid'=>-1
+                           'cid'=>-1,
+                           'appointment'=>$v->id_appointment
                           ];
                        $totalUserNPay[$v->rate_month] += $rate->price;
                     }

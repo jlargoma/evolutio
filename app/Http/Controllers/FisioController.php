@@ -134,6 +134,8 @@ class FisioController extends Controller {
             'id_user' => -1,
             'id_coach' => -1,
             'email' => '',
+            'phone' => '',
+            'card' => null,
             'id' => -1,
             'charged' => 0,
             'price' => 0,
@@ -173,7 +175,8 @@ class FisioController extends Controller {
         $oDate = Dates::find($id);
         if ($oDate) {
             $date = explode(' ', $oDate->date);
-            $user = $oDate->user()->first();
+            $oUser = $oDate->user()->first();
+            if (!$oUser) die('Usuario eliminado');
             $oServicios = Rates::getByTypeRate('fisio');
             $price = 0;
             if ($oServicios){
@@ -181,14 +184,27 @@ class FisioController extends Controller {
                     if($s->id == $oDate->id_rate)
                         $price = $s->price;
             }
+            
+            $card = null;
+            $paymentMethod = $oUser->paymentMethods()->first();
+            if ($paymentMethod){
+                $aux = $paymentMethod->toArray();
+                $card['brand'] = $aux['card']['brand'];
+                $card['exp_month'] = $aux['card']['exp_month'];
+                $card['exp_year'] = $aux['card']['exp_year'];
+                $card['last4'] = $aux['card']['last4'];
+            }
+        
             return view('fisioterapia.form', [
                 'date' => date('d-m-Y', strtotime($date[0])),
                 'time' => intval($date[1]),
                 'id_serv' => $oDate->id_rate,
                 'id_user' => $oDate->id_user,
                 'id_coach' => $oDate->id_coach,
-                'email' => $user->email,
+                'email' => $oUser->email,
+                'phone' => $oUser->telefono,
                 'price' => $price,
+                'card' => $card,
                 'id' => $oDate->id,
                 'charged' => $oDate->charged,
                 'services' => $oServicios,
@@ -291,7 +307,7 @@ class FisioController extends Controller {
         return view('fisioterapia.listado', $rslt);
     }
 
-    public function informeNutricion($uID) {
+    public function informe($uID) {
         $year = getYearActive();
         $user = User::find($uID);
         $servic = TypesRate::where('type', 'fisio')->pluck('name', 'id');
@@ -356,9 +372,9 @@ class FisioController extends Controller {
         // echo $storage_path . basename( $_FILES['uploadedfile']['name']);
         $directory = $directory . basename($_FILES['uploadedfile']['name']);
         if (move_uploaded_file($_FILES['uploadedfile']['tmp_name'], $directory)) {
-            return redirect()->action('NutriController@index');
+            return redirect()->action('FisioController@index');
         } else {
-            return redirect()->action('NutriController@index');
+            return redirect()->action('FisioController@index');
         }
     }
 

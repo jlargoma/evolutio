@@ -42,6 +42,8 @@ class ChargesController extends Controller {
         }
         if ($request->input('deleted')) {
             UserRates::where('id_charges',$id)->update(['id_charges' => null]);
+            \App\Models\Dates::where('id_charges',$id)->update(['charged' => 0]);
+            
             $charge->delete();
             return redirect()->back()->with('success', 'cobro Eliminado');
         } else {
@@ -277,7 +279,7 @@ class ChargesController extends Controller {
         $statusPayment = 'Pago realizado correctamente, por ' . payMethod($tpay);
         /*************************************************************/
         MailController::sendEmailPayRate($dataMail, $oUser, $oRate);
-        return ['OK', $statusPayment];
+        return ['OK', $statusPayment,$oCobro->id];
     }
 
     function generateStripeLink($time, $uID, $rID, $tpay, $importe, $disc=0,$idStripe=null,$cStripe=null) {

@@ -82,7 +82,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
     /* Citas Nutrición */
     Route::get('/citas-nutricion/listado/{coach?}/{type?}', 'NutriController@listado');
     Route::get('/citas-nutricion/create/{date?}/{time?}', 'NutriController@create');
-    Route::get('/citas-nutricion/informe-nutricion/{id}', 'NutriController@informeNutricion');
+    Route::get('/citas-nutricion/informe-nutricion/{id}', 'NutriController@informe');
     Route::post('/nutricion/nutri/upload', 'NutriController@uploadFile');
     Route::get('/citas-nutricion/edit/{id}', 'NutriController@edit');
     Route::get('/citas-nutricion/{month?}/{coach?}/{type?}', 'NutriController@index');
@@ -133,7 +133,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
 Route::group(['middleware' => ['auth','admin'], 'prefix' => ''], function () {
 
   /* Ingresos  rutas basicas */
-  Route::get('/admin/ingresos/{year?}', 'IncomesController@index');
+  Route::get('/admin/ingresos', 'IncomesController@index');
   Route::get('/admin/nuevo/ingreso', 'IncomesController@nuevo');
   Route::post('/admin/ingresos/create', 'IncomesController@create');
   Route::get('/admin/ingresos/{date?}', 'IncomesController@index');
