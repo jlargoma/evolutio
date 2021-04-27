@@ -14,49 +14,15 @@ function sumMonthValue($m){
 @section('content')
 @include('admin.contabilidad._button-contabiliad')
 
-<style>
-  table tr th,
-  table tr td{
-    text-align: center;
-  }
-  table tr th{
-    background-color: #5c90d2;
-    color: #FFF;
-  }
-  table tr td{
-    background-color: #FFF;
-  }
-  tr.d1 td {
-    background-color: #a0a0a0;
-    color: #FFF;
-}
-tr.d2,
-tr.d3{
-  display: none;
-}
-  tr.d2 td {
-    background-color: #dedede;
-}
-table tr th.static{ text-align: left;}
-table tr td.static{ text-align: left; cursor: pointer;}
-table tr.d3 .static{ cursor: initial;}
-  @media(max-width:991px) {
-  table tr .static{
-    width: 130px;
-    overflow-x: scroll;
-    margin-top: 1px;
-    position: absolute;
-    border-right: 1px solid #efefef;
-    z-index: 9;
-  }
-  table tr .first-col {
-    padding-right: 13px !important;
-    padding-left: 135px!important;
-}
-  }
-</style>
 <div class="content">
 <div class="row">
+  
+  <div class="col-xs-6">
+    <canvas id="chartTotalByYear" style="width: 100%; height: 250px;"></canvas>
+  </div>
+  <div class="col-xs-6">
+      <canvas id="chartTotalByMonth" style="width: 100%; height: 250px;"></canvas>
+  </div>
   <div class="col-xs-12">
   @include('admin.contabilidad.incomes.table')
   </div>
@@ -65,6 +31,30 @@ table tr.d3 .static{ cursor: initial;}
 @endsection
 
 @section('scripts')
+<link rel="stylesheet" href="{{ asset('css/contabilidad.css') }}">
+<script type="text/javascript" src="/admin-css/assets/js/plugins/chartJs/Chart.min.js"></script>
+<script type="text/javascript" src="/admin-css/assets/js/charts.js"></script>
+<?php
+  $tYearMonths = '';
+    $aux = '';
+    $ij = 0;
+     foreach ($byYears as $Y=>$monthData){
+      $aux .= '{
+              data: [';
+      foreach ($monthData as $k=>$v){
+        if ($k>0) $aux .= "'" . round($v) . "',";
+      }
+      
+      $aux .= '],
+              label: "Año '.$Y.'",
+              borderColor: "'.printColor($ij).'",
+              fill: false
+            },';
+      $ij++;
+    }
+    $tYearMonths = $aux;
+?>
+        
 <script type="text/javascript">
     $(document).ready(function () {
       $('.d1').on('click',function(){
@@ -73,9 +63,55 @@ table tr.d3 .static{ cursor: initial;}
       });
       $('.d2').on('click',function(){
         var k = $(this).data('k');
-        console.log('.d1_'+k);
         $('.d2_'+k).toggle();
       });
+      
+      
+      
+      
+       new Chart(document.getElementById("chartTotalByMonth"), {
+        type: 'line',
+        data: {
+          labels: [
+            <?php foreach ($monts as $v) echo "'" . $v . "',";?>
+          ],
+          datasets: [ <?php echo $tYearMonths;?>]
+        },
+        options: {
+          title: {
+            display: true,
+            text: 'Total x Año'
+          }
+        }
+      });
+      
+      var myBarChart = new Chart('chartTotalByYear', {
+        type: 'bar',
+        data: {
+          labels: [
+              <?php foreach ($tByYears as $k=>$v){ echo "'" . $k. "'," ;} ?>
+          ],
+          datasets: [
+            {
+              label: "Ingresos por Temp",
+              backgroundColor: 'rgba(54, 162, 235, 0.2)',
+              borderColor: 'rgba(54, 162, 235, 1)',
+              borderWidth: 1,
+              data: [
+                  <?php foreach ($tByYears as $k=>$v){ echo "'" . round($v). "'," ;} ?>
+              ],
+            }
+          ]
+          }
+      });
+      
+      
+      
+      
+      
+      
+      
+      
     });
 </script>
 @endsection

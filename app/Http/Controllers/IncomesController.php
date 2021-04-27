@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use \Carbon\Carbon;
 use DB;
+use App\Models\Charges;
 
 class IncomesController extends Controller {
 
@@ -24,7 +25,7 @@ class IncomesController extends Controller {
     $familyTotal = [];
     foreach ($family as $k=>$v) $familyTotal[$k] = $mm;
     /************************************************/
-    $oCharges = \App\Models\Charges::whereYear('date_payment','=',$year)->get();
+    $oCharges = Charges::whereYear('date_payment','=',$year)->get();
     foreach ($oCharges as $c){
       $rate = $c->id_rate;
       if (!isset($crLst[$rate])) $crLst[$rate] = $mm;
@@ -77,12 +78,28 @@ class IncomesController extends Controller {
       }
     }
     /************************************************/
+    
+    $byYears = $tByYears = [];
+    for($i=2;$i>=0;$i--){
+      $yAux = $year-$i;
+      $byYears[$yAux] = $mm;
+      $tByYears[$yAux] = 0;
+      $oCharges = Charges::whereYear('date_payment','=',$yAux)->get();
+      foreach ($oCharges as $c){
+        $m = intval(substr($c->date_payment,5,2));
+        $byYears[$yAux][$m] += $c->import;
+        $tByYears[$yAux] += $c->import;
+      }
+    }
+    /************************************************/
     return view('admin.contabilidad.incomes.index',[
         'year'=>$year,
         'monts'=>$monts,
         'lst'=>$lst,
         'family'=>$family,
-        'familyTotal'=>$familyTotal
+        'familyTotal'=>$familyTotal,
+        'byYears'=>$byYears,
+        'tByYears'=>$tByYears,
     ]);
   }
 

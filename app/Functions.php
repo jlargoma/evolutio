@@ -5,18 +5,10 @@ function formatToImport($data) {
     return utf8_decode($data);
 }
 
-function lstMonths($startYear, $endYear, $format = 'ym') {
-    $diff = $startYear->diffInMonths($endYear) + 1;
-    $lstMonths = [];
-    if (is_numeric($diff) && $diff > 0) {
-        $aux = strtotime($startYear);
-        while ($diff > 0) {
-            $lstMonths[date($format, $aux)] = ['m' => date('n', $aux), 'y' => date('y', $aux)];
-            $aux = strtotime("+1 month", $aux);
-            $diff--;
-        }
-    }
-
+function lstMonths($min = true) {
+  
+    $lstMonths = lstMonthsSpanish($min);
+    unset($lstMonths[0]);
     return $lstMonths;
 }
 
@@ -124,6 +116,14 @@ function getYearActive() {
 
 function colors() {
     return ['#9b59ff', '#295d9b', '#10cfbd', 'red', '#871282', '#066572', '#a7dae7', '#1fa7c0', '#b2d33d', '#3aaa49'];
+}
+function printColor($id){
+  $lst = colors();
+  $count = count($lst);
+  if ($id<$count) return $lst[$id];
+  
+  $id = $id/$count;
+  return $lst[$id];
 }
 
 function show_isset($index, $array) {

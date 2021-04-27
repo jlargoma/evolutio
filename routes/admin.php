@@ -130,45 +130,57 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
 });
 });
 
-Route::group(['middleware' => ['auth','admin'], 'prefix' => ''], function () {
+Route::group(['middleware' => ['auth','admin'], 'prefix' => 'admin'], function () {
 
   /* Ingresos  rutas basicas */
-  Route::get('/admin/ingresos', 'IncomesController@index');
-  Route::get('/admin/nuevo/ingreso', 'IncomesController@nuevo');
-  Route::post('/admin/ingresos/create', 'IncomesController@create');
-  Route::get('/admin/ingresos/{date?}', 'IncomesController@index');
+  Route::get('/ingresos', 'IncomesController@index');
+  Route::get('/nuevo/ingreso', 'IncomesController@nuevo');
+  Route::post('/ingresos/create', 'IncomesController@create');
+  Route::get('/ingresos/{date?}', 'IncomesController@index');
 
   /* Gastos  rutas basicas */
-  Route::get('/admin/nuevo/gasto', 'ExpensesController@nuevo');
-  Route::post('/admin/gastos/create', 'ExpensesController@create');
-  Route::get('/admin/gastos/{date?}', 'ExpensesController@index');
-
+//  Route::get('/nuevo/gasto', 'ExpensesController@nuevo');
+//  Route::get('/gastos/{date?}', 'ExpensesController@index');
+      
+  Route::post('/gastos/create', 'ExpensesController@create');
+  Route::post('/gastos/importar', 'ExpensesController@gastos_import');
+  Route::post('/gastos/gastosLst', 'ExpensesController@getTableGastos');
+  Route::post('/gastos/update', 'ExpensesController@updateGasto');
+  Route::get('/gastos/getHojaGastosByRoom/{year?}/{id}', 'ExpensesController@getHojaGastosByRoom');
+  Route::get('/gastos/containerTableExpensesByRoom/{year?}/{id}', 'ExpensesController@getTableExpensesByRoom');
+  Route::post('/gastos/del', 'ExpensesController@gastosDel');
+  Route::get('/gastos/delete/{id}','RouterActionsController@gastos_delete');
+  Route::get('/gastos/{year?}', 'ExpensesController@gastos');
+  
+  
+  Route::get('/perdidas-ganancias', 'PyGController@index');
+  
   /* Pendiente  rutas basicas */
-  Route::get('/admin/nuevo/pending', 'PendingController@nuevo');
-  Route::post('/admin/pending/create', 'PendingController@create');
+  Route::get('/nuevo/pending', 'PendingController@nuevo');
+  Route::post('/pending/create', 'PendingController@create');
 
   /* Gastos */
-  Route::get('/admin/gastos', 'ExpensesController@index');
-  Route::post('/admin/gastos/import/csv/', 'ExpensesController@importCsv');
+  Route::get('/gastos', 'ExpensesController@index');
+  Route::post('/gastos/import/csv/', 'ExpensesController@importCsv');
 
   /* Pendiente */
-  Route::get('/admin/pending/{year?}', 'PendingController@index');
-  Route::post('/admin/pending/import/csv/', 'PendingController@importCsv');
-  Route::get('/admin/pending/migrate/gasto', 'PendingController@banco');
-  Route::get('/admin/pending/delete/{id}', 'PendingController@delete');
-  Route::get('/admin/pending/{account?}/{year?}/{month?}', 'PendingController@index');
+  Route::get('/pending/{year?}', 'PendingController@index');
+  Route::post('/pending/import/csv/', 'PendingController@importCsv');
+  Route::get('/pending/migrate/gasto', 'PendingController@banco');
+  Route::get('/pending/delete/{id}', 'PendingController@delete');
+  Route::get('/pending/{account?}/{year?}/{month?}', 'PendingController@index');
 
   /* caja */
-  Route::post('/admin/cashbox/import/csv/', 'CashBoxController@importCsv');
-  Route::get('/admin/nuevo/addCashBox', 'CashBoxController@nuevo');
-  Route::post('/admin/cashbox/create', 'CashBoxController@create');
-  Route::get('/admin/cashbox/migrate/gasto', 'CashBoxController@cashbox');
-  Route::get('/admin/cashbox/{year?}', 'CashBoxController@index');
-  Route::get('/admin/cashbox/{year?}/{type?}', 'CashBoxController@index');
+  Route::post('/cashbox/import/csv/', 'CashBoxController@importCsv');
+  Route::get('/nuevo/addCashBox', 'CashBoxController@nuevo');
+  Route::post('/cashbox/create', 'CashBoxController@create');
+  Route::get('/cashbox/migrate/gasto', 'CashBoxController@cashbox');
+  Route::get('/cashbox/{year?}', 'CashBoxController@index');
+  Route::get('/cashbox/{year?}/{type?}', 'CashBoxController@index');
 
     /* Contabilidad */
 
-  Route::get('/admin/cuenta-socios/', 'ContabilidadController@socios');
-  Route::get('/admin/salario-mes/', 'ContabilidadController@salarioMes');
-  Route::get('/admin/ventas-mes/', 'ContabilidadController@ventasMes');
+  Route::get('/cuenta-socios/', 'ContabilidadController@socios');
+  Route::get('/salario-mes/', 'ContabilidadController@salarioMes');
+  Route::get('/ventas-mes/', 'ContabilidadController@ventasMes');
 });

@@ -6,9 +6,264 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use \Carbon\Carbon;
 use DB;
+use App\Models\Expenses;
 
 class ExpensesController extends Controller {
+
   public function index() {
     die('en construcción');
   }
+
+  public function gastosBy_month($month) {
+    $gastos = Expenses::where('date', '=', $year)->get();
+    $gType = Expenses::getTypes();
+    if ($gastos) {
+      foreach ($gastos as $g) {
+        
+      }
+    }
+  }
+
+  public function gastosDel(Request $request) {
+    $id = $request->input('id');
+    Expenses::where('id', $id)->delete();
+    return 'ok';
+  }
+
+  public function gastos($current = null) {
+
+    $year = getYearActive();
+    $lstMonths = lstMonthsSpanish(false);
+    $months_empty = array();
+    for ($i = 0; $i < 13; $i++)
+      $months_empty[$i] = 0;
+
+    $yearMonths = [
+        $year - 2 => $months_empty,
+        $year - 1 => $months_empty,
+        $year => $months_empty,
+    ];
+
+    $gastos = Expenses::whereYear('date', '=', $year)->get();
+    $gType = Expenses::getTypes();
+    $gTypeGroup = Expenses::getTypesGroup();
+    $gTypeGroup_g = $gTypeGroup['groups'];
+
+    $listGastos = array();
+    if ($gType) {
+      foreach ($gType as $k => $v) {
+        $listGastos[$k] = $months_empty;
+      }
+    }
+    $listGastos_g = array();
+    if ($gTypeGroup_g) {
+      foreach ($gTypeGroup_g as $k => $v) {
+        $listGastos_g[$v] = $months_empty;
+      }
+      $listGastos_g['otros'] = $months_empty;
+    }
+    $totalYearAmount = 0;
+    if ($gastos) {
+      foreach ($gastos as $g) {
+        $month = date('n', strtotime($g->date));
+        $totalYearAmount += $g->import;
+        $yearMonths[$year][$month] += $g->import;
+
+        $gTipe = isset($gTypeGroup_g[$g->type]) ? $gTypeGroup_g[$g->type] : 'otros';
+
+        if (isset($listGastos_g[$gTipe])) {
+          $listGastos_g[$gTipe][$month] += $g->import;
+          $listGastos_g[$gTipe][0] += $g->import;
+        }
+
+        if (isset($listGastos[$g->type])) {
+          $listGastos[$g->type][$month] += $g->import;
+          $listGastos[$g->type][0] += $g->import;
+        }
+      }
+    }
+    $auxYear = ($year) - 2;
+    $gastos = Expenses::whereYear('date', '=', $auxYear)->get();
+    if ($gastos) {
+      foreach ($gastos as $g) {
+        $month = date('n', strtotime($g->date));
+        $yearMonths[$auxYear][$month] += $g->import;
+      }
+    }
+    $auxYear = ($year) - 1;
+    $gastos = Expenses::whereYear('date', '=', $auxYear)->get();
+    if ($gastos) {
+      foreach ($gastos as $g) {
+        $month = date('n', strtotime($g->date));
+        $yearMonths[$auxYear][$month] += $g->import;
+      }
+    }
+
+
+
+    //First chart PVP by months
+    $dataChartMonths = [];
+    foreach ($lstMonths as $k => $v) {
+      $val = isset($listGastos[$k]) ? $listGastos[$k] : 0;
+      $dataChartMonths[getMonthSpanish($k)] = $val;
+    }
+
+    $totalYear = [];
+    foreach ($yearMonths as $k=>$v){
+      $totalYear[$k] = array_sum($v);
+    }
+    if (!$current) {
+      $current = date('m');
+    }
+
+
+    return view('admin.contabilidad.expenses.index', [
+        'year' => $year,
+        'lstMonths' => $lstMonths,
+        'dataChartMonths' => $dataChartMonths,
+        'gType' => $gType,
+        'gastos' => $listGastos,
+        'gTypeGroup' => $gTypeGroup['names'],
+        'listGasto_g' => $listGastos_g,
+        'current' => $current,
+        'totalYear' => $totalYear,
+        'total_year_amount' => $totalYearAmount,
+        'yearMonths' => $yearMonths,
+        'typePayment' => Expenses::getTypeCobro()
+    ]);
+  }
+
+  public function create(Request $request) {
+
+    $messages = [
+        'concept.required' => 'El Concepto es requerido.',
+        'import.required' => 'El Importe es requerido.',
+        'fecha.required' => 'La Fecha es requerida.',
+        'concept.min' => 'El Concepto debe tener un mínimo de :min caracteres.',
+        'import.min' => 'El Importe debe ser mayor de :min.',
+        'import.max' => 'El Importe no debe ser mayor de :max.',
+    ];
+
+    $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+                'concept' => 'required|min:3',
+                'import' => 'required|min:1|max:3000',
+                'fecha' => 'required',
+                    ], $messages);
+
+    if ($validator->fails()) {
+      return $validator->errors()->first();
+    }
+    $comment = $request->input('comment','');
+    $gasto = new Expenses();
+    $gasto->concept = $request->input('concept');
+    $gasto->date = Carbon::createFromFormat('d-m-Y', $request->input('fecha'))->format('Y-m-d');
+    $gasto->import = $request->input('import');
+    $gasto->typePayment = $request->input('type_payment');
+    $gasto->type = $request->input('type');
+    $gasto->comment = $comment ? $comment : '';
+    if ($gasto->save()) {
+      return 'ok';
+    }
+
+    return 'error';
+  }
+
+  public function updateGasto(Request $request) {
+
+    $id = $request->input('id');
+    $type = $request->input('type');
+    $val = $request->input('val');
+    $gasto = Expenses::find($id);
+    if ($gasto) {
+      $save = false;
+      switch ($type) {
+        case 'price':
+          $gasto->import = $val;
+          $save = true;
+          break;
+        case 'comm':
+          $gasto->comment = ($val) ? $val : '';
+          $save = true;
+          break;
+        case 'concept':
+          $gasto->concept = $val;
+          $save = true;
+          break;
+        case 'type':
+          $gasto->type = $val;
+          $save = true;
+          break;
+        case 'payment':
+          $gasto->typePayment = $val;
+          $save = true;
+          break;
+      }
+
+      if ($save) {
+        if ($gasto->save()) {
+          return "ok";
+        }
+      }
+    }
+
+    return 'error';
+  }
+
+  /**
+   * Get the Gastos by month-years to ajax table
+   * 
+   * @param Request $request
+   * @return Json-Objet
+   */
+  public function getTableGastos(Request $request, $isAjax = true) {
+
+    $year = getYearActive();;
+    $month = $request->input('month', null);
+    if (!$year) {
+      return response()->json(['status' => 'wrong']);
+    }
+
+    $qry = Expenses::whereYear('date', '=', $year);
+    if ($month && $month > 0)
+      $qry->whereMonth('date', '=', $month);
+
+    $gastos = $qry->orderBy('date')->get();
+    $gType = Expenses::getTypes();
+    $response = [
+        'status' => 'false',
+        'respo_list' => [],
+    ];
+    $totalMounth = 0;
+    $typePayment = Expenses::getTypeCobro();
+    if ($gastos) {
+      $respo_list = array();
+      foreach ($gastos as $item) {
+        $respo_list[] = [
+            'id' => $item->id,
+            'concept' => $item->concept,
+            'date' => convertDateToShow_text($item->date),
+            'typePayment' => isset($typePayment[$item->typePayment]) ? $typePayment[$item->typePayment] : '--',
+            'typePayment_v' => $item->typePayment,
+            'type' => isset($gType[$item->type]) ? $gType[$item->type] : '--',
+            'type_v' => $item->type,
+            'comment' => $item->comment,
+            'import' => $item->import,
+        ];
+        $totalMounth += $item->import;
+      }
+
+      $response = [
+          'status' => 'true',
+          'respo_list' => $respo_list,
+          'totalMounth' => moneda($totalMounth),
+      ];
+    }
+
+    if ($isAjax) {
+      return response()->json($response);
+    } else {
+      return $response;
+    }
+  }
+
 }

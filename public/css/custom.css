@@ -183,6 +183,30 @@ iframe{
     color: #FFF;
     font-size: 2em;
 }
+ul.selectDate {
+    padding: 0;
+    width: 100%;
+    margin: 1em auto;
+    text-align: center;
+}
+
+ul.selectDate li {
+    list-style: none;
+    display: inline-block;
+    padding: 7px;
+    border-radius: 7px;
+    color: #FFF;
+    background-color: #45c37b;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+ul.selectDate li:hover,
+ul.selectDate li.active {
+    background-color: #5c90d2 !important;
+    font-weight: bold;
+}
+
 @media(max-width:991px) {
   .table-fixed th.static{
     width: 9em;
