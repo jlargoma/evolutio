@@ -18,7 +18,7 @@ class MailController extends Controller
 		$typePayment = $data['type_payment'];
 		$importe     = $data['importe'];
 		$email       = $data['email'];
-
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return $email.' no es un mail válido';
 		$sended = Mail::send('emails._payment_rate', [
 			'user'        => $user,
 			'date'        => $date,
@@ -31,7 +31,7 @@ class MailController extends Controller
 			$message->to($email);
 		});
 
-		return ($sended) ? true : false;
+		 return 'OK';
 	}
         
         public static function sendEmailPayRate($data,$oUser,$oRate)
@@ -41,7 +41,8 @@ class MailController extends Controller
 		$typePayment = $data['type_payment'];
 		$importe     = $data['importe'];
 		$email       = $oUser->email;
-
+                
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return $email.' no es un mail válido';
 		$sended = Mail::send('emails._payment_rate', [
 			'user'        => $oUser,
 			'date'        => $date,
@@ -54,17 +55,18 @@ class MailController extends Controller
 			$message->to($email);
 		});
 
-		return ($sended) ? true : false;
+		 return 'OK';
 	}
         
-        public static function sendEmailPayRateByStripe($data,$oUser,$oRate,$pStripe)
+    public static function sendEmailPayRateByStripe($data,$oUser,$oRate,$pStripe)
 	{
 
 		$date        = Carbon::createFromFormat('Y-m-d', $data['fecha_pago']);
 		$typePayment = $data['type_payment'];
 		$importe     = $data['importe'];
 		$email       = $oUser->email;
-
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return $email.' no es un mail válido';
+        
 		$sended = Mail::send('emails._payment_rateStripe', [
 			'user'        => $oUser,
 			'date'        => $date,
@@ -76,8 +78,8 @@ class MailController extends Controller
 			$message->from(config('mail.from.address'), config('mail.from.name'));
 			$message->to($email);
 		});
-
-		return ($sended) ? true : false;
+         return 'OK';
+		return (!$sended) ? true : false;
 	}
         
         public static function sendEmailPayDateByStripe($oDate, $oUser, $oRate,$oCoach,$pStripe,$importe)
@@ -86,6 +88,7 @@ class MailController extends Controller
             $dateTime = strtotime($oDate->date);
             $day = date('d',$dateTime).' de '.getMonthSpanish(date('j',$dateTime));
             $hour = date('H:i',$dateTime);
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return $email.' no es un mail válido';
             $sended = Mail::send('emails._payment_citaStripe', [
                     'user'    => $oUser,
                     'obj'     => $oDate,
@@ -101,7 +104,7 @@ class MailController extends Controller
                     $message->to($email);
             });
 
-            return ($sended) ? true : false;
+            return 'OK';
 	}
 
 }

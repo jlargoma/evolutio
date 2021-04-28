@@ -32,9 +32,9 @@
         -webkit-transition: box-shadow 150ms ease !important;
         transition: box-shadow 150ms ease !important;
     }
-    .stripeEmail{display: none;}
+    .stripeEmail{height: 0px;    overflow: hidden;}
 </style>
-<div class="content" >
+<div class="content" style="max-width:780px;">
     <h2 class="text-center push-20"> ASIGNAR Y GENERAR COBRO PARA <?php echo strtoupper($user->name) ?></h2>
     <form class="form-toPayment" method="post" action="{{ url('/admin/cobros/cobrar-usuario') }}">
         <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
@@ -73,9 +73,9 @@
                 <div class="row push-20">
                     <div class="col-xs-6 push-20">
                         <label for="type_payment">Forma de pago</label>
-                        <?php $old = old('type_payment'); ?>
-                        <select class="form-control" name="type_payment" id="type_payment">
-                            <option value="card" <?php if ($old == 'card') echo 'selected'; ?>>Tarjeta</option>
+                        <?php $old = old('type_payment','card'); ?>
+                        <select class="likeBtn" name="type_payment" id="type_payment" multiple>
+                          <option class='aaaa' value="card" <?php if ($old == 'card') echo 'selected'; ?>>Tarjeta</option>
                             <option value="cash" <?php if ($old == 'cash') echo 'selected'; ?>>Efectivo</option>
                             <option value="banco" <?php if ($old == 'banco') echo 'selected'; ?>>Banco</option>
                         </select>
@@ -97,7 +97,7 @@
                         </div>
                         <div class="mt-2 stripeEmail" >
                         <label for="email">email:</label>
-                        <input type="email" id="stripe_email" name="stripe_email"  class="form-control" value="{{ $user->email }}"/>
+                        <input type="text" id="stripe_email" name="stripe_email"  class="form-control" value="{{ $user->email }}"/>
                         </div>
                         <div class="mt-2">
                             <h3 class="pull-left mr-2">Total</h3>
@@ -156,9 +156,9 @@ $(document).ready(function () {
 
     $('input[type=radio][name=operation]').change(function () {
         if (this.value == 'stripe') {
-            $(".stripeEmail").show();
+            $(".stripeEmail").css('height','auto');
         } else {
-            $(".stripeEmail").hide();
+            $(".stripeEmail").css('height','1px');
         }
     });
 

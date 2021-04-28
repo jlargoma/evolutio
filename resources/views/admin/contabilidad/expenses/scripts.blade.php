@@ -30,12 +30,12 @@
                   $('#tableItems').append(row);
               });
           } else {
-          window.show_notif('ERROR', 'danger', 'El listado está vacío no ha sido guardado.');
+          window.show_notif('error', 'El listado está vacío no ha sido guardado.');
           }
           $('#loadigPage').hide('slow');
           },
           error: function (response) {
-          window.show_notif('ERROR', 'danger', 'No se ha podido obtener los detalles de la consulta.');
+          window.show_notif('error', 'No se ha podido obtener los detalles de la consulta.');
               $('#loadigPage').hide('slow');
           }
       });
@@ -161,13 +161,13 @@ foreach ($typePayment as $k => $v) {
         {
           if (response == 'ok') {
             clearAll();
-            window.show_notif('OK', 'success', 'Registro Actualizado');
+            window.show_notif('success', 'Registro Actualizado');
             if (text)
               obj.text(text);
             else
               obj.text(value);
           } else {
-            window.show_notif('Error', 'danger', 'Registro NO Actualizado');
+            window.show_notif('error', 'Registro NO Actualizado');
           }
         }
       });

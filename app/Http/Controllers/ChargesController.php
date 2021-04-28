@@ -324,8 +324,9 @@ class ChargesController extends Controller {
         $sStripe = new \App\Services\StripeService();
         $pStripe = url($sStripe->getPaymentLink('rate',$data));
         
-        MailController::sendEmailPayRateByStripe($dataMail, $oUser, $oRate,$pStripe);
-        return ['OK', 'Se ha enviado un email con el link de pago'];
+        $sent = MailController::sendEmailPayRateByStripe($dataMail, $oUser, $oRate,$pStripe);
+        if ($sent == 'OK') return ['OK', 'Se ha enviado un email con el link de pago'];
+        return ['error', $sent];
     }
 
     
@@ -375,8 +376,9 @@ class ChargesController extends Controller {
                     'importe' => $importe,
                 ];
                 
-                MailController::sendEmailPayRateByStripe($dataMail, $oUser, $oRate,$pStripe);
-                return response()->json(['OK', 'Se ha enviado un email con el link de pago']);
+                $sentErr = MailController::sendEmailPayRateByStripe($dataMail, $oUser, $oRate,$pStripe);
+                if ($sentErr == 'OK')  return response()->json(['OK', 'Se ha enviado un email con el link de pago']);
+                  return response()->json(['error', $sentErr]);
                 break;
             case 'wsp':
                 $msg = 'Te adjuntamos el enlace para el pago de **'.$oRate->name.'** en Evolutio '.$pStripe;

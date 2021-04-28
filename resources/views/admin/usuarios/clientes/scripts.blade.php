@@ -9,17 +9,23 @@ $(document).ready(function () {
       $('#contentListIngresos').empty().append(data);
     });
   });
+$('.openEditCobro').on('click', function (e) {
+            e.preventDefault();
+            var cobro_id = $(this).data('id');
+            $('#ifrCliente').attr('src','/admin/update/cobro/' + cobro_id);
+            $('#modalCliente').modal('show');
+        });
+        $('.openCobro').on('click',function (e) {
+            e.preventDefault();
+            var rate = $(this).data('rate');
+             var appointment = $(this).data('appointment');
+            if (appointment>0){
+              alert('Las citas se deben abonar en el calendario'); return;
+            }
 
-  $('.btn-cobro').click(function (e) {
-    e.preventDefault();
-
-    var dateCobro = $(this).attr('data-dateCobro');
-    var id_user = $(this).attr('data-idUser');
-    var importe = $(this).attr('data-import');
-    var rate = $(this).attr('data-rate');
-    $('#ifrCliente').attr('src','/admin/clientes/generar-cobro/' + dateCobro + '/' + id_user + '/' + importe + '/' + rate);
-  });
-
+            $('#ifrCliente').attr('src','/admin/clientes/generar-cobro/' + rate);
+            $('#modalCliente').modal('show');
+        });
 
    
 

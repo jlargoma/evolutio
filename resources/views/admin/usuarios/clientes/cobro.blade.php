@@ -1,6 +1,6 @@
 @extends('layouts.popup')
 @section('content')
-<div class="col-xs-12">
+<div class="content" style="max-width:975px;">
     <div class="col-xs-12 not-padding push-20">
         <h2 class="text-center font-w300">
             COBRO DE <span class="font-w600">{{getMonthSpanish($month,false).' '.$year}}</span> A
@@ -19,30 +19,32 @@
                 </h2>
             </div>
             <div class="row">
-                <div class="col-xs-6">
+              <div class="col-xs-6">
                     <label for="type_payment">Forma de pago</label>
-                    <select class="form-control" name="type_payment" id="type_payment">
-                            <option value="card">Tarjeta</option>
+                    <select class="likeBtn" name="type_payment" id="type_payment" multiple>
+                      <option value="card" selected="">Tarjeta</option>
                             <option value="cash">Efectivo</option>
                             <option value="banco">Banco</option>
                     </select>
                     @include('admin.blocks.stripeBox')
                 </div>
-                <div class="col-xs-6">
+                <div class="col-xs-6 col-md-6">
+                  <div class="col-md-4 mb-1em">
                     <label for="discount">DTO %:</label>
                     <input type="number" id="discount" name="discount" class="form-control"/>
-                    <div class="mt-2">
+                    </div>
+                    <div class="col-md-8">
                         <label for="importeFinal">Total:</label>
                         <input id="importeFinal" type="text" name="importe" class="form-control"
                                value="<?php echo $rate->price; ?>"/>
                     </div>
-                    <div class="mt-2 col-md-12 text-center">
-                        <div class="col-xs-6">
+                    <div class="col-md-12 mt-2 text-center">
+                        <div class="col-md-6">
                             <button class="btn btn-lg btn-success" type="submit" id="submitFormPayment">
                                 Cobrar
                             </button>
                         </div>
-                        <div class="col-xs-6">
+                        <div class="col-md-6">
                             <a class="btn btn-lg btn-danger"
                                 href="{{ url('/admin/rates/unassigned')}}/<?php echo $uRate; ?>">
                                 Desasignar
@@ -62,17 +64,17 @@
                             <label for="importeFinal">Whatsapp:</label>
                             <input id="u_phone" type="text" class="form-control" value="<?php echo $user->telefono ?>"/>
                         </div>
-                        <div class="col-xs-4">
+                        <div class="col-xs-4 mt-1">
                             <button type="button" class="btn btn-default btnStripe" data-t="mail">
                                 <i class="fa fa-envelope"></i> Enviar Mail
                             </button>
                         </div>
-                        <div class="col-xs-4">
+                        <div class="col-xs-4 mt-1">
                             <button type="button" class="btn btn-default btnStripe" data-t="wsp">
                                 <i class="fa fa-whatsapp"></i> Enviar WSP 
                             </button>
                         </div>
-                        <div class="col-xs-4">
+                        <div class="col-xs-4 mt-1">
                             <button type="button" class="btn btn-default btnStripe" data-t="copy">
                                 <i class="fa fa-copy"></i> Copiar link Stripe
                             </button>
@@ -118,10 +120,12 @@
     $('#type_payment').change(function (e) {
         var value = $("#type_payment option:selected").val();
         if (value == "card") {
-            $('#stripeBox').show();
+//            $('#stripeBox').show();
+            $('#stripeBox').find('.disabled').show();
             $('.form-toPayment').attr('id', 'paymentForm');
         } else {
-            $('#stripeBox').hide();
+//            $('#stripeBox').hide();
+            $('#stripeBox').find('.disabled').hide();
             $('.form-toPayment').removeAttr('id');
         }
 
@@ -165,8 +169,8 @@
                             });
     	  	posting.done(function( data ) {
                     if (data[0] == 'OK'){
-                        if (type == 'email'){
-                            alert(data[1]);
+                        if (type == 'mail'){
+                          window.show_notif('success', data[1]);
                         }
                         if (type == 'wsp'){
                             if (detectMob()){
@@ -183,9 +187,11 @@
                             document.getElementById("cpy_link").select();
                             document.execCommand("copy");
                             document.getElementById("cpy_link").style.display = "none"; 
-                            alert('Mensaje copiado');
+                            window.show_notif('success', 'Mensaje copiado');
                         }
                         
+                    } else {
+                      window.show_notif('error', data[1]);
                     }
     	 	});
                 

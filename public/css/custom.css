@@ -207,6 +207,39 @@ ul.selectDate li.active {
     font-weight: bold;
 }
 
+select.likeBtn{
+  height: 44px;
+  border: none;
+  overflow: hidden;
+  display: block;
+  background-color: transparent;
+}
+select.likeBtn::-moz-focus-inner {
+  border: 0;
+}
+select.likeBtn:focus,
+select.likeBtn:checked {
+  outline: none;
+}
+
+select.likeBtn option{
+    font-size: 1.2em;
+    text-align: center;
+    margin-right: 20px;
+    display: inline-block;
+    cursor: pointer;
+    font-weight: bold;
+    color: rgb(0, 114, 191);
+    padding: 10px;
+    border: 1px solid rgb(0, 114, 191);
+    border-radius: 5px;
+}
+
+div#card-element,
+div#cardExists {
+    max-width: 320px;
+}
+
 @media(max-width:991px) {
   .table-fixed th.static{
     width: 9em;

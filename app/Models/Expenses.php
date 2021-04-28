@@ -39,6 +39,7 @@ class Expenses extends Model
                 'alquiler' => 'alquiler',
                 'comisiones' => 'comisiones',
                 'equip_deco' => 'comisiones',
+                'bancario' => 'comisiones',
                 'comision_tpv' => 'comisiones',
                 'lavanderia' => 'limpieza',
                 'limpieza'   => 'limpieza',

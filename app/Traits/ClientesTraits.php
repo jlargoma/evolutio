@@ -19,466 +19,439 @@ use App\Models\Charges;
 
 trait ClientesTraits {
 
-    public function clientes(Request $request, $month = false) {
-        if (!$month) $month = date('n');
+  public function clientes(Request $request, $month = false) {
+    if (!$month)
+      $month = date('n');
 
-        $year = getYearActive();
-        $months = lstMonthsSpanish(false);
-        unset($months[0]);
-        
-        $status = isset($request->status) ? $request->status : 1;
-        if ($status == 'all') {
-            $sqlUsers = User::where('role', 'user');
-        } else {
-            $sqlUsers = User::where('role', 'user')
-                            ->where('status', $status);
-                            
-        }
-        $sqlUsers->with('userCoach');
-        $users = $sqlUsers->orderBy('name', 'asc')->get();
-        $userIDs = $sqlUsers->pluck('id');
-        /*******************************************************/
-        $aRates = [];
-        $typeRates = TypesRate::whereIn('type',['gral','pt'])->pluck('id');
-        $oRates = Rates::whereIn('type',$typeRates)->get();
-        if ($oRates){
-            foreach ($oRates as $r){
-                $aRates[$r->id] = $r;
-            }
-        }
-        /*******************************************************/
-        $arrayPaymentMonthByUser = array();
-        $date = date('Y-m-d', strtotime($year . '-' . $month.'-01' . ' -1 month'));
-        $payments = $uRates = $uCobros = [];
-        for ($i = 0; $i < 3; $i++) {
-            $aux = $this->getRatesByMonth($date,$userIDs,$aRates);
-            $payments[$i] = $aux[1];
-            $uRates[$i] = $aux[0];
-            $uCobros[$i] = $aux[2];
-            $date = date('Y-m-d', strtotime($date . ' +1 month'));
-        }
-        
-        $aCoachs = User::where('role','teach')->orderBy('name')->pluck('name','id')->toArray();
-        return view('/admin/usuarios/clientes/index', [
-            'users' => $users,
-            'month' => $month,
-            'year' => $year,
-            'status' => $status,
-            'payments' => $payments,
-            'uRates' => $uRates,
-            'uCobros' => $uCobros,
-            'months' => $months,
-            'aCoachs' => $aCoachs,
-            'total_pending' => array_sum($arrayPaymentMonthByUser),
-        ]);
+    $year = getYearActive();
+    $months = lstMonthsSpanish(false);
+    unset($months[0]);
+
+    $payments = $noPay = 0;
+    $status = isset($request->status) ? $request->status : 1;
+    if ($status == 'all') {
+      $sqlUsers = User::where('role', 'user');
+    } else {
+      $sqlUsers = User::where('role', 'user')
+              ->where('status', $status);
     }
-
-    public function getRatesByMonth($date,$userIDs,$aRates) {
-        $pendiente = 0;
-        $ratesAsign= [];
-        $aCobros = [];   
-        $month = date('m', strtotime($date));
-        $year = date('Y', strtotime($date));
-        $uRates = UserRates::whereIN('id_user',$userIDs)
-                ->where('rate_year',$year)
-                ->where('rate_month',$month)
-                ->get();
-        if ($uRates && count($uRates)>0){
-            
-            $cobrosID = [];
-            foreach ($uRates as $item){
-                if ($item->id_charges)
-                    $cobrosID[] = $item->id_charges;
-            }
-            $cobros = Charges::whereIN('id', $cobrosID)->get();
-            
-            if ($cobros && count($cobros)>0){  
-            
-                foreach ($cobros as $cobro) {
-                    $aCobros[$cobro->id] = $cobro;
-                }
-            }
-            foreach ($uRates as $item){
-                if (isset($aRates[$item->id_rate])) {
-                    $aux = $aRates[$item->id_rate];
-                    $iRate =   (object)[
-                                    'price' => $aux->price,
-                                    'id'    => $aux->id,
-                                    'charge'    => $item->id_charges,
-                                ];
-                    if (isset($ratesAsign[$item->id_user])){
-                        $ratesAsign[$item->id_user][] = $iRate;
-                    } else {
-                        $ratesAsign[$item->id_user] = [$iRate];
-                    }
-                    if (!isset($aCobros[$item->id_charges]))
-                    $pendiente += $aRates[$item->id_rate]->price;
-                }
-
-            }
-            
-        }
-
-        return [$ratesAsign,$pendiente,$aCobros];
-    }
-
-    public function clienteRateCharge($uRateID){
-      $uRates = UserRates::find($uRateID);
-      
-      if (!$uRates){
-        return view('admin.popup_msg',['msg'=>'Servicio no asignada']);
+    $sqlUsers->with('userCoach');
+    $users = $sqlUsers->orderBy('name', 'asc')->get();
+    $userIDs = $sqlUsers->pluck('id');
+    /*     * **************************************************** */
+    $aRates = [];
+    $typeRates = TypesRate::whereIn('type', ['gral', 'pt'])->pluck('id');
+    $oRates = Rates::whereIn('type', $typeRates)->get();
+    $rPrices = [];
+    if ($oRates) {
+      foreach ($oRates as $r) {
+        $aRates[$r->id] = $r;
+        $rPrices[$r->id] = $r->price;
       }
-      $oUser = $uRates->user;
-      $oRates = $uRates->rate;
-        /******************************/
-        /** STRIPE              ******/
-//        $data = [$year,$month,$id_user,$importe*100,$rate];
-//        $sStripe = new \App\Services\StripeService();
-//        $pStripe = $sStripe->getPaymentLink('rate',$data);
-        $pStripe = null;
-        $card = null;
-        $paymentMethod = $oUser->paymentMethods()->first();
-        if ($paymentMethod){
-            $aux = $paymentMethod->toArray();
-            $card['brand'] = $aux['card']['brand'];
-            $card['exp_month'] = $aux['card']['exp_month'];
-            $card['exp_year'] = $aux['card']['exp_year'];
-            $card['last4'] = $aux['card']['last4'];
-        }
-        
-        /** STRIPE              ******/
-        /******************************/
-        return view('/admin/usuarios/clientes/cobro', [
-                'rate'    => $oRates,
-                'user'    => $oUser,
-                'importe' => $oRates->price,
-                'year'    => $uRates->rate_year,
-                'month'   => $uRates->rate_month,
-                'pStripe' => $pStripe,
-                'card'    => $card,
-                'uRate'   => $uRates->id,
-        ]);
-    }
-        
-    public function informe($id,$tab='datos') {
-        $year = getYearActive();
-        $months = lstMonthsSpanish(false);
-        unset($months[0]);
-        $user = User::find($id);
-        $userID = $user->id;
-        
-        $aRates = [];
-        $oRates = Rates::where('status',1)->get();
-        
-        if ($oRates){
-            foreach ($oRates as $k=>$v){
-                $aRates[$v->id] = $v;
-            }
-        }
-        /*********************************************************/
-        foreach ($months as $k=>$v){
-            $totalUser[$k] = 0;
-            $totalUserNPay[$k] = 0;
-        }
-        
-        /*********************************************************/
-        $oDates = Dates::where('id_user',$userID)->OrderBy('date')->get();
-        /*********************************************************/
-        $oNotes = UsersNotes::where('id_user',$userID)->OrderBy('created_at')->get();
-        /*********************************************************/
-        $oCharges = Charges::where('id_user',$userID)
-                ->pluck('import','id')->toArray();
-       
-        $uLstRates = [];
-        $uLstRatesNoPay = [];
-        $uRates = UserRates::where('id_user',$userID)
-                ->where('rate_year',$year)->get();
-        $usedRates = [];
-        
-        if ($uRates){
-            foreach ($uRates as $k=>$v){
-                if (isset($aRates[$v->id_rate])){
-                    if (!isset($totalUser[$v->rate_month])){
-                        $totalUser[$v->rate_month] = 0;
-                        $totalUserNPay[$v->rate_month] = 0;
-                    }
-                    if (!isset($uLstRates[$v->id_rate])){
-                        $uLstRates[$v->id_rate] = [];
-                        $uLstRatesNoPay[$v->id_rate] = [];
-                    }
-                    $idRate = $v->id_rate;
-                    $rate = $aRates[$idRate];
-                    // si esta pagado, lo busco luego
-                    
-                    $auxCharges = ($v->id_charges) ? Charges::find($v->id_charges) : null;
-                    
-                    if ($auxCharges){
-                        if (!isset($uLstRates[$idRate][$v->rate_month]))
-                            $uLstRates[$idRate][$v->rate_month] = [];
-
-                        $uLstRates[$idRate][$v->rate_month][] = [
-                            'price' =>$auxCharges->import,
-                            'id' =>$v->id,
-                            'paid'=>true,
-                            'cid'=>$auxCharges->id,
-                            'appointment'=>$v->id_appointment
-                          ];;
-                        $totalUser[$v->rate_month] += $auxCharges->import;
-                    } else {
-                       if (!isset($uLstRates[$idRate][$v->rate_month]))
-                            $uLstRates[$idRate][$v->rate_month] = [];
-                       
-                       $uLstRates[$idRate][$v->rate_month][] = [
-                            'price' =>$rate->price,
-                            'id' =>$v->id,
-                            'paid'=>false,
-                           'cid'=>-1,
-                           'appointment'=>$v->id_appointment
-                          ];
-                       $totalUserNPay[$v->rate_month] += $rate->price;
-                    }
-                    
-                    $usedRates[$v->id_rate] = $aRates[$v->id_rate]->name;
-                }
-            }
-        }
-        /*********************************************************/
-        
-        $uCurrentRates = [];
-                
-        $oRatesSubsc = Rates::select('rates.*','types_rate.type')
-                ->join('types_rate','rates.type','=','types_rate.id')
-                ->whereIn('types_rate.type',['gral','pt'])->get();
-        
-        $subscrLst = $user->suscriptions;
-        /*********************************************************/
-        $aCoachs = User::where('role','teach')->orderBy('name')->pluck('name','id')->toArray();
-        $allCoachs = User::all()->pluck('name','id')->toArray();
-        $coachID = $user->userCoach()->select('id_coach')->first();
-        if($coachID) $coachID = $coachID->id_coach;
-        /*********************************************************/
-        $path = storage_path('/app/signs/'.$userID.'.png');
-        $alreadySign = File::exists($path);
-        /*********************************************************/
-        
-        return view('/admin/usuarios/clientes/informe', [
-            'aRates' => $aRates,
-            'usedRates' => $usedRates,
-            'uLstRates' => $uLstRates,
-            'uLstRatesNoPay' => $uLstRatesNoPay,
-            'totalUser' => $totalUser,
-            'totalUserNPay' => $totalUserNPay,
-            'subscrLst' => $subscrLst,
-            'subscrRates' => $oRatesSubsc,
-            'months' => $months,
-            'year' => $year,
-            'user' => $user,
-            'coachID' => $coachID,
-            'aCoachs' => $aCoachs,
-            'allCoachs' => $allCoachs,
-            'oDates' => $oDates,
-            'oNotes' => $oNotes,
-            'tab' => $tab,
-            'alreadySign' => $alreadySign,
-        ]);
     }
 
-    public function addSubscr(Request $request) {
-        $uID = $request->input('id');
-        $rID = $request->input('id_rate');
-        $oUser = User::find($uID);
-        $oRate = Rates::find($rID);
-        if (!$oUser){
-            return redirect()->action('UsersController@clientes')->withErrors(['Usuario no encontrado']);
-        }
-        if (!$oRate){
-            return redirect('/admin/usuarios/informe/'.$uID.'/servic')->withErrors(['Servicio no encontrada']);
-        }
-       
-        $oObj = new UserRates();
-        $oObj->id_user = $uID;
-        $oObj->id_rate = $rID;
-        $oObj->rate_year = date('Y');
-        $oObj->rate_month = date('m');
-        $oObj->save();
-        
-        $oObj = new \App\Models\UsersSuscriptions();
-        $oObj->id_user = $uID;
-        $oObj->id_rate = $rID;
-        $oObj->id_coach = $request->input('id_rateCoach');
-        $oObj->save();
-                    
-        return redirect('/admin/usuarios/informe/'.$uID.'/servic')->with('success',$oRate->name.' asignado a '.$oUser->name.'.');
+    /*     * **************************************************** */
+    $arrayPaymentMonthByUser = array();
+    $date = date('Y-m-d', strtotime($year . '-' . $month . '-01' . ' -1 month'));
+    $payments = $uRates = $uCobros = [];
+    $monthAux = date('m', strtotime($date));
+    for ($i = 0; $i < 3; $i++) {
+      $resp = $this->getRatesByMonth($monthAux, $year, $userIDs, $rPrices);
+      $uRates[$i] = $resp[0];
+      $payments[$i] = $resp[1];
+      $noPay += $resp[2];
+      $next = strtotime($date . ' +1 month');
+      $date = date('Y-m-d', $next);
+      $monthAux = date('m', $next);
     }
-    /**
-     * Remove subscription
-     * @param Request $request
-     */
-    public function rmSubscr($uID,$id) {
-        $oObj = \App\Models\UsersSuscriptions::find($id);
-        if (!$oObj || $oObj->id_user != $uID){
-            return redirect('/admin/usuarios/informe/'.$uID.'/servic')->withErrors(['Servicio no encontrada']);
-        }
-        $oRate = $oObj->rate;
-        $oObj->delete();
-        $msg = ' Se eliminó la suscripción.';
-        if ($oRate){
-          $msg = 'Se eliminó la suscripción a '.$oRate->name.'.';
-        }
-        return redirect('/admin/usuarios/informe/'.$uID.'/servic')->with('success',$msg);
 
+
+    $aCoachs = User::where('role', 'teach')->orderBy('name')->pluck('name', 'id')->toArray();
+    return view('/admin/usuarios/clientes/index', [
+        'users' => $users,
+        'month' => $month,
+        'year' => $year,
+        'status' => $status,
+        'payments' => $payments,
+        'uRates' => $uRates,
+        'months' => $months,
+        'aCoachs' => $aCoachs,
+        'total_pending' => array_sum($arrayPaymentMonthByUser),
+    ]);
+  }
+
+  public function getRatesByMonth($month, $year, $userIDs, $rPrices) {
+
+    $RateIDs = array_keys($rPrices);
+    $uRates = UserRates::whereIN('id_user', $userIDs)
+            ->where('rate_year', $year)
+            ->where('rate_month', $month)
+            ->whereIn('id_rate', $RateIDs)
+            ->get();
+
+    $payments = $noPay = 0;
+    $uLstRates = [];
+    if ($uRates) {
+      /*       * ******************************* */
+      $charges = [];
+      foreach ($uRates as $k => $v) {
+        if ($v->id_charges)
+          $charges[] = $v->id_charges;
+      }
+      $aCharges = Charges::whereIn('id', $charges)->pluck('import', 'id')->toArray();
+      /*       * ******************************* */
+      foreach ($uRates as $k => $v) {
+        $idRate = $v->id_rate;
+        $idUser = $v->id_user;
+        if (!isset($uLstRates[$idUser])) {
+          $uLstRates[$idUser] = [];
+        }
+        if (!isset($uLstRates[$idUser][$idRate])) {
+          $uLstRates[$idUser][$idRate] = [];
+        }
+
+        // si esta pagado, lo busco luego
+        $auxCharges = isset($aCharges[$v->id_charges]) ? $aCharges[$v->id_charges] : null;
+        if ($auxCharges) {
+          $uLstRates[$idUser][$idRate][] = [
+              'price' => $auxCharges,
+              'id' => $v->id,
+              'paid' => true,
+              'cid' => $v->id_charges,
+              'appointment' => $v->id_appointment
+          ];
+          $payments += $auxCharges;
+        } else {
+          $noPay += $rPrices[$idRate];
+          $uLstRates[$idUser][$idRate][] = [
+              'price' => $rPrices[$idRate],
+              'id' => $v->id,
+              'paid' => false,
+              'cid' => -1,
+              'appointment' => $v->id_appointment
+          ];
+        }
+      }
+    }
+    return [$uLstRates,$payments,$noPay];
+  }
+
+  public function clienteRateCharge($uRateID) {
+    $uRates = UserRates::find($uRateID);
+
+    if (!$uRates) {
+      return view('admin.popup_msg', ['msg' => 'Servicio no asignada']);
+    }
+    $oUser = $uRates->user;
+    $oRates = $uRates->rate;
+    /*     * *************************** */
+    /** BEGIN: STRIPE              ***** */
+    $pStripe = null;
+    $card = null;
+    $paymentMethod = $oUser->paymentMethods()->first();
+    if ($paymentMethod) {
+      $aux = $paymentMethod->toArray();
+      $card['brand'] = $aux['card']['brand'];
+      $card['exp_month'] = $aux['card']['exp_month'];
+      $card['exp_year'] = $aux['card']['exp_year'];
+      $card['last4'] = $aux['card']['last4'];
+    }
+
+    /** END: STRIPE              ***** */
+    /*     * *************************** */
+    return view('/admin/usuarios/clientes/cobro', [
+        'rate' => $oRates,
+        'user' => $oUser,
+        'importe' => $oRates->price,
+        'year' => $uRates->rate_year,
+        'month' => $uRates->rate_month,
+        'pStripe' => $pStripe,
+        'card' => $card,
+        'uRate' => $uRates->id,
+    ]);
+  }
+
+  public function informe($id, $tab = 'datos') {
+    $year = getYearActive();
+    $months = lstMonthsSpanish(false);
+    unset($months[0]);
+    $user = User::find($id);
+    $userID = $user->id;
+
+    $aRates = $rPrices = [];
+    $oRates = Rates::where('status', 1)->get();
+
+    if ($oRates) {
+      foreach ($oRates as $k => $v) {
+        $aRates[$v->id] = $v;
+        $rPrices[$v->id] = $v->price;
+      }
+    }
+    /*     * ****************************************************** */
+    foreach ($months as $k => $v) {
+      $totalUser[$k] = 0;
+      $totalUserNPay[$k] = 0;
+    }
+
+    /*     * ****************************************************** */
+    $oDates = Dates::where('id_user', $userID)->OrderBy('date')->get();
+    /*     * ****************************************************** */
+    $oNotes = UsersNotes::where('id_user', $userID)->OrderBy('created_at')->get();
+    /*     * ****************************************************** */
+    $oCharges = Charges::where('id_user', $userID)
+                    ->pluck('import', 'id')->toArray();
+
+    $uLstRates = [];
+    $usedRates = [];
+    $uRateIds = UserRates::where('id_user', $userID)
+                    ->where('rate_year', $year)
+                    ->pluck('id_rate')->toArray();
+    if ($uRateIds){
+      $uRateIds = array_unique($uRateIds);
+      foreach ($uRateIds as $rid)
+        if (isset ($aRates[$rid]))
+          $usedRates[$rid] = $aRates[$rid]->name;
     }
     
-    public function unassignedMontly($idUser, $idRate, $date) {
-        $aDate = explode('-', $date);
-        if (count($aDate) != 2){
-            return redirect()->action('UsersController@clientes')->withErrors(['Periodo inválido']);
-        }
-        $userRate = UserRates::where('id_user', $idUser)
-                        ->where('id_rate', $idRate)
-                        ->where('active',1)->first();
-        
-        if ($userRate){
-            $userRate->active = 0;
-            $userRate->save();
-            return redirect()->action('UsersController@clientes')->with('success','Cliente desuscripto del Servicio '.$date);
-        }
-   
-        return redirect()->action('UsersController@clientes')->withErrors(['No se ha podido desuscribir']);
+    $uLstRates =  [];
+    if ($uRateIds) {
+      for ($i = 1; $i < 13; $i++) {
+        $resp = $this->getRatesByMonth($i, $year, [$id], $rPrices);
+        $uLstRates[$i] = (count($resp[0])) ? $resp[0][$id] : [];
+        $totalUser[$i] = $resp[1];
+        $totalUserNPay[$i] = $resp[2];
+      }
     }
     
-    public function exportClients(){
-		$array_excel   = [];
-		$array_excel[] = [
-			'Nombre',
-			'Email',
-			'Telefono',
-			'Estado',
-                        'Servicios'
-		];
-                
-                $aRates = Rates::all()->pluck('name','id')->toArray();
-                $oUserRates = UserRates::where('active',1)->get();
-                $aUserRates = [];
-                if ($oUserRates){
-                    foreach ($oUserRates as $i){
-                        if (!isset($aUserRates[$i->id_user]))
-                            $aUserRates[$i->id_user] = [];
-                        if (isset($aRates[$i->id_rate])){
-                            $aUserRates[$i->id_user][] = $aRates[$i->id_rate];
-                        }
-                    }
-                    foreach ($aUserRates as $k=>$v)
-                        $aUserRates[$k] = array_unique ($aUserRates[$k]);
-                }
+    /*     * ****************************************************** */
+    $oRatesSubsc = Rates::select('rates.*', 'types_rate.type')
+                    ->join('types_rate', 'rates.type', '=', 'types_rate.id')
+                    ->whereIn('types_rate.type', ['gral', 'pt'])->get();
+
+    $subscrLst = $user->suscriptions;
+    /*     * ****************************************************** */
+    $aCoachs = User::where('role', 'teach')->orderBy('name')->pluck('name', 'id')->toArray();
+    $allCoachs = User::all()->pluck('name', 'id')->toArray();
+    /*     * ****************************************************** */
+    $path = storage_path('/app/signs/' . $userID . '.png');
+    $alreadySign = File::exists($path);
+    /*     * ****************************************************** */
+
+    return view('/admin/usuarios/clientes/informe', [
+        'aRates' => $aRates,
+        'usedRates' => $usedRates,
+        'uLstRates' => $uLstRates,
+        'totalUser' => $totalUser,
+        'totalUserNPay' => $totalUserNPay,
+        'subscrLst' => $subscrLst,
+        'subscrRates' => $oRatesSubsc,
+        'months' => $months,
+        'year' => $year,
+        'user' => $user,
+        'aCoachs' => $aCoachs,
+        'allCoachs' => $allCoachs,
+        'oDates' => $oDates,
+        'oNotes' => $oNotes,
+        'tab' => $tab,
+        'alreadySign' => $alreadySign,
+    ]);
+  }
+
+  public function addSubscr(Request $request) {
+    $uID = $request->input('id');
+    $rID = $request->input('id_rate');
+    $oUser = User::find($uID);
+    $oRate = Rates::find($rID);
+    if (!$oUser) {
+      return redirect()->action('UsersController@clientes')->withErrors(['Usuario no encontrado']);
+    }
+    if (!$oRate) {
+      return redirect('/admin/usuarios/informe/' . $uID . '/servic')->withErrors(['Servicio no encontrada']);
+    }
+
+    $oObj = new UserRates();
+    $oObj->id_user = $uID;
+    $oObj->id_rate = $rID;
+    $oObj->rate_year = date('Y');
+    $oObj->rate_month = date('m');
+    $oObj->save();
+
+    $oObj = new \App\Models\UsersSuscriptions();
+    $oObj->id_user = $uID;
+    $oObj->id_rate = $rID;
+    $oObj->id_coach = $request->input('id_rateCoach');
+    $oObj->save();
+
+    return redirect('/admin/usuarios/informe/' . $uID . '/servic')->with('success', $oRate->name . ' asignado a ' . $oUser->name . '.');
+  }
+
+  /**
+   * Remove subscription
+   * @param Request $request
+   */
+  public function rmSubscr($uID, $id) {
+    $oObj = \App\Models\UsersSuscriptions::find($id);
+    if (!$oObj || $oObj->id_user != $uID) {
+      return redirect('/admin/usuarios/informe/' . $uID . '/servic')->withErrors(['Servicio no encontrada']);
+    }
+    $oRate = $oObj->rate;
+    $oObj->delete();
+    $msg = ' Se eliminó la suscripción.';
+    if ($oRate) {
+      $msg = 'Se eliminó la suscripción a ' . $oRate->name . '.';
+    }
+    return redirect('/admin/usuarios/informe/' . $uID . '/servic')->with('success', $msg);
+  }
+
+  public function unassignedMontly($idUser, $idRate, $date) {
+    $aDate = explode('-', $date);
+    if (count($aDate) != 2) {
+      return redirect()->action('UsersController@clientes')->withErrors(['Periodo inválido']);
+    }
+    $userRate = UserRates::where('id_user', $idUser)
+                    ->where('id_rate', $idRate)
+                    ->where('active', 1)->first();
+
+    if ($userRate) {
+      $userRate->active = 0;
+      $userRate->save();
+      return redirect()->action('UsersController@clientes')->with('success', 'Cliente desuscripto del Servicio ' . $date);
+    }
+
+    return redirect()->action('UsersController@clientes')->withErrors(['No se ha podido desuscribir']);
+  }
+
+  public function exportClients() {
+    $array_excel = [];
+    $array_excel[] = [
+        'Nombre',
+        'Email',
+        'Telefono',
+        'Estado',
+        'Servicios'
+    ];
+
+    $aRates = Rates::all()->pluck('name', 'id')->toArray();
+    $oUserRates = UserRates::where('active', 1)->get();
+    $aUserRates = [];
+    if ($oUserRates) {
+      foreach ($oUserRates as $i) {
+        if (!isset($aUserRates[$i->id_user]))
+          $aUserRates[$i->id_user] = [];
+        if (isset($aRates[$i->id_rate])) {
+          $aUserRates[$i->id_user][] = $aRates[$i->id_rate];
+        }
+      }
+      foreach ($aUserRates as $k => $v)
+        $aUserRates[$k] = array_unique($aUserRates[$k]);
+    }
 //                dd($aUserRates);
 
-		\Maatwebsite\Excel\Facades\Excel::create('clientes', function ($excel) use ($array_excel,$aUserRates) {
+    \Maatwebsite\Excel\Facades\Excel::create('clientes', function ($excel) use ($array_excel, $aUserRates) {
 
-			$excel->sheet('clientes_activos_inactivos', function ($sheet) use ($array_excel,$aUserRates) {
+      $excel->sheet('clientes_activos_inactivos', function ($sheet) use ($array_excel, $aUserRates) {
 
-				$users = User::where('role', 'user')->get();
+        $users = User::where('role', 'user')->get();
 
-				foreach ($users as $user)
-				{
-                                    $serv = isset($aUserRates[$user->id]) ? implode(', ', $aUserRates[$user->id]) : '';
-					$array_excel[] = [
-						$user->name,
-						$user->email,
-						$user->telefono,
-						$user->status ? 'ACTIVO' : 'NO ACTIVO',
-                                                $serv
-					];
-				}
-
-				$sheet->fromArray($array_excel,null,'A1',false,false); 
-
-			});
-                        
-		})->export('xls');
-
-	}
-        
-            
-    public function rateCharge(Request $request) {
-        $stripe = null;
-        $oUser = User::find($request->id_user);
-                
-        $card = null;
-        $paymentMethod = $oUser->paymentMethods()->first();
-        if ($paymentMethod){
-            $aux = $paymentMethod->toArray();
-            $card['brand'] = $aux['card']['brand'];
-            $card['exp_month'] = $aux['card']['exp_month'];
-            $card['exp_year'] = $aux['card']['exp_year'];
-            $card['last4'] = $aux['card']['last4'];
+        foreach ($users as $user) {
+          $serv = isset($aUserRates[$user->id]) ? implode(', ', $aUserRates[$user->id]) : '';
+          $array_excel[] = [
+              $user->name,
+              $user->email,
+              $user->telefono,
+              $user->status ? 'ACTIVO' : 'NO ACTIVO',
+              $serv
+          ];
         }
-        return view('admin.usuarios.clientes._rate_charge', [
-            'user'  => $oUser,
-            'rates' => Rates::orderBy('status', 'desc')->orderBy('name', 'asc')->get(),
-            'stripe'=> $stripe,
-            'card'  => $card
-        ]);
-    }
-    public function addNotes(Request $request) {
-        $uID = $request->input('uid');
-        $id = $request->input('id');
-        $note = $request->input('note');
-        $oNote = null;
-        if ($id>0) $oNote = UsersNotes::find($id);
-        if (!$oNote){
-            $oNote = new UsersNotes();
-            $oNote->id_coach   = Auth::user()->id;
-            $oNote->type   = Auth::user()->role;
-            $oNote->id_user	 = $uID;
-        }
-        
-        
-        $oNote->note = $note;
-        $oNote->save();
-        
-        return redirect('/admin/usuarios/informe/'.$uID.'/notes')->with(['success'=>'Nota Guardada']);
-    }
-    public function delNotes(Request $request) {
-        $uID = $request->input('uid');
-        $id = $request->input('id');
-        $oNote = UsersNotes::find($id);
-        if ($oNote){
-            if ($oNote->delete()){
-                return redirect('/admin/usuarios/informe/'.$uID.'/notes')->with(['success'=>'Nota eliminada']);
-            }
-        }
-                
-        return redirect('/admin/usuarios/informe/'.$uID.'/notes')->withErrors(['Nota no eliminada']);
-        
-    }
-    public function addSign(Request $request) {
-        $uID = $request->input('uid');
-        $sign = $request->input('sign');
-        $encoded_image = explode(",", $sign)[1];
-        $decoded_image = base64_decode($encoded_image);
-        $fileName = 'signs/'.$uID.'.png';
-        $path = storage_path('/app/' . $fileName);
 
-        $storage = Storage::disk('local');
-        $storage->put($fileName,$decoded_image);
+        $sheet->fromArray($array_excel, null, 'A1', false, false);
+      });
+    })->export('xls');
+  }
+
+  public function rateCharge(Request $request) {
+    $stripe = null;
+    $oUser = User::find($request->id_user);
+
+    $card = null;
+    $paymentMethod = $oUser->paymentMethods()->first();
+    if ($paymentMethod) {
+      $aux = $paymentMethod->toArray();
+      $card['brand'] = $aux['card']['brand'];
+      $card['exp_month'] = $aux['card']['exp_month'];
+      $card['exp_year'] = $aux['card']['exp_year'];
+      $card['last4'] = $aux['card']['last4'];
+    }
+    return view('admin.usuarios.clientes._rate_charge', [
+        'user' => $oUser,
+        'rates' => Rates::orderBy('status', 'desc')->orderBy('name', 'asc')->get(),
+        'stripe' => $stripe,
+        'card' => $card
+    ]);
+  }
+
+  public function addNotes(Request $request) {
+    $uID = $request->input('uid');
+    $id = $request->input('id');
+    $note = $request->input('note');
+    $oNote = null;
+    if ($id > 0)
+      $oNote = UsersNotes::find($id);
+    if (!$oNote) {
+      $oNote = new UsersNotes();
+      $oNote->id_coach = Auth::user()->id;
+      $oNote->type = Auth::user()->role;
+      $oNote->id_user = $uID;
+    }
+
+
+    $oNote->note = $note;
+    $oNote->save();
+
+    return redirect('/admin/usuarios/informe/' . $uID . '/notes')->with(['success' => 'Nota Guardada']);
+  }
+
+  public function delNotes(Request $request) {
+    $uID = $request->input('uid');
+    $id = $request->input('id');
+    $oNote = UsersNotes::find($id);
+    if ($oNote) {
+      if ($oNote->delete()) {
+        return redirect('/admin/usuarios/informe/' . $uID . '/notes')->with(['success' => 'Nota eliminada']);
+      }
+    }
+
+    return redirect('/admin/usuarios/informe/' . $uID . '/notes')->withErrors(['Nota no eliminada']);
+  }
+
+  public function addSign(Request $request) {
+    $uID = $request->input('uid');
+    $sign = $request->input('sign');
+    $encoded_image = explode(",", $sign)[1];
+    $decoded_image = base64_decode($encoded_image);
+    $fileName = 'signs/' . $uID . '.png';
+    $path = storage_path('/app/' . $fileName);
+
+    $storage = Storage::disk('local');
+    $storage->put($fileName, $decoded_image);
 //        file_put_contents("signature.png", $decoded_image);
-        return redirect('/admin/usuarios/informe/'.$uID.'/consent')->with(['success'=>'Firma Guardada']);
+    return redirect('/admin/usuarios/informe/' . $uID . '/consent')->with(['success' => 'Firma Guardada']);
+  }
+
+  function getSign($uid) {
+
+    $path = storage_path('/app/signs/' . $uid . '.png');
+    if (!File::exists($path)) {
+      abort(404);
     }
-    
-    function getSign($uid){
-      
-        $path = storage_path('/app/signs/'.$uid.'.png');
-        if (!File::exists($path)) {
-            abort(404);
-        }
 
-        $file = File::get($path);
-        $type = File::mimeType($path);
+    $file = File::get($path);
+    $type = File::mimeType($path);
 
-        $response = \Response::make($file, 200);
-        $response->header("Content-Type", $type);
+    $response = \Response::make($file, 200);
+    $response->header("Content-Type", $type);
 
-        return $response;
-    }
+    return $response;
+  }
+
 }

@@ -73,21 +73,17 @@
                         <?php
                         if (isset($uRates[$i][$user->id])):
                             foreach ($uRates[$i][$user->id] as $rate):
-                                $cobro = false;
-                                if(isset($uCobros[$i][$rate->charge])){
-                                    $cobro = $uCobros[$i][$rate->charge];
-                                }
+                            foreach ($rate as $r):
                                 ?>
-                                @if($cobro)
-                                <div class="label label-success btn-edit-cobro" data-toggle="modal" data-target="#modalCliente" data-rate="<?php echo $rate->id ?>" data-charge="{{$cobro->id}}">
-                                    {{$cobro->import}} €
-                                </div>
+                                @if($r['paid'])
+                                <div class="label label-success openEditCobro" data-id="<?php echo $r['cid'] ?>" data-appointment='<?php echo $r['appointment']; ?>'>
                                 @else
-                                <div class="label label-danger btn-cobro" data-toggle="modal" data-target="#modalCliente" data-idUser="<?php echo $user->id; ?>" data-dateCobro="{{$year.'-'.$auxMonth}}" data-import="{{$rate->price}}" data-rate="{{$rate->id}}">
-                                {{$rate->price}} €
-                                </div>	
+                                <div class="label label-danger openCobro" data-rate="<?php echo $r['id'] ?>" data-appointment='<?php echo $r['appointment']; ?>'>
                                 @endif
+                                {{moneda($r['price'])}}
+                                </div>	
                                 <?php
+                            endforeach;
                             endforeach;
                         endif;
                         ?>

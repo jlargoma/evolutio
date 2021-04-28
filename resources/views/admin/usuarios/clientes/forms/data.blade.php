@@ -62,8 +62,8 @@
                 <td class="text-center">
                   <?php
                   $empty = true;
-                  if (isset($uLstRates[$id][$key])) {
-                    $aux = $uLstRates[$id][$key];
+                  if (isset($uLstRates[$key][$id])) {
+                    $aux = $uLstRates[$key][$id];
                     $tAux = 0;
                     if (count($aux) > 0) {
                       $empty = false;

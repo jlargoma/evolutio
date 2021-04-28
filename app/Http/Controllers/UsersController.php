@@ -189,7 +189,7 @@ class UsersController extends Controller {
                 $uCoach = new \App\Models\CoachUsers();
                 $uCoach->id_user = $id;
             }
-                $uCoach->id_coach = intval($request->input('u_coach',-1));
+                $uCoach->id_coach = intval($request->input('u_coach',0));
                 $uCoach->save();
             /***************************************/
         }

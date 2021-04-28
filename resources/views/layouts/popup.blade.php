@@ -18,6 +18,7 @@
         <script src="{{ asset('/admin-css/assets/js/core/jquery.scrollLock.min.js') }}" ></script>
         <script src="{{ asset('/admin-css/assets/js/core/jquery.placeholder.min.js') }}" ></script>
         <script src="{{ asset('/admin-css/assets/js/core/js.cookie.min.js') }}" ></script>
+        <script src="{{ asset('/js/vendor/notify.min.js') }}" ></script>
         <script src="{{ asset('/admin-css/assets/js/app.js') }}" ></script>
         <script src="{{ asset('/admin-css/assets/js/custom.js') }}" ></script>
     </head>

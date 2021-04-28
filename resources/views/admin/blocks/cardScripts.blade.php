@@ -3,7 +3,6 @@
     $(document).ready(function () {
         $('#type_payment').change(function (e) {
             var value = $("#type_payment option:selected").val();
-            console.log(value);
             if (value == "card") {
                 var operation = $('input[type=radio][name=operation]:checked').val();
                 if (typeof operation == 'undefined'|| operation != 'stripe') {

@@ -55,8 +55,7 @@
           <option value=""> -- </option>
           <?php
           foreach ($aCoachs as $k => $v) {
-            $selected = ($k == $coachID) ? 'selected' : '';
-            echo '<option value="' . $k . '" ' . $selected . '>' . $v . '</option>';
+            echo '<option value="' . $k . '">' . $v . '</option>';
           }
           ?>
         </select>
