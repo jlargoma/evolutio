@@ -301,6 +301,7 @@ class ExpensesController extends Controller {
   <tr>
     <th>Fecha</th>
     <th>Tipo</th>
+    <th>Concepto</th>
     <th>Monto</th>
     <th>Met. Pago</th>
   </tr>
@@ -310,6 +311,7 @@ class ExpensesController extends Controller {
 <tr>
   <td><?php echo dateMin($i->date);?></td>
   <td><?php echo $aTypeLst[$i->type];?></td>
+  <td><?php echo $i->concept;?></td>
   <td><?php echo moneda($i->import);?></td>
   <td><?php echo $payType[$i->typePayment];?></td>
 </tr>
