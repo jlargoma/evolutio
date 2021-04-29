@@ -265,5 +265,59 @@ class ExpensesController extends Controller {
       return $response;
     }
   }
+  
+  
+  
+  function byType($type){
+    $year = getYearActive();
+    
+    $gTypeGroup = Expenses::getTypesGroup();
+    
+    $aTypeLst = Expenses::getTypes();
+    if (!isset($gTypeGroup['names'][$type])){
+      echo  '<p class="alert alert-warning">Sin Registros</p>';
+      return '';
+    }
+    ?>
+<h2>Registors de <?php echo $gTypeGroup['names'][$type];?></h2>
+<?php
+    $gTypeGroup = $gTypeGroup['groups'];
+    $auxTypes = [];
+    foreach ($gTypeGroup as $k=>$v){
+      if ($v == $type) $auxTypes[] = $k;
+    }
+    $payType = Expenses::getTypeCobro();
+    
+    $items = Expenses::whereYear('date', '=', $year)
+            ->whereIn('type',$auxTypes)->orderBy('date')->get();
+    if (count($items)== 0){
+      echo  '<p class="alert alert-warning">Sin Registros</p>';
+      return '';
+    }
+    
+ ?>
+
+<table class="table">
+  <tr>
+    <th>Fecha</th>
+    <th>Tipo</th>
+    <th>Monto</th>
+    <th>Met. Pago</th>
+  </tr>
+    <?php
+    foreach ($items as $i){
+      ?>
+<tr>
+  <td><?php echo dateMin($i->date);?></td>
+  <td><?php echo $aTypeLst[$i->type];?></td>
+  <td><?php echo moneda($i->import);?></td>
+  <td><?php echo $payType[$i->typePayment];?></td>
+</tr>
+      <?php
+    }
+     ?>
+</table>
+    <?php
+  }
 
 }

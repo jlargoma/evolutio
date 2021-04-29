@@ -45,24 +45,24 @@ class CustomerController extends Controller {
           $oDate = \App\Models\Dates::find($data[0]);
           $oUser = $oDate->user;
           $dateTime = strtotime($oDate->date);
-          $day = date('d', $dateTime) . ' de ' . getMonthSpanish(date('j', $dateTime));
+          $day = date('d', $dateTime) . ' de ' . getMonthSpanish(date('n', $dateTime),false);
           $hour = date('H:i', $dateTime);
           $oRate = $oDate->service;
           $oCoach = $oDate->coach;
           /** @Todo Controlar si ya está pagado */
-          $name = 'Pago de su cida de ';
+          $name = 'Pago de su cita de ';
           $items = [];
           if ($oDate->date_type == 'nutri') {
             $name .= ' Nutrición ';
-            $items[] = 'Nutricionista: ' . $oCoach->name;
+            $items[] = '<b>Nutricionista:</b> ' . $oCoach->name;
           }
           if ($oDate->date_type == 'fisio') {
             $name .= ' Fisioterapia ';
-            $items[] = 'Fisioterapeuta: ' . $oCoach->name;
+            $items[] = '<b>Fisioterapeuta:</b> ' . $oCoach->name;
           }
-          $items[] = 'Servicio: ' . $oRate->name;
-          $items[] = 'Fecha: ' . $day;
-          $items[] = 'Hora: ' . $hour;
+          $items[] = '<b>Servicio:</b> ' . $oRate->name;
+          $items[] = '<b>Fecha:</b> ' . $day;
+          $items[] = '<b>Hora:</b> ' . $hour;
 
           $amount = round($data[2]);
           break;
@@ -116,10 +116,10 @@ class CustomerController extends Controller {
         return redirect()->back()->withErrors(['Item no encontrado']);
         
         $dateTime = strtotime($oDate->date);
-        $day = date('d', $dateTime) . ' de ' . getMonthSpanish(date('j', $dateTime));
+        $day = date('d', $dateTime) . ' de ' . getMonthSpanish(date('n', $dateTime));
         $hour = date('H:i', $dateTime);
         $oRate = $oDate->service;
-        $name = 'Pago de su cida de ';
+        $name = 'Pago de su cita de ';
         $items = [];
         if ($oDate->date_type == 'nutri') {
           $name .= ' Nutrición ';

@@ -185,8 +185,7 @@ class DatesController extends Controller {
         $oUser = $oDates->user;
         $service = $oDates->service;
         $oRate = Rates::find($req->input('id_rate'));
-        $payType = $req->input('type');
-
+        $payType = $req->input('type_payment');
         if (!$oRate) {
             if ($ajax)
                 return "Tarifa no encontada";

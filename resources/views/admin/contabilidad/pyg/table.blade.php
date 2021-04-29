@@ -18,13 +18,12 @@
        <tbody>
          @foreach($crLst as $k1=>$v1)
           <tr>
-            <td class="static">{{$oRateTypes[$k1]}}</td>
+            <td class="static detail" data-t="i" data-id="{{$k1}}">{{$oRateTypes[$k1]}}</td>
             <td class="first-col"></td>
             <?php 
-            $sumMonthValue = sumMonthValue($v1);
-            $aux_i[0]+= $sumMonthValue;
+            $aux_i[0]+= $v1[0];
             ?>
-            <td><b>{{ moneda($sumMonthValue)}}</b></td>
+            <td><b>{{ moneda($v1[0])}}</b></td>
             @foreach($monts as $k=>$v)
             <?php $aux_i[$k]+= $v1[$k];?>
             <td>{{moneda($v1[$k])}}</td>
@@ -41,7 +40,7 @@
        </tbody>
        <thead>
         <tr>
-          <th class="static">Egresos</th>
+          <th class="static">Gastos</th>
           <th class="first-col"></th>
           <th class="">Total</th>
           @foreach($monts as $k=>$v)
@@ -52,7 +51,7 @@
        <tbody>
           @foreach($ggMonth as $k1=>$v1)
           <tr>
-            <td class="static">{{$ggNames[$k1]}}</td>
+            <td class="static detail" data-t="e" data-id="{{$k1}}">{{$ggNames[$k1]}}</td>
             <td class="first-col"></td>
             <?php 
             $sumMonthValue = sumMonthValue($v1);

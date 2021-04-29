@@ -7,8 +7,9 @@ function getPieChart(idDom, pieData) {
     legend: {
       labels: {
         fontSize: 11,
-        boxWidth: 15
-      }
+        boxWidth: 15,
+      },
+      position: 'right'
     },
     tooltips: {},
   }

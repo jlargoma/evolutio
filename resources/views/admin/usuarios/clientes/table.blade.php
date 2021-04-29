@@ -8,7 +8,7 @@
             <th class="text-center hidden-xs hidden-sm sorting_disabled">
                 <?php
                 $aux = ($month == 1) ? 12 : $month - 1;
-                echo $months[$aux] . ' (' . $year . ')';
+                echo $months[$aux];
                 ?>
                 <label class="text-danger">
                     (<?php echo $payments[0] ?>)
@@ -17,7 +17,7 @@
             <th class="text-center hidden-xs hidden-sm sorting_disabled">
                 <?php
                 $aux = $month;
-                echo $months[$aux] . ' (' . $year . ')';
+                echo $months[$aux];
                 ?>
                 <label class="text-danger">
                     (<?php echo $payments[1] ?>)
@@ -26,7 +26,7 @@
             <th class="text-center hidden-xs hidden-sm sorting_disabled">
                 <?php
                 $aux = ($month == 12) ? 1 : $month + 1;
-                echo $months[$aux] . ' (' . $year . ')';
+                echo $months[$aux];
                 ?>
                 <label class="text-danger">
                     (<?php echo $payments[2] ?>)

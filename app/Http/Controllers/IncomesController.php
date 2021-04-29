@@ -103,4 +103,52 @@ class IncomesController extends Controller {
     ]);
   }
 
+  function byRate($rateID){
+    $year = getYearActive();
+    $oType = \App\Models\TypesRate::find($rateID);
+    $servic = \App\Models\Rates::getByTypeRateID($rateID)
+            ->pluck('name', 'id')->toArray();
+    
+    ?>
+<h2>Registors de <?php echo $oType->name;?></h2>
+<?php
+    if (count($servic)== 0){
+      echo  '<p class="alert alert-warning">Sin Registros</p>';
+      return '';
+    }
+    $oCharges = Charges::whereYear('date_payment', '=', $year)
+            ->whereIn('id_rate', array_keys($servic))
+            ->orderBy('date_payment')->get();
+     
+    if (count($oCharges)== 0){
+      echo  '<p class="alert alert-warning">Sin Registros</p>';
+      return '';
+    }
+    
+    $pMeth = payMethod();
+    
+ ?>
+
+<table class="table">
+  <tr>
+    <th>Fecha</th>
+    <th>Servicio</th>
+    <th>Monto</th>
+    <th>Met. Pago</th>
+  </tr>
+    <?php
+    foreach ($oCharges as $c){
+      ?>
+<tr>
+  <td><?php echo dateMin($c->date_payment);?></td>
+  <td><?php echo $servic[$c->id_rate];?></td>
+  <td><?php echo moneda($c->import);?></td>
+  <td><?php echo isset($pMeth[$c->type_payment]) ? $pMeth[$c->type_payment] : 'Otro';?></td>
+</tr>
+      <?php
+    }
+     ?>
+</table>
+    <?php
+  }
 }

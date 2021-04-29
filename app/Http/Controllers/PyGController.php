@@ -58,6 +58,18 @@ class PyGController extends Controller {
       $crLst[$rateGr][$m] += $c->import;
     }
     $currentY['Ingresos'] = $aux;
+    
+    $tIncomes = 0;
+    foreach ($crLst as $k=>$v){
+        $t=0;
+        foreach ($v as $k1=>$v1){
+          if (is_numeric($k1)){
+            $t += $v1;
+          }
+        }
+        $crLst[$k][0] = $t;
+        $tIncomes += $t;
+    }
 
 
     /********************************************************** */
@@ -104,7 +116,8 @@ class PyGController extends Controller {
         'oRateTypes'=>$oRateTypes,
         'crLst'=>$crLst,
         'aux_i'=>$aux_i,
-        'aux_e'=>$aux_e
+        'aux_e'=>$aux_e,
+        'tIncomes'=>$tIncomes
   ]);
   }
 

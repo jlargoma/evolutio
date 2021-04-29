@@ -30,9 +30,9 @@ function sumMonthValue($m){
       <div class="box"><h2>Ingresos {{$year}}</h2><span>{{moneda($incomesYear[$year])}}</span></div>
     </div>
     <div class="col-md-4 col-xs-6">
-      <div class="box"><h2>Egresos {{$year}}</h2><span>{{moneda($expensesYear[$year])}}</span></div>
+      <div class="box"><h2>Gastos {{$year}}</h2><span>{{moneda($expensesYear[$year])}}</span></div>
     </div>
-    <div class="col-md-4 col-xs-6">
+    <div class="col-md-4 col-xs-12">
       <?php $result = $incomesYear[$year]-$expensesYear[$year]; ?>
       <div class="box">
         <h2>Resultado {{$year}}</h2>
@@ -44,15 +44,34 @@ function sumMonthValue($m){
           @endif
         </span></div>
     </div>
-    <div class="col-md-3 col-xs-6">
+    <div class="col-lg-3 col-md-6 col-xs-6 col-smal">
       <div class="box"><h2>Suscripciones activas</h2><span>{{$subscs}}</span></div>
-    </div>
-    <div class="col-md-3 col-xs-6">
       <div class="box"><h2>Clientes activos</h2><span>{{$uActivs}}</span></div>
     </div>
-    <div class="col-xs-4"></div>
+    <div class="col-lg-3 col-md-6 col-xs-6 chart_1">
+      <canvas id="chart_1" width="50" height="50"></canvas>
+    </div>
     <div class="col-xs-12">
 @include('admin.contabilidad.pyg.table')
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalInfo" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="block block-themed block-transparent remove-margin-b">
+        <div class="block-header bg-primary-dark">
+          <ul class="block-options">
+            <li>
+              <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+            </li>
+          </ul>
+        </div>
+        <div class="row block-content" id="contentModalInfo">
+
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -83,7 +102,15 @@ tfoot tr td {
     color: #FFF;
     font-size: 1.3em;
 }
+@media(min-width:430px) {
+  .chart_1{
+    margin-top: -55px;
+  }
+}
 @media(max-width:480px) {
+  .chart_1{width: 100%;}
+  .col-smal{width: 100%;}
+  .col-smal .box{width: 45%; float: left;margin: 2%;}
   .box {
     padding: 1em 0px;
     margin: 1em auto;

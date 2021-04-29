@@ -21,11 +21,41 @@ foreach ($currentY as $t => $monthData) {
   $ij++;
 }
 $tYearMonths = $aux;
+/***************************************/
+$labels_1 = [];
+$values_1 = [];
+$bColor_1 = [];
+$ij = 0;
+if ($crLst) {
+    foreach ($crLst as $k => $v) {
+      $valueAux = ($v[0]>0) ? round(($v[0]/$tIncomes)*100) : 0;
+      echo $valueAux.' - '.$tIncomes.'<br>';
+      $bColor_1[] = '"'.printColor($ij).'"';
+      $labels_1[] = "'$oRateTypes[$k]'";
+      $values_1[] = $valueAux;
+      $ij++;
+    }
+  }
+  
+//$tIncomes
+        
 ?>
 
 <script type="text/javascript">
 $(document).ready(function () {
 
+  var chart_1 = {
+        labels: [<?php echo implode(',',$labels_1)?>],
+        datasets: [
+          {
+            data: [<?php echo implode(',',$values_1)?>],
+            backgroundColor: [<?php echo implode(',',$bColor_1)?>],
+          }
+        ]
+      }
+    
+  getPieChart('chart_1',chart_1);
+    
   new Chart(document.getElementById("chartTotalByMonth"), {
     type: 'line',
     data: {
@@ -91,6 +121,23 @@ $(document).ready(function () {
   });
 
 
+$('.detail').on('click',function(){
+  if($(this).data('t') == 'i'){
+    $.get('/admin/ingreso-by-rate/'+$(this).data('id'), function (data) {
+      $('#contentModalInfo').html(data);
+      $('#modalInfo').modal('show');
+    });
+  }
+  if($(this).data('t') == 'e'){
+    $.get('/admin/gastos-by-byType/'+$(this).data('id'), function (data) {
+      $('#contentModalInfo').html(data);
+      $('#modalInfo').modal('show');
+    });
+  }
+  
+  
+  
+});
 
 
 });

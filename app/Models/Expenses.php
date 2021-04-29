@@ -69,14 +69,6 @@ class Expenses extends Model
   }
     
     
-  static function getListByRoom($start,$end,$roomID){
-    return self::where('date', '>=', $start)
-            ->Where('date', '<=', $end)
-            ->Where('PayFor', 'LIKE', '%' . $roomID. '%')       
-            ->orderBy('date', 'DESC')
-            ->get();
-  }
-  
   static function getTypesOrderned(){
     $types =  [
       'alquiler'=>"ALQUILER INMUEBLES",

@@ -135,10 +135,12 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
 Route::group(['middleware' => ['auth','admin'], 'prefix' => 'admin'], function () {
 
   /* Ingresos  rutas basicas */
-  Route::get('/ingresos', 'IncomesController@index');
   Route::get('/nuevo/ingreso', 'IncomesController@nuevo');
   Route::post('/ingresos/create', 'IncomesController@create');
   Route::get('/ingresos/{date?}', 'IncomesController@index');
+  Route::get('/ingreso-by-rate/{rateID}', 'IncomesController@byRate');
+  
+  Route::get('/ingresos', 'IncomesController@index');
 
   /* Gastos  rutas basicas */
 //  Route::get('/nuevo/gasto', 'ExpensesController@nuevo');
@@ -151,7 +153,7 @@ Route::group(['middleware' => ['auth','admin'], 'prefix' => 'admin'], function (
   Route::get('/gastos/getHojaGastosByRoom/{year?}/{id}', 'ExpensesController@getHojaGastosByRoom');
   Route::get('/gastos/containerTableExpensesByRoom/{year?}/{id}', 'ExpensesController@getTableExpensesByRoom');
   Route::post('/gastos/del', 'ExpensesController@gastosDel');
-  Route::get('/gastos/delete/{id}','RouterActionsController@gastos_delete');
+  Route::get('/gastos-by-byType/{typeID}', 'ExpensesController@byType');
   Route::get('/gastos/{year?}', 'ExpensesController@gastos');
   
   

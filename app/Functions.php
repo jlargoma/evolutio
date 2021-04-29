@@ -267,7 +267,7 @@ function payMethod($i = null){
     $lst = [
         'cash'=>'Efectivo',
         'card'=>'Tarjeta',
-        'banck'=>'Banco',
+        'banco'=>'Banco',
         ];
     
     if ($i){
