@@ -46,16 +46,49 @@ class DatesController extends Controller {
         $validated = $this->validate($request, [
             'date' => 'required',
             'id_rate' => 'required',
-            'id_user' => 'required',
             'id_coach' => 'required',
                 ], [
             'date.required' => 'Fecha requerida',
             'id_rate.required' => 'Tarifa requerida',
-            'id_user.required' => 'Usuario requerido',
             'id_coach.required' => 'Coach requerido',
         ]);
+        
         $ID = $request->input('idDate', null);
-        $id_user = $request->input('id_user');
+        
+        /*********************************************************************/
+        $id_user = $request->input('id_user',null);
+        $uEmail = $request->input('email');
+        $uPhone = $request->input('phone');
+        
+        if (!$id_user){
+          $issetUser = User::where('email',$uEmail)->first();
+          if ($issetUser) {
+            return redirect()->back()->withErrors(["email duplicado"])->withInput();
+          } else {
+            $oUser = new User();
+            $oUser->name = $request->input('u_name');
+            $oUser->email = $uEmail;
+            $oUser->password = str_random(60); //bcrypt($request->input('password'));
+            $oUser->remember_token = str_random(60);
+            $oUser->role = 'user';
+            $oUser->telefono = $uPhone;
+            $oUser->save();
+            $id_user = $oUser->id;
+          }
+        } else {
+          $oUser = User::find($id_user);
+          
+          if ($oUser && $oUser->email != $uEmail) {
+              $oUser->email = $uEmail;
+              $oUser->save();
+          }
+          if ($uPhone && $oUser->telefono != $uPhone) {
+              $oUser->telefono = $uPhone;
+              $oUser->save();
+          }
+        }
+        /*********************************************************************/
+        
         $id_coach = $request->input('id_coach');
         $oCarbon = Carbon::createFromFormat('d-m-Y H:00:00', $request->input('date') . " " . $request->input('hour') . ":00:00");
         $date = $oCarbon->format('Y-m-d H:i:00');
@@ -86,10 +119,6 @@ class DatesController extends Controller {
             }
         }
         /*         * *********************************************************** */
-
-
-
-
         if ($ID) {
             $oObj = Dates::find($ID);
         } else {
@@ -97,6 +126,7 @@ class DatesController extends Controller {
         }
         $type=$request->input('date_type');
         $oObj->id_rate = $request->input('id_rate');
+        $oObj->price = $request->input('importe');
         $oObj->id_user = $id_user;
         $oObj->id_coach = $id_coach;
         $oObj->date_type = $type;
@@ -108,36 +138,28 @@ class DatesController extends Controller {
             $oObj->updated_at = $date;
         }
         if ($oObj->save()) {
-            $oUser = User::find($oObj->id_user);
-            $uEmail = $request->input('email');
-            if ($oUser && $oUser->email != $uEmail) {
-                $oUser->email = $uEmail;
-                $oUser->save();
-            }
+           
 
             /*             * ************************************************************** */
             $timeCita = strtotime($oObj->date);
             $service = Rates::find($oObj->id_rate);
             $coach = User::find($oObj->id_coach);
 
-            $mailData = [
-                'dayCita' => getNameDay(date('w', $timeCita), false) . ' ' . date('d', $timeCita),
-                'monthCita' => getMonthSpanish(date('n', $timeCita), false),
-                'hourCita' => date('g A', $timeCita),
-                'service' => $service->name,
-                'coach' => $coach->name,
-                'user' => $oUser
-            ];
-//            return view('emails._create_cita', $mailData);
-
-            $sended = Mail::send('emails._create_cita', $mailData, function ($message) use ($uEmail) {
-                        $message->subject('Cita en Evolutio');
-                        $message->from('info@evolutio.fit', 'Evolutio');
-                        $message->to($uEmail);
-                    });
-
+            /******************************************/
+            //crear el pago
+            $pStripe = null;
+            $oRate = Rates::find($oObj->id_rate);
+            $importe = $oObj->price;
+            if (!$ID) {
+              $data = [$oObj->id,$oUser->id,$oObj->price*100,$oRate->id];
+              $sStripe = new \App\Services\StripeService();
+              $rType = \App\Models\TypesRate::find($oRate->type);
+              $pStripe = url($sStripe->getPaymentLink($rType->type,$data));
+            }
+        
+            /******************************************/
+            MailController::sendEmailPayDateByStripe($oObj, $oUser, $oRate,$coach,$pStripe,$importe);
             /*             * ************************************************************** */
-//            return redirect()->back();
           if ($type == 'nutri') return redirect('/admin/citas-nutricion/edit/'.$oObj->id);
           if ($type == 'fisio') return redirect('/admin/citas-fisioterapia/edit/'.$oObj->id);
         }
@@ -167,11 +189,7 @@ class DatesController extends Controller {
                 return redirect()->back()->with(['error' => 'Tarifa no encontada']);
         }
 
-        if ($payType == 'inv') { //invitado
-            $oDates->status = 1;
-            $oDates->charged = 2;
-        } else {
-            $value = $req->input('importe');
+            $value = $oDates->price;
             $idStripe=null;$cStripe=null;
             if ($payType == 'card'){
                  
@@ -253,7 +271,6 @@ class DatesController extends Controller {
             $oDates->status = 1;
             $oDates->charged = 1;
             $oDates->id_charges = $oCobro->id;
-        }
 
         if ($oDates->save()) {
             if ($ajax)

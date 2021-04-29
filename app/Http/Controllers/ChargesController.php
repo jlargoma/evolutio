@@ -122,10 +122,8 @@ class ChargesController extends Controller {
     }
 
     public function chargeUser(Request $req) {
-        
         $month = $req->input('date_payment', null);
-        $stripe_email = $req->input('stripe_email', null);
-        $operation = $req->input('operation', 'all');
+        $operation = $req->input('type', 'all');
         if ($month)
             $time = strtotime($month);
         else
@@ -135,9 +133,10 @@ class ChargesController extends Controller {
         $tpay = $req->input('type_payment','cash');
         $value = $req->input('importe', 0);
         $disc = $req->input('discount', 0);
+        $oUser = \App\Models\User::find($uID);
         /************************************************************/
         $resp = ['error','Error al procesar su cobro'];
-        if ($operation == 'all'){
+        if ($operation == 'all' || !$operation){
             $idStripe=null;$cStripe=null;
             if ($tpay == 'card'){
                  
@@ -146,7 +145,7 @@ class ChargesController extends Controller {
                 $cc_expide_yy = $req->input('cc_expide_yy', null);
                 $cc_cvc = $req->input('cc_cvc', null);
                 $cardLoaded = $req->input('cardLoaded', null);
-                $oUser = \App\Models\User::find($uID);
+                
                 $sStripe = new \App\Services\StripeService();
                 
                 /***********************************/
@@ -179,14 +178,18 @@ class ChargesController extends Controller {
                 $cStripe = $resp[2];
             }
             $resp = $this->generateePayment($time, $uID, $rID, $tpay, $value, $disc,$idStripe,$cStripe);
-        }
-        if ($operation == 'stripe'){
-          $oUser = \App\Models\User::find($uID);
-          if ($oUser->email != $stripe_email){
-            $oUser->email = $stripe_email;
+        } else {
+          $u_email = $req->input('u_email',null);
+          if ($u_email && $oUser->email != $u_email){
+            $oUser->email = $u_email;
             $oUser->save();
           }
-            $resp = $this->generateStripeLink($time, $uID, $rID, $tpay, $value, $disc);
+          $u_phone = $req->input('u_phone',null);
+          if ($u_phone && $oUser->telefono != $u_phone){
+            $oUser->telefono = $u_phone;
+            $oUser->save();
+          }
+          return $this->generateStripeLink($time, $uID, $rID, $tpay, $value, $disc,$operation);
         }
 
         if ($resp[0] == 'error') {
@@ -260,29 +263,13 @@ class ChargesController extends Controller {
             $disc = 0; //solo se factura el primer mes
         }
         //END PAYMENTS MONTH
-        
-        if ($tpay == "cash") {
-//                    $cashBox              = new \App\CashBox();
-//                    $cashBox->concept     = "COBRO DE TARIFA";
-//                    $cashBox->import      = (float) $oCobro->import;
-//                    $cashBox->date        = $month;
-//                    $cashBox->comment     = 'Cobro ' . $oRate->name . ' :' . $oUser->name;
-//                    $cashBox->type        = "INGRESO";
-//                    $cashBox->typePayment = "INGRESO CLIENTES";
-//
-//                    $oldBalance = \App\CashBox::orderBy('id', 'desc')->get();
-//                    $cashBox->balance = (float) $oldBalance[0]->balance + (float) $oCobro->import;
-//                    $cashBox->save();
-
-            }
-            
         $statusPayment = 'Pago realizado correctamente, por ' . payMethod($tpay);
         /*************************************************************/
         MailController::sendEmailPayRate($dataMail, $oUser, $oRate);
         return ['OK', $statusPayment,$oCobro->id];
     }
 
-    function generateStripeLink($time, $uID, $rID, $tpay, $importe, $disc=0,$idStripe=null,$cStripe=null) {
+    function generateStripeLink($time, $uID, $rID, $tpay, $importe, $disc=0,$operation) {
 
         $month = date('Y-m-d', $time);
         $oUser = \App\Models\User::find($uID);
@@ -293,11 +280,7 @@ class ChargesController extends Controller {
         $oRate = Rates::find($rID);
         if (!$oRate)
             return ['error', 'Tarifa no encontrada'];
-        $dataMail = [
-            'fecha_pago' => $month,
-            'type_payment' => $tpay,
-            'importe' => $importe,
-        ];
+     
         if(!$disc) $disc = 0;
         //BEGIN PAYMENTS MONTH
         $auxTime = $time;
@@ -323,10 +306,27 @@ class ChargesController extends Controller {
         $data = [date('Y', $time),date('m', $time),$uID,$importe*100,$rID,$disc];
         $sStripe = new \App\Services\StripeService();
         $pStripe = url($sStripe->getPaymentLink('rate',$data));
-        
-        $sent = MailController::sendEmailPayRateByStripe($dataMail, $oUser, $oRate,$pStripe);
-        if ($sent == 'OK') return ['OK', 'Se ha enviado un email con el link de pago'];
-        return ['error', $sent];
+        switch ($operation){
+          case 'mail':
+            $dataMail = [
+              'fecha_pago' => $month,
+              'type_payment' => $tpay,
+              'importe' => $importe,
+            ];
+            $sent = MailController::sendEmailPayRateByStripe($dataMail, $oUser, $oRate,$pStripe);
+            if ($sent == 'OK') return ['OK', 'Se ha enviado un email con el link de pago'];
+            return ['error', $sent];
+            break;
+               case 'wsp':
+                $msg = 'Te adjuntamos el enlace para el pago de **'.$oRate->name.'** en Evolutio '.$pStripe;
+                return response()->json(['OK',$msg]);
+                break;
+            case 'copy':
+                $msg = 'Te adjuntamos el enlace para el pago de '.$oRate->name.' en Evolutio '.$pStripe;
+                return response()->json(['OK',$msg]);
+                break;
+        }
+        return response()->json(['error','error']);
     }
 
     
@@ -405,7 +405,7 @@ class ChargesController extends Controller {
         }
         
         $coach = $oDate->coach;
-        $importe = ($request->input('importe'));
+        $importe = $oDate->price;
         $u_email = ($request->input('u_email'));
         $u_phone = ($request->input('u_phone'));
         $type = ($request->input('type'));
@@ -428,12 +428,11 @@ class ChargesController extends Controller {
         
         $data = [$dID,$oUser->id,$importe*100,$oRate->id];
         $sStripe = new \App\Services\StripeService();
-        $pStripe = url($sStripe->getPaymentLink('nutri',$data));
+        $rType = \App\Models\TypesRate::find($oRate->type);
+        $pStripe = url($sStripe->getPaymentLink($rType->type,$data));
         
         switch ($type){
             case 'mail':
-              
-                
                 MailController::sendEmailPayDateByStripe($oDate, $oUser, $oRate,$coach,$pStripe,$importe);
                 return response()->json(['OK', 'Se ha enviado un email con el link de pago']);
                 break;

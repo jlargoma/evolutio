@@ -38,7 +38,7 @@
 
 @section('headerButtoms')
 <li class="text-center">
-    <button id="newUser" class="btn btn-sm btn-success font-s16 font-w300" data-toggle="modal" data-target="#modal-newUser" style="padding: 10px 15px;">
+    <button id="newUser" class="btn btn-sm btn-success font-s16 font-w300" style="padding: 10px 15px;">
         <i class="fa fa-plus"></i> Cliente
     </button>
 </li>

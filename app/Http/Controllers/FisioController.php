@@ -178,12 +178,12 @@ class FisioController extends Controller {
             $oUser = $oDate->user()->first();
             if (!$oUser) die('Usuario eliminado');
             $oServicios = Rates::getByTypeRate('fisio');
-            $price = 0;
-            if ($oServicios){
-                foreach ($oServicios as $s)
-                    if($s->id == $oDate->id_rate)
-                        $price = $s->price;
-            }
+            $price = $oDate->price;
+//            if ($oServicios){
+//                foreach ($oServicios as $s)
+//                    if($s->id == $oDate->id_rate)
+//                        $price = $s->price;
+//            }
             
             $card = null;
             $paymentMethod = $oUser->paymentMethods()->first();

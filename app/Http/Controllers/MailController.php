@@ -67,10 +67,16 @@ class MailController extends Controller
 		$email       = $oUser->email;
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return $email.' no es un mail válido';
         
+        $rType = \App\Models\TypesRate::find($oRate->type);
+        $type = 'Nuevo Servicio';
+        if ($rType->type == 'fisio' || $rType->type == 'nutri'){
+          $type = 'Nueva Cita';
+        }
 		$sended = Mail::send('emails._payment_rateStripe', [
 			'user'        => $oUser,
 			'date'        => $date,
 			'rate'        => $oRate,
+			'type'        => $type,
 			'importe'     => $importe,
 			'pStripe'     => $pStripe
 		], function ($message) use ($email) {
@@ -86,7 +92,7 @@ class MailController extends Controller
 	{
             $email    = $oUser->email;
             $dateTime = strtotime($oDate->date);
-            $day = date('d',$dateTime).' de '.getMonthSpanish(date('j',$dateTime));
+            $day = date('d',$dateTime).' de '.getMonthSpanish(date('j',$dateTime),false);
             $hour = date('H:i',$dateTime);
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return $email.' no es un mail válido';
             $sended = Mail::send('emails._payment_citaStripe', [

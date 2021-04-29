@@ -41,6 +41,7 @@ class CustomerController extends Controller {
           $disc = $data[5];
           break;
         case 'nutri': //$dID,$oUser->id,$importe*100,$oRate->id;
+        case 'fisio': //$dID,$oUser->id,$importe*100,$oRate->id;
           $oDate = \App\Models\Dates::find($data[0]);
           $oUser = $oDate->user;
           $dateTime = strtotime($oDate->date);
@@ -53,11 +54,15 @@ class CustomerController extends Controller {
           $items = [];
           if ($oDate->date_type == 'nutri') {
             $name .= ' Nutrición ';
-            $items[] = 'Nutricionista:' . $oCoach->name;
-            $items[] = 'Servicio:' . $oRate->name;
-            $items[] = 'Fecha:' . $day;
-            $items[] = 'Hora:' . $hour;
+            $items[] = 'Nutricionista: ' . $oCoach->name;
           }
+          if ($oDate->date_type == 'fisio') {
+            $name .= ' Fisioterapia ';
+            $items[] = 'Fisioterapeuta: ' . $oCoach->name;
+          }
+          $items[] = 'Servicio: ' . $oRate->name;
+          $items[] = 'Fecha: ' . $day;
+          $items[] = 'Hora: ' . $hour;
 
           $amount = round($data[2]);
           break;
@@ -104,6 +109,7 @@ class CustomerController extends Controller {
         $disc = $data[5];
         break;
       case 'nutri': //$dID,$oUser->id,$importe*100,$oRate->id;
+      case 'fisio':
         $oDate = \App\Models\Dates::find($data[0]);
         /** @Todo Controlar si ya está pagado */
         if (!$oDate)
@@ -117,6 +123,9 @@ class CustomerController extends Controller {
         $items = [];
         if ($oDate->date_type == 'nutri') {
           $name .= ' Nutrición ';
+        }
+        if ($oDate->date_type == 'fisio') {
+          $name .= ' Fisioterapia ';
         }
         $name .= ' (' . $oRate->name . ') ';
         $name .= 'para el día ' . $day . ' a las ' . $hour . 'hrs';
@@ -147,6 +156,7 @@ class CustomerController extends Controller {
         );
         break;
       case 'nutri': //$dID,$oUser->id,$importe*100,$oRate->id;
+      case 'fisio':
         $oDate = \App\Models\Dates::find($data[0]);
         $response = ChargesController::savePaymentRate(
                         time(), $oDate->id_user, $oDate->id_rate,

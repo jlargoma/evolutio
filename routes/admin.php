@@ -28,6 +28,9 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
 //    Route::get('/usuarios/informe/{year}/{id}', 'UsersController@informe');
     Route::get('/usuarios/informe/{id}/{tab?}', 'UsersController@informe');
     
+    Route::get('/usuarios/nuevo', 'UsersController@newCustomer');
+    Route::post('/usuarios/nuevo', 'UsersController@saveCustomer');
+     
     /* Entrenadores */
     Route::get('/sendEmail/trainer/{id}', 'UsersController@sendEmailEntrenadores');
     Route::get('/horariosEntrenador/{id?}', 'UsersController@horarios');

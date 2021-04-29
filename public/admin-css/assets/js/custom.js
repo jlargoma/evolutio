@@ -24,4 +24,21 @@ $(document).ready(function () {
     $.notify(message,status,{ z_index: 1031}); 
     };
     
+    
+  window["detectMob"] =  function (){
+      const toMatch = [
+      /Android/i,
+      /webOS/i,
+      /iPhone/i,
+      /iPad/i,
+      /iPod/i,
+      /BlackBerry/i,
+      /Windows Phone/i
+      ];
+      //alert(navigator.userAgent);
+      return toMatch.some((toMatchItem) => {
+      return navigator.userAgent.match(toMatchItem);
+      });
+    }
+
 });

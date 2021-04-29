@@ -34,13 +34,13 @@ $('.openEditCobro').on('click', function (e) {
     e.preventDefault();
     var charge_id = $(this).data('charge');
     var rate_id = $(this).data('rate');
-    console.log(charge_id,rate_id);
     $('#ifrCliente').attr('src','/admin/update/cobro/' + charge_id);
   });
 
   $('#newUser').click(function (e) {
     e.preventDefault();
-    $('#content-new-user').empty().load('/admin/usuarios/new');
+    $('#ifrCliente').attr('src','/admin/usuarios/nuevo' );
+    $('#modalCliente').modal('show');
   });
 
   $('.btn-user').click(function (e) {

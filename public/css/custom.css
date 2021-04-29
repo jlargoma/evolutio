@@ -23,6 +23,7 @@ h3{
 .ml-1{margin-left: 1em;}
 .ml-2{margin-left: 2em;}
 .my-1{margin: 1em auto;}
+.my-2{margin: 2em auto;}
 #stripeBox{
     margin: 1em auto;
 }
@@ -239,6 +240,41 @@ div#card-element,
 div#cardExists {
     max-width: 320px;
 }
+
+.box-payment-btn, .box-payment-card{
+    border: 1px solid #afafaf;
+    padding: 3em 7px 7px 7px;
+    margin-top: 35px;
+    position: relative;
+}
+.box-payment-btn h4,
+.box-payment-card h4{
+  position: absolute;
+    top: -0.7em;
+    background-color: whitesmoke;
+    padding: 0px 10px;
+}
+.box-payment-btn .col-imput {
+    float: left;
+    width: 70%;
+    position: relative;
+    padding-left: 15px;
+}
+.stripeAction{
+    float: left;
+    margin-top: 25px;
+    padding-left: 0;
+    width: 25%;
+    overflow: hidden;
+}
+
+input#importeFinal {
+    font-weight: bold;
+    font-size: 1.4em;
+    color: #1b4b8c;
+    box-shadow: 1px 1px 0px 3px #1b4b8c;
+}
+
 
 @media(max-width:991px) {
   .table-fixed th.static{

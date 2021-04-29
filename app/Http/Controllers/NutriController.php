@@ -178,12 +178,7 @@ class NutriController extends Controller {
             $oUser = $oDate->user()->first();
             if (!$oUser) die('Usuario eliminado');
             $oServicios = Rates::getByTypeRate('nutri');
-            $price = 0;
-            if ($oServicios){
-                foreach ($oServicios as $s)
-                    if($s->id == $oDate->id_rate)
-                        $price = $s->price;
-            }
+            $price = $oDate->price;
             
             $card = null;
             $paymentMethod = $oUser->paymentMethods()->first();
