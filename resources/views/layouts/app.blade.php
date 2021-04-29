@@ -38,7 +38,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('/admin-css/assets/img/favicons/apple-touch-icon-180x180.png') }}">
   </head>
   <body>
-    <div class="section nopadding nomargin" style="width: 100%; height: 100%; position: absolute; left: 0; top: 0; background: url('{{ asset('assets/login.jpg') }}') center center no-repeat; background-size: cover;"></div>
+    <div class="fondo"></div>
 
     <div class="container">
       <div class="content-box">
@@ -47,6 +47,9 @@
       </div>
     </div>
     <style>
+      .fondo{
+        width: 100%; height: 100%; position: fixed; left: 0; top: 0; background: url('{{ asset('assets/login.jpg') }}') center center no-repeat; background-size: cover; 
+      }
       .panel.divcenter{
         margin: 6em auto; background-color: rgba(255,255,255,0.93);
       }
