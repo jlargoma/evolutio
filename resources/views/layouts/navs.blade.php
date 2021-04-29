@@ -30,6 +30,11 @@ $uRole = Auth::user()->role;
               <i class="fa fa-calendar-o"></i><span class="sidebar-mini-hide font-w600">FISIOTERAPIA</span>
           </a>
       </li>
+      <li class="{{ (str_contains($path,'citas-pt')) ? 'active' : '' }}">
+          <a href="{{ url('/admin/citas-pt') }}" >
+              <i class="fa fa-calendar-o"></i><span class="sidebar-mini-hide font-w600">P.T.</span>
+          </a>
+      </li>
       <li class="{{ str_contains($path,'admin/entrenadores') ? 'active' : '' }}">
           <a href="{{ url('/admin/entrenadores/activos') }}" >
               <i class="fa fa-hand-rock-o"></i><span class="sidebar-mini-hide font-w600">Entrenadores</span>

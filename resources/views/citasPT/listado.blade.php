@@ -1,11 +1,11 @@
 @extends('layouts.admin-master')
 
-@section('title') Citas Fisioterapia Evolutio HTS @endsection
-@section('headerTitle') Citas Fisioterapia @endsection
+@section('title') Citas Entrenador Personal -  Evolutio HTS @endsection
+@section('headerTitle') Citas Entrenador Personal @endsection
 @section('headerButtoms')
 <button type="button" class="btn btn-success addDate" data-date="{{time()}}" data-time="8">
     <i class="fa fa-plus-circle"></i></button>
-    <a href="/admin/citas-fisioterapia/" class="btn btn-success" style="float: right; margin-left: 3px;">Calendario</a>
+    <a href="/admin/citas-pt/" class="btn btn-success" style="float: right; margin-left: 3px;">Calendario</a>
 @endsection
 @section('externalScripts')
 <link rel="stylesheet" href="{{ asset('admin-css/assets/js/plugins/datatables/jquery.dataTables.min.css') }}">
@@ -63,19 +63,18 @@
                     
                 </div>
                 </div>
-                 @include('fisioterapia.tabla')
+                 @include('citasPT.tabla')
             </div>
 	</div>
 </div>
-    @include('fisioterapia.modals')
+    @include('citasPT.modals')
 @endsection
 
 @section('scripts')
 <link rel="stylesheet" href="{{ asset('css/calendars.css') }}">
 
 <style>
-
-   @foreach($tColors as $k=>$v)
+  @foreach($tColors as $k=>$v)
     ul.coachsFilter li.select_{{$k}} {
             background-color: {{$v}};
             color: #FFF;
@@ -100,21 +99,20 @@ $('.addDate').click(function(event){
     event.preventDefault();
     dateForm = $(this).data('date');
     timeForm = $(this).data('time');
-    $('#ifrModal').attr('src','/admin/citas-fisioterapia/create/'+dateForm+'/'+timeForm);
+    $('#ifrModal').attr('src','/admin/citas-pt/create/'+dateForm+'/'+timeForm);
     $('#modalIfrm').modal();
 });
-
 $('.coachsFilter').on('click','li',function(event){
     event.preventDefault();
     var coach = $(this).data('val');
     var type = $('#selectType').val();
-    location.assign("/admin/citas-fisioterapia/listado/"+coach+"/"+type);
+    location.assign("/admin/citas-pt/listado/"+coach+"/"+type);
 });
 $('#selectType').on('change',function(event){
     event.preventDefault();
     var type = $('#selectType').val();
     var coach = $('#coachsFilter').val();
-    location.assign("/admin/citas-fisioterapia/listado/"+coach+"/"+type);
+    location.assign("/admin/citas-pt/listado/"+coach+"/"+type);
 });
 
 $('#modal_newUser').on('submit','#form-new',function(event){
@@ -125,7 +123,7 @@ $('#modal_newUser').on('submit','#form-new',function(event){
     // Send the data using post
     var posting = $.post( url, $form.serialize() ).done(function( data ) {
         if (data == 'OK'){
-            $('#content-add-date').load('/admin/citas-fisioterapia/create/'+dateForm+'/'+timeForm);
+            $('#content-add-date').load('/admin/citas-pt/create/'+dateForm+'/'+timeForm);
             $('#modal_newUser').modal('hide');
             $('#modal-add-date').modal();
         } else {

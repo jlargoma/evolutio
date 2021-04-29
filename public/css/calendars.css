@@ -19,6 +19,10 @@
 .table-calendar tbody td.editDate{
     max-width: 0px !important;
 }
+.table-calendar tbody td.editDate.not{
+    max-width: auto !important;
+    width:10%;
+}
 
 .table-calendar tbody td.editDate div {
     max-width: 100px;

@@ -126,7 +126,7 @@ class DatesController extends Controller {
         }
         $type=$request->input('date_type');
         $oObj->id_rate = $request->input('id_rate');
-        $oObj->price = $request->input('importe');
+        $oObj->price = $request->input('importe',0);
         $oObj->id_user = $id_user;
         $oObj->id_coach = $id_coach;
         $oObj->date_type = $type;
@@ -139,7 +139,12 @@ class DatesController extends Controller {
         }
         if ($oObj->save()) {
            
-
+          if ($type == 'pt'){
+            $oObj->charged = 1;
+            $oObj->status = 1;
+            $oObj->save();
+            return redirect('/admin/citas-pt/edit/'.$oObj->id);
+          }
             /*             * ************************************************************** */
             $timeCita = strtotime($oObj->date);
             $service = Rates::find($oObj->id_rate);

@@ -87,7 +87,7 @@ trait EntrenadoresTraits {
     public function horarios($id = null) {
         
         
-        $aUsers = User::whereIn('role',['fisio','nutri'])->orderBy('name')->pluck('name','id')->toArray();
+        $aUsers = User::whereIn('role',['fisio','nutri','teach'])->orderBy('name')->pluck('name','id')->toArray();
         /******************************************************/
         $days = listDaysSpanish(false);
         $horarios = [];

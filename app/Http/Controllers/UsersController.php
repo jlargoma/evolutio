@@ -170,6 +170,10 @@ class UsersController extends Controller {
     return ['', ''];
 //        return ($oUser) ? $oUser->email : '';
   }
+  public function getRates($id) {
+    $aLst = UserRates::where('id_user',$id)->pluck('id_rate')->toArray();
+    return response()->json(array_unique($aLst));
+  }
 
   public function getList() {
     return \App\User::where('role', 'user')

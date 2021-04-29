@@ -240,15 +240,16 @@ class FisioController extends Controller {
     public function listado($coach = 0, $type = 0) {
 
         $year = getYearActive();
+        $month = null;
         /**************************************************** */
-        $servic = TypesRate::where('type', 'fisio')->pluck('name', 'id');
+        $servic = Rates::getByTypeRate('fisio')->pluck('name', 'id');
         /**************************************************** */
         $aLst = [];
         $aUser = $uIDs = [];
         $sql = Dates::where('date_type', 'fisio')
                 ->whereYear('date', '=', $year);
         if ($type && $type != 0)
-            $sql->where('id_type_rate', $type);
+            $sql->where('id_rate', $type);
         if ($coach && $coach > 0)
             $sql->where('id_coach', $coach);
 

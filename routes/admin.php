@@ -15,6 +15,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
     Route::get('/clientes/generar-cobro/{rate}', 'UsersController@clienteRateCharge');
     Route::get('/clientes/{month?}', 'UsersController@clientes');
     Route::get('/get-mail/{id?}', 'UsersController@getMail');
+    Route::get('/get-rates/{id?}', 'UsersController@getRates');
 //    Route::get('/get-list', 'UsersController@getList');
     Route::get('/clientes-export', 'UsersController@exportClients');
     Route::get('/clientes-unassigned/{idUserRate}', 'RatesController@unassignedRate');
@@ -63,19 +64,11 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
     /* Citas */
 
     Route::get('/citas/create/createSchedules', 'DatesController@createSchedules');
-//    Route::get('/citas/create/createSchedules', 'DatesController@createSchedules');
-//    Route::post('/citas/charged/charge', 'DatesController@charge');
-//    Route::get('/citas/crear/nuevo', 'DatesController@nueva');
     Route::get('/citas/delete/{id}', 'DatesController@delete');
     Route::post('/citas/create', 'DatesController@create');
     Route::post('/citas/createAdvanced', 'DatesController@createAdvanced');
     Route::post('/citas/chargeAdvanced', 'DatesController@chargeAdvanced');
     Route::get('/citas/charge', 'DatesController@chargeDate');
-//    Route::get('/citas/getForm/cita/{id}', 'DatesController@getForm');
-//    Route::get('/citas/_dates/{week?}', 'DatesController@dates');
-//    Route::get('/citas/{month?}', 'DatesController@index');
-//    Route::get('/citas/form/inform/create/{id}/{type}', 'DatesController@informeCreateFrom');
-
     /* Citas fisioterapia */
     Route::get('/citas-fisioterapia/listado/{coach?}/{type?}', 'FisioController@listado');
     Route::get('/citas-fisioterapia/create/{date?}/{time?}', 'FisioController@create');
@@ -89,6 +82,12 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
     Route::post('/nutricion/nutri/upload', 'NutriController@uploadFile');
     Route::get('/citas-nutricion/edit/{id}', 'NutriController@edit');
     Route::get('/citas-nutricion/{month?}/{coach?}/{type?}', 'NutriController@index');
+    /* Citas personalTrainer */
+    Route::get('/citas-pt/listado/{coach?}/{type?}', 'PTController@listado');
+    Route::get('/citas-pt/create/{date?}/{time?}', 'PTController@create');
+//    Route::get('/citas-pt/informe-nutricion/{id}', 'NutriController@informe');
+    Route::get('/citas-pt/edit/{id}', 'PTController@edit');
+    Route::get('/citas-pt/{month?}/{coach?}/{type?}', 'PTController@index');
 
     /* Tarifas */
     Route::get('/tarifas/listado', 'RatesController@index');

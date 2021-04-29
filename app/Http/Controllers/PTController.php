@@ -12,7 +12,7 @@ use App\Models\Rates;
 use App\Models\CoachTimes;
 use App\Models\TypesRate;
 
-class NutriController extends Controller {
+class PTController extends Controller {
 
     /**
      * Display a listing of the resource.
@@ -29,10 +29,10 @@ class NutriController extends Controller {
         $times = [];
 
         /**************************************************** */
-        $servic = Rates::getByTypeRate('nutri')->pluck('name', 'id');
+        $servic = Rates::getByTypeRate('pt')->pluck('name', 'id');
         /**************************************************** */
         $aLst = [];
-        $sql = Dates::where('date_type', 'nutri')
+        $sql = Dates::where('date_type', 'pt')
                 ->where('date', '>=', date('Y-m-d', $start))
                 ->where('date', '<=', date('Y-m-d', $finish));
         if ($type && $type != 0)
@@ -84,7 +84,7 @@ class NutriController extends Controller {
                 $aMonths[$year . '-' . str_pad($k, 2, "0", STR_PAD_LEFT)] = $v;
         }
         /*         * *************************************************** */
-        $coachs = User::where('role', 'nutri')->where('status', 1)->get();
+        $coachs = User::where('role', 'teach')->where('status', 1)->get();
         $tColors = [];
         if ($coachs) {
             $auxColors = colors();
@@ -106,7 +106,6 @@ class NutriController extends Controller {
             'aMonths' => $aMonths,
             'year' => $year,
             'month' => $month,
-            'type' => $type,
             'types' => $servic,
             'tColors' => $tColors,
             'coachs' => $coachs,
@@ -114,7 +113,7 @@ class NutriController extends Controller {
             'times' => $times,
         ];
 
-        return view('nutricion.index', $rslt);
+        return view('citasPT.index', $rslt);
     }
 
     /**
@@ -127,7 +126,7 @@ class NutriController extends Controller {
         if (!$date)
             $date = time();
 
-        return view('nutricion.form', [
+        return view('citasPT.form', [
             'date' => date('d-m-Y', $date),
             'time' => $time,
             'id_serv' => -1,
@@ -139,9 +138,9 @@ class NutriController extends Controller {
             'id' => -1,
             'charged' => 0,
             'price' => 0,
-            'services' => Rates::getByTypeRate('nutri'),
+            'services' => Rates::getByTypeRate('pt'),
             'users' => User::where('role', 'user')->where('status', 1)->orderBy('name', 'ASC')->get(),
-            'coachs' => User::where('role', 'nutri')->where('status', 1)->get()
+            'coachs' => User::where('role', 'teach')->where('status', 1)->get()
         ]);
     }
 
@@ -177,9 +176,8 @@ class NutriController extends Controller {
             $date = explode(' ', $oDate->date);
             $oUser = $oDate->user()->first();
             if (!$oUser) die('Usuario eliminado');
-            $oServicios = Rates::getByTypeRate('nutri');
+            $oServicios = Rates::getByTypeRate('pt');
             $price = $oDate->price;
-            
             $card = null;
             $paymentMethod = $oUser->paymentMethods()->first();
             if ($paymentMethod){
@@ -190,7 +188,7 @@ class NutriController extends Controller {
                 $card['last4'] = $aux['card']['last4'];
             }
         
-            return view('nutricion.form', [
+            return view('citasPT.form', [
                 'date' => date('d-m-Y', strtotime($date[0])),
                 'time' => intval($date[1]),
                 'id_serv' => $oDate->id_rate,
@@ -204,7 +202,7 @@ class NutriController extends Controller {
                 'charged' => $oDate->charged,
                 'services' => $oServicios,
                 'users' => User::where('role', 'user')->where('status', 1)->orderBy('name', 'ASC')->get(),
-                'coachs' => User::where('role', 'nutri')->where('status', 1)->get()
+                'coachs' => User::where('role', 'teach')->where('status', 1)->get()
             ]);
         } else {
             return $this->create();
@@ -237,11 +235,11 @@ class NutriController extends Controller {
         $year = getYearActive();
         $month = null;
         /**************************************************** */
-        $servic = Rates::getByTypeRate('nutri')->pluck('name', 'id');
+        $servic = Rates::getByTypeRate('pt')->pluck('name', 'id');
         /**************************************************** */
         $aLst = [];
         $aUser = $uIDs = [];
-        $sql = Dates::where('date_type', 'nutri')
+        $sql = Dates::where('date_type', 'pt')
                 ->whereYear('date', '=', $year);
         if ($type && $type != 0)
             $sql->where('id_rate', $type);
@@ -271,7 +269,7 @@ class NutriController extends Controller {
         $lstMonts = lstMonthsSpanish();
 
         /**************************************************** */
-        $coachs = User::where('role', 'nutri')->where('status', 1)->get();
+        $coachs = User::where('role', 'teach')->where('status', 1)->get();
         $tColors = [];
         if ($coachs) {
             $auxColors = colors();
@@ -300,18 +298,18 @@ class NutriController extends Controller {
             'oUsers' => $oUsers,
         ];
 
-        return view('nutricion.listado', $rslt);
+        return view('citasPT.listado', $rslt);
     }
 
     public function informe($uID) {
         $year = getYearActive();
         $user = User::find($uID);
-        $servic = TypesRate::where('type', 'nutri')->pluck('name', 'id');
-        $coachs = User::where('role', 'nutri')->pluck('name', 'id');
+        $servic = TypesRate::where('type', 'pt')->pluck('name', 'id');
+        $coachs = User::where('role', 'pt')->pluck('name', 'id');
         $lstMonts = lstMonthsSpanish();
         /**************************************************** */
         $aLst = [];
-        $oLst = Dates::where('date_type', 'nutri')
+        $oLst = Dates::where('date_type', 'pt')
                 ->where('id_user', $uID)
                 ->whereYear('date', '=', $year)
                 ->orderBy('date')->get();
@@ -347,7 +345,7 @@ class NutriController extends Controller {
             sort($lstRates);
         }
         /**************************************************** */
-        return view('nutricion.informe', [
+        return view('citasPT.informe', [
             'user' => $user,
             'aLst' => $aLst,
             'lstRates' => $lstRates,
@@ -368,9 +366,9 @@ class NutriController extends Controller {
         // echo $storage_path . basename( $_FILES['uploadedfile']['name']);
         $directory = $directory . basename($_FILES['uploadedfile']['name']);
         if (move_uploaded_file($_FILES['uploadedfile']['tmp_name'], $directory)) {
-            return redirect()->action('NutriController@index');
+            return redirect()->action('FisioController@index');
         } else {
-            return redirect()->action('NutriController@index');
+            return redirect()->action('FisioController@index');
         }
     }
 

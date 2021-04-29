@@ -74,13 +74,17 @@
 <link rel="stylesheet" href="{{ asset('css/calendars.css') }}">
 
 <style>
-
-    @foreach($tColors as $k=>$v)
+  @foreach($tColors as $k=>$v)
     ul.coachsFilter li.select_{{$k}} {
-            border-bottom: 5px solid {{$v}};
-            border-top: 5px solid {{$v}};
+            background-color: {{$v}};
+            color: #FFF;
         }
+    .eventType_{{$k}} {background-color: {{$v}};}
     @endforeach
+    .time.not{
+        background-color: #ddd;
+        border-color: #c1c1c1 !important;
+    }
 </style>
 <script src="{{asset('/admin-css/assets/js/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
 <script src="{{asset('/admin-css/assets/js/plugins/select2/select2.full.min.js')}}"></script>
@@ -95,9 +99,10 @@ $('.addDate').click(function(event){
     event.preventDefault();
     dateForm = $(this).data('date');
     timeForm = $(this).data('time');
-    $('#content-add-date').load('/admin/citas-nutricion/create/'+dateForm+'/'+timeForm);
-    $('#modal-add-date').modal();
+    $('#ifrModal').attr('src','/admin/citas-nutricion/create/'+dateForm+'/'+timeForm);
+    $('#modalIfrm').modal();
 });
+
 $('.coachsFilter').on('click','li',function(event){
     event.preventDefault();
     var coach = $(this).data('val');
