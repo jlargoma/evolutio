@@ -27,6 +27,7 @@
         cursor: pointer;
     }
 
+    .openUser{cursor: pointer}
     .no-pay{
         color: #c54b4b;
         font-weight: bold;

@@ -46,7 +46,7 @@
                     </label>
                 </td>
                 <td class="text-justify"> 
-                    <a  class="btn-user" data-toggle="modal" data-target="#modalCliente" data-idUser="<?php echo $user->id; ?>" type="button" data-toggle="tooltip" title="" data-type="user" data-original-title="Editar user" ><b><?php echo $user->name; ?></b></a>
+                    <a  class="openUser" data-id="<?php echo $user->id; ?>"  data-type="user" data-original-title="Editar user" ><b><?php echo $user->name; ?></b></a>
                 </td>
                 <td class="text-center">
                     <span class="hidden-xs hidden-sm"><?php echo $user->telefono; ?></span>

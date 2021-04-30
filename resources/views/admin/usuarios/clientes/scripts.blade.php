@@ -43,11 +43,11 @@ $('.openEditCobro').on('click', function (e) {
     $('#modalCliente').modal('show');
   });
 
-  $('.btn-user').click(function (e) {
+  $('#containerTableResult').on('click','.openUser',function (e) {
     e.preventDefault();
-    var id = $(this).attr('data-idUser');
+    var id = $(this).data('id');
     $('#ifrCliente').attr('src','/admin/usuarios/informe/' + id);
-
+    $('#modalCliente').modal('show');
   });
 
   $('.btn-rate-charge').click(function (e) {

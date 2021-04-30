@@ -15,3 +15,12 @@ use Illuminate\Support\Facades\Route;
 
 include_once 'admin.php';
 include_once 'customer.php';
+
+Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
+  Route::get('/import/{tipe}', function($tipe){
+    $oServc = new \App\Services\temps\ImportCustomers();
+    $oServc->import($tipe);
+  });
+  
+});
+

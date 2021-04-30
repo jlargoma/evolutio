@@ -41,7 +41,8 @@ trait ClientesTraits {
     /*     * **************************************************** */
     $aRates = [];
     $typeRates = TypesRate::whereIn('type', ['gral', 'pt'])->pluck('id');
-    $oRates = Rates::whereIn('type', $typeRates)->get();
+    $oRates = Rates::all();
+//    $oRates = Rates::whereIn('type', $typeRates)->get();
     $rPrices = [];
     if ($oRates) {
       foreach ($oRates as $r) {

@@ -9,14 +9,28 @@ $linea = 0;
 //$archivo = fopen("BBDD_CLIENTES_EVOLUTIO.csv", "r");
 $archivo = fopen("BBDD.csv", "r");
 $data = [];
+$start = true;
+
+$monts = ['','ene'=>'01','feb'=>'02','mar'=>'03','abr'=>'04'];
 while (($datos = fgetcsv($archivo, ",")) == true) 
 {
+  if ($start){
+    $start = false;
+    continue;
+  }
   $num = count($datos);
   $linea++;
+  $date = trim($datos[1]);
+  $aDate = explode('/', $date);
   
-  $data[] = '("'.$datos[1].'", "'.$datos[2].'", "'.$datos[3].'", "'.$datos[4].'")';
+  $month = $monts[$aDate[1]];
+  $date = '2021-'.$month.'-'.$aDate[0];
+  $name = trim($datos[0]);
+  $price = intval($datos[3]);
+  $email = str_replace(' ','_', $name).'@evolutio.fit';
+  $data[] = '("'.$name.'","'.$email.'", "'.$date.'", "'.$datos[2].'", "'.$price.'", "'.$datos[4].'", "'.$datos[5].'", "'.$datos[6].'")';
   if ($linea>100){
-    echo "INSERT INTO `0_Temp_users` (`name`, `email`, `tel`, `estado`) VALUES ";
+    echo "INSERT INTO `0_temp_users2` (`name`,email, `date`, `tpay`, `price`, `rate`,rate_t, `coach`) VALUES ";
     echo implode(',', $data);
     echo  ";<br/><br/>";
     $linea = 0;
@@ -25,7 +39,7 @@ while (($datos = fgetcsv($archivo, ",")) == true)
 
 }
 
-echo "INSERT INTO `0_Temp_users` (`name`, `email`, `tel`, `estado`) VALUES ";
+echo "INSERT INTO `0_temp_users2` (`name`,email, `date`, `tpay`, `price`, `rate`,rate_t, `coach`) VALUES ";
 echo implode(',', $data);
  echo  ';';
 
