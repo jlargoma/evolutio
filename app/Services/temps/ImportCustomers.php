@@ -7,6 +7,8 @@ use App\Models\User;
 /*
  * UPDATE `0_temp_users2`  SET user_id = null;
 UPDATE `0_temp_users2`  SET user_id = (SELECT users.id FROM users WHERE users.name = `0_temp_users2`.`name`)
+ * 
+ * /admin/import/updRates
  */
 class ImportCustomers {
 
@@ -21,6 +23,8 @@ class ImportCustomers {
         break;
       case 'rates':
         $this->loadRates();
+      case 'updRates':
+        $this->updRates();
         break;
     }
   }
@@ -90,7 +94,27 @@ class ImportCustomers {
       $newRate->save();
       
     }
-    
   }
+    
+    function updRates(){
+      $cutomers = DB::table('0_temp_users2')->get();
+      $tRates = \App\Models\Rates::pluck('type','id')->toArray();
+      foreach ($cutomers as $c){
+        $month = date('n', strtotime($c->date));
+        if ($month != 4)          continue;
+        $year = date('Y', strtotime($c->date));
+        
+        $oRate = \App\Models\UserRates::where('id_user',$c->user_id)
+                ->where('id_rate',$c->rate_id)
+                ->where('rate_month',$month)
+                ->where('rate_year',$year)->first();
+        if ($oRate){
+          $oRate->price = $c->price;
+          $oRate->save();
+        }
+        
+      }
+    }
+  
   
 }

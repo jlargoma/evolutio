@@ -35,7 +35,7 @@
         <div class="col-md-8">
           <label for="importeFinal">Total:</label>
           <input id="importeFinal" type="text" name="importe" class="form-control"
-                 value="<?php echo $rate->price; ?>"/>
+                 value="<?php echo $importe; ?>"/>
         </div>
         @include('admin.blocks.stripe-actions')
         <div class="col-md-12 mt-2 text-center">

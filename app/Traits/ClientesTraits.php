@@ -125,7 +125,7 @@ trait ClientesTraits {
         } else {
           $noPay += $rPrices[$idRate];
           $uLstRates[$idUser][$idRate][] = [
-              'price' => $rPrices[$idRate],
+              'price' => ($v->price == null) ? $rPrices[$idRate]:$v->price,
               'id' => $v->id,
               'paid' => false,
               'cid' => -1,
@@ -163,7 +163,7 @@ trait ClientesTraits {
     return view('/admin/usuarios/clientes/cobro', [
         'rate' => $oRates,
         'user' => $oUser,
-        'importe' => $oRates->price,
+        'importe' => ($uRates->price == null) ? $oRates->price : $uRates->price,
         'year' => $uRates->rate_year,
         'month' => $uRates->rate_month,
         'pStripe' => $pStripe,
@@ -275,6 +275,7 @@ trait ClientesTraits {
     $oObj->id_rate = $rID;
     $oObj->rate_year = date('Y');
     $oObj->rate_month = date('m');
+    $oObj->price = $oRate->price;
     $oObj->save();
 
     $oObj = new \App\Models\UsersSuscriptions();

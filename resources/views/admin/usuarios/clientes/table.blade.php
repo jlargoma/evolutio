@@ -5,7 +5,7 @@
             <th class="text-center">Nombre<br></th>
             <th class="text-center sorting_disabled">Tel<span class="hidden-xs hidden-sm">éfono</span><br></th>
             <th class="text-center hidden-xs hidden-sm sorting_disabled">Entrenador<br></th>
-            <th class="text-center hidden-xs hidden-sm sorting_disabled">
+            <th class="text-center hidden-xs hidden-sm">
                 <?php
                 $aux = ($month == 1) ? 12 : $month - 1;
                 echo $months[$aux];
@@ -14,7 +14,7 @@
                     (<?php echo $payments[0] ?>)
                 </label>
             </th>
-            <th class="text-center hidden-xs hidden-sm sorting_disabled">
+            <th class="text-center hidden-xs hidden-sm">
                 <?php
                 $aux = $month;
                 echo $months[$aux];
@@ -23,7 +23,7 @@
                     (<?php echo $payments[1] ?>)
                 </label>
             </th>
-            <th class="text-center hidden-xs hidden-sm sorting_disabled">
+            <th class="text-center hidden-xs hidden-sm">
                 <?php
                 $aux = ($month == 12) ? 1 : $month + 1;
                 echo $months[$aux];
@@ -68,25 +68,25 @@
                 for ($i = 0; $i < 3; $i++): 
                     $auxMonth++;
                     if ($auxMonth>12) $auxMonth = 1;
-                ?>
-                    <td class="text-center">
-                        <?php
-                        if (isset($uRates[$i][$user->id])):
-                            foreach ($uRates[$i][$user->id] as $rate):
-                            foreach ($rate as $r):
-                                ?>
-                                @if($r['paid'])
-                                <div class="label label-success openEditCobro" data-id="<?php echo $r['cid'] ?>" data-appointment='<?php echo $r['appointment']; ?>'>
-                                @else
-                                <div class="label label-danger openCobro" data-rate="<?php echo $r['id'] ?>" data-appointment='<?php echo $r['appointment']; ?>'>
-                                @endif
-                                {{moneda($r['price'])}}
-                                </div>	
-                                <?php
-                            endforeach;
-                            endforeach;
-                        endif;
+                    $textAux = '';
+                    $auxPend = 0;
+                    if (isset($uRates[$i][$user->id])):
+                      foreach ($uRates[$i][$user->id] as $rate):
+                        foreach ($rate as $r):
+                          if($r['paid']):
+                            $textAux.= '<div class="label label-success openEditCobro" data-id="'.$r['cid'].'" data-appointment="'.$r['appointment'].'" >';
+                          else:
+                            $auxPend += $r['price'];
+                            $textAux.= '<div class="label label-danger openCobro" data-rate="'.$r['id'].'" data-appointment="'.$r['appointment'].'" >';
+                          endif;
+                          $textAux.= moneda($r['price']).'</div>';
+                        endforeach;
+                      endforeach;
+                    endif;
                         ?>
+                    <td class="text-center" data-order="<?php echo $auxPend; ?>">
+                          
+                          <?php echo $textAux; ?>
                     </td>
                 <?php endfor; ?>
 

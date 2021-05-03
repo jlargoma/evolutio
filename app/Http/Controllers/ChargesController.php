@@ -51,7 +51,7 @@ class ChargesController extends Controller {
             $charge->import = $request->input('importe');
             $charge->discount = $request->input('discount');
             $charge->save();
-
+            UserRates::where('id_charges',$id)->update(['price' => $charge->import]);
             return redirect()->back()->with('success', 'cobro actualizado');
         }
     }
@@ -253,6 +253,7 @@ class ChargesController extends Controller {
                 $newRate->rate_year = date('Y', $time);
                 $newRate->rate_month = date('n', $time);
                 $newRate->id_charges = $oCobro->id;
+                $newRate->price = $value;
                 $newRate->save();
             }
             /**************************************************/
@@ -292,6 +293,8 @@ class ChargesController extends Controller {
                 $newRate->rate_year = date('Y', $auxTime);
                 $newRate->rate_month = date('n', $auxTime);
                 $newRate->id_charges = null;
+                $newRate->price = $oRate->price;
+                
                 $newRate->save();
             /************************************************** */
             //Next month
