@@ -54,12 +54,12 @@ trait ClientesTraits {
     /*     * **************************************************** */
     $arrayPaymentMonthByUser = array();
     $date = date('Y-m-d', strtotime($year . '-' . $month . '-01' . ' -1 month'));
-    $payments = $uRates = $uCobros = [];
+    $toPay = $uRates = $uCobros = [];
     $monthAux = date('m', strtotime($date));
     for ($i = 0; $i < 3; $i++) {
       $resp = $this->getRatesByMonth($monthAux, $year, $userIDs, $rPrices);
       $uRates[$i] = $resp[0];
-      $payments[$i] = $resp[1];
+      $toPay[$i] = $resp[2];
       $noPay += $resp[2];
       $next = strtotime($date . ' +1 month');
       $date = date('Y-m-d', $next);
@@ -73,7 +73,7 @@ trait ClientesTraits {
         'month' => $month,
         'year' => $year,
         'status' => $status,
-        'payments' => $payments,
+        'toPay' => $toPay,
         'uRates' => $uRates,
         'months' => $months,
         'aCoachs' => $aCoachs,
@@ -123,9 +123,11 @@ trait ClientesTraits {
           ];
           $payments += $auxCharges;
         } else {
-          $noPay += $rPrices[$idRate];
+          $importe = ($v->price == null) ? $rPrices[$idRate]:$v->price;
+          $noPay += $importe;
+          
           $uLstRates[$idUser][$idRate][] = [
-              'price' => ($v->price == null) ? $rPrices[$idRate]:$v->price,
+              'price' => $importe,
               'id' => $v->id,
               'paid' => false,
               'cid' => -1,

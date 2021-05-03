@@ -11,7 +11,7 @@
                 echo $months[$aux];
                 ?>
                 <label class="text-danger">
-                    (<?php echo $payments[0] ?>)
+                    (<?php echo $toPay[0] ?>)
                 </label>
             </th>
             <th class="text-center hidden-xs hidden-sm">
@@ -20,7 +20,7 @@
                 echo $months[$aux];
                 ?>
                 <label class="text-danger">
-                    (<?php echo $payments[1] ?>)
+                    (<?php echo $toPay[1] ?>)
                 </label>
             </th>
             <th class="text-center hidden-xs hidden-sm">
@@ -29,7 +29,7 @@
                 echo $months[$aux];
                 ?>
                 <label class="text-danger">
-                    (<?php echo $payments[2] ?>)
+                    (<?php echo $toPay[2] ?>)
                 </label>
             </th>
             <th class="text-center sorting_desc" id="estado-payment">Estado</th>
