@@ -188,3 +188,9 @@ Route::group(['middleware' => ['auth','admin'], 'prefix' => 'admin'], function (
   Route::get('/salario-mes/', 'ContabilidadController@salarioMes');
   Route::get('/ventas-mes/', 'ContabilidadController@ventasMes');
 });
+
+
+Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
+  Route::get('/userRates', 'FunctionalControler@userRates');
+  Route::post('/userRates', 'FunctionalControler@save_userRates');
+});
