@@ -5,7 +5,7 @@
 <h1 class="text-center"><?php echo $user->name; ?></h1>
 <ul class="nav nav-tabs">
   <li <?php if ($tab == 'datos') echo 'class="active"'; ?>><a data-toggle="tab" href="#datos">Datos</a></li>
-  <li <?php if ($tab == 'servic') echo 'class="active"'; ?>><a data-toggle="tab" href="#servic">Servicios</a></li>
+  <li <?php if ($tab == 'servic') echo 'class="active"'; ?>><a data-toggle="tab" href="#servic">Suscripciones</a></li>
   <li <?php if ($tab == 'history') echo 'class="active"'; ?>><a data-toggle="tab" href="#history">Historial</a></li>
   <li <?php if ($tab == 'notes') echo 'class="active"'; ?>><a data-toggle="tab" href="#notes">Anotaciones</a></li>
   <li <?php if ($tab == 'consent') echo 'class="active"'; ?>><a data-toggle="tab" href="#consent">Concentimiento</a></li>
@@ -115,8 +115,9 @@
         });
         
         $('#id_rateSubscr').on('change',function (e) {
-          var data = $(this).find(':selected').data('t');
-          console.log(data);
+          var obj  = $(this).find(':selected');
+          var data = obj.data('t');
+          $('#r_price').val(obj.data('p'));
           if (data == 'pt'){
             $('#rateCoach').removeClass('disabled');
             $('#id_rateCoach').attr('disabled',false);
@@ -127,7 +128,22 @@
           }
         });
         
-        
+        /**************************************************/        
+        $('.subscr_price').on('change',function (e) {
+          var posting = $.post( '/admin/change-subscr-price', { 
+                            _token: '{{csrf_token()}}',
+                            subscr_id: $(this).data('r'),
+                            price: $(this).val(),
+                        });
+          posting.done(function (data) {
+              if (data[0] == 'OK') {
+                window.show_notif('success', data[1]);
+              } else {
+                window.show_notif('error', data[1]);
+              }
+
+          });
+        });
         
         
         /**************************************************/
@@ -163,6 +179,14 @@
 }
 #id_rateCoach:disabled{
   background-color: #d0d0d0;
+}
+.subscr_price {
+    background-color: #f7f7f7;
+    border: none;
+    text-align: right;
+    width: 81px;
+    padding: 3px 0px;
+    cursor: pointer;
 }
 </style>
 @endsection

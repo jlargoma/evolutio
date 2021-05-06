@@ -55,6 +55,7 @@ trait ClientesTraits {
     $arrayPaymentMonthByUser = array();
     $date = date('Y-m-d', strtotime($year . '-' . $month . '-01' . ' -1 month'));
     $toPay = $uRates = $uCobros = [];
+    $total_pending = 0;
     $monthAux = date('m', strtotime($date));
     for ($i = 0; $i < 3; $i++) {
       $resp = $this->getRatesByMonth($monthAux, $year, $userIDs, $rPrices);
@@ -66,6 +67,13 @@ trait ClientesTraits {
       $monthAux = date('m', $next);
     }
 
+    
+    //get all rates pendings by users
+//    $uRatesPending = UserRates::whereIN('id_user', $userIDs)
+//            ->where('rate_year', $year)
+//            ->where('rate_month', $month)
+//            ->whereIn('id_rate', $RateIDs)
+//            ->get();
 
     $aCoachs = User::where('role', 'teach')->orderBy('name')->pluck('name', 'id')->toArray();
     return view('/admin/usuarios/clientes/index', [
@@ -74,6 +82,7 @@ trait ClientesTraits {
         'year' => $year,
         'status' => $status,
         'toPay' => $toPay,
+        'noPay' => $noPay,
         'uRates' => $uRates,
         'months' => $months,
         'aCoachs' => $aCoachs,
@@ -263,6 +272,7 @@ trait ClientesTraits {
   public function addSubscr(Request $request) {
     $uID = $request->input('id');
     $rID = $request->input('id_rate');
+    $price = $request->input('r_price');
     $oUser = User::find($uID);
     $oRate = Rates::find($rID);
     if (!$oUser) {
@@ -277,18 +287,39 @@ trait ClientesTraits {
     $oObj->id_rate = $rID;
     $oObj->rate_year = date('Y');
     $oObj->rate_month = date('m');
-    $oObj->price = $oRate->price;
+    $oObj->price = $price;
     $oObj->save();
 
     $oObj = new \App\Models\UsersSuscriptions();
     $oObj->id_user = $uID;
     $oObj->id_rate = $rID;
+    $oObj->price = $price;
     $oObj->id_coach = $request->input('id_rateCoach');
     $oObj->save();
 
     return redirect('/admin/usuarios/informe/' . $uID . '/servic')->with('success', $oRate->name . ' asignado a ' . $oUser->name . '.');
   }
 
+  /**
+   * 
+   * @param Request $request
+   * @return type
+   */
+  public function changeSubscr(Request $request) {
+    $subscr_id = $request->input('subscr_id');
+    $price = $request->input('price');
+    $oObj = \App\Models\UsersSuscriptions::find($subscr_id);
+    if( !is_numeric($price) || $price<0 ) 
+      return response()->json(['error','El valor debe ser mayor o igual a 0€']);
+
+    if(!$oObj || $oObj->id != $subscr_id ) 
+      return response()->json(['error','Suscripcion no encontrada']);
+    
+    $oObj->price = $price;
+    if($oObj->save())  return response()->json(['OK','Suscripcion cambiada']);
+      
+    return response()->json(['error','Error al cambiar la Suscripcion']);
+  }
   /**
    * Remove subscription
    * @param Request $request

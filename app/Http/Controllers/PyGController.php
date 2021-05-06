@@ -48,12 +48,21 @@ class PyGController extends Controller {
     
     $oCharges = Charges::whereYear('date_payment', '=', $year)->get();
     $aux = $months_empty;
+    $pay_method = ['c'=>$months_empty,'b'=>$months_empty];
     $incomesYear[$year] = 0;
     foreach ($oCharges as $c) {
       $m = intval(substr($c->date_payment, 5, 2));
+      $aux[0] += $c->import;
       $aux[$m] += $c->import;
       $incomesYear[$year] += $c->import;
       
+      if ($c->type_payment == 'cash'){
+        $pay_method['c'][0] += $c->import;
+        $pay_method['c'][$m] += $c->import;
+      } else {
+        $pay_method['b'][0] += $c->import;
+        $pay_method['b'][$m] += $c->import;
+      }
       $rateGr = isset($aRates[$c->id_rate]) ? $aRates[$c->id_rate] : 3;
       $crLst[$rateGr][$m] += $c->import;
     }
@@ -85,6 +94,7 @@ class PyGController extends Controller {
       foreach ($oExpenses as $e) {
         $m = intval(substr($e->date, 5, 2));
         $aux[$m] += $e->import;
+        $aux[0] += $e->import;
         $expensesYear[$year] += $e->import;
         $g = $gTypeGroup_g[$e->type];
         if (isset($ggMonth[$g])){
@@ -101,7 +111,6 @@ class PyGController extends Controller {
     /***************************************/
         
     $aux_i = $aux_e = $months_empty; 
-
     /***************************************/
     return view('admin.contabilidad.pyg.index',[
         'year'=>$year,
@@ -117,7 +126,8 @@ class PyGController extends Controller {
         'crLst'=>$crLst,
         'aux_i'=>$aux_i,
         'aux_e'=>$aux_e,
-        'tIncomes'=>$tIncomes
+        'tIncomes'=>$tIncomes,
+        'pay_method'=>$pay_method
   ]);
   }
 

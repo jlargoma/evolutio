@@ -118,6 +118,7 @@ class StripeService {
       }
       return ['error','Ocurrió un error al procesar su Tarjeta. Por favor, intentelo nuevamente.'];
     } catch (\Exception $ex) {
+      dd($ex);
       return $this->codesErrors($ex->getStripeCode());
     }
   }

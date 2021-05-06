@@ -34,6 +34,14 @@
     }
     .openEditCobro,
     .open-cobro{ cursor: pointer;}
+    div#DataTables_Table_0_filter {
+    margin-top: -52px;
+    max-width: 80px;
+}
+a.inline {
+    display: inline-block;
+    margin-right: 2px;
+}
 </style>
 @endsection
 
@@ -49,45 +57,43 @@
 @section('content')
 <div class="content content-full bg-gray-lighter">
     <div class="row ">
-        <div class="col-md-5 col-xs-12 push-20">
-            <div class="col-md-2 col-xs-4">
-                <a href="{{url('/admin/clientes')}}?status=all">
+        <div class="col-md-6 col-xs-12 push-20">
+            <div class="col-md-3 col-xs-4">
+            </div>
+            <div class="col-md-9 col-xs-4">
+              <a href="{{url('/admin/clientes')}}?status=all" class="inline">
                     <button class="btn btn-md 
                             @if($status == 'all') btn-success @else btn-primary @endif
                             " style="width: 100%;">
                         Todos
                     </button>
                 </a>
-            </div>
-            <div class="col-md-2 col-xs-4">
-                <a href="{{url('/admin/clientes')}}?status=1">
+                <a href="{{url('/admin/clientes')}}?status=1" class="inline">
                     <button class="btn btn-md @if($status == 1) btn-success @else btn-primary @endif" style="width: 100%;">
                         Activos
                     </button>
                 </a>
-            </div>
-            <div class="col-md-2 col-xs-4">
-                <a href="{{url('/admin/clientes')}}?status=0">
+                <a href="{{url('/admin/clientes')}}?status=0" class="inline">
                     <button class="btn btn-md @if($status != 1) btn-success @else btn-primary @endif" style="width: 100%;">
                         Inactivos
                     </button>
                 </a>
-            </div>
-            <div class="col-md-3 col-xs-4">
-                <a href="{{url('/admin/clientes-export')}}">
+                <a href="{{url('/admin/clientes-export')}}" class="inline">
                     <button class="btn btn-md" style="width: 100%;">
                         EXPORT EXCEL
                     </button>
                 </a>
             </div>
         </div> 
-        <div class="col-xs-12 col-md-2 text-center center">
-<!--            <button id="addIngreso" class="btn btn-success btn-mobile-lg" data-toggle="modal" data-target="#modal-ingreso"
-                    style="padding: 7px 20px;">
-                TPV
-            </button>-->
-        </div>
+      <div class="col-md-2 col-xs-12 push-20"></div>
         <div class="col-md-4 col-xs-12 push-20">
+          <div class="col-xs-12 col-md-6 pull-right">
+             @if ($noPay > 0)
+                    <button id="cuotas-pendientes" class="btn btn-danger right">
+                        Cuotas Pendientes {{ $noPay }} €
+                    </button>
+                @endif
+          </div>
             <div class="col-xs-12 col-md-6 pull-right">
                 <select id="date" class="form-control">
                     <?php
@@ -100,21 +106,6 @@
                     <?php endforeach; ?>
                 </select>
             </div>
-        </div>
-        <div class="col-xs-12">
-            <h2 class="text-center font-s36 font-w300">Listado de Clientes</h2>
-        </div>
-        <div class="col-xs-12">
-            <div class="col-md-2 col-xs-12">
-                @if ($total_pending > 0)
-                <a href="#" style="float: right; margin: 5px 10px 5px 0; ">
-                    <button id="cuotas-pendientes" class="btn btn-danger right">
-                        Cuotas Pendientes {{ $total_pending }} €
-                    </button>
-                </a>
-                @endif
-            </div>
-
         </div>
 
         <div class="col-xs-12 push-20">

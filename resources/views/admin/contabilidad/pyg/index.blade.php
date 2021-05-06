@@ -51,6 +51,25 @@ function sumMonthValue($m){
     <div class="col-lg-3 col-md-6 col-xs-6 chart_1">
       <canvas id="chart_1" width="50" height="50"></canvas>
     </div>
+    <div class="col-lg-4 col-md-4 col-xs-6 chart_2">
+      <canvas id="myChart" width="400" height="200"></canvas>
+    </div>
+    <div class="col-lg-2 col-md-2 col-xs-6">
+      <table class="table">
+        <tr>
+          <th>Total</th>
+          <th>{{moneda($pay_method['c'][0]+$pay_method['b'][0])}}</th>
+        </tr>
+        <tr>
+          <td>Cash</td>
+          <td>{{moneda($pay_method['c'][0])}}</td>
+        </tr>
+        <tr>
+          <td>Banco</td>
+          <td>{{moneda($pay_method['b'][0])}}</td>
+        </tr>
+      </table>
+    </div>
     <div class="col-xs-12">
 @include('admin.contabilidad.pyg.table')
     </div>

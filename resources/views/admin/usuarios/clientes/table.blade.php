@@ -2,7 +2,8 @@
     <thead>
         <tr>
             <th class="text-center hidden-xs hidden-sm sorting_disabled"></th>
-            <th class="text-center">Nombre<br></th>
+            <th class="text-center">Nombre Cliente<br></th>
+            <th class="text-center sorting_disabled">Acciones</th>
             <th class="text-center sorting_disabled">Tel<span class="hidden-xs hidden-sm">éfono</span><br></th>
             <th class="text-center hidden-xs hidden-sm sorting_disabled">Entrenador<br></th>
             <th class="text-center hidden-xs hidden-sm">
@@ -33,7 +34,7 @@
                 </label>
             </th>
             <th class="text-center sorting_desc" id="estado-payment">Estado</th>
-            <th class="text-center sorting_disabled">Acciones</th>
+            
         </tr>
     </thead>
     <tbody>
@@ -47,6 +48,11 @@
                 </td>
                 <td class="text-justify"> 
                     <a  class="openUser" data-id="<?php echo $user->id; ?>"  data-type="user" data-original-title="Editar user" ><b><?php echo $user->name; ?></b></a>
+                </td>
+                <td class="text-center">
+                    <button class="btn btn-default btn-rate-charge" data-toggle="modal" data-target="#modalCliente" data-idUser="<?php echo $user->id; ?>">
+                        <i class="fa fa-usd" aria-hidden="true"></i>
+                    </button>
                 </td>
                 <td class="text-center">
                     <span class="hidden-xs hidden-sm"><?php echo $user->telefono; ?></span>
@@ -65,17 +71,20 @@
                 </td>
                 <?php 
                 $auxMonth = $month - 2;
+                $pending = null;
                 for ($i = 0; $i < 3; $i++): 
                     $auxMonth++;
                     if ($auxMonth>12) $auxMonth = 1;
                     $textAux = '';
                     $auxPend = 0;
                     if (isset($uRates[$i][$user->id])):
+                      if ($pending == null) $pending = false;
                       foreach ($uRates[$i][$user->id] as $rate):
                         foreach ($rate as $r):
                           if($r['paid']):
                             $textAux.= '<div class="label label-success openEditCobro" data-id="'.$r['cid'].'" data-appointment="'.$r['appointment'].'" >';
                           else:
+                            $pending = true;
                             $auxPend += $r['price'];
                             $textAux.= '<div class="label label-danger openCobro" data-rate="'.$r['id'].'" data-appointment="'.$r['appointment'].'" >';
                           endif;
@@ -89,13 +98,17 @@
                           <?php echo $textAux; ?>
                     </td>
                 <?php endfor; ?>
-
-                <td class="text-center"></td>
-                <td class="text-center">
-                    <button class="btn btn-default btn-rate-charge" data-toggle="modal" data-target="#modalCliente" data-idUser="<?php echo $user->id; ?>">
-                        <i class="fa fa-usd" aria-hidden="true"></i>
-                    </button>
+                <td class="text-center" data-order="<?php echo $pending ? 1 : (($pending === false) ? 0:'');?>" >
+                  <?php 
+                  if ($pending === false){
+                    echo '<i class="fa fa-circle text-success" aria-hidden="true"></i>';
+                  }
+                  if ($pending){
+                    echo '<i class="fa fa-circle text-danger" aria-hidden="true"></i>';
+                  }
+                  ?>
                 </td>
+
             </tr>
         <?php endforeach ?>
     </tbody>

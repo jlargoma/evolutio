@@ -8,7 +8,7 @@
     <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
     <div class="row">
       <div class="col-xs-12 col-md-4 push-20">
-        <div class="col-xs-12 col-md-4 push-20">
+        <div class="col-xs-12 col-md-8 push-20">
           <label>Servicio</label>
           <div >
             <select class="form-control" id="id_rate" name="id_rate">

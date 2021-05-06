@@ -120,24 +120,62 @@ $(document).ready(function () {
     }
   });
 
+var ctx = document.getElementById("myChart");
+var myChart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: [<?php foreach ($monts as $v) echo "'" . $v . "',"; ?>],
+    datasets: [{
+        label: 'Cash',
+        data: [<?php for($i=1;$i<13;$i++) echo "'" . round($pay_method['c'][$i]) . "',"; ?>],
+        backgroundColor: 'rgba(52, 162, 99, 0.2)',
+        borderColor: 'rgba(52,162,99,1)',
+        borderWidth: 2
+      },
+      {
+        label: 'Banco',
+        data: [<?php for($i=1;$i<13;$i++) echo "'" . round($pay_method['b'][$i]) . "',"; ?>],
+        backgroundColor: 'rgb(92,144,210,0.2)',
+        borderColor: '#5c90d2',
+        borderWidth: 2
+      }
+    ]
+  },
+  options: {
+    scales: {
+      yAxes: [{
+        stacked: true,
+        ticks: {
+          beginAtZero: true
+        }
+      }],
+      xAxes: [{
+        stacked: true,
+        ticks: {
+          beginAtZero: true
+        }
+      }]
 
-$('.detail').on('click',function(){
-  if($(this).data('t') == 'i'){
-    $.get('/admin/ingreso-by-rate/'+$(this).data('id'), function (data) {
-      $('#contentModalInfo').html(data);
-      $('#modalInfo').modal('show');
-    });
+    },
+    legend:{display:false}
   }
-  if($(this).data('t') == 'e'){
-    $.get('/admin/gastos-by-byType/'+$(this).data('id'), function (data) {
-      $('#contentModalInfo').html(data);
-      $('#modalInfo').modal('show');
-    });
-  }
-  
-  
-  
 });
+
+
+  $('.detail').on('click',function(){
+    if($(this).data('t') == 'i'){
+      $.get('/admin/ingreso-by-rate/'+$(this).data('id'), function (data) {
+        $('#contentModalInfo').html(data);
+        $('#modalInfo').modal('show');
+      });
+    }
+    if($(this).data('t') == 'e'){
+      $.get('/admin/gastos-by-byType/'+$(this).data('id'), function (data) {
+        $('#contentModalInfo').html(data);
+        $('#modalInfo').modal('show');
+      });
+    }
+  });
 
 
 });

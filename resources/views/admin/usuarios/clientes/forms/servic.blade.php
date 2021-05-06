@@ -17,7 +17,7 @@
     <tr>
       <td>{{$aux->name}}</td>
       <td>{{$coach}}</td>
-      <td>{{$aux->price}}€</td>
+      <td><input type="number" step="0.01" data-r="{{$r->id}}" value="{{$r->price}}" class="subscr_price">€</td>
       <td>
         <a 
           href="/admin/clientes-unsubscr/{{ $user->id }}/{{$r->id}}"
@@ -41,7 +41,7 @@
         <select class="form-control" id="id_rateSubscr" name="id_rate" style="width: 100%; cursor: pointer" data-placeholder="Seleccione tarifas.." >
           <option></option>
           <?php foreach ($subscrRates as $rate): ?>
-            <option value="{{$rate->id}}" data-t="{{$rate->type}}">
+            <option value="{{$rate->id}}" data-t="{{$rate->type}}" data-p="{{$rate->price}}">
               <?php echo $rate->name ?>
             </option>
           <?php endforeach ?>
@@ -49,7 +49,7 @@
         <label for="id_rate">Agregar Servicio</label>
       </div>
     </div>
-    <div class="col-md-4  push-20">
+    <div class="col-md-3  push-20">
       <div class="form-material">
         <select class="form-control" name="id_rateCoach" id="id_rateCoach" disabled>
           <option value=""> -- </option>
@@ -62,7 +62,13 @@
         <label for="id_rate">Entrenador</label>
       </div>
     </div>
-    <div class="col-md-4  push-20">
+    <div class="col-md-3  push-20">
+      <div class="form-material">
+        <label for="price">Precio</label>
+        <input class="form-control" type="number" id="r_price" name="r_price" step="0.01" required value="">
+      </div>
+    </div>
+    <div class="col-md-2  push-20">
       <button class="btn btn-success">Agregar</button>
     </div>
   </form>

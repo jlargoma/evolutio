@@ -1,7 +1,10 @@
 <!--    TABLA                                  -->
-
+<?php 
+$tIngr = $currentY['Ingresos'];
+$tGast = $currentY['Gastos']; 
+?>
 <h2 class="font-w600">
-    Listado de Ingresos / Egresos de <b><?php echo $year?></b>
+    Listado de Ingresos / Gastos de <b><?php echo $year?></b>
 </h2>
 <div class="table-responsive" >
     <table class="table">
@@ -9,9 +12,9 @@
         <tr>
           <th class="static">Ingresos</th>
           <th class="first-col"></th>
-          <th class="">Total</th>
+          <th class="">Total <br/>({{ moneda($tIngr[0])}})</th>
           @foreach($monts as $k=>$v)
-          <th>{{$v}}</th>
+          <th>{{$v}} <br/>({{ moneda($tIngr[$k])}})</th>
           @endforeach
         </tr>
        </thead>
@@ -42,9 +45,9 @@
         <tr>
           <th class="static">Gastos</th>
           <th class="first-col"></th>
-          <th class="">Total</th>
+          <th class="">Total <br/>({{ moneda($tGast[0])}})</th>
           @foreach($monts as $k=>$v)
-          <th>{{$v}}</th>
+          <th>{{$v}}<br/>({{ moneda($tGast[$k])}})</th>
           @endforeach
         </tr>
        </thead>
