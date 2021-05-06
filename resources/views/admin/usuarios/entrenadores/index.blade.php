@@ -56,10 +56,10 @@
                   <th class="text-center">Nombre</th>
                   <th class="text-center">Tel<span class="hidden-xs hidden-sm">éfono</span></th>
                   <th class="text-center">Tipo</th>
+                  <th class="text-center">Totales</th>
                   <?php foreach ($months as $i):?>
                     <th class="hidden-xs hidden-sm input"><?php echo $i ?></th>
                   <?php endforeach ?>
-                  <th class="text-center">Totales</th>
                 </tr>
               </thead>
               <tbody>
@@ -107,7 +107,16 @@
                       }
                          ?>
                     </td>
-                    <?php $totalLiquidationByCoach = 0; ?>
+                    <td class="text-center">
+                      <?php 
+                      $totalLiquidationByCoach = 0;
+                      if (isset($aLiqTotal[$user->id])):
+                        $totalLiquidationByCoach = $aLiqTotal[$user->id];
+                        $totalYear += $totalLiquidationByCoach;
+                      endif;
+                      ?>
+                      <?php echo number_format(abs($totalLiquidationByCoach), 2, ',', '.'); ?>
+                    </td>
                     <?php if (isset($aLiq[$user->id])):  ?>
                     <?php foreach ($months as $k=>$v): 
                         if ($aLiq[$user->id][$k])
@@ -115,7 +124,6 @@
                       <td class="hidden-xs hidden-sm input"> 
                           <input class="form-control only-numbers liquidation" type="text" name="liquidation-{{$year.'-'.$k}}"  value="{{$liq[1]}}" data-idLiquidation="{{$liq[0]}}" data-idCoach="<?php echo $user->id ?>" data-dateLiquidation="{{$year.'-'.$k.'-01'}}"/>
                       </td>
-                      <?php $totalLiquidationByCoach += $liq[1]; ?>
                       <?php $totalMonthCoach[$k] += $liq[1]; ?>
                     <?php endforeach; ?>
                     <?php else: ?>
@@ -125,10 +133,6 @@
                       </td>
                     <?php endforeach; ?>
                     <?php endif; ?>
-                    <td class="text-center">
-                      <?php echo number_format(abs($totalLiquidationByCoach), 2, ',', '.'); ?>
-                      <?php $totalYear += $totalLiquidationByCoach; ?>
-                    </td>
                   </tr>
                 <?php endforeach ?>
                 <tr>

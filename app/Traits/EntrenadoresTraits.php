@@ -28,6 +28,7 @@ trait EntrenadoresTraits {
         if ($type == 'desactivados') $sql->where('status',0);
         $users = $sql->orderBy('status', 'DESC')->get();
         $aLiq = [];
+        $aLiqTotal = [];
         $oLiquidations = \App\Models\CoachLiquidation::whereYear('date_liquidation', '=', $year)->get();
         if ($oLiquidations){
             $aux = [];
@@ -38,6 +39,7 @@ trait EntrenadoresTraits {
                     $aLiq[$liq->id_coach] = $aux;
                 
                 $aLiq[$liq->id_coach][date('n', strtotime($liq->date_liquidation))] = [$liq->id, intval($liq->total)];
+                $aLiqTotal[$liq->id_coach] = intval($liq->total);
             }
         }
         
@@ -46,6 +48,7 @@ trait EntrenadoresTraits {
             'year' => $year,
             'users' => $users,
             'aLiq' => $aLiq,
+            'aLiqTotal' => $aLiqTotal,
             'type' => $type,
             'date' => Carbon::now(),
         ]);
