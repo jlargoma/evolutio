@@ -4,6 +4,7 @@ namespace App\Services\temps;
 
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
+use App\Models\Charges;
 /*
  * UPDATE `0_temp_users2`  SET user_id = null;
 UPDATE `0_temp_users2`  SET user_id = (SELECT users.id FROM users WHERE users.name = `0_temp_users2`.`name`)
@@ -18,14 +19,17 @@ class ImportCustomers {
   
   public function import($tipe) {
     switch ($tipe){
-      case 'clientes':
-        $this->importCustomer();
-        break;
-      case 'rates':
-        $this->loadRates();
-      case 'updRates':
-        $this->updRates();
-        break;
+//      case 'clientes':
+//        $this->importCustomer();
+//        break;
+//      case 'rates':
+//        $this->loadRates();
+//      case 'updRates':
+//        $this->updRates();
+//        break;
+//      case 'updChargesDate':
+//        $this->updChargesDate();
+//        break;
     }
   }
   public function importCustomer() {
@@ -116,5 +120,27 @@ class ImportCustomers {
       }
     }
   
+    function updChargesDate(){
+      $charges = Charges::where('date_payment','>=','2021-05-05')
+              ->where('date_payment','<=','2021-05-07')->get();
+      
+      $cIDS = [];
+      $aCh = [];
+      foreach ($charges as $c){
+        $cIDS[] = $c->id;
+        $aCh[$c->id] = $c;
+        
+      }
+     
+      $uRates = \App\Models\UserRates::whereIn('id_charges',$cIDS)
+              ->where('rate_month','<',5)->get();
+      foreach ($uRates as $ur){
+        $oCharge = $aCh[$ur->id_charges];
+        $day = date('d', strtotime($oCharge->date_payment));
+        
+        $oCharge->date_payment = $ur->rate_year.'-'.$ur->rate_month.'-'.$day;
+        $oCharge->update();
+      }
+    }
   
 }

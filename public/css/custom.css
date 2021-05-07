@@ -274,7 +274,9 @@ input#importeFinal {
     color: #1b4b8c;
     box-shadow: 1px 1px 0px 3px #1b4b8c;
 }
-
+.mb-1em{
+  margin-bottom: 1em;
+}
 
 @media(max-width:991px) {
   .table-fixed th.static{

@@ -275,3 +275,32 @@ function payMethod($i = null){
     }
     return $lst;
 }
+function convertBold($detail){
+  $detail = trim(nl2br($detail));
+  if (!$detail || trim($detail) == '') return '';
+  $start = false;
+  $aDetail = explode('*', $detail);
+  $result = '';
+  if ($detail[0] == '*'){
+    $result = '<b>';
+    $start =  true;
+  }
+  if (count($aDetail)>0){
+    foreach ($aDetail as $v){
+      if ($v == "") continue;
+      $result .= $v;
+      if ($start)  $result .= '</b>';
+      else  $result .= '<b>';
+      
+      $start = !$start;
+    }
+  }
+  
+  if ($start)  $result .= '</b>';
+  return $result;
+    
+}
+function removeIVA($price,$iva){
+  if (!$price || !$iva) return 0;
+  return round($price / (1 + $iva/100),2);
+}

@@ -50,6 +50,9 @@ $uRole = Auth::user()->role;
       <li class="{{ $path == 'admin/ingresos' ? 'active' : '' }}">
           <a href="{{url('/admin/ingresos/')}}" class="font-w600"><i class="fa fa-line-chart"></i> <span class="sidebar-mini-hide font-w600">Contabilidad</span></a>
       </li>
+      <li class="{{ $path == 'admin/facturas' ? 'active' : '' }}">
+          <a href="{{url('/admin/facturas/')}}" class="font-w600"><i class="fa fa-line-chart"></i> <span class="sidebar-mini-hide font-w600">Facturas</span></a>
+      </li>
     @endif
     <li style="margin-left: 17px;">
         <form action="{{ url('/logout') }}" method="POST">

@@ -61,19 +61,19 @@ a.inline {
             <div class="col-md-3 col-xs-4">
             </div>
             <div class="col-md-9 col-xs-4">
-              <a href="{{url('/admin/clientes')}}?status=all" class="inline">
+              <a href="{{url('/admin/clientes/'.$month)}}?status=all" class="inline">
                     <button class="btn btn-md 
                             @if($status == 'all') btn-success @else btn-primary @endif
                             " style="width: 100%;">
                         Todos
                     </button>
                 </a>
-                <a href="{{url('/admin/clientes')}}?status=1" class="inline">
+                <a href="{{url('/admin/clientes/'.$month)}}?status=1" class="inline">
                     <button class="btn btn-md @if($status == 1) btn-success @else btn-primary @endif" style="width: 100%;">
                         Activos
                     </button>
                 </a>
-                <a href="{{url('/admin/clientes')}}?status=0" class="inline">
+                <a href="{{url('/admin/clientes/'.$month)}}?status=0" class="inline">
                     <button class="btn btn-md @if($status != 1) btn-success @else btn-primary @endif" style="width: 100%;">
                         Inactivos
                     </button>

@@ -103,16 +103,20 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
     
     /* Facturacion */
   Route::get('/facturacion/entrenadores', 'UsersController@entrenadores');
-//  Route::get('/facturacion/entrenadores/new', 'FacturacionController@nueva');
-//  Route::post('/facturacion/create', 'FacturacionController@create');
-//  Route::get('/facturacion/entrenador/actualizar/{id}', 'FacturacionController@actualizar');
-//  Route::post('/facturacion/entrenador/update', 'FacturacionController@update');
-//  Route::get('/facturacion/entrenador/delete/{id}', 'FacturacionController@delete');
-//  Route::get('/facturacion/generar-liquidacion/{id}', 'FacturacionController@liquidacion');
-//  Route::get('/facturacion/generar-liquidacion/{id}/{date?}', 'FacturacionController@liquidacion');
-//  Route::get('/facturacion/getDesgloceClase', 'FacturacionController@getDesgloceClase');
-//  Route::get('/facturacion/enviar-liquidacion/{id}/{date?}', 'FacturacionController@enviarEmailLiquidacion');
 
+  //Facturas
+  Route::get('/facturas/ver/{id}', 'InvoicesController@view')->name('invoice.view');
+  Route::get('/facturas/editar/{id}', 'InvoicesController@update')->name('invoice.edit');
+  Route::post('/facturas/guardar', 'InvoicesController@save')->name('invoice.save');
+  Route::post('/facturas/enviar', 'InvoicesController@sendMail')->name('invoice.sendmail');
+  Route::get('/facturas/modal/editar/{id}', 'InvoicesController@update_modal');
+  Route::post('/facturas/modal/guardar', 'InvoicesController@save_modal');
+  Route::delete('/facturas/borrar', 'InvoicesController@delete')->name('invoice.delete');
+  Route::get('/facturas/descargar/{id}', 'InvoicesController@download')->name('invoice.downl');
+  Route::get('/facturas/descargar-todas', 'InvoicesController@downloadAll');
+  Route::get('/facturas/solicitudes/{year?}', 'InvoicesController@solicitudes');
+  Route::get('/facturas/{order?}', 'InvoicesController@index');
+  
   /* Cobros */
   Route::get('/generar/cobro', 'ChargesController@generarCobro');
   Route::get('/update/cobro/{id}', 'ChargesController@updateCobro');
