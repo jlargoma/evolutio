@@ -186,7 +186,7 @@ class FisioController extends Controller {
 //            }
             
             $card = null;
-            $paymentMethod = $oUser->paymentMethods()->first();
+            $paymentMethod = $oUser->getPayCard();
             if ($paymentMethod){
                 $aux = $paymentMethod->toArray();
                 $card['brand'] = $aux['card']['brand'];

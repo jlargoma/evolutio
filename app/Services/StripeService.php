@@ -74,7 +74,7 @@ class StripeService {
       Stripe::setApiKey($this->sPRivKey);
       if (!$oUser->hasStripeId()) $oUser->createAsStripeCustomer();
 
-      $paymentMethod = $oUser->paymentMethods()->first();
+      $paymentMethod = $oUser->getPayCard();
       if (!$paymentMethod) return 'No tiene una tarjeta asociada';
       
       $stripeCharge = $oUser->charge(
@@ -104,7 +104,7 @@ class StripeService {
       Stripe::setApiKey($this->sPRivKey);
       if (!$oUser->hasStripeId()) $oUser->createAsStripeCustomer();
 
-      $paymentMethod = $oUser->paymentMethods()->first();
+      $paymentMethod = $oUser->getPayCard();
       if (!$paymentMethod) return 'No tiene una tarjeta asociada';
       
       $stripeCharge = $oUser->charge(

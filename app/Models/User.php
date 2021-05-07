@@ -83,4 +83,18 @@ class User extends Authenticatable
     }
     return null;
   }
+  
+  function getPayCard(){
+      
+    $paymentMethod = null;
+    try {
+    return $this->paymentMethods()->first();
+    } catch (\Exception $ex) {
+      return null;
+      /*$ex->getMessage();*/
+      
+    }
+    
+//    $obj = $this->paymentMethods()->first();
+  }
 }

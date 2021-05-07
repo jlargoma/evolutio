@@ -160,7 +160,7 @@ trait ClientesTraits {
     /** BEGIN: STRIPE              ***** */
     $pStripe = null;
     $card = null;
-    $paymentMethod = $oUser->paymentMethods()->first();
+    $paymentMethod = $oUser->getPayCard();
     if ($paymentMethod) {
       $aux = $paymentMethod->toArray();
       $card['brand'] = $aux['card']['brand'];
@@ -409,7 +409,7 @@ trait ClientesTraits {
     $oUser = User::find($request->id_user);
 
     $card = null;
-    $paymentMethod = $oUser->paymentMethods()->first();
+    $paymentMethod = $oUser->getPayCard();
     if ($paymentMethod) {
       $aux = $paymentMethod->toArray();
       $card['brand'] = $aux['card']['brand'];

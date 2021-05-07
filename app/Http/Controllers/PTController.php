@@ -179,7 +179,7 @@ class PTController extends Controller {
             $oServicios = Rates::getByTypeRate('pt');
             $price = $oDate->price;
             $card = null;
-            $paymentMethod = $oUser->paymentMethods()->first();
+            $paymentMethod = $oUser->getPayCard();
             if ($paymentMethod){
                 $aux = $paymentMethod->toArray();
                 $card['brand'] = $aux['card']['brand'];
