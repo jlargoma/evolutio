@@ -224,7 +224,7 @@ class ChargesController extends Controller {
 
             $oCobro = new Charges();
             $oCobro->id_user = $oUser->id;
-            $oCobro->date_payment = date('Y-m-d');
+            $oCobro->date_payment = $month;
             $oCobro->id_rate = $oRate->id;
             $oCobro->type_payment = $tpay;
             $oCobro->type = 1;
