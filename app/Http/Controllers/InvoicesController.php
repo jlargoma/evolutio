@@ -53,44 +53,36 @@ class InvoicesController extends Controller {
     $oInvoice = Invoices::find($id);
     return view('invoices.forms._form',$this->getData($oInvoice)); 
   }
-  public function update_modal($book_id){
-    $oInvoice = Invoices::where('book_id',$book_id)->first();
-    
+  public function update_modal($charge_id){
+    $oInvoice = Invoices::where('charge_id',$charge_id)->first();
     $data = $this->getData($oInvoice);
-    $data['book_id'] = $book_id;
-    
-    $oBook = \App\Book::find($book_id);
-    
+    $oCharge = \App\Models\Charges::find($charge_id);
+    $oRateUser = \App\Models\UserRates::where('id_charges',$charge_id)->first();
+      
     if (!$data['items'] || count($data['items']) == 0){
-      
-      
-      $detail = 'Alojamiento ';
-      
-      $oRoomType = $oBook->room->RoomsType()->first();
-      if ($oRoomType){
-        $detail .= '('.$oRoomType->title.')';
+      $detail = '';
+      if ($oRateUser && $oCharge){
+        $oRate  = $oRateUser->rate;
+        $detail = 'Servicio ';
+        if ($oRate) $detail .= $oRate->name;
+        $detail .= PHP_EOL.'*Fecha: '. convertDateToShow_text($oCharge->date,true).'*';
+        $data['items'][] = [
+          'detail'=> $detail,
+          'iva'   => 0,
+          'price' => $oCharge->inport,
+        ];
       }
-      $detail .= PHP_EOL.'*Fechas: del '. convertDateToShow_text($oBook->start,true);
-      $detail .= ' al '. convertDateToShow_text($oBook->start,true).'*';
-      
-      $data['items'][] = [
-        'detail'=> $detail,
-        'iva'   => 10,
-        'price' => $oBook->total_price,
-      ];
-      
     }
     $oInvoice = $data['oInvoice'];
     if (!$oInvoice->id){
-      $customer = $oBook->customer;
-      $email= (trim($customer->email_notif) == '') ? $customer->email : $customer->email_notif;
-//      dd($customer);
+      $data['charge_id'] = $charge_id;
+      $customer = $oCharge->user;
       $oInvoice->name = $customer->name;
-      $oInvoice->email = $email;
-      $oInvoice->nif  = $customer->DNI;
-      $oInvoice->address = $customer->address;
-      $oInvoice->phone   = $customer->phone;
-      $oInvoice->zip_code= $customer->zipCode;
+      $oInvoice->email = $customer->emial;
+//      $oInvoice->nif  = $customer->DNI;
+//      $oInvoice->address = $customer->address;
+//      $oInvoice->phone   = $customer->phone;
+//      $oInvoice->zip_code= $customer->zipCode;
     }
     
     return view('invoices.forms/_form-modal',$data); 

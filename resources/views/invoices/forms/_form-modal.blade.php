@@ -8,7 +8,7 @@
     <form action="{{ route('invoice.save') }}" method="post" id="sendInvoiceBook">
       <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
       <input type="hidden" name="id" value="{{$oInvoice->id ?? null}}">
-      <input type="hidden" name="book_id" value="{{$book_id}}">
+      <input type="hidden" name="charge_id" value="{{$charge_id}}">
       <input type="hidden" name="confirm" value="1">
     
       

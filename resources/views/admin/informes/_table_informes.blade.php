@@ -29,6 +29,7 @@
             <th class="text-center">Nombre cliente</th>
             <th class="text-center">Cuota / Concepto</th>
             <th class="text-center">Importe</th>
+            <th class="text-center">MES</th>
             <th class="text-center">Forma pago</th>
         </tr>
         </thead>
@@ -65,7 +66,14 @@
                 echo (isset($aRates[$charge->id_rate])) ? $aRates[$charge->id_rate] : ' - ';
                 ?>
             </td>
-            <td class="text-center">{{moneda($charge->import,false,1)}}
+            <td class="text-center">{{moneda($charge->import,false,1)}}</td>
+            <td class="text-center">
+              <?php 
+              if(isset($aURates[$charge->id])){
+                $monthAux = $aURates[$charge->id];
+                show_isset($monthAux,$months);
+              }
+              ?>
             </td>
             <td class="text-center">
                 <?php 

@@ -18,5 +18,9 @@ class UserRates extends Model
     {
         return $this->hasOne('\App\Models\Rates', 'id', 'id_rate');
     }
+    public function charges()
+    {
+        return $this->hasOne('\App\Models\Charges', 'id', 'id_charges');
+    }
 
 }

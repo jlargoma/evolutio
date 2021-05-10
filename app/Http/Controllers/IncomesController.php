@@ -25,11 +25,16 @@ class IncomesController extends Controller {
     $familyTotal = [];
     foreach ($family as $k=>$v) $familyTotal[$k] = $mm;
     /************************************************/
-    $oCharges = Charges::whereYear('date_payment','=',$year)->get();
-    foreach ($oCharges as $c){
+    $uRates = \App\Models\UserRates::where('id_charges', '>', 0)
+              ->where('rate_year',$year)->get();
+    foreach ($uRates as $item){
+      $c = $item->charges;
+//    $oCharges = Charges::whereYear('date_payment','=',$year)->get();
+//    foreach ($oCharges as $c){
       $rate = $c->id_rate;
       if (!isset($crLst[$rate])) $crLst[$rate] = $mm;
-      $m = intval(substr($c->date_payment,5,2));
+//      $m = intval(substr($c->date_payment,5,2));
+      $m = $item->rate_month;
       $crLst[$rate][$m] += $c->import;
     }
     

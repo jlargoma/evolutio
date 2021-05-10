@@ -84,11 +84,6 @@
                         </a>
                     </li>
                     <li class="text-center">
-                        <a href="{{ url('admin/informes/cierre-diario') }}" class="btn btn-xs-small btn-sm btn-success font-s16 font-w300" style="padding: 10px 15px;height: 45px;    line-height: 25px;">
-                            Inf. Cierre diario
-                        </a>
-                    </li>
-                    <li class="text-center">
                         <button id="button-checkCash" class="btn btn-sm btn-xs-small btn-success font-s16 font-w300" style="padding: 10px 15px;height: 45px;    line-height: 25px;" data-toggle="modal" data-target="#checkCash">
                             Caja
                         </button>
