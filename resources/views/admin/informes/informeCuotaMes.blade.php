@@ -38,7 +38,7 @@
                 @endforeach
                         </div>
   
-                    <div class="col-md-12 col-xs-12 push-20">
+                    <div class="col-md-8 col-xs-12 push-20">
                         <table class="table table-striped table-header-bg">
                             <thead>
                                 <tr>
@@ -52,6 +52,35 @@
                             <tr>
                                 <td class="text-left">
                                     <?php echo (isset($aRates[$rate])) ? $aRates[$rate] : ' - '; ?>
+                                </td>
+                                <td class="text-center">
+                                    <?php $total += $import; echo moneda($import); ?>
+                                </td>
+                            </tr>
+                            @endforeach
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th class="text-left bg-complete font-w800">Total</th>
+                                    <th class="text-center bg-complete font-w800">{{moneda($total)}}</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                   <div class="col-md-4 col-xs-12 push-20">
+                        <table class="table table-striped table-header-bg">
+                            <thead>
+                                <tr>
+                                    <th class="text-left bg-complete font-w800">Tarifa</th>
+                                    <th class="text-center bg-complete font-w800">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                 <?php $total = 0; ?>
+                                @foreach($byTypeRate as $rt=>$import)
+                            <tr>
+                                <td class="text-left">
+                                    <?php echo (isset($aRType[$rt])) ? $aRType[$rt] : ' - '; ?>
                                 </td>
                                 <td class="text-center">
                                     <?php $total += $import; echo moneda($import); ?>

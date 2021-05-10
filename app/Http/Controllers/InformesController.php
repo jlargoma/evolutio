@@ -231,13 +231,25 @@ die('no armado');
         $data['months'] =  $lstMonthsSpanish;
         
         $byRate = [];
+        $byRateT = [];
+        $aRType = \App\Models\TypesRate::all()->pluck('name','id')->toArray();
+        $aR_RateType = \App\Models\Rates::all()->pluck('type','id')->toArray();
+        foreach ($aR_RateType as $k=>$v){
+          $byRateT[$v] = 0;
+        }
+        
         foreach ($data['charges'] as $charges){
             if (!isset($byRate[$charges->id_rate]))
                 $byRate[$charges->id_rate] = 0;
             
             $byRate[$charges->id_rate] += $charges->import;
+            if (isset($aR_RateType[$charges->id_rate])){
+              $byRateT[$aR_RateType[$charges->id_rate]] += $charges->import;
+            }
         }
         $data['byRate'] =  $byRate;
+        $data['byTypeRate'] =  $byRateT;
+        $data['aRType'] =  $aRType;
         return view('admin.informes.informeCuotaMes',$data);
     }
     
