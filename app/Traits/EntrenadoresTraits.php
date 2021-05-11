@@ -39,7 +39,8 @@ trait EntrenadoresTraits {
                     $aLiq[$liq->id_coach] = $aux;
                 
                 $aLiq[$liq->id_coach][date('n', strtotime($liq->date_liquidation))] = [$liq->id, intval($liq->total)];
-                $aLiqTotal[$liq->id_coach] = intval($liq->total);
+                if (!isset($aLiqTotal[$liq->id_coach])) $aLiqTotal[$liq->id_coach] = 0;
+                $aLiqTotal[$liq->id_coach] += intval($liq->total);
             }
         }
         

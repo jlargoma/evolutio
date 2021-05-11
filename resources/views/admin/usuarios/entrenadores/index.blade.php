@@ -139,14 +139,14 @@
                   <td class="text-center" colspan="5" style="color: #fff; background-color: #5c90d2; border-bottom-color: #5c90d2; font-size: 24px;">
                     TOTAL ANUALES
                   </td>
+                  <td class="text-center"  style="color: #fff; background-color: #5c90d2; border-bottom-color: #5c90d2; font-size: 24px;">
+                    <b><?php echo abs($totalYear); ?>€</b>
+                  </td>
                   <?php for ($i = 1; $i <= 12; $i++) : ?>
                     <td class="text-center" style="color: #fff; background-color: #5c90d2; border-bottom-color: #5c90d2; font-size: 24px;">
                       <b><?php echo $totalMonthCoach[$i]; ?>€</b>
                     </td>
                   <?php endfor; ?>
-                  <td class="text-center"  style="color: #fff; background-color: #5c90d2; border-bottom-color: #5c90d2; font-size: 24px;">
-                    <b><?php echo abs($totalYear); ?>€</b>
-                  </td>
                   
                 </tr>
               </tbody>

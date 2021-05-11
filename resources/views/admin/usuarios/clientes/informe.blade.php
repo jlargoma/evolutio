@@ -8,7 +8,7 @@
   <li <?php if ($tab == 'servic') echo 'class="active"'; ?>><a data-toggle="tab" href="#servic">Suscripciones</a></li>
   <li <?php if ($tab == 'history') echo 'class="active"'; ?>><a data-toggle="tab" href="#history">Historial</a></li>
   <li <?php if ($tab == 'notes') echo 'class="active"'; ?>><a data-toggle="tab" href="#notes">Anotaciones</a></li>
-  <li <?php if ($tab == 'consent') echo 'class="active"'; ?>><a data-toggle="tab" href="#consent">Concentimiento</a></li>
+  <li <?php if ($tab == 'consent') echo 'class="active"'; ?>><a data-toggle="tab" href="#consent">Consentimiento</a></li>
 </ul>
 
 <div class="tab-content box">
