@@ -205,6 +205,7 @@ class CoachLiquidationController extends Controller
 //
 //        return view('emails._liquidacion_coach',['user' => $user,'mes'=>$aData['mes']]);
         $emailing = $user->email;
+        try{
         \Mail::send(['html' => 'emails._liquidacion_coach'],['user' => $user,'mes'=>$aData['mes']], function ($message) use ($emailing, $fileName,$routePdf)  {
                 setlocale(LC_TIME, "ES");
                 setlocale(LC_TIME, "es_ES");
@@ -213,6 +214,9 @@ class CoachLiquidationController extends Controller
                 $message->to($emailing);
                 $message->attach($routePdf);
             });
+        } catch (\Exception $ex) {
+          dd($ex);
+        }
             
         return 'OK';
 

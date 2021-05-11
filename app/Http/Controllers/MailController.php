@@ -19,19 +19,23 @@ class MailController extends Controller
 		$importe     = $data['importe'];
 		$email       = $data['email'];
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return $email.' no es un mail válido';
-		$sended = Mail::send('emails._payment_rate', [
-			'user'        => $user,
-			'date'        => $date,
-			'rate'        => $rate,
-			'importe'     => $importe,
-			'typePayment' => $typePayment
-		], function ($message) use ($email) {
-			$message->subject('Comprobante de pago evolutio');
-			$message->from(config('mail.from.address'), config('mail.from.name'));
-			$message->to($email);
-		});
-
-		 return 'OK';
+        try{
+          $sended = Mail::send('emails._payment_rate', [
+              'user'        => $user,
+              'date'        => $date,
+              'rate'        => $rate,
+              'importe'     => $importe,
+              'typePayment' => $typePayment
+          ], function ($message) use ($email) {
+              $message->subject('Comprobante de pago evolutio');
+              $message->from(config('mail.from.address'), config('mail.from.name'));
+              $message->to($email);
+          });
+        } catch (\Exception $ex) {
+          return ($ex->getMessage());
+        }
+		 
+        return 'OK';
 	}
         
         public static function sendEmailPayRate($data,$oUser,$oRate)
@@ -43,19 +47,23 @@ class MailController extends Controller
 		$email       = $oUser->email;
                 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return $email.' no es un mail válido';
-		$sended = Mail::send('emails._payment_rate', [
-			'user'        => $oUser,
-			'date'        => $date,
-			'rate'        => $oRate,
-			'importe'     => $importe,
-			'typePayment' => $typePayment
-		], function ($message) use ($email) {
-			$message->subject('Comprobante de pago evolutio');
-			$message->from(config('mail.from.address'), config('mail.from.name'));
-			$message->to($email);
-		});
-
-		 return 'OK';
+        try{
+          $sended = Mail::send('emails._payment_rate', [
+              'user'        => $oUser,
+              'date'        => $date,
+              'rate'        => $oRate,
+              'importe'     => $importe,
+              'typePayment' => $typePayment
+          ], function ($message) use ($email) {
+              $message->subject('Comprobante de pago evolutio');
+              $message->from(config('mail.from.address'), config('mail.from.name'));
+              $message->to($email);
+          });
+        } catch (\Exception $ex) {
+          return ($ex->getMessage());
+        }
+		
+        return 'OK';
 	}
         
     public static function sendEmailPayRateByStripe($data,$oUser,$oRate,$pStripe)
@@ -72,44 +80,53 @@ class MailController extends Controller
         if ($rType->type == 'fisio' || $rType->type == 'nutri'){
           $type = 'Nueva Cita';
         }
-		$sended = Mail::send('emails._payment_rateStripe', [
-			'user'        => $oUser,
-			'date'        => $date,
-			'rate'        => $oRate,
-			'type'        => $type,
-			'importe'     => $importe,
-			'pStripe'     => $pStripe
-		], function ($message) use ($email) {
-			$message->subject('Solicitud de pago evolutio');
-			$message->from(config('mail.from.address'), config('mail.from.name'));
-			$message->to($email);
-		});
-         return 'OK';
+        try{
+          $sended = Mail::send('emails._payment_rateStripe', [
+              'user'        => $oUser,
+              'date'        => $date,
+              'rate'        => $oRate,
+              'type'        => $type,
+              'importe'     => $importe,
+              'pStripe'     => $pStripe
+          ], function ($message) use ($email) {
+              $message->subject('Solicitud de pago evolutio');
+              $message->from(config('mail.from.address'), config('mail.from.name'));
+              $message->to($email);
+          });
+        } catch (\Exception $ex) {
+          return ($ex->getMessage());
+        }
+         
+        return 'OK';
 		return (!$sended) ? true : false;
 	}
         
-        public static function sendEmailPayDateByStripe($oDate, $oUser, $oRate,$oCoach,$pStripe,$importe)
+        
+    public static function sendEmailPayDateByStripe($oDate, $oUser, $oRate,$oCoach,$pStripe,$importe)
 	{
             $email    = $oUser->email;
             $dateTime = strtotime($oDate->date);
             $day = date('d',$dateTime).' de '.getMonthSpanish(date('j',$dateTime),false);
             $hour = date('H:i',$dateTime);
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return $email.' no es un mail válido';
-            $sended = Mail::send('emails._payment_citaStripe', [
-                    'user'    => $oUser,
-                    'obj'     => $oDate,
-                    'rate'    => $oRate,
-                    'importe' => $importe,
-                    'oCoach'  => $oCoach,
-                    'pStripe' => $pStripe,
-                    'hour'    => $hour,
-                    'day'     => $day,
-            ], function ($message) use ($email) {
-                    $message->subject('Solicitud de pago evolutio');
-                    $message->from(config('mail.from.address'), config('mail.from.name'));
-                    $message->to($email);
-            });
-
+            try{
+              $sended = Mail::send('emails._payment_citaStripe', [
+                      'user'    => $oUser,
+                      'obj'     => $oDate,
+                      'rate'    => $oRate,
+                      'importe' => $importe,
+                      'oCoach'  => $oCoach,
+                      'pStripe' => $pStripe,
+                      'hour'    => $hour,
+                      'day'     => $day,
+              ], function ($message) use ($email) {
+                      $message->subject('Solicitud de pago evolutio');
+                      $message->from(config('mail.from.address'), config('mail.from.name'));
+                      $message->to($email);
+              });
+            } catch (\Exception $ex) {
+              return ($ex->getMessage());
+            }
             return 'OK';
 	}
 

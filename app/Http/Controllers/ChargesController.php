@@ -436,8 +436,9 @@ class ChargesController extends Controller {
         
         switch ($type){
             case 'mail':
-                MailController::sendEmailPayDateByStripe($oDate, $oUser, $oRate,$coach,$pStripe,$importe);
-                return response()->json(['OK', 'Se ha enviado un email con el link de pago']);
+                $resp = MailController::sendEmailPayDateByStripe($oDate, $oUser, $oRate,$coach,$pStripe,$importe);
+                if ($resp == 'OK')  return response()->json(['OK', 'Se ha enviado un email con el link de pago']);
+                  return response()->json(['error', $resp]);
                 break;
             case 'wsp':
                 $msg = 'Te adjuntamos el enlace para el pago de **'.$oRate->name.'** en Evolutio '.$pStripe;
