@@ -34,7 +34,7 @@
         </div>
         <div class="col-md-8">
           <label for="importeFinal">Total:</label>
-          <input id="importeFinal" type="text" name="importe" class="form-control"
+          <input id="importeFinal" type="number" step="0.01" name="importe" class="form-control"
                  value="<?php echo $importe; ?>"/>
         </div>
         @include('admin.blocks.stripe-actions')

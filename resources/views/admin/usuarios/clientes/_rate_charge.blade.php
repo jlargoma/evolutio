@@ -75,7 +75,7 @@
       <div class="col-xs-6 col-md-2 push-20">
         <label>Total</label>
         <div class="pull-left">
-          <input id="importeFinal" type="text" name="importe" class="form-control" value="{{ old('importe') }}"/>
+          <input id="importeFinal" type="number" step="0.01" name="importe" class="form-control" value="{{ old('importe') }}"/>
         </div>
       </div>
       

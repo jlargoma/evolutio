@@ -8,9 +8,9 @@
         <tr>
           <th class="static">Servicio</th>
           <th class="first-col"></th>
-          <th class="">Total</th>
+          <th class="">Total<br>{{sumMonthValue($totals)}}</th>
           @foreach($monts as $k=>$v)
-          <th>{{$v}}</th>
+          <th>{{$v}}<br/>{{moneda($totals[$k])}}</th>
           @endforeach
         </tr>
        </thead>

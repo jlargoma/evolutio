@@ -97,12 +97,22 @@ class IncomesController extends Controller {
       }
     }
     /************************************************/
+    $totals = $mm;
+    foreach ($lst as $i){
+      foreach ($mm as $k=>$v){
+        if (isset($i[$k])){
+          $totals[$k] += $i[$k];
+        }
+      }
+    }
+    /************************************************/
     return view('admin.contabilidad.incomes.index',[
         'year'=>$year,
         'monts'=>$monts,
         'lst'=>$lst,
         'family'=>$family,
         'familyTotal'=>$familyTotal,
+        'totals'=>$totals,
         'byYears'=>$byYears,
         'tByYears'=>$tByYears,
     ]);

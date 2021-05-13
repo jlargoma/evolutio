@@ -29,7 +29,7 @@
     </div>
     <div class="col-md-4">
       <label>Total</label>
-      <input id="importeFinal" type="text" name="importe" class="form-control" value="{{ $charge->import}}" />
+      <input id="importeFinal" type="number" step="0.01" name="importe" class="form-control" value="{{ $charge->import}}" />
     </div>
   </div>
   <div class="row mt-2">

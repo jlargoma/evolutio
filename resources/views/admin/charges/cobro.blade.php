@@ -89,7 +89,7 @@
                         <h3>Total</h3>
                     </div>
                     <div class="col-md-7">
-                        <input id="importeFinal" type="text" name="importe" class="form-control"
+                      <input id="importeFinal" type="number" step="0.01" name="importe" class="form-control"
                                value="<?php echo $rate->price; ?>"/>
                     </div>
                 </div>

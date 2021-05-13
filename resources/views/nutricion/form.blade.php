@@ -91,7 +91,7 @@
                 </div>
                 <div class="col-xs-3 col-md-3 push-20">
                   <label for="importeFinal">Precio</label>
-                  <input id="importeFinal" type="text" name="importe" class="form-control"  value="{{$price}}">
+                  <input id="importeFinal" type="number" step="0.01" name="importe" class="form-control"  value="{{$price}}">
                 </div>
               
             </div>
