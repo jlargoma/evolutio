@@ -27,7 +27,8 @@
                                 $payment = ($item['charged'] != 1) ? '<span class="no-pay"></span>' : '';
                                 echo '<div '
                                 . 'data-id="'.$item['id'].'" '
-                                . 'class="eventType_'.$item['coach'].'">'
+                                . 'data-name="'. strtolower($item['name']).'" '
+                                . 'class="eventType_'.$item['coach'].' events">'
                                     .$payment.str_limit($item['name'],10)
                                     .'<span class="detail">'.$item['name'].'</span>'
                                 . '</div>';

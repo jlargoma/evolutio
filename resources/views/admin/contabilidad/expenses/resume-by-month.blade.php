@@ -5,12 +5,13 @@
       <table class="table table-resumen">
         <thead>
           <tr class="resume-head">
-            <th class="static">Concepto</th>
-            <th class="static-2">Total</th>
+            <th class="static">Concepto<br>&nbsp;</th>
+            <th class="static-2">Total<br>{{moneda(array_sum($tYear))}}</th>
             <th class="first-col-2"></th>
             @foreach($lstMonths as $k => $month)
-            <?php if ($k==0) continue; ?>
-            <th>{{$month}}</th>
+              @if ($k>0)
+              <th>{{$month}}<br/>{{moneda($tYear[$k])}}</th>
+              @endif
             @endforeach
           </tr>
         </thead>

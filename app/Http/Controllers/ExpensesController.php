@@ -129,6 +129,7 @@ class ExpensesController extends Controller {
         'totalYear' => $totalYear,
         'total_year_amount' => $totalYearAmount,
         'yearMonths' => $yearMonths,
+        'tYear' => $yearMonths[$year],
         'typePayment' => Expenses::getTypeCobro()
     ]);
   }

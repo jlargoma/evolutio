@@ -129,6 +129,7 @@
       $ij++;
     }
     $tYearMonths = $aux;
+    unset($lstMonths[0]);
   ?>
   @section('scripts')
   

@@ -29,7 +29,12 @@
                     <div class="col-xs-2 mx-1em">
                         <button class="btn btn-horarios" data-toggle="modal" data-target="#modalIfrm">Horarios</button>
                     </div>
-                <div class="col-xs-10">
+                </div>
+                <div class="row">  
+                <div class="col-md-2 col-xs-12  mx-1em">
+                  <input type="search" id="search_cust" class="form-control" placeholder="Buscar clientes">
+                </div>
+                <div class="col-md-8 col-xs-12">
                 <ul class="selectDate">
                 @foreach($aMonths as $k=>$v)
                 <li data-val="{{$k}}" class="<?php echo ($month == $k) ? 'active' : ''?>">
@@ -38,7 +43,7 @@
                 @endforeach
                 </ul>
                 </div>
-                <div class="col-xs-2 mx-1em">
+                <div class="col-md-2 col-xs-12 mx-1em">
                     <select id="selectType" class="form-control">
                         <option value="0">Servicio</option>
                         <?php
@@ -151,5 +156,20 @@ $('#modal_newUser').on('submit','#form-new',function(event){
     $('#ifrModal').attr('src','/admin/horariosEntrenador/');
   });
 
+  $('#search_cust').on('keyup',function(){
+    var s = $(this).val();
+    if (s != ''){
+      s = s.toLowerCase();
+      $('.events').each(function( index ) {
+        if ($( this ).data('name').includes(s)){
+          $( this ).show();
+        } else {
+          $( this ).hide();
+        }
+      });
+    } else {
+      $('.events').show();
+    }
+  });
 </script>
 @endsection

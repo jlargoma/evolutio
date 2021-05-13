@@ -307,7 +307,7 @@ foreach ($typePayment as $k => $v) {
         options: {
           title: {
             display: true,
-            text: 'Total x Año'
+            text: 'Total x Año/Mes'
           }
         }
       });

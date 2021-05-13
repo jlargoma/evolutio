@@ -98,15 +98,22 @@ die('no armado');
 
         $bank = 0;
         $cash = 0;
+        $card = 0;
         $clients = [];
         $rates = [];
         foreach ($charges as $charge) {
             $clients[] = $charge->id_user;
             $rates[] = $charge->id_rate;
-            if ($charge->type_payment == "banco") {
+            switch ($charge->type_payment){
+              case 'banco':
                 $bank += $charge->import;
-            } elseif ($charge->type_payment == "cash") {
+                break;
+              case 'cash':
                 $cash += $charge->import;
+                break;
+              case 'card':
+                $card += $charge->import;
+                break;
             }
         }
 
@@ -127,6 +134,7 @@ die('no armado');
             'charges' => $charges,
             'extrasCharges' => $extrasCharges,
             'cash' => $cash,
+            'card' => $card,
             'bank' => $bank,
             'clients' => $clients,
             'rates' => $rates,
@@ -153,6 +161,7 @@ die('no armado');
       $uRates = $sqlURates->orderBy('created_at')->get();
       $bank = 0;
       $cash = 0;
+      $card = 0;
       $clients = [];
       $rates = [];
       $charges = [];
@@ -162,11 +171,18 @@ die('no armado');
           
           $charge = $item->charges;
           $charges[] = $charge;
-          if ($charge->type_payment == "banco") {
-              $bank += $charge->import;
-          } elseif ($charge->type_payment == "cash") {
-              $cash += $charge->import;
-          }
+          switch ($charge->type_payment){
+              case 'banco':
+                $bank += $charge->import;
+                break;
+              case 'cash':
+                $cash += $charge->import;
+                break;
+              case 'card':
+                $card += $charge->import;
+                break;
+            }
+            
       }
 
       $extrasCharges = [];
@@ -181,6 +197,7 @@ die('no armado');
             'extrasCharges' => $extrasCharges,
             'cash' => $cash,
             'bank' => $bank,
+            'card' => $card,
             'clients' => $clients,
             'rates' => $rates,
             'year' => $year,
@@ -214,7 +231,7 @@ die('no armado');
         }
         $data['aURates']= \App\Models\UserRates::whereIn('id_charges', $chargesIDs)
               ->pluck('rate_month','id_charges')->toArray();
-      
+
         return view('admin.informes.informeClientesMes',$data);
     }
     public function informeCuotaMes(Request $request, $month = null, $day = null) {

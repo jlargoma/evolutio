@@ -9,13 +9,15 @@
             <td class="text-center bg-complete font-w800">Nº Clientes</td>
             <td class="text-center bg-complete font-w800">CAJA</td>
             <td class="text-center bg-complete font-w800">BANCO</td>
+            <td class="text-center bg-complete font-w800">TARJ</td>
             <td class="text-center bg-complete font-w800">TOTAL</td>
         </tr>
         <tr>
             <td class="text-center bg-complete"><?php echo count($aUsers); ?></td>
             <td class="text-center bg-complete"><?php echo $cash; ?> €</td>
             <td class="text-center bg-complete"><?php echo $bank; ?> €</td>
-            <td class="text-center bg-complete"><?php echo ($cash + $bank); ?> €</td>
+            <td class="text-center bg-complete"><?php echo $card; ?> €</td>
+            <td class="text-center bg-complete"><?php echo ($cash + $bank + $card); ?> €</td>
         </tr>
         </tbody>
     </table>
@@ -77,9 +79,17 @@
             </td>
             <td class="text-center">
                 <?php 
-                if ($charge->type_payment == "banco"): echo 'TARJETA';
-		elseif ($charge->type_payment == "cash"): echo 'METALICO';
-                endif; 
+                switch ($charge->type_payment){
+                  case 'banco':
+                    echo 'BANCO';
+                    break;
+                  case 'cash':
+                    echo 'METALICO';
+                    break;
+                  case 'card':
+                    echo 'TARJETA';
+                    break;
+                }
                 ?>
             </td>
         </tr>
