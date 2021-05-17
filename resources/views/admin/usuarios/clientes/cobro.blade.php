@@ -7,14 +7,13 @@
       <span class="font-w600"><?php echo strtoupper($user->name); ?></span>
     </h2>
   </div>
-
   <form class="form-toPayment" method="post" action="{{ url('/admin/cobros/cobrar') }}">
     <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
     <input type="hidden" name="id_uRate" value="<?php echo $uRate; ?>">
     <input type="hidden" id="importeCobrar" value="<?php echo $rate->price; ?>">
     <div class="col-md-12 push-20">
       <h2 class="text-center font-w300">
-        Cuota a cobrar <span class="font-w600"><?php echo $rate->name; ?></span> {{moneda($rate->price)}}
+        Cuota a cobrar <span class="font-w600"><?php echo $rate->typeRate->name.': '.$rate->name; ?></span> {{moneda($rate->price)}}
       </h2>
     </div>
     <div class="row">

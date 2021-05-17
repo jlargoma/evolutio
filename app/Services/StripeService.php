@@ -46,7 +46,9 @@ class StripeService {
     }
     
     function pagoSimple($amount,$data){
-        
+        if (!isset($data['stripeToken']) || trim($data['stripeToken']) == ''){
+          return 'Tarjeta no ingresada';
+        }
          try {
             Stripe::setApiKey($this->sPRivKey);
             $customer = Customer::create(array(

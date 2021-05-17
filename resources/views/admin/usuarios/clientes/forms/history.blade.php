@@ -30,7 +30,11 @@ if ($oDates):
     <td>{{date('H',$dateTime)}} Hrs</td>
     <td>{{$type}}</td>
     <td>{{$personal}}</td>
-    <td><?php echo ($v->charged == 1) ? 'SI' : 'NO'; ?></td>
+    <td><?php 
+    $uRates = $v->uRates;
+    if ($uRates) echo ($uRates->id_charges > 0) ? 'SI' : 'NO'; 
+    else echo 'NO';
+    ?></td>
 </tr>
         <?php
     endforeach;

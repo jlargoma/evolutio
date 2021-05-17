@@ -6,7 +6,7 @@
   ACTUALIZAR COBRO DE <b>{{$date}}</b> A <span class="font-w600"><?php echo strtoupper($user->name); ?></span>
 </h2>
 <h3 class="text-center font-w300 mt-1">
-  Cuota a actualizar <span class="font-w600"><?php echo $rate->name; ?></span>
+  Cuota a actualizar <span class="font-w600"><?php echo $rate->typeRate->name.': '.$rate->name; ?></span>
 </h3>
 <form class="fomr-horizontal content-md" method="post" action="{{ url('/admin/cobros/cobrar/' . $charge->id) }}" id="forms">
   <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">

@@ -9,7 +9,7 @@ use App\Models\Charges;
  * UPDATE `0_temp_users2`  SET user_id = null;
 UPDATE `0_temp_users2`  SET user_id = (SELECT users.id FROM users WHERE users.name = `0_temp_users2`.`name`)
  * 
- * /admin/import/updRates
+ * /admin/import/updChargesDate
  */
 class ImportCustomers {
 
@@ -27,9 +27,9 @@ class ImportCustomers {
 //      case 'updRates':
 //        $this->updRates();
 //        break;
-//      case 'updChargesDate':
-//        $this->updChargesDate();
-//        break;
+      case 'updChargesDate':
+        $this->updChargesDate();
+        break;
     }
   }
   public function importCustomer() {
@@ -121,6 +121,32 @@ class ImportCustomers {
     }
   
     function updChargesDate(){
+      $allDates = \App\Models\Dates::all();
+      foreach ($allDates as $i){
+        if (!$i->id_user_rates){
+          $uRate = \App\Models\UserRates::where('id_appointment',$i->id)->first();
+          if ($uRate){
+            $uRate->id_charges = $i->id_charges;
+            $uRate->save();
+            
+          } else {
+            $timeCita = strtotime($i->date);
+            $uRate = new \App\Models\UserRates();
+            $uRate->id_user = $i->id_user;
+            $uRate->id_rate = $i->id_rate;
+            $uRate->rate_year = date('Y', $timeCita);
+            $uRate->rate_month = date('n', $timeCita);
+            $uRate->price = $i->price;
+            $uRate->id_charges = $i->id_charges;
+            $uRate->save();
+          }
+          
+          $i->id_user_rates = $uRate->id;
+          $i->save();
+        }
+      }
+      
+      return ;
       $charges = Charges::where('date_payment','>=','2021-05-05')
               ->where('date_payment','<=','2021-05-07')->get();
       

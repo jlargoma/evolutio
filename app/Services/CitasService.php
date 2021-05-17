@@ -14,13 +14,13 @@ class CitasService {
       $date = explode(' ', $oDate->date);
       $uRates = $oDate->uRates;
       if (!$uRates){
-        $oDate->delete();
-        die('Usuario eliminado');
+//        $oDate->delete();
+        die('Servicio eliminado');
       }
       $oUser = $uRates->user;
       if (!$oUser){
-        $uRates->delete();
-        $oDate->delete();
+//        $uRates->delete();
+//        $oDate->delete();
         die('Usuario eliminado');
       }
       $oServicios = Rates::getByTypeRate($oDate->date_type);
@@ -129,7 +129,7 @@ class CitasService {
             $detail[$item->id] = [
                 'n' => $u_name,
                 'p'=>($uRates) ? moneda($uRates->price): '--',
-                's'=>$item->service->name,
+                's'=> ($item->service) ? $item->service->name : '-',
                 'mc'=>'', //Metodo pago
                 'dc'=>'', // fecha pago
             ];
