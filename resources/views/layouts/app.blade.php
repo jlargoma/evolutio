@@ -86,5 +86,6 @@
         text-align: left;
       }
     </style>
+    @yield('scripts')
   </body>
 </html>

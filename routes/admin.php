@@ -26,7 +26,10 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
     Route::post('/usuarios/notes', 'UsersController@addNotes');
     Route::post('/usuarios/del-note', 'UsersController@delNotes');
     Route::post('/usuarios/sign', 'UsersController@addSign');
-    Route::get('/usuarios/sign/{uid?}', 'UsersController@getSign');
+    Route::get('/usuarios/sign/{file?}', 'UsersController@getSign');
+    Route::post('/usuarios/send-consent', 'UsersController@sendConsent');
+    Route::get('/see-consent/{id}/{type}', 'UsersController@seeConsent');
+    Route::get('/downl-consent/{id}/{type}', 'UsersController@downlConsent');
 //    Route::get('/usuarios/informe/{year}/{id}', 'UsersController@informe');
     Route::get('/usuarios/informe/{id}/{tab?}', 'UsersController@informe');
     

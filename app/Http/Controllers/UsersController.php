@@ -431,4 +431,50 @@ class UsersController extends Controller {
     return $pendiente . "€";
   }
 
+  function sendConsent(Request $request){
+    $uID = $request->input('id_user',null);
+    $type = $request->input('type',null);
+    if (!$uID){
+      return response()->json(['error','usuario no encontrado']);
+    }
+    $oUser = User::find($uID);
+    if (!$oUser){
+      return response()->json(['error','usuario no encontrado']);
+    }
+    
+    $email = $oUser->email;
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
+      return response()->json(['error',$email.' no es un mail válido']);
+    }
+    
+    $doc = $tit = '';
+    $code = 0;
+    switch ($type){
+      case 'fisioIndiba':
+        $tit = 'CONSENTIMIENTO FISIOTERAPIA CON INDIBA';
+        $doc = 'CONSENTIMIENTO-FISIOTERAPIA-CON-INDIBA.pdf';
+        $code = 1001;
+        break;
+      case 'sueloPelvico':
+        $tit = 'CONSENTIMIENTO SUELO PELVICO';
+        $doc = 'CONSENTIMIENTO-SUELO-PELVICO.pdf';
+        $code = 2002;
+        break;
+      default:
+        $tit = '';
+        $doc = '';
+        break;
+    }
+    
+    $link = URL::to('/firmar-consentimiento/').'/';
+    $link .= \App\Services\LinksService::getLink([$uID,$code,time()]);
+    
+    
+    $sended = Mail::send('emails._sign-consent', ['user' => $oUser,'tit'=>$tit,'link'=>$link], function ($message) use ($email) {
+          $message->subject('Firma de consentimiento');
+          $message->from(config('mail.from.address'), config('mail.from.name'));
+          $message->to($email);
+        });
+    return response()->json(['OK','Email enviado']);
+  }
 }

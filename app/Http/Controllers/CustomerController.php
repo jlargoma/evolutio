@@ -16,7 +16,7 @@ class CustomerController extends Controller {
   }
 
   public function pagoSimple($type, $token = null, $control = null) {
-    $amount = 1500;
+    $amount = 15000;
     $name = '';
     $items = null;
     $sStripe = new \App\Services\StripeService();
@@ -242,5 +242,108 @@ class CustomerController extends Controller {
     $resp = $sStripe->subscription_changeCard($oUser, $cc_number, $cc_expide_mm, $cc_expide_yy, $cc_cvc);
     die('asfdasdf');
   }
+  
+  
+  public function showResult() {
+    return view('customers.message');
+  }
+  
+  public function signConsentSave(Request $request,$code,$control) {
+    $data = \App\Services\LinksService::getLinkData($code,$control);
+    if (!$data){
+      abort(404);
+      exit();
+    }
+    $oUser = User::find($data[0]);
+    if (!$oUser){
+      abort(404);
+      exit();
+    }
+    $uID  = $oUser->id;
+    $sign = $request->input('sign');
+    $encoded_image = explode(",", $sign)[1];
+    $decoded_image = base64_decode($encoded_image);
+    switch ($data[1]){
+      case 1001:
+        $type = 'sign_fisioIndiba';
+        break;
+      case 2002:
+        $type = 'sign_sueloPelvico';
+        break;
+      default:
+        $type = 'sign_gral';
+        break;
+    }
+    
+    $fileName = 'signs/' .$type.'-'. $uID .'-'.time().'.png';
+    $path = storage_path('/app/' . $fileName);
+    
+    $oUser->setMetaContent($type,$fileName);
+
+    $storage = \Illuminate\Support\Facades\Storage::disk('local');
+    $storage->put($fileName, $decoded_image);
+    
+    return redirect('/resultado')->with(['success' => 'Firma Guardada']);
+  }
+
+  function signConsent($code,$control) {
+    
+    $data = \App\Services\LinksService::getLinkData($code,$control);
+    $dView = [
+      'name'=>'',  
+      'file'=>'',  
+      'tit' =>'',  
+      'tmsg'=>'',  
+      'msg' =>'',  
+      'url' =>"/firmar-consentimiento/$code/$control",  
+    ];
+    if (!$data){
+      abort(404);
+      exit();
+    }
+    
+    $oUser = User::find($data[0]);
+    if (!$oUser){
+      abort(404);
+      exit();
+    }
+    switch ($data[1]){
+      case 1001:
+        $tit = 'CONSENTIMIENTO FISIOTERAPIA CON INDIBA';
+        $doc = 'CONSENTIMIENTO-FISIOTERAPIA-CON-INDIBA';
+        break;
+      case 2002:
+        $tit = 'CONSENTIMIENTO SUELO PELVICO';
+        $doc = 'CONSENTIMIENTO-SUELO-PELVICO';
+        break;
+      default:
+        $tit = '';
+        $doc = '';
+        break;
+    }
+    
+
+    return view('customers.consentimiento', [
+      'name'=>$oUser->name,  
+      'file'=>$doc,  
+      'tit' =>$tit,  
+      'url' =>"/firmar-consentimiento/$code/$control", 
+    ]);
+
+
+    $path = storage_path('/app/signs/' . $uid . '.png');
+    if (!File::exists($path)) {
+      abort(404);
+    }
+
+    $file = File::get($path);
+    $type = File::mimeType($path);
+
+    $response = \Response::make($file, 200);
+    $response->header("Content-Type", $type);
+
+    return $response;
+  }
+
 
 }

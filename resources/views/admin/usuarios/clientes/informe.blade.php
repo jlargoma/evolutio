@@ -1,6 +1,5 @@
 @extends('layouts.popup')
 @section('content')
-<script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
 
 <h1 class="text-center"><?php echo $user->name; ?></h1>
 <ul class="nav nav-tabs">
@@ -152,18 +151,40 @@
         
         
         /**************************************************/
-        var canvas = document.querySelector("canvas");
-        var signaturePad = new SignaturePad(canvas);
-        $('#newSign').on('click',function (e) {
-        $('#iSign').hide();
-        $('#cSign').show();
-        signaturePad.clear();
-        $('#saveSign').show();
-        });
-        $('#saveSign').on('click',function (e) {
-            e.preventDefault();
-            $('#sign').val(signaturePad.toDataURL()); // save image as PNG
-            $(this).closest('form').submit();
+//        var canvas = document.querySelector("canvas");
+//        var signaturePad = new SignaturePad(canvas);
+//        $('#newSign').on('click',function (e) {
+//        $('#iSign').hide();
+//        $('#cSign').show();
+//        signaturePad.clear();
+//        $('#saveSign').show();
+//        });
+//        $('#saveSign').on('click',function (e) {
+//            e.preventDefault();
+//            $('#sign').val(signaturePad.toDataURL()); // save image as PNG
+//            $(this).closest('form').submit();
+//        });
+        /**************************************************/
+        
+        $('.sendConsent').on('click', function () {
+          var type = $(this).closest('tr').data('id');
+          var posting = $.post('/admin/usuarios/send-consent', {
+            _token: '{{csrf_token()}}',
+            id_user: {{$user->id}},
+            type: type
+          });
+          posting.done(function (data) {
+            if (data[0] == 'OK') {
+              window.show_notif('success', data[1]);
+            } else {
+              window.show_notif('error', data[1]);
+            }
+          });
+          posting.fail(function (data) {
+            window.show_notif('error', 'UPs, algo salió mal');
+          });
+          
+          
         });
         /**************************************************/
     });
@@ -196,6 +217,9 @@
     width: 81px;
     padding: 3px 0px;
     cursor: pointer;
+}
+td.btnCel {
+    width: 50px;
 }
 </style>
 @endsection

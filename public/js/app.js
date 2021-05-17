@@ -1,9 +1,3 @@
-$(document).ready(function () {
-//$('form').on('submit', function(){
-//    
-//});
-
-
 $(document).ready(function() { 
   window["show_notif"] = function(title,status,message){
     

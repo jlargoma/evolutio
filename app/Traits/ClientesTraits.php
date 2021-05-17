@@ -261,8 +261,22 @@ trait ClientesTraits {
     $aCoachs = User::where('role', 'teach')->orderBy('name')->pluck('name', 'id')->toArray();
     $allCoachs = User::all()->pluck('name', 'id')->toArray();
     /*     * ****************************************************** */
-    $path = storage_path('/app/signs/' . $userID . '.png');
-    $alreadySign = File::exists($path);
+    // CONSENTIMIENTOS
+    
+    $fileName = $user->getMetaContent('sign_fisioIndiba');
+    $fisioIndiba = false;
+    if ($fileName){
+      $path = storage_path('/app/' . $fileName);
+      $fisioIndiba = File::exists($path);
+    }
+    
+    $fileName = $user->getMetaContent('sign_sueloPelvico');
+    $sueloPelvico = false;
+    if ($fileName){
+      $path = storage_path('/app/' . $fileName);
+      $sueloPelvico = File::exists($path);
+    }
+    
     /*     * ****************************************************** */
 
     if (count($detail)>0){
@@ -298,7 +312,8 @@ trait ClientesTraits {
         'oDates' => $oDates,
         'oNotes' => $oNotes,
         'tab' => $tab,
-        'alreadySign' => $alreadySign,
+        'fisioIndiba' => $fisioIndiba,
+        'sueloPelvico' => $sueloPelvico,
     ]);
   }
 
@@ -492,23 +507,65 @@ trait ClientesTraits {
     return redirect('/admin/usuarios/informe/' . $uID . '/notes')->withErrors(['Nota no eliminada']);
   }
 
-  public function addSign(Request $request) {
-    $uID = $request->input('uid');
-    $sign = $request->input('sign');
-    $encoded_image = explode(",", $sign)[1];
-    $decoded_image = base64_decode($encoded_image);
-    $fileName = 'signs/' . $uID . '.png';
-    $path = storage_path('/app/' . $fileName);
 
-    $storage = Storage::disk('local');
-    $storage->put($fileName, $decoded_image);
-//        file_put_contents("signature.png", $decoded_image);
-    return redirect('/admin/usuarios/informe/' . $uID . '/consent')->with(['success' => 'Firma Guardada']);
+
+  function downlConsent($uid,$type) {
+    $view = $this->seeConsent($uid,$type);
+    
+//            $fileName = str_replace(' ','-','liquidacion '.$aData['mes'].' '. strtoupper($user->name));
+//        $routePdf = storage_path('/app/liquidaciones/'. urlencode($fileName).'.pdf');
+//        $pdf = PDF::loadView('pdfs.liquidacion', $aData);
+//        $pdf->save($routePdf);
+        
+    $pdf = \Barryvdh\DomPDF\Facade::loadHTML($view);
+    return $pdf->download('invoice.pdf');
+        
+        
   }
+  function seeConsent($uid,$type) {
+    
+    $oUser = User::find($uid);
+    if (!$oUser){
+      abort(404);
+      exit();
+    }
+    $u_name = $oUser->name;
+    $fileName = $oUser->getMetaContent('sign_'.$type);
+    $sign = false;
+    if ($fileName){
+      $path = storage_path('/app/' . $fileName);
+      $sign = File::exists($path);
+      if ($sign){
+        $fileName = str_replace('signs/','', $fileName);
+      }
+    }
+    if (!$sign){
+      die('firma');
+    }
+    switch ($type){
+      case 'fisioIndiba':
+        $file = 'CONSENTIMIENTO-FISIOTERAPIA-CON-INDIBA';
+        break;
+      case 'sueloPelvico':
+        $file = 'CONSENTIMIENTO-SUELO-PELVICO';
+        break;
+      default:
+        $file = '';
+        break;
+    }
+    
+    
+            
+    return view('docs.concentimientos', [
+        'fileName' => $fileName,
+        'file' => $file,
+        'u_name' => $u_name,
+        'sign' => $sign
+    ]);
+  }
+  function getSign($file) {
 
-  function getSign($uid) {
-
-    $path = storage_path('/app/signs/' . $uid . '.png');
+    $path = storage_path('/app/signs/' .$file);
     if (!File::exists($path)) {
       abort(404);
     }
