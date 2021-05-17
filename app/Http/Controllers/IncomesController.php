@@ -29,6 +29,7 @@ class IncomesController extends Controller {
               ->where('rate_year',$year)->get();
     foreach ($uRates as $item){
       $c = $item->charges;
+      if (!$c)        continue;
 //    $oCharges = Charges::whereYear('date_payment','=',$year)->get();
 //    foreach ($oCharges as $c){
       $rate = $c->id_rate;

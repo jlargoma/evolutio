@@ -58,6 +58,7 @@ class PyGController extends Controller {
 //    $oCharges = Charges::whereYear('date_payment', '=', $year)->get();
 //    foreach ($oCharges as $c) {
       $c = $item->charges;
+      if (!$c)        continue;
 //      $m = intval(substr($c->date_payment, 5, 2));
       $m = $item->rate_month;
       $aux[0] += $c->import;

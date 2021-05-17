@@ -76,9 +76,9 @@
                                 <label>Tipo de Pago</label>
                                 <select id="f_method" class="form-control">
                                     <option value="all">Todos</option>
-                                    <option value="banco" <?php if($filt_method == 'banco') echo 'selected' ?>>Banco</option>
-                                    <option value="cash" <?php if($filt_method == 'cash') echo 'selected' ?>>Efectivo</option>
-                                    <option value="card" <?php if($filt_method == 'card') echo 'selected' ?>>Tarjeta</option>
+                                    <option value="banco" <?php if($filt_method == 'banco') echo 'selected' ?>>BANCO</option>
+                                    <option value="cash" <?php if($filt_method == 'cash') echo 'selected' ?>>METALICO</option>
+                                    <option value="card" <?php if($filt_method == 'card') echo 'selected' ?>>TARJETA</option>
                                 </select>
                             </div>
                         </div>

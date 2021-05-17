@@ -126,14 +126,14 @@ var myChart = new Chart(ctx, {
   data: {
     labels: [<?php foreach ($monts as $v) echo "'" . $v . "',"; ?>],
     datasets: [{
-        label: 'Cash',
+        label: 'METALICO',
         data: [<?php for($i=1;$i<13;$i++) echo "'" . round($pay_method['c'][$i]) . "',"; ?>],
         backgroundColor: 'rgba(52, 162, 99, 0.2)',
         borderColor: 'rgba(52,162,99,1)',
         borderWidth: 2
       },
       {
-        label: 'Banco',
+        label: 'BANCO',
         data: [<?php for($i=1;$i<13;$i++) echo "'" . round($pay_method['b'][$i]) . "',"; ?>],
         backgroundColor: 'rgb(92,144,210,0.2)',
         borderColor: '#5c90d2',

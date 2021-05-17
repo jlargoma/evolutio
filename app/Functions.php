@@ -265,7 +265,7 @@ function getKeyControl($id){
 }
 function payMethod($i = null){
     $lst = [
-        'cash'=>'Efectivo',
+        'cash'=>'Metálico',
         'card'=>'Tarjeta',
         'banco'=>'Banco',
         ];
