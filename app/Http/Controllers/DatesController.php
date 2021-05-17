@@ -289,7 +289,7 @@ class DatesController extends Controller {
             $time = strtotime($oDates->date);
             $oCobro = new \App\Models\Charges();
             $oCobro->id_user = $oUser->id;
-            $oCobro->date_payment = date('Y-m-d',$time);
+            $oCobro->date_payment = date('Y-m-d');
             $oCobro->id_rate = $oRate->id;
             $oCobro->type_payment = $payType;
             $oCobro->type = 1;
