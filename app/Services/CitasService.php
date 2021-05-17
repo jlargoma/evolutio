@@ -14,13 +14,13 @@ class CitasService {
       $date = explode(' ', $oDate->date);
       $uRates = $oDate->uRates;
       if (!$uRates){
-//        $oDate->delete();
+        $oDate->delete();
         die('Servicio eliminado');
       }
       $oUser = $uRates->user;
       if (!$oUser){
-//        $uRates->delete();
-//        $oDate->delete();
+        $uRates->delete();
+        $oDate->delete();
         die('Usuario eliminado');
       }
       $oServicios = Rates::getByTypeRate($oDate->date_type);
