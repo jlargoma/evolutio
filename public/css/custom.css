@@ -291,6 +291,7 @@ toltip {
   text-decoration: none;
   border: 3px outset;
   display: none;
+  overflow: hidden;
 }
 toltip h3 {
   font-size: 17px;
