@@ -22,7 +22,7 @@
             <div class="col-xs-12 push-20">
                 <div class="row">
                     <div class="col-md-12 col-xs-12 push-20">
-                        <h2 class="text-center">INFORME DE CAJA AL MES</h2>
+                        <h2 class="text-center">INGRESOS POR CAJA / MES</h2>
                     </div>
                     <div class="col-md-12 col-xs-12 push-20">
                         <div class="col-md-4 col-xs-12">
