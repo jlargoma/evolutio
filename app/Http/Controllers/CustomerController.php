@@ -43,11 +43,21 @@ class CustomerController extends Controller {
         case 'nutri': //$dID,$oUser->id,$importe*100,$oRate->id;
         case 'fisio': //$dID,$oUser->id,$importe*100,$oRate->id;
           $oDate = \App\Models\Dates::find($data[0]);
-          $oUser = $oDate->user;
+          $uRates = $oDate->uRates;
+          if (!$uRates){
+            $oDate->delete();
+            die('Usuario eliminado');
+          }
+          $oUser = $uRates->user;
+          if (!$oUser){
+            $uRates->delete();
+            $oDate->delete();
+            die('Usuario eliminado');
+          }
           $dateTime = strtotime($oDate->date);
           $day = date('d', $dateTime) . ' de ' . getMonthSpanish(date('n', $dateTime),false);
           $hour = date('H:i', $dateTime);
-          $oRate = $oDate->service;
+          $oRate = $uRates->rate;
           $oCoach = $oDate->coach;
           /** @Todo Controlar si ya está pagado */
           $name = 'Pago de su cita de ';
@@ -132,12 +142,7 @@ class CustomerController extends Controller {
         $amount = round($data[2]);
         break;
     }
-
     $stripeResp = $sStripe->pagoSimple($amount, $request->all());
-//        dd($stripeResp);
-//        echo json_encode($response);
-//        $stripeResp = '{"id":"ch_1IgYHhDPIlaJjDoZet9zqsWE","object":"charge","amount":1990,"amount_captured":1990,"amount_refunded":0,"application":null,"application_fee":null,"application_fee_amount":null,"balance_transaction":"txn_1IgYHiDPIlaJjDoZyXJyjmMW","billing_details":{"address":{"city":null,"country":null,"line1":null,"line2":null,"postal_code":null,"state":null},"email":null,"name":"asdfdasf@asdfasd.com","phone":null},"calculated_statement_descriptor":"Stripe","captured":true,"created":1618504997,"currency":"eur","customer":"cus_JJAcl21bmPP0gh","description":null,"destination":null,"dispute":null,"disputed":false,"failure_code":null,"failure_message":null,"fraud_details":[],"invoice":null,"livemode":false,"metadata":[],"on_behalf_of":null,"order":null,"outcome":{"network_status":"approved_by_network","reason":null,"risk_level":"normal","risk_score":20,"seller_message":"Payment complete.","type":"authorized"},"paid":true,"payment_intent":null,"payment_method":"card_1IgYEbDPIlaJjDoZlJmk4jNc","payment_method_details":{"card":{"brand":"visa","checks":{"address_line1_check":null,"address_postal_code_check":null,"cvc_check":"pass"},"country":"US","exp_month":12,"exp_year":2021,"fingerprint":"3xQykneQx3Hx5jrE","funding":"credit","installments":null,"last4":"4242","network":"visa","three_d_secure":null,"wallet":null},"type":"card"},"receipt_email":null,"receipt_number":null,"receipt_url":"https:\/\/pay.stripe.com\/receipts\/acct_1GgAEQDPIlaJjDoZ\/ch_1IgYHhDPIlaJjDoZet9zqsWE\/rcpt_JJAcLWsCOe7yRu9ZThgvZ5fHvPsxWUV","refunded":false,"refunds":{"object":"list","data":[],"has_more":false,"total_count":0,"url":"\/v1\/charges\/ch_1IgYHhDPIlaJjDoZet9zqsWE\/refunds"},"review":null,"shipping":null,"source":{"id":"card_1IgYEbDPIlaJjDoZlJmk4jNc","object":"card","address_city":null,"address_country":null,"address_line1":null,"address_line1_check":null,"address_line2":null,"address_state":null,"address_zip":null,"address_zip_check":null,"brand":"Visa","country":"US","customer":"cus_JJAcl21bmPP0gh","cvc_check":"pass","dynamic_last4":null,"exp_month":12,"exp_year":2021,"fingerprint":"3xQykneQx3Hx5jrE","funding":"credit","last4":"4242","metadata":[],"name":"asdfdasf@asdfasd.com","tokenization_method":null},"source_transfer":null,"statement_descriptor":null,"statement_descriptor_suffix":null,"status":"succeeded","transfer_data":null,"transfer_group":null}';
-//        $stripeResp = json_decode($stripeResp);
     if (is_string($stripeResp))
       return redirect()->back()->withErrors([$stripeResp]);
     if (!$stripeResp->paid)
@@ -158,18 +163,25 @@ class CustomerController extends Controller {
       case 'nutri': //$dID,$oUser->id,$importe*100,$oRate->id;
       case 'fisio':
         $oDate = \App\Models\Dates::find($data[0]);
-        $response = ChargesController::savePaymentRate(
-                        time(), $oDate->id_user, $oDate->id_rate,
+        $uRates = $oDate->uRates;
+        if (!$uRates){
+          die('Usuario eliminado');
+        }
+        $oUser = $uRates->user;
+        if (!$oUser){
+          die('Usuario eliminado');
+        }
+        $response = ChargesController::savePayment(
+                        date('Y-m-d'), $oUser->id, $oDate->id_rate,
                         'card', $amount, $disc, $idPaid, $idCust);
         if ($response[0] != 'OK') {
           return redirect()->back()
                           ->withErrors([$response[1]])
                           ->withInput();
+        } else {
+          $uRates->id_charges = $response[2];
+          $uRates->save();
         }
-        // Actualizamos la cita
-        $oDate->status = 1;
-        $oDate->charged = 1;
-        $oDate->save();
         break;
     }
 

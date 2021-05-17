@@ -9,14 +9,10 @@ class Dates extends Model
 {
     use SoftDeletes; //Implementamos 
     protected $table = "appointment";
+    
     public function service()
     {
         return $this->hasOne('\App\Models\Rates', 'id', 'id_rate');
-    }
-
-    public function user()
-    {
-        return $this->hasOne('\App\Models\User', 'id', 'id_user');
     }
 
     public function coach()
@@ -24,8 +20,8 @@ class Dates extends Model
         return $this->hasOne('\App\Models\User', 'id', 'id_coach');
     }
 
-    public function check()
+    public function uRates()
     {
-        return $this->hasOne('\App\Models\FisicCheck', 'id_date', 'id');
+        return $this->hasOne('\App\Models\UserRates', 'id', 'id_user_rates');
     }
 }

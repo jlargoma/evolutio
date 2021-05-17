@@ -116,15 +116,37 @@
 
         <hr/>
 
-        @if($charged != 1 && $id>0)
+        @if(!$charge && $id>0)
         <div class="col-xs-12 form-group">
             @include('nutricion.cobrar')
         </div>
         @endif
             </div>
     <div class="col-xs-12">
-        @if($id>0 && $charged == 1)
-        <div class="alert alert-success">Cobrado</div>
+        @if($id>0 && $charge)
+        <div class="tpayData">
+          <table class="table">
+            <tr>
+              <td colspan="2" class="success">Cobrado</td>
+            </tr>
+            <tr>
+              <th>Fecha:</th>
+              <td>{{dateMin($charge->date_payment)}}</td>
+            </tr>
+            <tr>
+              <th>Desc.:</th>
+              <td>{{$charge->discount}}%</td>
+            </tr>
+            <tr>
+              <th>Precio:</th>
+              <td>{{moneda($charge->import)}}</td>
+            </tr>
+            <tr>
+              <th>Metodo:</th>
+              <td>{{payMethod($charge->type_payment)}}</td>
+            </tr>
+          </table>
+        </div>
         @endif
     </div>
 </div>
@@ -196,4 +218,20 @@ jQuery(function () {
  @if ($id > 0)
 @include('admin.blocks.cardScripts')
  @endif
+ <style>
+   .tpayData{
+     max-width: 320px;
+     margin: 1em auto;
+   }
+   .tpayData table.table {
+     border: 1px solid;
+   }
+   .tpayData table.table .success{
+      border: 1px solid;
+      text-align: center;
+      background-color: #e0f5e9;
+      font-size: 1.7em;
+      font-weight: bold;
+   }
+ </style>
 @endsection

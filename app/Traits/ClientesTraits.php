@@ -27,6 +27,7 @@ trait ClientesTraits {
     $months = lstMonthsSpanish(false);
     unset($months[0]);
 
+    $detail = [];
     $payments = $noPay = 0;
     $status = isset($request->status) ? $request->status : 1;
     if ($status == 'all') {
@@ -43,11 +44,12 @@ trait ClientesTraits {
     $typeRates = TypesRate::whereIn('type', ['gral', 'pt'])->pluck('id');
     $oRates = Rates::all();
 //    $oRates = Rates::whereIn('type', $typeRates)->get();
-    $rPrices = [];
+    $rPrices = $rNames = [];
     if ($oRates) {
       foreach ($oRates as $r) {
         $aRates[$r->id] = $r;
         $rPrices[$r->id] = $r->price;
+        $rNames[$r->id] = $r->name;
       }
     }
 
@@ -58,23 +60,32 @@ trait ClientesTraits {
     $total_pending = 0;
     $monthAux = date('m', strtotime($date));
     for ($i = 0; $i < 3; $i++) {
-      $resp = $this->getRatesByMonth($monthAux, $year, $userIDs, $rPrices);
+      $resp = $this->getRatesByMonth($monthAux, $year, $userIDs, $rPrices,$rNames);
       $uRates[$i] = $resp[0];
       $toPay[$i] = $resp[2];
       $noPay += $resp[2];
+      $detail[] = $resp[3];
       $next = strtotime($date . ' +1 month');
       $date = date('Y-m-d', $next);
       $monthAux = date('m', $next);
     }
 
+    if (count($detail)>0){
+      $aux = '';
+      foreach ($detail as $item){
+        foreach ($item as $k=>$d){
+          $aux .= $k.':{';
+          foreach ($d as $k2=>$i2){
+            $aux .= "$k2: '$i2',";
+          }
+          $aux .= '},';
+        }
+      }
+      $detail = "{ $aux }";
+    } else {
+      $detail = null;
+    }
     
-    //get all rates pendings by users
-//    $uRatesPending = UserRates::whereIN('id_user', $userIDs)
-//            ->where('rate_year', $year)
-//            ->where('rate_month', $month)
-//            ->whereIn('id_rate', $RateIDs)
-//            ->get();
-
     $aCoachs = User::where('role', 'teach')->orderBy('name')->pluck('name', 'id')->toArray();
     return view('/admin/usuarios/clientes/index', [
         'users' => $users,
@@ -84,32 +95,28 @@ trait ClientesTraits {
         'toPay' => $toPay,
         'noPay' => $noPay,
         'uRates' => $uRates,
+        'detail' => $detail,
         'months' => $months,
         'aCoachs' => $aCoachs,
         'total_pending' => array_sum($arrayPaymentMonthByUser),
     ]);
   }
 
-  public function getRatesByMonth($month, $year, $userIDs, $rPrices) {
+  public function getRatesByMonth($month, $year, $userIDs, $rPrices, $rNames) {
 
+    $detail = [];
     $RateIDs = array_keys($rPrices);
     $uRates = UserRates::whereIN('id_user', $userIDs)
             ->where('rate_year', $year)
             ->where('rate_month', $month)
             ->whereIn('id_rate', $RateIDs)
+            ->with('charges')
             ->get();
 
     $payments = $noPay = 0;
     $uLstRates = [];
     if ($uRates) {
-      /*       * ******************************* */
-      $charges = [];
-      foreach ($uRates as $k => $v) {
-        if ($v->id_charges)
-          $charges[] = $v->id_charges;
-      }
-      $aCharges = Charges::whereIn('id', $charges)->pluck('import', 'id')->toArray();
-      /*       * ******************************* */
+      /******************************** */
       foreach ($uRates as $k => $v) {
         $idRate = $v->id_rate;
         $idUser = $v->id_user;
@@ -119,18 +126,25 @@ trait ClientesTraits {
         if (!isset($uLstRates[$idUser][$idRate])) {
           $uLstRates[$idUser][$idRate] = [];
         }
-
+        $detail[$v->id] = [
+            'n' => '',
+            'p'=>moneda($rPrices[$idRate]),
+            's'=>$rNames[$idRate],
+            'mc'=>'', //Metodo pago
+            'dc'=>'', // fecha pago
+        ];
         // si esta pagado, lo busco luego
-        $auxCharges = isset($aCharges[$v->id_charges]) ? $aCharges[$v->id_charges] : null;
+        $auxCharges = $v->charges;
         if ($auxCharges) {
           $uLstRates[$idUser][$idRate][] = [
-              'price' => $auxCharges,
+              'price' => $auxCharges->import,
               'id' => $v->id,
               'paid' => true,
-              'cid' => $v->id_charges,
-              'appointment' => $v->id_appointment
+              'cid' => $v->id_charges
           ];
-          $payments += $auxCharges;
+          $payments += $auxCharges->import;
+          $detail[$v->id]['mc'] = payMethod($auxCharges->type_payment);
+          $detail[$v->id]['dc'] = dateMin($auxCharges->date_payment);
         } else {
           $importe = ($v->price == null) ? $rPrices[$idRate]:$v->price;
           $noPay += $importe;
@@ -140,12 +154,11 @@ trait ClientesTraits {
               'id' => $v->id,
               'paid' => false,
               'cid' => -1,
-              'appointment' => $v->id_appointment
           ];
         }
       }
     }
-    return [$uLstRates,$payments,$noPay];
+    return [$uLstRates,$payments,$noPay,$detail];
   }
 
   public function clienteRateCharge($uRateID) {
@@ -177,6 +190,7 @@ trait ClientesTraits {
         'importe' => ($uRates->price == null) ? $oRates->price : $uRates->price,
         'year' => $uRates->rate_year,
         'month' => $uRates->rate_month,
+        'id_appointment' => $uRates->id_appointment,
         'pStripe' => $pStripe,
         'card' => $card,
         'uRate' => $uRates->id,
@@ -190,13 +204,14 @@ trait ClientesTraits {
     $user = User::find($id);
     $userID = $user->id;
 
-    $aRates = $rPrices = [];
+    $aRates = $rPrices = $rNames =[];
     $oRates = Rates::where('status', 1)->get();
 
     if ($oRates) {
       foreach ($oRates as $k => $v) {
         $aRates[$v->id] = $v;
-        $rPrices[$v->id] = $v->price;
+        $rPrices[$v->id]= $v->price;
+        $rNames[$v->id] = $v->name;
       }
     }
     /*     * ****************************************************** */
@@ -214,7 +229,7 @@ trait ClientesTraits {
                     ->pluck('import', 'id')->toArray();
 
     $uLstRates = [];
-    $usedRates = [];
+    $usedRates = $detail = [];
     $uRateIds = UserRates::where('id_user', $userID)
                     ->where('rate_year', $year)
                     ->pluck('id_rate')->toArray();
@@ -228,10 +243,11 @@ trait ClientesTraits {
     $uLstRates =  [];
     if ($uRateIds) {
       for ($i = 1; $i < 13; $i++) {
-        $resp = $this->getRatesByMonth($i, $year, [$id], $rPrices);
+        $resp = $this->getRatesByMonth($i, $year, [$id], $rPrices, $rNames);
         $uLstRates[$i] = (count($resp[0])) ? $resp[0][$id] : [];
         $totalUser[$i] = $resp[1];
         $totalUserNPay[$i] = $resp[2];
+        $detail[] = $resp[3];
       }
     }
     
@@ -249,6 +265,22 @@ trait ClientesTraits {
     $alreadySign = File::exists($path);
     /*     * ****************************************************** */
 
+    if (count($detail)>0){
+      $aux = '';
+      foreach ($detail as $item){
+        foreach ($item as $k=>$d){
+          $aux .= $k.':{';
+          foreach ($d as $k2=>$i2){
+            $aux .= "$k2: '$i2',";
+          }
+          $aux .= '},';
+        }
+      }
+      $detail = "{ $aux }";
+    } else {
+      $detail = null;
+    }
+    
     return view('/admin/usuarios/clientes/informe', [
         'aRates' => $aRates,
         'usedRates' => $usedRates,
@@ -258,6 +290,7 @@ trait ClientesTraits {
         'subscrLst' => $subscrLst,
         'subscrRates' => $oRatesSubsc,
         'months' => $months,
+        'detail' => $detail,
         'year' => $year,
         'user' => $user,
         'aCoachs' => $aCoachs,

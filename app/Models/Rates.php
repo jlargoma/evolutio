@@ -26,4 +26,8 @@ class Rates extends Model
                 ->join('types_rate','rates.type','=','types_rate.id')
                 ->where('types_rate.id',$id)->get();
     }
+    static function getRatesTypeRates(){
+        return self::join('types_rate','rates.type','=','types_rate.id')
+                ->pluck('types_rate.name','rates.id')->toArray();
+    }
 }

@@ -77,10 +77,14 @@
             $(".rate-" + idRate).empty();
             $(".rate-" + idRate).hide('fast');
         });
-
+        $('.add_rate').click(function (e) {
+          e.preventDefault();
+          var id_user = $(this).attr('data-idUser');
+          $('#ifrCliente').attr('src','/admin/usuarios/cobrar/tarifa?id_user=' + id_user);
+        });
         $('.openEditCobro').on('click', function (e) {
             e.preventDefault();
-            var cobro_id = $(this).data('id');
+            var cobro_id = $(this).data('cobro');
             $('#ifrCliente').attr('src','/admin/update/cobro/' + cobro_id);
             $('#modalCliente').modal('show');
         });
@@ -89,10 +93,11 @@
             var rate = $(this).data('rate');
              var appointment = $(this).data('appointment');
             if (appointment>0){
-              alert('Las citas se deben abonar en el calendario'); return;
+              $('#ifrCliente').attr('src','/admin/clientes/cobro-cita/' + appointment);
+//              alert('Las citas se deben abonar en el calendario'); return;
+            } else {
+              $('#ifrCliente').attr('src','/admin/clientes/generar-cobro/' + rate);
             }
-
-            $('#ifrCliente').attr('src','/admin/clientes/generar-cobro/' + rate);
             $('#modalCliente').modal('show');
         });
         $('.editNote').on('click',function (e) {
@@ -163,7 +168,11 @@
         /**************************************************/
     });
 
+  @if($detail)
+    var details = {!!$detail!!};
+  @endif
 </script>
+<script src="{{asset('/admin-css/assets/js/toltip.js')}}"></script>
 <style>
     .openEditCobro,
     .openCobro{ cursor: pointer;}

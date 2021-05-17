@@ -70,6 +70,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
     Route::post('/citas/createAdvanced', 'DatesController@createAdvanced');
     Route::post('/citas/chargeAdvanced', 'DatesController@chargeAdvanced');
     Route::get('/citas/charge', 'DatesController@chargeDate');
+    Route::get('/clientes/cobro-cita/{id}', 'DatesController@openChargeDate');
     /* Citas fisioterapia */
     Route::get('/citas-fisioterapia/listado/{coach?}/{type?}', 'FisioController@listado');
     Route::get('/citas-fisioterapia/create/{date?}/{time?}', 'FisioController@create');
@@ -127,7 +128,8 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::get('/cobros/getPriceTax', 'ChargesController@getPriceTax');
   Route::post('/cobros/cobrar-usuario', 'ChargesController@chargeUser');
   Route::get('/informes/cuotas-mes/{month?}/{day?}', 'InformesController@informeCuotaMes');
-  Route::get('/informes/cliente-mes/{month?}/{day?}', 'InformesController@informeClienteMes');
+  Route::get('/informes/cliente-mes/{month?}/{day?}/{f_rate?}/{f_method?}', 'InformesController@informeClienteMes');
+  Route::get('/informes/caja/{month?}/{day?}', 'InformesController@informeCajaMes');
   Route::post('/informes/search/{month?}', 'InformesController@searchClientInform');
   Route::get('/informes/cierre-diario/{month?}/{day?}', 'InformesController@informeCierreDiario');
   Route::get('/informes/cajas', 'InformesController@informeCaja');

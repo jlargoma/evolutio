@@ -122,6 +122,25 @@ class StripeService {
       return $this->codesErrors($ex->getStripeCode());
     }
   }
+    /**
+   * 
+   * @param Request $req
+   * @return type
+   */
+  public function checkUser($oUser) {
+//      Stripe::setApiKey($this->sPRivKey);
+      if (!$oUser->hasStripeId()){
+        $oUser->createAsStripeCustomer();
+        return null;
+      }
+      try {
+        $customer = \Stripe\Customer::retrieve($oUser->stripe_id,[]);
+      } catch (\Exception $ex) {
+        $oUser->stripe_id = null;
+        $oUser->save();
+        $oUser->createAsStripeCustomer();
+      }
+  }
     
  /**
    * 
@@ -137,7 +156,7 @@ class StripeService {
         if (!$cc_number || !$cc_expide_mm || !$cc_expide_yy || !$cc_cvc){
             return 'Por favor, complete los campos requeridos.';
         }
-        if (!$oUser->hasStripeId()) $oUser->createAsStripeCustomer();
+        $this->checkUser($oUser);
         /** si no tiene el metodo de pago, se genera uno nuevo* */
         $paymentMethod = \Stripe\PaymentMethod::create([
                     'type' => 'card',
@@ -148,18 +167,19 @@ class StripeService {
                         'cvc' => $cc_cvc,
                     ],
                     'billing_details' => [
-                        'name' => $oUser->name
+                        'name' => $oUser->name,
+                        'email' => $oUser->email,
                     ]
         ]);
         $oUser->updateDefaultPaymentMethod($paymentMethod);
         $oUser->updateDefaultPaymentMethodFromStripe();
         return 'updated';//'Tarjeta de crédito actualizada';
     } catch (\Exception $ex) {
-      return $this->codesErrors($ex->getStripeCode());
+      return $this->codesErrors($ex->getStripeCode(),$ex->getMessage());
     }
   }
   
-  private function codesErrors($stripeCode) {
+  private function codesErrors($stripeCode,$msg=null) {
 //      dd($stripeCode);
       switch ($stripeCode) {
             case 'token_already_used':
@@ -188,6 +208,9 @@ class StripeService {
             case "invalid_cvc":
             case "incorrect_cvc":
                 $error = "Código de seguridad inválido";
+                break;
+            case "resource_missing":
+                $error = $msg;
                 break;
             default:
                 $error = 'Ocurrió un error al procesar su Tarjeta. Por favor, intentelo nuevamente.';

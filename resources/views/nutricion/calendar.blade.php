@@ -30,7 +30,7 @@
                                 . 'data-name="'. strtolower($item['name']).'" '
                                 . 'class="eventType_'.$item['coach'].' events">'
                                     .$payment.str_limit($item['name'],10)
-                                    .'<span class="detail">'.$item['name'].'</span>'
+                                    . '<toltip/>'
                                 . '</div>';
                             }
                         }

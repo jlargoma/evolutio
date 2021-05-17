@@ -44,12 +44,12 @@
                 </ul>
                 </div>
                 <div class="col-md-2 col-xs-12 mx-1em">
-                    <select id="selectType" class="form-control">
+                    <select id="servSelect" class="form-control">
                         <option value="0">Servicio</option>
                         <?php
-                        if ($types){
-                            foreach ($types as $k=>$v){
-                                $selected = ($type == $k) ? 'selected' : '';
+                        if ($servLst){
+                            foreach ($servLst as $k=>$v){
+                                $selected = ($serv == $k) ? 'selected' : '';
                                 echo '<option value="'.$k.'" '.$selected.'>'.$v.'</optiono>';
                             }
                         }
@@ -104,17 +104,10 @@ $('.editDate').on('click','div',function(event){
     $('#ifrModal').attr('src','/admin/citas-nutricion/edit/'+id);
     $('#modalIfrm').modal();
 });
-$('.editDate').on('mouseover',function(event){
-    var obj = $(this).find('.detail');
-    
-    obj.css('top', (event.screenY-110));
-    obj.css('left', (event.pageX-100));
-    
-});
 $('.selectDate').on('click','li',function(event){
     event.preventDefault();
     var val = $(this).data('val');
-    var type = $('#selectType').val();
+    var type = $('#servSelect').val();
     var coach = $('#coachsFilter').val();
     location.assign("/admin/citas-nutricion/"+val+"/"+coach+"/"+type);
 });
@@ -122,12 +115,12 @@ $('.coachsFilter').on('click','li',function(event){
     event.preventDefault();
     var coach = $(this).data('val');
     var month = $('#selectMonth').val();
-    var type = $('#selectType').val();
+    var type = $('#servSelect').val();
     location.assign("/admin/citas-nutricion/"+month+"/"+coach+"/"+type);
 });
-$('#selectType').on('change',function(event){
+$('#servSelect').on('change',function(event){
     event.preventDefault();
-    var type = $('#selectType').val();
+    var type = $('#servSelect').val();
     var month = $('#selectMonth').val();
     var coach = $('#coachsFilter').val();
     location.assign("/admin/citas-nutricion/"+month+"/"+coach+"/"+type);
@@ -171,5 +164,9 @@ $('#modal_newUser').on('submit','#form-new',function(event){
       $('.events').show();
     }
   });
+  @if($detail)
+    var details = {!!$detail!!};
+  @endif
 </script>
+<script src="{{asset('/admin-css/assets/js/toltip.js')}}"></script>
 @endsection

@@ -1,4 +1,8 @@
-<h3 class="text-left">Datos del Usuario</h3>
+<h3 class="text-left">Datos del Usuario
+  <button class="btn btn-default add_rate" data-toggle="modal" data-target="#modalCliente" data-idUser="<?php echo $user->id; ?>">
+    <i class="fa fa-usd" aria-hidden="true"></i>
+  </button>
+</h3>
 <form class="row" action="{{ url('/admin/usuarios/update') }}" method="post">
   <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
   <input type="hidden" name="id" value="{{ $user->id }}">
@@ -71,15 +75,15 @@
                         $import = $v['price'];
                         if ($v['paid']):
                           ?>
-                          <div class="label label-success openEditCobro" data-id="<?php echo $v['cid'] ?>" data-appointment='<?php echo $v['appointment']; ?>'>
-                            {{$import}} €
+                          <div class="label label2 label-success events openEditCobro" data-cobro="<?php echo $v['cid'] ?>" data-id="<?php echo $v['id'] ?>">
+                            {{$import}} €<toltip data-k="2"/>
                           </div>
                           <?php
                           $totalServiceUser += $import;
                         else:
                           ?>
-                  <div class="label label-danger openCobro" data-rate="<?php echo $v['id'] ?>" data-appointment='<?php echo $v['appointment']; ?>'>
-                            {{$import}} €
+                  <div class="label label2 label-danger events openCobro" data-rate="<?php echo $v['id'] ?>" data-id="<?php echo $v['id'] ?>">
+                            {{$import}} €<toltip data-k="2"/>
                           </div>
                           <?php
 

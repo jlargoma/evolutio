@@ -35,9 +35,20 @@ class DatesController extends Controller {
     }
 
     public function delete($id) {
-        $date = Dates::find($id);
-        if ($date->delete()) {
-            return redirect()->back();
+        $object = Dates::find($id);
+        if ($object){
+          if ($object->date_type != 'pt'){
+            /*Busca y elimina el user_rate*/
+            $uRate = $object->uRates;
+            if ($uRate){
+              /*Buscar y elimnar cobro*/
+              $charge = $uRate->charges;
+              if ($charge) $charge->delete();
+              $uRate->delete();
+            }
+          }
+          $object->delete();
+          return redirect()->back();
         }
     }
 
@@ -57,9 +68,16 @@ class DatesController extends Controller {
         
         /*********************************************************************/
         $id_user = $request->input('id_user',null);
-        $uEmail = $request->input('email');
-        $uPhone = $request->input('phone');
-        
+        $uEmail  = $request->input('email');
+        $uPhone  = $request->input('phone');
+        $type    = $request->input('date_type');
+        $importe = $request->input('importe',0);
+        $id_rate = $request->input('id_rate');
+        $id_coach= $request->input('id_coach');
+        $date    = $request->input('date');
+        $hour    = $request->input('hour');
+        $timeCita= strtotime($date);
+        /************************************************************/
         if (!$id_user){
           $issetUser = User::where('email',$uEmail)->first();
           if ($issetUser) {
@@ -88,13 +106,10 @@ class DatesController extends Controller {
           }
         }
         /*********************************************************************/
-        
-        $id_coach = $request->input('id_coach');
-        $oCarbon = Carbon::createFromFormat('d-m-Y H:00:00', $request->input('date') . " " . $request->input('hour') . ":00:00");
-        $date = $oCarbon->format('Y-m-d H:i:00');
-
-        /*         * *********************************************************** */
-        $alreadyExit = Dates::where('date', $date)
+        $oCarbon = Carbon::createFromFormat('d-m-Y H:00:00', "$date $hour:00:00");
+        $date_compl = $oCarbon->format('Y-m-d H:i:00');
+        /************************************************************ */
+        $alreadyExit = Dates::where('date', $date_compl)
                         ->where('id', '!=', $ID)
                         ->where(function ($query) use ($id_user, $id_coach) {
                             $query->where('id_user', $id_user)
@@ -107,7 +122,7 @@ class DatesController extends Controller {
                 $msg = 'Personal ocupado';
             return redirect()->back()->withErrors([$msg]);
         }
-        /*         * *********************************************************** */
+        /************************************************************ */
         $coachTimes = CoachTimes::where('id_coach', $id_coach)->first();
         if ($coachTimes) {
             $t_control = json_decode($coachTimes->times, true);
@@ -118,34 +133,63 @@ class DatesController extends Controller {
                     return redirect()->back()->withErrors(['Horario no disponible']);
             }
         }
-        /*         * *********************************************************** */
+        /************************************************************ */
+        if ($ID) {
+          $oObj = Dates::find($ID);
+        } else {
+          $oObj = new Dates();
+        }
+        /************************************************************ */
+        //nueva cita => crear userRate
+        $id_user_rates = null;
+        if ($type == 'pt'){
+          $uRate = UserRates::where('id_user', $oUser->id)
+                    ->where('id_rate', $id_rate)
+                    ->where('rate_month', date('n', $timeCita))
+                    ->where('rate_year', date('Y', $timeCita))
+                    ->first();
+          
+        } else {
+          $uRate = UserRates::find($oObj->id_user_rates);
+          if ($uRate){
+            $uRate->rate_year = date('Y', $timeCita);
+            $uRate->rate_month = date('n', $timeCita);
+            $uRate->price = $importe;
+            $uRate->save();
+          }else{
+            
+            $uRate = new UserRates();
+            $uRate->id_user = $oUser->id;
+            $uRate->id_rate = $id_rate;
+            $uRate->rate_year = date('Y', $timeCita);
+            $uRate->rate_month = date('n', $timeCita);
+            $uRate->price = $importe;
+            $uRate->save();
+          }
+        }
+        if (!$uRate)
+          return redirect()->back()->withErrors(['Servicio no encontrado']);
+        
+        $id_user_rates = $uRate->id;
+        /************************************************************ */
         if ($ID) {
             $oObj = Dates::find($ID);
         } else {
             $oObj = new Dates();
         }
-        $type=$request->input('date_type');
-        $oObj->id_rate = $request->input('id_rate');
-        $oObj->price = $request->input('importe',0);
+        
+        $oObj->id_rate = $id_rate;
         $oObj->id_user = $id_user;
         $oObj->id_coach = $id_coach;
+        $oObj->id_user_rates = $id_user_rates;
         $oObj->date_type = $type;
-        $oObj->date = $date;
-        $oObj->created_at = $date;
-        if (!$ID) {
-            $oObj->charged = 0;
-            $oObj->status = 0;
-            $oObj->updated_at = $date;
-        }
+        $oObj->date = $date_compl;
+        $oObj->updated_at = $date;
         if ($oObj->save()) {
-           
           if ($type == 'pt'){
-            $oObj->charged = 1;
-            $oObj->status = 1;
-            $oObj->save();
             return redirect('/admin/citas-pt/edit/'.$oObj->id);
           }
-            /*             * ************************************************************** */
+          /*************************************************************** */
             $timeCita = strtotime($oObj->date);
             $service = Rates::find($oObj->id_rate);
             $coach = User::find($oObj->id_coach);
@@ -154,15 +198,16 @@ class DatesController extends Controller {
             //crear el pago
             $pStripe = null;
             $oRate = Rates::find($oObj->id_rate);
-            $importe = $oObj->price;
             if (!$ID) {
-              $data = [$oObj->id,$oUser->id,$oObj->price*100,$oRate->id];
+              $data = [$oObj->id,$oUser->id,$importe*100,$oRate->id];
               $sStripe = new \App\Services\StripeService();
               $rType = \App\Models\TypesRate::find($oRate->type);
               $pStripe = url($sStripe->getPaymentLink($rType->type,$data));
             }
         
-            /******************************************/
+            /**************************************************** */
+           
+            /**************************************************/
             MailController::sendEmailPayDateByStripe($oObj, $oUser, $oRate,$coach,$pStripe,$importe);
             /*             * ************************************************************** */
           if ($type == 'nutri') return redirect('/admin/citas-nutricion/edit/'.$oObj->id);
@@ -182,9 +227,14 @@ class DatesController extends Controller {
                 return redirect()->back()->with(['error' => 'Cita no encontada']);
         }
 
-        $oUser = $oDates->user;
+        $uRate = $oDates->uRates;
+        if (!$uRate){
+          if ($ajax) return "Cita no encontada";
+          else return redirect()->back()->with(['error' => 'Cita no encontada']);
+        }
+        $oUser = $uRate->user;
         $service = $oDates->service;
-        $oRate = Rates::find($req->input('id_rate'));
+        $oRate = $uRate->rate;
         $payType = $req->input('type_payment');
         if (!$oRate) {
             if ($ajax)
@@ -193,7 +243,7 @@ class DatesController extends Controller {
                 return redirect()->back()->with(['error' => 'Tarifa no encontada']);
         }
 
-            $value = $oDates->price;
+            $value = $uRate->price;
             $idStripe=null;$cStripe=null;
             if ($payType == 'card'){
                  
@@ -251,19 +301,8 @@ class DatesController extends Controller {
             $oCobro->save();
             
             /*--------------------------------*/
-            $oUserRate = UserRates::where('id_appointment', $oDates->id)->first();
-            if (!$oUserRate) {
-            //si no tenia asignada la tarifa del mes
-              $oUserRate = new UserRates();
-              $oUserRate->id_user = $oUser->id;
-              $oUserRate->id_rate = $oRate->id;
-              $oUserRate->rate_year = date('Y',$time);
-              $oUserRate->rate_month = date('n',$time);
-              $oUserRate->id_charges = $oCobro->id;
-              $oUserRate->id_appointment = $oDates->id;
-            }
-            $oUserRate->id_charges = $oCobro->id;
-            $oUserRate->save();
+            $uRate->id_charges = $oCobro->id;
+            $uRate->save();
             /*******************************************/
             $dataMail = [
                   'fecha_pago' => date('Y-m-d'),
@@ -271,22 +310,29 @@ class DatesController extends Controller {
                   'importe' => $value,
               ];
             MailController::sendEmailPayRate($dataMail, $oUser, $oRate);
-            // Actualizamos la cita
-            $oDates->status = 1;
-            $oDates->charged = 1;
-            $oDates->id_charges = $oCobro->id;
-
-        if ($oDates->save()) {
-            if ($ajax)
-                return "OK";
-            else
-                return redirect()->back()->with(['success' => 'Cobro guadado']);
-        } else {
-            if ($ajax)
-                return "No se pudo guardar el cobro";
-            else
-                return redirect()->back()->with(['error' => 'No se pudo guardar el cobro']);
-        }
+            if ($ajax) return "OK";
+            else return redirect()->back()->with(['success' => 'Cobro guadado']);
+            
     }
 
+    function openChargeDate($id){
+      $obj = Dates::find($id);
+      if (!$obj){
+        UserRates::where('id_appointment', $id)->delete();
+        echo 'Registro no encontrado.';
+      } else {
+        $date_type = $obj->date_type;
+        switch ($date_type){
+          case 'nutri':
+            header('Location: /admin/citas-nutricion/edit/'.$id);
+            exit();
+            break;
+          case 'fisio':
+            header('Location: /admin/citas-fisioterapia/edit/'.$id);
+            exit();
+            break;
+        }
+        dd($obj);
+      }
+    }
 }

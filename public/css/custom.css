@@ -1,5 +1,5 @@
 h1{
-  
+
 }
 h2 {
   margin-bottom: 7px;
@@ -25,17 +25,17 @@ h3{
 .my-1{margin: 1em auto;}
 .my-2{margin: 2em auto;}
 #stripeBox{
-    margin: 1em auto;
+  margin: 1em auto;
 }
 #stripeBox .disabled{
-    width: 100%;
-    position: absolute;
-    height: 100%;
-    background-color: #00000052;
-    z-index: 99;
-    left: 0;
-    top: 0;
-    display: none;
+  width: 100%;
+  position: absolute;
+  height: 100%;
+  background-color: #00000052;
+  z-index: 99;
+  left: 0;
+  top: 0;
+  display: none;
 }
 .box-shadow{
   box-shadow: 3px 3px 4px #a9a9a9;
@@ -133,79 +133,79 @@ td.line-td {
 }
 
 .nav-main .ribbon-box{
-     border-radius: 35px;
-    margin-top: 5px;
-    top: -5px;
-    padding: 0 10px;
-    right: 15px;
+  border-radius: 35px;
+  margin-top: 5px;
+  top: -5px;
+  padding: 0 10px;
+  right: 15px;
 }
 .nav-main a span{
-    font-weight: 600 !important;
+  font-weight: 600 !important;
 }
 
 .modal-dialog {
-    width: 1024px;
-    max-width: 98%;
+  width: 1024px;
+  max-width: 98%;
 }
 .modal-dialog.lg{
-    width: 1420px;
-    max-width: 98%;
+  width: 1420px;
+  max-width: 98%;
 }
 .content-md{
-    max-width: 800px;
-    text-align: center;
-    margin: auto;
+  max-width: 800px;
+  text-align: center;
+  margin: auto;
 }
 .select2-container--default .select2-selection--single .select2-selection__rendered {
-line-height: 19px;
-    padding-left: 0;
+  line-height: 19px;
+  padding-left: 0;
 }
 
 .select2-container .select2-selection--single {
-    height: 34px;
+  height: 34px;
 }
 
 iframe{
-    max-width: 100%;
-    min-height: 85vh;
-    border: none;
-    width: 1420px;
+  max-width: 100%;
+  min-height: 85vh;
+  border: none;
+  width: 1420px;
 }
 
 .loading {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-    padding: 15%;
-    background-color: #333333a1;
-    color: #FFF;
-    font-size: 2em;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  padding: 15%;
+  background-color: #333333a1;
+  color: #FFF;
+  font-size: 2em;
 }
 ul.selectDate {
-    padding: 0;
-    width: 100%;
-    margin: 1em auto;
-    text-align: center;
+  padding: 0;
+  width: 100%;
+  margin: 1em auto;
+  text-align: center;
 }
 
 ul.selectDate li {
-    list-style: none;
-    display: inline-block;
-    padding: 7px;
-    border-radius: 7px;
-    color: #FFF;
-    background-color: #45c37b;
-    font-weight: 600;
-    cursor: pointer;
+  list-style: none;
+  display: inline-block;
+  padding: 7px;
+  border-radius: 7px;
+  color: #FFF;
+  background-color: #45c37b;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 ul.selectDate li:hover,
 ul.selectDate li.active {
-    background-color: #5c90d2 !important;
-    font-weight: bold;
+  background-color: #5c90d2 !important;
+  font-weight: bold;
 }
 
 select.likeBtn{
@@ -224,58 +224,85 @@ select.likeBtn:checked {
 }
 
 select.likeBtn option{
-    font-size: 1.2em;
-    text-align: center;
-    margin-right: 20px;
-    display: inline-block;
-    cursor: pointer;
-    font-weight: bold;
-    color: rgb(0, 114, 191);
-    padding: 10px;
-    border: 1px solid rgb(0, 114, 191);
-    border-radius: 5px;
+  font-size: 1.2em;
+  text-align: center;
+  margin-right: 20px;
+  display: inline-block;
+  cursor: pointer;
+  font-weight: bold;
+  color: rgb(0, 114, 191);
+  padding: 10px;
+  border: 1px solid rgb(0, 114, 191);
+  border-radius: 5px;
 }
 
 div#card-element,
 div#cardExists {
-    max-width: 320px;
+  max-width: 320px;
 }
 
 .box-payment-btn, .box-payment-card{
-    border: 1px solid #afafaf;
-    padding: 3em 7px 7px 7px;
-    margin-top: 35px;
-    position: relative;
+  border: 1px solid #afafaf;
+  padding: 3em 7px 7px 7px;
+  margin-top: 35px;
+  position: relative;
 }
 .box-payment-btn h4,
 .box-payment-card h4{
   position: absolute;
-    top: -0.7em;
-    background-color: whitesmoke;
-    padding: 0px 10px;
+  top: -0.7em;
+  background-color: whitesmoke;
+  padding: 0px 10px;
 }
 .box-payment-btn .col-imput {
-    float: left;
-    width: 70%;
-    position: relative;
-    padding-left: 15px;
+  float: left;
+  width: 70%;
+  position: relative;
+  padding-left: 15px;
 }
 .stripeAction{
-    float: left;
-    margin-top: 25px;
-    padding-left: 0;
-    width: 25%;
-    overflow: hidden;
+  float: left;
+  margin-top: 25px;
+  padding-left: 0;
+  width: 25%;
+  overflow: hidden;
 }
 
 input#importeFinal {
-    font-weight: bold;
-    font-size: 1.4em;
-    color: #1b4b8c;
-    box-shadow: 1px 1px 0px 3px #1b4b8c;
+  font-weight: bold;
+  font-size: 1.4em;
+  color: #1b4b8c;
+  box-shadow: 1px 1px 0px 3px #1b4b8c;
 }
 .mb-1em{
   margin-bottom: 1em;
+}
+
+toltip {
+  padding: 5px 20px 5px 5px;
+  border-radius: 5px;
+  display: block;
+  color: #040404;
+  z-index: 100;
+  background: #f3f8ff;
+  margin: 10px;
+  width: 210px;
+  position: fixed;
+  text-decoration: none;
+  border: 3px outset;
+  display: none;
+}
+toltip h3 {
+  font-size: 17px;
+  margin: 3px 0;
+}
+toltip h4 {
+  font-size: 14px;
+  display: block;
+}
+toltip p {
+  padding: 0px !important;
+  margin: 0 !important;
 }
 
 @media(max-width:991px) {

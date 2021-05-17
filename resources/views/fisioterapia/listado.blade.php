@@ -49,7 +49,7 @@
                 </ul>
                 </div>
                 <div class="col-xs-2 mx-1em">
-                    <select id="selectType" class="form-control">
+                    <select id="servSelect" class="form-control">
                         <option value="0">Servicio</option>
                         <?php
                         if ($types){
@@ -107,12 +107,12 @@ $('.addDate').click(function(event){
 $('.coachsFilter').on('click','li',function(event){
     event.preventDefault();
     var coach = $(this).data('val');
-    var type = $('#selectType').val();
+    var type = $('#servSelect').val();
     location.assign("/admin/citas-fisioterapia/listado/"+coach+"/"+type);
 });
-$('#selectType').on('change',function(event){
+$('#servSelect').on('change',function(event){
     event.preventDefault();
-    var type = $('#selectType').val();
+    var type = $('#servSelect').val();
     var coach = $('#coachsFilter').val();
     location.assign("/admin/citas-fisioterapia/listado/"+coach+"/"+type);
 });

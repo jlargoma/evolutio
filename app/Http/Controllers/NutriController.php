@@ -9,8 +9,8 @@ use Carbon\Carbon;
 use App\Models\Dates;
 use App\Models\User;
 use App\Models\Rates;
-use App\Models\CoachTimes;
 use App\Models\TypesRate;
+use App\Services\CitasService;
 
 class NutriController extends Controller {
 
@@ -19,101 +19,16 @@ class NutriController extends Controller {
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($month = null, $coach = 0, $type = 0) {
-        if (!$month)
-            $month = date('Y-m');
+    public function index($month = null, $coach = 0, $serv = 0) {
+        if (!$month) $month = date('Y-m');
         $date = $month . '-01';
         $calendar = \App\Services\CalendarService::getCalendarWeeks($date);
         $start = $calendar['firstDay'];
         $finish = $calendar['lastDay'];
-        $times = [];
-
-        /**************************************************** */
-        $servic = Rates::getByTypeRate('nutri')->pluck('name', 'id');
-        /**************************************************** */
-        $aLst = [];
-        $sql = Dates::where('date_type', 'nutri')
-                ->where('date', '>=', date('Y-m-d', $start))
-                ->where('date', '<=', date('Y-m-d', $finish));
-        if ($type && $type != 0)
-            $sql->where('id_rate', $type);
-        if ($coach && $coach > 0){
-            $sql->where('id_coach', $coach);
-            
-            /*******************************************/
-            /***    BEGIN HORARIOS                   ***/
-            
-            $coachTimes = CoachTimes::where('id_coach',$coach)->first(); 
-            if ($coachTimes){
-                $times = json_decode($coachTimes->times,true);
-                if (!is_array($times)) $times = [];
-            }
-            /***    END: HORARIOS                    ***/
-            /*******************************************/
-        }
-
-        $oLst = $sql->with('user')->get();
-
-        if ($oLst) {
-            foreach ($oLst as $item) {
-                $time = strtotime($item->date);
-                $hour = date('G', $time);
-                $date = date('Y-m-d', $time);
-                $time = strtotime($date);
-
-                if (!isset($aLst[$time]))
-                    $aLst[$time] = [];
-                if (!isset($aLst[$time][$hour]))
-                    $aLst[$time][$hour] = [];
-
-                $aLst[$time][$hour][] = [
-                    'id' => $item->id,
-                    'charged' => $item->charged,
-                    'type' => $item->id_rate,
-                    'coach' => $item->id_coach,
-                    'name' => ($item->user) ? $item->user->name : ' -- ',
-                ];
-            }
-        }
-        /*         * *************************************************** */
-        $lstMonts = lstMonthsSpanish();
-        $aMonths = [];
-        $year = getYearActive();
-        foreach ($lstMonts as $k => $v) {
-            if ($k > 0)
-                $aMonths[$year . '-' . str_pad($k, 2, "0", STR_PAD_LEFT)] = $v;
-        }
-        /*         * *************************************************** */
-        $coachs = User::where('role', 'nutri')->where('status', 1)->get();
-        $tColors = [];
-        if ($coachs) {
-            $auxColors = colors();
-            $i = 0;
-            foreach ($coachs as $item) {
-                if (!isset($auxColors[$i]))
-                    $i = 0;
-                $tColors[$item->id] = $auxColors[$i];
-                $i++;
-            }
-        }
-
-
-
-        $rslt = [
-            'type' => $type,
-            'calendar' => $calendar['days'],
-            'aLst' => $aLst,
-            'aMonths' => $aMonths,
-            'year' => $year,
-            'month' => $month,
-            'type' => $type,
-            'types' => $servic,
-            'tColors' => $tColors,
-            'coachs' => $coachs,
-            'coach' => $coach,
-            'times' => $times,
-        ];
-
+        $rslt = CitasService::get_calendars($start,$finish,$serv,$coach,'nutri');
+        $rslt['calendar'] = $calendar['days'];
+        $rslt['month'] = $month;
+        /*******************************************/
         return view('nutricion.index', $rslt);
     }
 
@@ -123,46 +38,8 @@ class NutriController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function create($date = null, $time = null) {
-
-        if (!$date)
-            $date = time();
-
-        return view('nutricion.form', [
-            'date' => date('d-m-Y', $date),
-            'time' => $time,
-            'id_serv' => -1,
-            'id_user' => -1,
-            'id_coach' => -1,
-            'email' => '',
-            'phone' => '',
-            'card' => null,
-            'id' => -1,
-            'charged' => 0,
-            'price' => 0,
-            'services' => Rates::getByTypeRate('nutri'),
-            'users' => User::where('role', 'user')->where('status', 1)->orderBy('name', 'ASC')->get(),
-            'coachs' => User::where('role', 'nutri')->where('status', 1)->get()
-        ]);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request) {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id) {
-        //
+      $data = CitasService::get_create($date,$time,'nutri');
+      return view('nutricion.form', $data);
     }
 
     /**
@@ -172,43 +49,13 @@ class NutriController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function edit($id) {
-        $oDate = Dates::find($id);
-        if ($oDate) {
-            $date = explode(' ', $oDate->date);
-            $oUser = $oDate->user()->first();
-            if (!$oUser) die('Usuario eliminado');
-            $oServicios = Rates::getByTypeRate('nutri');
-            $price = $oDate->price;
-            
-            $card = null;
-            $paymentMethod = $oUser->getPayCard();
-            if ($paymentMethod){
-                $aux = $paymentMethod->toArray();
-                $card['brand'] = $aux['card']['brand'];
-                $card['exp_month'] = $aux['card']['exp_month'];
-                $card['exp_year'] = $aux['card']['exp_year'];
-                $card['last4'] = $aux['card']['last4'];
-            }
-        
-            return view('nutricion.form', [
-                'date' => date('d-m-Y', strtotime($date[0])),
-                'time' => intval($date[1]),
-                'id_serv' => $oDate->id_rate,
-                'id_user' => $oDate->id_user,
-                'id_coach' => $oDate->id_coach,
-                'email' => $oUser->email,
-                'phone' => $oUser->telefono,
-                'price' => $price,
-                'card' => $card,
-                'id' => $oDate->id,
-                'charged' => $oDate->charged,
-                'services' => $oServicios,
-                'users' => User::where('role', 'user')->where('status', 1)->orderBy('name', 'ASC')->get(),
-                'coachs' => User::where('role', 'nutri')->where('status', 1)->get()
-            ]);
-        } else {
-            return $this->create();
-        }
+      
+      $data = CitasService::get_edit($id);
+      if ($data){
+        return view('nutricion.form',$data);
+      } else {
+        return $this->create();
+      }
     }
 
     /**

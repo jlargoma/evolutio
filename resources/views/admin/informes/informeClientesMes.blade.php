@@ -14,6 +14,9 @@
             font-weight: 800;
             vertical-align: middle !important;
         }
+        option.b {
+            font-weight: bold;
+        }
     </style>
 @endsection
 @section('content')
@@ -30,8 +33,8 @@
                                    style="margin-top: 24px;"/>
                             <input type="hidden" id="_token" name="_token" value="<?php echo csrf_token(); ?>">
                         </div>
-                        <div class="col-md-4 col-xs-12">
-                            <div class="col-md-4 col-xs-12">
+                        <div class="col-md-8 col-xs-12">
+                            <div class="col-md-2 col-xs-4">
                                 <label>Mes</label>
                                 <select id="month" class="form-control">
                                     <?php 
@@ -42,9 +45,8 @@
                                     ?>
                                 </select>
                             </div>
-                            <div class="col-md-4 col-xs-12">
+                            <div class="col-md-2 col-xs-2">
                                 <label>Dia</label>
-						
                                 <select id="day" class="form-control">
                                     <option value="all">Todos</option>
                                     <?php for ($i = 1; $i <= $endDay; $i++):
@@ -53,9 +55,36 @@
                                     endfor; ?>
                                 </select>
                             </div>
+                            <div class="col-md-4 col-xs-6">
+                                <label>Servicio</label>
+                                <select id="f_rate" class="form-control">
+                                    <option value="all">Todos</option>
+                                    <?php 
+                                    foreach ($rateFilter as $k=>$v):
+                                      $s = ($k == $filt_rate)? 'selected' : '';
+                                      echo '<option value="'.$k.'" '.$s.' class="b">'.$v['n'].'</option>';
+                                      foreach ($v['l'] as $k2=>$v2):
+                                        $aux = "$k-$k2";
+                                        $s = ($aux == $filt_rate)? 'selected' : '';
+                                        echo '<option value="'.$aux.'" '.$s.'>&nbsp; - '.$v2.'</option>';
+                                      endforeach;
+                                    endforeach; 
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="col-md-4 col-xs-6">
+                                <label>Tipo de Pago</label>
+                                <select id="f_method" class="form-control">
+                                    <option value="all">Todos</option>
+                                    <option value="banco" <?php if($filt_method == 'banco') echo 'selected' ?>>Banco</option>
+                                    <option value="cash" <?php if($filt_method == 'cash') echo 'selected' ?>>Efectivo</option>
+                                    <option value="card" <?php if($filt_method == 'card') echo 'selected' ?>>Tarjeta</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <div class="row" id="content-table-inform">
+                        @include('admin.informes._table_sumary')
                         @include('admin.informes._table_informes')
                     </div>
                 </div>
@@ -65,12 +94,14 @@
 @endsection
 @section('scripts')
     <script type="text/javascript">
-      $('#date, #month, #day').change(function (event) {
+      $('#date, #month, #day,#f_rate,#f_method').change(function (event) {
 
         var year = $('#date').val();
         var month = $('#month').val();
         var day = $('#day').val();
-        window.location = '/admin/informes/cliente-mes/' + month + '/' + day;
+        var f_rate = $('#f_rate').val();
+        var f_method = $('#f_method').val();
+        window.location = '/admin/informes/cliente-mes/'+month+'/'+day+'/'+f_rate+'/'+f_method;
       });
 
       $('#searchInform').keydown(function (evt) {

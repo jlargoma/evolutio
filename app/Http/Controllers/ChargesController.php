@@ -41,11 +41,15 @@ class ChargesController extends Controller {
             return redirect()->back()->withErrors(['cobro no encontrado']);
         }
         if ($request->input('deleted')) {
-            UserRates::where('id_charges',$id)->update(['id_charges' => null]);
-            \App\Models\Dates::where('id_charges',$id)->update(['charged' => 0]);
+//          $appointment = \App\Models\Dates::where('id_charges',$id)->first();
+//          if ($appointment){
+//            $appointment->charged = 0;
+//            $appointment->save();
+//          }
             
-            $charge->delete();
-            return redirect()->back()->with('success', 'cobro Eliminado');
+          UserRates::where('id_charges',$id)->update(['id_charges' => null]);
+          $charge->delete();
+          return redirect()->back()->with('success', 'cobro Eliminado');
         } else {
             $charge->type_payment = $request->input('type_payment');
             $charge->import = $request->input('importe');
@@ -202,6 +206,39 @@ class ChargesController extends Controller {
         $objet = new ChargesController();
         return $objet->generateePayment($time, $uID, $rID, $tpay, $value, $disc,$idStripe,$cStripe);
     }
+    
+    public static function savePayment($date, $uID, $rID, $tpay, $value, $disc,$idStripe,$cStripe){
+        $oUser = \App\Models\User::find($uID);
+        if (!$oUser)
+          return ['error', 'Usuario no encontrado'];
+        $oRate = Rates::find($rID);
+        if (!$oRate)
+            return ['error', 'Tarifa no encontrada'];
+        $dataMail = [
+            'fecha_pago' => $date,
+            'type_payment' => $tpay,
+            'importe' => $value,
+        ];
+        if(!$disc) $disc = 0;
+        //BEGIN PAYMENTS
+            $oCobro = new Charges();
+            $oCobro->id_user = $oUser->id;
+            $oCobro->date_payment = $date;
+            $oCobro->id_rate = $oRate->id;
+            $oCobro->type_payment = $tpay;
+            $oCobro->type = 1;
+            $oCobro->import = $value;
+            $oCobro->discount = $disc;
+            $oCobro->type_rate = $oRate->type;
+            $oCobro->id_stripe = $idStripe;
+            $oCobro->customer_stripe = $cStripe;
+            $oCobro->save();
+        //END PAYMENTS
+        $statusPayment = 'Pago realizado correctamente, por ' . payMethod($tpay);
+        /*************************************************************/
+        MailController::sendEmailPayRate($dataMail, $oUser, $oRate);
+        return ['OK', $statusPayment,$oCobro->id];
+    }
             
     function generateePayment($time, $uID, $rID, $tpay, $value, $disc=0,$idStripe=null,$cStripe=null) {
         $month = date('Y-m-d', $time);
@@ -247,14 +284,14 @@ class ChargesController extends Controller {
                 $oUserRate->id_charges = $oCobro->id;
                 $oUserRate->save();
             } else { //si no tenia asignada la tarifa del mes
-                $newRate = new UserRates();
-                $newRate->id_user = $oUser->id;
-                $newRate->id_rate = $oRate->id;
-                $newRate->rate_year = date('Y', $time);
-                $newRate->rate_month = date('n', $time);
-                $newRate->id_charges = $oCobro->id;
-                $newRate->price = $value;
-                $newRate->save();
+                $oUserRate = new UserRates();
+                $oUserRate->id_user = $oUser->id;
+                $oUserRate->id_rate = $oRate->id;
+                $oUserRate->rate_year = date('Y', $time);
+                $oUserRate->rate_month = date('n', $time);
+                $oUserRate->id_charges = $oCobro->id;
+                $oUserRate->price = $value;
+                $oUserRate->save();
             }
             /**************************************************/
             //Next month
@@ -408,18 +445,21 @@ class ChargesController extends Controller {
         }
         
         $coach = $oDate->coach;
-        $importe = $oDate->price;
+        
         $u_email = ($request->input('u_email'));
         $u_phone = ($request->input('u_phone'));
         $type = ($request->input('type'));
-        $oUser = $oDate->user;
-        if (!$oUser)
-            return ['error', 'Usuario no encontrado'];
-
-        $oRate = $oDate->service;
-        if (!$oRate)
-            return ['error', 'Servicio no encontrado'];
         
+        $uRates = $oDate->uRates;
+        if (!$uRates){
+          return ['error', 'Servicio no encontrado'];
+        }
+        $oUser = $uRates->user;
+        if (!$oUser){
+          return ['error', 'Usuario no encontrado'];
+        }
+        $oRate = $uRates->rate;
+        $importe = $uRates->price;
         if (!empty($u_email) && $oUser->email != $u_email){
             $oUser->email = $u_email;
             $oUser->save();

@@ -61,11 +61,11 @@ function sumMonthValue($m){
           <th>{{moneda($pay_method['c'][0]+$pay_method['b'][0])}}</th>
         </tr>
         <tr>
-          <td>Cash</td>
+          <td class="square" ><span style="background-color: rgba(52,162,99,1);"></span>Cash</td>
           <td>{{moneda($pay_method['c'][0])}}</td>
         </tr>
         <tr>
-          <td>Banco</td>
+          <td class="square" ><span style="background-color: #5c90d2;"></span>Banco</td>
           <td>{{moneda($pay_method['b'][0])}}</td>
         </tr>
       </table>
@@ -120,6 +120,16 @@ tfoot tr td {
     font-weight: bold;
     color: #FFF;
     font-size: 1.3em;
+}
+.square{
+  text-align: left;
+}
+.square span{
+  height: 1em;
+  width: 1em;
+  display: inline-block;
+  margin-right: 4px;
+  margin-bottom: -2px;
 }
 @media(min-width:430px) {
   .chart_1{

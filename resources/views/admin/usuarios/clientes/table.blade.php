@@ -50,7 +50,7 @@
                     <a  class="openUser" data-id="<?php echo $user->id; ?>"  data-type="user" data-original-title="Editar user" ><b><?php echo $user->name; ?></b></a>
                 </td>
                 <td class="text-center">
-                    <button class="btn btn-default btn-rate-charge" data-toggle="modal" data-target="#modalCliente" data-idUser="<?php echo $user->id; ?>">
+                    <button class="btn btn-default add_rate" data-toggle="modal" data-target="#modalCliente" data-idUser="<?php echo $user->id; ?>">
                         <i class="fa fa-usd" aria-hidden="true"></i>
                     </button>
                 </td>
@@ -82,13 +82,13 @@
                       foreach ($uRates[$i][$user->id] as $rate):
                         foreach ($rate as $r):
                           if($r['paid']):
-                            $textAux.= '<div class="label label-success openEditCobro" data-id="'.$r['cid'].'" data-appointment="'.$r['appointment'].'" >';
+                            $textAux.= '<div class="label label-success openEditCobro" data-cobro="'.$r['cid'].'"  data-id="'.$r['id'].'">';
                           else:
                             $pending = true;
                             $auxPend += $r['price'];
-                            $textAux.= '<div class="label label-danger openCobro" data-rate="'.$r['id'].'" data-appointment="'.$r['appointment'].'" >';
+                            $textAux.= '<div class="label label-danger openCobro" data-rate="'.$r['id'].'" data-id="'.$r['id'].'">';
                           endif;
-                          $textAux.= moneda($r['price']).'</div>';
+                          $textAux.= moneda($r['price']).'<toltip/></div>';
                         endforeach;
                       endforeach;
                     endif;

@@ -7,6 +7,7 @@ use App\Http\Requests;
 use Carbon\Carbon;
 use DB;
 use \App\Models\User;
+use App\Models\Charges;
 
 class InformesController extends Controller {
 
@@ -70,8 +71,17 @@ die('no armado');
         $forma->save();
     }
 
-    private function getCharges($year,$month,$day,$search=null) {
-        $sql_charges = \App\Models\Charges::where('import', '!=', 0);
+    /**
+     * 
+     * @param type $year
+     * @param type $month
+     * @param type $day
+     * @param type $search
+     * @param type $type_payment
+     * @return type
+     */
+    private function getCharges($year,$month,$day,$search=null,$type_payment=null,$rate=null) {
+        $sql_charges = Charges::where('import', '!=', 0);
         $sql_CashBox = \App\Models\CashBox::where('import', '!=', 0)
                 ->where('type', 'INGRESO');
         
@@ -93,6 +103,25 @@ die('no armado');
             $sql_CashBox->where('date', '=', $starDate);
         }
 
+        if ($type_payment && $type_payment != 'all'){
+          $sql_charges->where('type_payment', $type_payment);
+        }
+        
+        if ($rate){
+          if ($rate != 'all'){
+            $filerRate = explode('-', $rate);
+            if (count($filerRate) == 2){
+              $sql_charges->where('id_rate', $filerRate[1]);
+            }
+            else{
+              $sql_charges->where('type_rate', $filerRate[0]);
+            }
+          }
+        }
+        
+        
+        
+        
         $charges = $sql_charges->orderBy('date_payment')->get();
         $extrasCharges = $sql_CashBox->orderBy('date')->get();
 
@@ -212,7 +241,7 @@ die('no armado');
     }
     
     
-    public function informeClienteMes(Request $request, $month = null, $day = null) {
+    public function informeClienteMes(Request $request,$month=null,$day=null,$f_rate=null,$f_method=null) {
 
         $year = getYearActive();
         if (!$month)
@@ -220,7 +249,7 @@ die('no armado');
         if (!$day)
             $day = 'all';
 
-        $data = $this->getCharges($year,$month,$day);
+        $data = $this->getCharges($year,$month,$day,null,$f_method,$f_rate);
         $lstMonthsSpanish = lstMonthsSpanish();
         unset($lstMonthsSpanish[0]);
         $data['months'] =  $lstMonthsSpanish;
@@ -231,7 +260,25 @@ die('no armado');
         }
         $data['aURates']= \App\Models\UserRates::whereIn('id_charges', $chargesIDs)
               ->pluck('rate_month','id_charges')->toArray();
-
+        
+        /*****************************************************************/
+        $rateFilter = [];
+        $oTypes = \App\Models\TypesRate::all();
+        foreach ($oTypes as $item){
+          $aux  = \App\Models\Rates::where('type',$item->id)->get();
+          $aux2 = [];
+          foreach ($aux as $a){
+            $aux2[$a->id] = $a->name;
+          }
+          $rateFilter[$item->id] = ['n' => $item->name,'l'=>$aux2];
+        }
+        $data['rateFilter']= $rateFilter;
+//        dd($rateFilter);
+        $data['filt_rate']= $f_rate;
+        $data['filt_method']= $f_method;
+        /*****************************************************************/
+        
+        $data['aTRates']= \App\Models\Rates::getRatesTypeRates();
         return view('admin.informes.informeClientesMes',$data);
     }
     public function informeCuotaMes(Request $request, $month = null, $day = null) {
@@ -346,7 +393,7 @@ die('no armado');
     public function informeCaja(Request $request) {
         
         $date = date('Y-m-d');
-        $charges = \App\Models\Charges::where('import', '!=', 0)
+        $charges = Charges::where('import', '!=', 0)
                 ->where('date_payment', '=', $date)
                 ->where('type_payment', 'cash')
                 ->sum('import');
@@ -368,6 +415,37 @@ die('no armado');
         ]);
     }
 
+    public function informeCajaMes(Request $request, $month = null, $day = null) {
+
+        $year = getYearActive();
+        if (!$month)
+            $month = date('m');
+        if (!$day)
+            $day = 'all';
+
+        $data = $this->getCharges($year,$month,$day,null,'cash');
+        $lstMonthsSpanish = lstMonthsSpanish();
+        unset($lstMonthsSpanish[0]);
+        $data['months'] =  $lstMonthsSpanish;
+        
+        $chargesIDs = [];
+        foreach ($data['charges'] as $c){
+          $chargesIDs[] = $c->id;
+        }
+        $data['aURates']= \App\Models\UserRates::whereIn('id_charges', $chargesIDs)
+              ->pluck('rate_month','id_charges')->toArray();
+
+        /***************************************************************/
+        $date = date('Y-m-d');
+        $data['totalCash'] = Charges::where('import', '!=', 0)
+                ->where('date_payment', '=', $date)
+                ->where('type_payment', 'cash')
+                ->sum('import');
+        $data['date'] = $date;
+        /***************************************************************/
+        return view('admin.informes.informeCajaMes',$data);
+    }
+  
     
 
 }
