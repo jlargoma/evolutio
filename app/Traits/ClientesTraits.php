@@ -278,6 +278,13 @@ trait ClientesTraits {
     }
     
     /*     * ****************************************************** */
+    //Invoices
+    $invoices = \App\Models\Invoices::whereYear('date', '=', $year)
+            ->where('user_id',$userID)
+            ->orderBy('date', 'DESC')->get();
+    $totalInvoice = $invoices->sum('total_price');
+    $invoiceModal = true;
+    /*     * ****************************************************** */
 
     if (count($detail)>0){
       $aux = '';
@@ -314,6 +321,9 @@ trait ClientesTraits {
         'tab' => $tab,
         'fisioIndiba' => $fisioIndiba,
         'sueloPelvico' => $sueloPelvico,
+        'invoices' => $invoices,
+        'totalInvoice' => $totalInvoice,
+        'invoiceModal' => $invoiceModal,
     ]);
   }
 

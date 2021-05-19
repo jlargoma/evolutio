@@ -8,6 +8,7 @@
   <li <?php if ($tab == 'history') echo 'class="active"'; ?>><a data-toggle="tab" href="#history">Historial</a></li>
   <li <?php if ($tab == 'notes') echo 'class="active"'; ?>><a data-toggle="tab" href="#notes">Anotaciones</a></li>
   <li <?php if ($tab == 'consent') echo 'class="active"'; ?>><a data-toggle="tab" href="#consent">Consentimiento</a></li>
+  <li <?php if ($tab == 'invoice') echo 'class="active"'; ?>><a data-toggle="tab" href="#invoice">Factura</a></li>
 </ul>
 
 <div class="tab-content box">
@@ -25,6 +26,9 @@
   </div>
   <div id="consent" class="tab-pane fade <?php if ($tab == 'consent') echo 'in active'; ?>">
         @include('admin.usuarios.clientes.forms.consent')
+  </div>
+  <div id="invoice" class="tab-pane fade <?php if ($tab == 'invoice') echo 'in active'; ?>">
+        @include('admin.usuarios.clientes.forms.invoice')
   </div>
 </div>
 <div class="row">
@@ -59,7 +63,8 @@
     </div>
   </div>
 </div>
-
+<script src="{{ asset('admin-css/assets/js/plugins/datatables/jquery.dataTables.min.js')}}"></script>
+<script src="{{ asset('admin-css/assets/js/pages/base_tables_datatables.js')}}"></script>
 <script type="text/javascript">
     $(document).ready(function () {
         $(".rates-inform").mouseenter(function () {
@@ -151,21 +156,6 @@
         
         
         /**************************************************/
-//        var canvas = document.querySelector("canvas");
-//        var signaturePad = new SignaturePad(canvas);
-//        $('#newSign').on('click',function (e) {
-//        $('#iSign').hide();
-//        $('#cSign').show();
-//        signaturePad.clear();
-//        $('#saveSign').show();
-//        });
-//        $('#saveSign').on('click',function (e) {
-//            e.preventDefault();
-//            $('#sign').val(signaturePad.toDataURL()); // save image as PNG
-//            $(this).closest('form').submit();
-//        });
-        /**************************************************/
-        
         $('.sendConsent').on('click', function () {
           var type = $(this).closest('tr').data('id');
           var posting = $.post('/admin/usuarios/send-consent', {
@@ -187,12 +177,14 @@
           
         });
         /**************************************************/
+       
     });
 
   @if($detail)
     var details = {!!$detail!!};
   @endif
 </script>
+@include('invoices.script')
 <script src="{{asset('/admin-css/assets/js/toltip.js')}}"></script>
 <style>
     .openEditCobro,
@@ -220,6 +212,9 @@
 }
 td.btnCel {
     width: 50px;
+}
+div#tableInvoices_filter {
+    float: right;
 }
 </style>
 @endsection

@@ -30,39 +30,5 @@
 @endsection
 
 @section('scripts')
-<style type="text/css">
-  td{
-    padding: 8px!important;
-  }
-  #tableInvoices .fa.order{
-    font-size: 11px;
-        color: #FFF;
-  }
-  #tableInvoices thead th{
-        color: #FFF;
-    text-align: center;
-    background-color: #48b0f7;
-  }
-  #tableInvoices thead th::after{
-    content: none !important;
-    display: none !important;
-  }
-</style>
-<script src="{{ asset('admin-css/assets/js/plugins/datatables/jquery.dataTables.min.js')}}"></script>
-<script src="{{ asset('admin-css/assets/js/pages/base_tables_datatables.js')}}"></script>
-<script type="text/javascript">
-  
-$(document).ready(function () {
- jQuery('#tableInvoices').dataTable({
-            initComplete: function() {
-                            $('div.loading').remove();
-                            $('#containerTableResult').show();
-                        },
-            pageLength: 500,
-            lengthMenu: [[500], [500]]
-        });
-        
-    
-});
-</script>
+@include('invoices.script')
 @endsection

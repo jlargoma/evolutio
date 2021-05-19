@@ -53,36 +53,62 @@ class InvoicesController extends Controller {
     $oInvoice = Invoices::find($id);
     return view('invoices.forms._form',$this->getData($oInvoice)); 
   }
-  public function update_modal($charge_id){
+  public function create($uID){
+    $data = $this->getData(null);
+    $oInvoice = new Invoices();
+    $data['charge_id'] = -1;
+    $oUser = \App\Models\User::find($uID);
+    $oInvoice->charge_id = -1;
+    $oInvoice->user_id = $uID;
+    $oInvoice->name = $oUser->name;
+    $oInvoice->email = $oUser->email;
+    $oInvoice->nif  = $oUser->dni;
+    $oInvoice->address = $oUser->address;
+    $oInvoice->phone   = $oUser->telefono;
+    $data['oInvoice'] = $oInvoice;
+    return view('invoices.forms/_form-modal',$data); 
+  }
+  public function update_modal($charge_id,$id=null){
+    if ($id){
+      $oInvoice = Invoices::find($id);
+      $data = $this->getData($oInvoice);
+      $data['charge_id'] = $oInvoice->charge_id;
+      return view('invoices.forms/_form-modal',$data); 
+    }
     $oInvoice = Invoices::where('charge_id',$charge_id)->first();
     $data = $this->getData($oInvoice);
     $oCharge = \App\Models\Charges::find($charge_id);
     $oRateUser = \App\Models\UserRates::where('id_charges',$charge_id)->first();
-      
+    
     if (!$data['items'] || count($data['items']) == 0){
       $detail = '';
       if ($oRateUser && $oCharge){
         $oRate  = $oRateUser->rate;
         $detail = 'Servicio ';
         if ($oRate) $detail .= $oRate->name;
-        $detail .= PHP_EOL.'*Fecha: '. convertDateToShow_text($oCharge->date,true).'*';
+        $detail .= PHP_EOL.'*Fecha: '. convertDateToShow_text($oCharge->date_payment,true).'*';
         $data['items'][] = [
           'detail'=> $detail,
           'iva'   => 0,
-          'price' => $oCharge->inport,
+          'price' => $oCharge->import,
         ];
       }
     }
     $oInvoice = $data['oInvoice'];
     if (!$oInvoice->id){
       $data['charge_id'] = $charge_id;
-      $customer = $oCharge->user;
-      $oInvoice->name = $customer->name;
-      $oInvoice->email = $customer->emial;
-//      $oInvoice->nif  = $customer->DNI;
-//      $oInvoice->address = $customer->address;
-//      $oInvoice->phone   = $customer->phone;
-//      $oInvoice->zip_code= $customer->zipCode;
+      $oUser = $oCharge->user;
+      $oInvoice->charge_id = $charge_id;
+      $oInvoice->user_id = $oUser->id;
+      $oInvoice->name = $oUser->name;
+      $oInvoice->email = $oUser->email;
+      $oInvoice->nif  = $oUser->dni;
+      $oInvoice->address = $oUser->address;
+      $oInvoice->phone   = $oUser->telefono;
+      $data['oInvoice'] = $oInvoice;
+//      dd($data['oInvoice'],$customer);
+    } else {
+      $data['charge_id'] = $oInvoice->charge_id;
     }
     
     return view('invoices.forms/_form-modal',$data); 
@@ -94,6 +120,8 @@ class InvoicesController extends Controller {
     $items = $request->input('item',[]);
     $iva = $request->input('iva',[]);
     $prices = $request->input('price',[]);
+    $charge_id = $request->input('charge_id',null);
+    $user_id = $request->input('user_id',null);
     
     $oInvoice = null;
     if ($id) $oInvoice = Invoices::find($id);
@@ -104,6 +132,8 @@ class InvoicesController extends Controller {
       $oInvoice->date = date('Y-m-d');
       $oInvoice->code = 'SN'.date('y');
       $oInvoice->status = 1;
+      $oInvoice->charge_id = $charge_id;
+      $oInvoice->user_id = $user_id;
       $nextNumber = Invoices::select('number')
               ->withTrashed()
               ->whereYear('date','=',date('Y'))
@@ -124,7 +154,7 @@ class InvoicesController extends Controller {
       $oInvoice->zip_code_business = $aEmisor['zipcode'];
     }
     
-    
+    $oInvoice->user_id = $user_id;
     $oInvoice->name = $request->input('name');
     $oInvoice->nif  = $request->input('nif');
     $oInvoice->address = $request->input('address');
@@ -233,13 +263,9 @@ class InvoicesController extends Controller {
             $message->to($to);
             $message->subject($subject);
         });
-     
-      
-      if ($sended){
-        return '<p class="alert alert-success">Factura enviada a '.$oInvoice->email.'</p>';
-      }
+      return 'OK';
     }
-    return '<p class="alert alert-warmimg">Factura no enviada a '.$oInvoice->email.'</p>';
+    return 'Factura no enviada a '.$oInvoice->email;
   }
   
   public function delete(Request $request) {

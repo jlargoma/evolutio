@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+      Commands\Subscriptions::class,
     ];
 
     /**
@@ -24,8 +24,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
-    }
+//      $schedule->command('inspire')->hourly();   
+      $schedule->command('Subscriptions:createRates')->dailyAt('3:00')->timezone('Europe/Madrid');
+  }
 
     /**
      * Register the commands for the application.

@@ -21,33 +21,25 @@ class CoachLiquidationController extends Controller
     
     public function coachLiquidation(Request $request)
     {
-    	if ( empty($request->id_liquidation) ) {
-    		$liquidation = new CoachLiquidation();
-    		$liquidation->id_coach = $request->id_coach;
-    		$liquidation->total = $request->importe;
-    		$liquidation->date_liquidation = Carbon::createFromFormat('Y-m-d', $request->date_liquidation)->copy()->format('Y-m-d');
-    		if ($liquidation->save()) {
-    			return "Guardado!";
-    		}else{
-    			return "Error al guardar, intentelo de nuevo más tarde!";
+      $liquidation = null;
+      if ( !empty($request->id_liquidation) ) {
+        $liquidation = CoachLiquidation::find($request->id_liquidation);
+      }
+      if (!$liquidation){
+        $liquidation = new CoachLiquidation();
+        $liquidation->id_coach = $request->id_coach;
+        $liquidation->total = $request->importe;
+        $liquidation->date_liquidation = Carbon::createFromFormat('Y-m-d', $request->date_liquidation)->copy()->format('Y-m-d');
+      }
+      
+      if ($request->importe == "") {
+        $liquidation->total = 0;
+      } else {
+        $liquidation->total = $request->importe;
+      }
 
-    		}
-
-    	}else{
-    		$liquidation = CoachLiquidation::find($request->id_liquidation);
-    		if ($request->importe == "") {
-                $liquidation->total = 0;
-            }else{
-                $liquidation->total = $request->importe;
-            }
-    		if ($liquidation->save()) {
-    			return "Actualizado!";
-    		}else{
-    			return "Error al actualizar la liquidación, intentelo de nuevo más tarde!";
-
-    		}
-    	}
-    	
+      if ($liquidation->save())	return 'OK';
+    	else return "Error al guardar, intentelo de nuevo más tarde!";
     }
     
     

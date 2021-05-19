@@ -52,6 +52,10 @@
     display: block;
     clear: both;
   }
+  .col-logo{
+    float: left;
+    width: 45%;
+  }
   .col-xs-4{
     float: left;
     width: 33.33%;
@@ -62,6 +66,8 @@
     padding-bottom: 10px;
     overflow: auto;
     white-space: normal;
+    padding-top: 10px;
+    font-size: 13px;
   }
   .offset-margin{
     margin-top:-10px;
@@ -89,7 +95,7 @@
   }
   .table {
     margin-bottom: 0px !important;
-    border: 1px solid #356cc4;
+    border: 1px solid #46c37b;
     margin-top: 1em;
     width: 100%;
     border-collapse: collapse;
@@ -102,8 +108,11 @@
   }
 
   thead,tfoot {
-    background-color: #356cc4;
-    color: #FFF !important;
+    background-color: #46c37b;
+    /*color: #FFF !important;*/
+  }
+  .subtotal{
+    background-color: #c3c3c3;
   }
   .table > thead > tr > th{
     border: none;
@@ -115,7 +124,7 @@
     margin-top: 7px;
   }
   .img-responsive{
-    max-width: 190px;
+    max-width: 250px;
   }
   .whatever { page-break-after: always; }
 </style>

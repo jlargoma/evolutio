@@ -1,14 +1,17 @@
-     @if($oInvoice->id>0)
-    <div class="col-xs-12 text-left">
-      <p>Núm de Factura: <b>{{$oInvoice->num}}</b></p>
-      <p>Fecha de Emisión: <b>{{convertDateToShow_text($oInvoice->date)}}</b></p>
-    </div>
+@extends('layouts.popup')
+@section('content')
+@if($oInvoice->id>0)
+  <div class="row mb-1em">
+    <div class="col-xs-6 text-left">Núm de Factura: <b>{{$oInvoice->num}}</b></div>
+    <div class="col-xs-6 text-right">Fecha de Emisión: <b>{{convertDateToShow_text($oInvoice->date)}}</b></div>
+  </div>
     @endif
     
     <form action="{{ route('invoice.save') }}" method="post" id="sendInvoiceBook">
       <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
       <input type="hidden" name="id" value="{{$oInvoice->id ?? null}}">
       <input type="hidden" name="charge_id" value="{{$charge_id}}">
+      <input type="hidden" name="user_id" value="{{$oInvoice->user_id ?? null}}">
       <input type="hidden" name="confirm" value="1">
     
       
@@ -96,14 +99,68 @@
         <button class="btn btn-danger" type="button" id="delete" data-id="{{$oInvoice->id}}" >Eliminar</button>
         <a href="{{ route('invoice.downl',$oInvoice->id) }}" class="btn btn-success"><i class="fa fa-download"></i></a>
         @endif
+        @if($oInvoice->user_id>0)
+        <a href="/admin/usuarios/informe/{{$oInvoice->user_id}}/invoice" class="btn btn-success">Volver</a>
+        @endif
       </div>
     </form>
 
-@include('invoices.forms._form-script')
-<style>
-  h3#modalSafetyBox_title {
-    float: left;
-    margin-top: -29px;
+@endsection
+@section('scripts')
+<style type="text/css">
+  td{
+    padding: 8px!important;
+  }
+  #tableInvoices .fa.order{
+    font-size: 11px;
+        color: #FFF;
+  }
+  #tableInvoices thead th{
+        color: #FFF;
+    text-align: center;
+    background-color: #48b0f7;
+  }
+  #tableInvoices thead th::after{
+    content: none !important;
+    display: none !important;
+  }
+  button#addItem {
+    color: black;
+    font-size: 15px;
+}
+.prices{
+  text-align: right;
 }
 </style>
+<script type="text/javascript">
+  
+$(document).ready(function () {
+$('#sendInvoiceEmail').on('click',function (e){
+    e.preventDefault();
+    e.stopPropagation();
+    if(confirm('Enviar factura a '+ $('#email').val() +'?')){
+      $('#loadigPage').show('slow');
+       $.ajax({
+        url: '/admin/facturas/enviar',
+          type: 'POST',
+          data: {
+            id: $(this).data('id'),
+            _token: "{{csrf_token()}}"
+          }
+        })
+        .done(function () {
+          window.show_notif('Ok', 'success', 'Factura enviada');
+        })
+        .fail(function () {
+          window.show_notif('Ok', 'danger', 'Factura no enviada');
+        })
+        .always(function () {
+          $('#loadigPage').hide('slow');
+        });
+      }
+    });    
+});
+</script>
+@include('invoices.forms._form-script')
+@endsection
   

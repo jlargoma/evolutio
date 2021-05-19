@@ -102,15 +102,17 @@
           type: 'DELETE',
           success: function (result) {
             if (result == 'OK') {
-              window.show_notif('OK', 'success', 'Registro Eliminado.');
-              location.href = '/admin/facturas';
+              window.show_notif('success', 'Registro Eliminado.');
+              setTimeout(function(){location.reload();},500);
+              
+//              location.href = '/admin/facturas';
             } else {
-              window.show_notif('ERROR', 'danger', 'Registro no encontrado');
+              window.show_notif('danger', 'Registro no encontrado');
             }
           },
           error: function (e) {
             console.log(e);
-            window.show_notif('ERROR', 'danger', 'Error de sistema');
+            window.show_notif('danger', 'Error de sistema');
           }
         });
       }

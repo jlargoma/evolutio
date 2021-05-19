@@ -2,12 +2,9 @@
 <div class="panel panel-default main">
   <div class="panel-heading">
     <div class="clearfix">
-      <div class="col-xs-4">
-        <img src="{{url('/assets/logo-retina.png')}}" class="img-responsive">
+      <div class="col-logo">
+        <img src="{{url('/assets/evolutiofit_logo_invoice.png')}}" class="img-responsive">
         <div class="inv_numb"><?php echo $oInvoice->num ?></div>
-      </div>
-      <div class="col-xs-3">
-
       </div>
       <div class="col-xs-5 info-empresa">
 
@@ -63,12 +60,12 @@
         <tr><td colspan="3"><br/><br/></td></tr>
       </tbody>
       <tfoot>
-        <tr>
+        <tr class="subtotal">
           <th class="text-right" colspan="2">Total Neto</th>
           <th class="text-right">{{moneda($subtotal,true,2)}}</th>
         </tr>
         @if($oInvoice->total_price>$subtotal)
-        <tr>
+        <tr class="subtotal">
           <th class="text-right" colspan="2">IVA</th>
           <th class="text-right">{{moneda($oInvoice->total_price-$subtotal,true,2)}}</th>
         </tr>
@@ -82,7 +79,11 @@
     <br/>
   </div>
   <div class="panel-footer">
-    <p class="text-center">Evolutio HTS</p>
+    <p class="text-center">
+      <a href="www.evolutio.fit" title="www.evolutio.fit">www.evolutio.fit</a>
+      <br/>
+      Salud - Actividad Física - Rendimiento
+    </p>
   </div>
 </div>
 <?php } ?>

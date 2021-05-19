@@ -73,6 +73,10 @@ section.content.content-full.bg-white {
   opacity: 0;
 }
 
+.btn-complete {
+    background-color: #4079d6;
+    color: #FFF;
+}
 .nowrap{
   white-space: nowrap;
 }
@@ -306,6 +310,26 @@ toltip p {
   margin: 0 !important;
 }
 
+  #tableInvoices td{
+    padding: 8px!important;
+  }
+  #tableInvoices .fa.order{
+    font-size: 11px;
+        color: #FFF;
+  }
+  #tableInvoices thead th{
+    color: #FFF;
+    text-align: center;
+    background-color: #48b0f7;
+  }
+  #tableInvoices thead th::after{
+    content: none !important;
+    display: none !important;
+  }
+  #itemInvoices input.form-control.iva {
+    min-width: 45px;
+}
+  
 @media(max-width:991px) {
   .table-fixed th.static{
     width: 9em;

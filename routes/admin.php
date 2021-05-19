@@ -110,10 +110,11 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
 
   //Facturas
   Route::get('/facturas/ver/{id}', 'InvoicesController@view')->name('invoice.view');
+  Route::get('/facturas/nueva/{id}', 'InvoicesController@create')->name('invoice.create');
   Route::get('/facturas/editar/{id}', 'InvoicesController@update')->name('invoice.edit');
   Route::post('/facturas/guardar', 'InvoicesController@save')->name('invoice.save');
   Route::post('/facturas/enviar', 'InvoicesController@sendMail')->name('invoice.sendmail');
-  Route::get('/facturas/modal/editar/{id}', 'InvoicesController@update_modal');
+  Route::get('/facturas/modal/editar/{charge}/{id?}', 'InvoicesController@update_modal')->name('invoice.updModal');
   Route::post('/facturas/modal/guardar', 'InvoicesController@save_modal');
   Route::delete('/facturas/borrar', 'InvoicesController@delete')->name('invoice.delete');
   Route::get('/facturas/descargar/{id}', 'InvoicesController@download')->name('invoice.downl');

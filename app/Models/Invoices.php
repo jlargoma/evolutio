@@ -25,11 +25,11 @@ class Invoices extends Model
   public function emisor($emisor = null) {
     $emisores = [
       'ISDE' => [
-          'name' => 'Evolutio HTS',
-          'nif' => 'B--',
-          'address' => 'Avda Quitapesares nº20',
+          'name' => 'GET FIT VILLAVICIOSA SL',
+          'nif' => 'B87457206',
+          'address' => 'avda Quitapesares n20 28670 ',
           'phone' => -1,
-          'zipcode' => 'Madrid',
+          'zipcode' => 'Villaviciosa de Odon (Madrid)',
       ],
     ];
     

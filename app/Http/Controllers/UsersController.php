@@ -48,6 +48,8 @@ class UsersController extends Controller {
       $newUser->remember_token = str_random(60);
       $newUser->role = 'user';
       $newUser->telefono = $request->input('telefono');
+      $newUser->dni = $request->input('dni');
+      $newUser->address = $request->input('address');
       if ($newUser->save()) {
         $email = $newUser->email;
         $sended = Mail::send('emails._create_user_email', ['user' => $newUser], function ($message) use ($email) {
@@ -194,7 +196,9 @@ class UsersController extends Controller {
     $userToUpdate->name = $request->input('name');
     $userToUpdate->email = $request->input('email');
     $userToUpdate->role = $request->input('role', 'user');
-
+    $userToUpdate->dni = $request->input('dni');
+    $userToUpdate->address = $request->input('address');
+      
     if ($request->input('password'))
       $userToUpdate->password = bcrypt($request->input('password'));
 
