@@ -107,12 +107,12 @@
               
 //              location.href = '/admin/facturas';
             } else {
-              window.show_notif('danger', 'Registro no encontrado');
+              window.show_notif('error', 'Registro no encontrado');
             }
           },
           error: function (e) {
             console.log(e);
-            window.show_notif('danger', 'Error de sistema');
+            window.show_notif('error', 'Error de sistema');
           }
         });
       }

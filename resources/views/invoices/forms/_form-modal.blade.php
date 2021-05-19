@@ -132,35 +132,7 @@
   text-align: right;
 }
 </style>
-<script type="text/javascript">
-  
-$(document).ready(function () {
-$('#sendInvoiceEmail').on('click',function (e){
-    e.preventDefault();
-    e.stopPropagation();
-    if(confirm('Enviar factura a '+ $('#email').val() +'?')){
-      $('#loadigPage').show('slow');
-       $.ajax({
-        url: '/admin/facturas/enviar',
-          type: 'POST',
-          data: {
-            id: $(this).data('id'),
-            _token: "{{csrf_token()}}"
-          }
-        })
-        .done(function () {
-          window.show_notif('Ok', 'success', 'Factura enviada');
-        })
-        .fail(function () {
-          window.show_notif('Ok', 'danger', 'Factura no enviada');
-        })
-        .always(function () {
-          $('#loadigPage').hide('slow');
-        });
-      }
-    });    
-});
-</script>
 @include('invoices.forms._form-script')
+@include('invoices.script_mail')
 @endsection
   

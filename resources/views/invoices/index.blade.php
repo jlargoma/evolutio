@@ -31,4 +31,5 @@
 
 @section('scripts')
 @include('invoices.script')
+@include('invoices.script_mail')
 @endsection
