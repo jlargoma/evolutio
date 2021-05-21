@@ -101,6 +101,10 @@ ul.selectType li.active {
 .events.blocked {
     min-width: 30px;
     height: 1em;
+    opacity: 0.7;
+}
+.events.blocked:hover {
+  opacity: 1.0;
 }
 .events.blocked span{
   width: 27px;

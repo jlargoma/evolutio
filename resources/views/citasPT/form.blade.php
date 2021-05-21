@@ -38,7 +38,7 @@
           </select>
         </div>
         <div class="col-xs-3 col-md-2 push-20">
-          <label for="id_coach">Fisioterapeuta</label>
+                    <label for="id_coach">Entrenador</label>
           <select class="js-select2 form-control" id="id_coach" name="id_coach" style="width: 100%; cursor: pointer" data-placeholder="Seleccione coach.." >
             <option></option>
             <?php foreach ($coachs as $key => $coach): ?>

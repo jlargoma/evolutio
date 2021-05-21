@@ -68,7 +68,7 @@
 @endsection
 
 @section('scripts')
-<link rel="stylesheet" href="{{ asset('css/calendars.css') }}">
+<link rel="stylesheet" href="{{ asset('css/calendars.css?v1') }}">
 
 <style>
 
