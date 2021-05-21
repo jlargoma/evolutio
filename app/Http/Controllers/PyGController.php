@@ -41,7 +41,7 @@ class PyGController extends Controller {
 
     /*     * ********************************************************* */
     
-    for ($i = 2; $i > 0; $i--) {
+    for ($i = 2; $i >= 0; $i--) {
       $yAux = $year - $i;
       $incomesYear[$yAux] = Charges::whereYear('date_payment', '=', $yAux)->sum('import');
     }
@@ -52,8 +52,6 @@ class PyGController extends Controller {
       
     $aux = $months_empty;
     $pay_method = ['c'=>$months_empty,'b'=>$months_empty];
-    $incomesYear[$year] = 0;
-    
     foreach ($uRates as $item){
 //    $oCharges = Charges::whereYear('date_payment', '=', $year)->get();
 //    foreach ($oCharges as $c) {
@@ -63,8 +61,6 @@ class PyGController extends Controller {
       $m = $item->rate_month;
       $aux[0] += $c->import;
       $aux[$m] += $c->import;
-      $incomesYear[$year] += $c->import;
-      
       if ($c->type_payment == 'cash'){
         $pay_method['c'][0] += $c->import;
         $pay_method['c'][$m] += $c->import;

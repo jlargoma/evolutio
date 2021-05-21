@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
       Commands\Subscriptions::class,
+      Commands\InfoMonth::class,
     ];
 
     /**
@@ -26,6 +27,7 @@ class Kernel extends ConsoleKernel
     {
 //      $schedule->command('inspire')->hourly();   
       $schedule->command('Subscriptions:createRates')->dailyAt('3:00')->timezone('Europe/Madrid');
+      $schedule->command('InfoMonth:weekStatus')->weeklyOn(7, '9:00')->timezone('Europe/Madrid');
   }
 
     /**

@@ -66,6 +66,8 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
     
 
     /* Citas */
+    Route::get('/citas/bloqueo-horarios/{type}', 'DatesController@blockDates');
+    Route::post('/citas/bloqueo-horarios', 'DatesController@blockDatesSave');
 
     Route::get('/citas/create/createSchedules', 'DatesController@createSchedules');
     Route::get('/citas/delete/{id}', 'DatesController@delete');
@@ -205,3 +207,9 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::get('/userRates', 'FunctionalControler@userRates');
   Route::post('/userRates', 'FunctionalControler@save_userRates');
 });
+
+Route::get('/checkcrom/{command}/{param}',function($command,$param){
+  $artisan = \Artisan::call($command.":".$param);
+  $output = \Artisan::output();
+  return $output;
+});//->middleware('admin');

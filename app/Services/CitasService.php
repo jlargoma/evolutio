@@ -13,43 +13,52 @@ class CitasService {
     if ($oDate) {
       $date = explode(' ', $oDate->date);
       $uRates = $oDate->uRates;
-      if (!$uRates){
-        $oDate->delete();
-        die('Servicio eliminado');
-      }
-      $oUser = $uRates->user;
-      if (!$oUser){
-        $uRates->delete();
-        $oDate->delete();
-        die('Usuario eliminado');
+      $id_serv = $oDate->id_rate;
+      $card    = null;
+      $price   = 0; 
+      $id_user = -1;
+      $email   = null;
+      $phone   = null;
+      $charge  = null;
+      if ($uRates){
+        $price   = $uRates->price;
+        $id_serv = $uRates->id_rate;
+        $oUser = $uRates->user;
+        if ($oUser){
+          $id_user = $oUser->id;
+          $email = $oUser->email;
+          $phone = $oUser->telefono;
+          $charge = $uRates->charges;
+          
+          $paymentMethod = $oUser->getPayCard();
+          if ($paymentMethod) {
+            $aux = $paymentMethod->toArray();
+            $card['brand'] = $aux['card']['brand'];
+            $card['exp_month'] = $aux['card']['exp_month'];
+            $card['exp_year'] = $aux['card']['exp_year'];
+            $card['last4'] = $aux['card']['last4'];
+          }
+      
+        }
       }
       $oServicios = Rates::getByTypeRate($oDate->date_type);
-      $price = $uRates->price;
-      $card = null;
-      $paymentMethod = $oUser->getPayCard();
-      if ($paymentMethod) {
-        $aux = $paymentMethod->toArray();
-        $card['brand'] = $aux['card']['brand'];
-        $card['exp_month'] = $aux['card']['exp_month'];
-        $card['exp_year'] = $aux['card']['exp_year'];
-        $card['last4'] = $aux['card']['last4'];
-      }
-      
       return [
           'date' => date('d-m-Y', strtotime($date[0])),
           'time' => intval($date[1]),
-          'id_serv' => $uRates->id_rate,
-          'id_user' => $oUser->id,
+          'id_serv' => $id_serv,
+          'id_user' => $id_user,
           'id_coach' => $oDate->id_coach,
-          'email' => $oUser->email,
-          'phone' => $oUser->telefono,
+          'customTime' => $oDate->customTime,
+          'email' => $email,
+          'phone' => $phone,
           'price' => $price,
           'card' => $card,
           'id' => $oDate->id,
-          'charge' => $uRates->charges,
+          'charge' => $charge,
           'services' => $oServicios,
           'users' => User::where('role', 'user')->where('status', 1)->orderBy('name', 'ASC')->get(),
-          'coachs' => self::getCoachs($oDate->date_type)
+          'coachs' => self::getCoachs($oDate->date_type),
+          'blocked' => $oDate->blocked
       ];
     }
     return null;
@@ -64,6 +73,7 @@ class CitasService {
       'id_serv' => -1,
       'id_user' => -1,
       'id_coach' => -1,
+      'customTime' => $time.':00',
       'email' => '',
       'phone' => '',
       'card' => null,
@@ -72,7 +82,8 @@ class CitasService {
       'price' => 0,
       'services' => Rates::getByTypeRate($type),
       'users' => User::where('role', 'user')->where('status', 1)->orderBy('name', 'ASC')->get(),
-      'coachs' => self::getCoachs($type)
+      'coachs' => self::getCoachs($type),
+      'blocked' => false
      ];
   }
   
@@ -81,6 +92,22 @@ class CitasService {
     $times = [];    
     /**************************************************** */
     $servLst = Rates::getByTypeRate($type)->pluck('name', 'id');
+    /**************************************************** */
+    $coachs = self::getCoachs($type);
+    $tColors = [];
+    $cNames = [];
+    if ($coachs) {
+        $auxColors = colors();
+        $i = 0;
+        foreach ($coachs as $item) {
+            if (!isset($auxColors[$i]))
+                $i = 0;
+            $tColors[$item->id] = $auxColors[$i];
+            $cNames[$item->id] = $item->name;
+            $i++;
+        }
+    }
+
     /**************************************************** */
     $aLst = [];
     $sql = Dates::where('date_type', $type)
@@ -99,6 +126,8 @@ class CitasService {
 
     $oLst = $sql->get();
     $detail = [];
+    $days = listDaysSpanish();
+    $months = lstMonthsSpanish();
     if ($oLst) {
         foreach ($oLst as $item) {
             $time = strtotime($item->date);
@@ -106,10 +135,36 @@ class CitasService {
             $date = date('Y-m-d', $time);
             $time = strtotime($date);
 
+            $aux = explode(':', $item->customTime);
+            
+            $dTime = (is_array($aux) && count($aux) == 3) ? $aux[0].':'.$aux[1] : $hour.':00';
+            $dTime .= ' '.$days[date('w',$time)];
+            $dTime .= ' '.date('d',$time).' '.$months[date('n',$time)];
+            
             if (!isset($aLst[$time]))
                 $aLst[$time] = [];
             if (!isset($aLst[$time][$hour]))
                 $aLst[$time][$hour] = [];
+            
+            if ($item->blocked){
+              $aLst[$time][$hour][] = [
+                'id' => $item->id,
+                'charged' => 2,
+                'type' => $item->id_rate,
+                'coach' => $item->id_coach,
+                'name' => 'bloqueo',
+              ];
+              $detail[$item->id] = [
+                  'n' => 'bloqueo',
+                  'p'=> '',
+                  's'=> '-',
+                  'cn' => isset($cNames[$item->id_coach]) ? $cNames[$item->id_coach] : '-',
+                  'mc'=>'', //Metodo pago
+                  'dc'=>'', // fecha pago
+                  'd'=>$dTime, // fecha 
+              ];
+              continue;
+            }
 
             $u_name = '';
             $uRates = $item->uRates;
@@ -130,8 +185,10 @@ class CitasService {
                 'n' => $u_name,
                 'p'=>($uRates) ? moneda($uRates->price): '--',
                 's'=> ($item->service) ? $item->service->name : '-',
+                'cn' => isset($cNames[$item->id_coach]) ? $cNames[$item->id_coach] : '-',
                 'mc'=>'', //Metodo pago
                 'dc'=>'', // fecha pago
+                'd'=>$dTime, // fecha 
             ];
 
             if ($charge){
@@ -149,18 +206,6 @@ class CitasService {
             $aMonths[$year . '-' . str_pad($k, 2, "0", STR_PAD_LEFT)] = $v;
     }
     /**************************************************** */
-    $coachs = self::getCoachs($type);
-    $tColors = [];
-    if ($coachs) {
-        $auxColors = colors();
-        $i = 0;
-        foreach ($coachs as $item) {
-            if (!isset($auxColors[$i]))
-                $i = 0;
-            $tColors[$item->id] = $auxColors[$i];
-            $i++;
-        }
-    }
 
 
     if (count($detail)>0){

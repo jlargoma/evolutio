@@ -53,31 +53,51 @@ class DatesController extends Controller {
     }
 
     public function create(Request $request) {
-
-        $validated = $this->validate($request, [
-            'date' => 'required',
-            'id_rate' => 'required',
-            'id_coach' => 'required',
-                ], [
-            'date.required' => 'Fecha requerida',
-            'id_rate.required' => 'Tarifa requerida',
-            'id_coach.required' => 'Coach requerido',
-        ]);
-        
-        $ID = $request->input('idDate', null);
-        
-        /*********************************************************************/
-        $id_user = $request->input('id_user',null);
-        $uEmail  = $request->input('email');
-        $uPhone  = $request->input('phone');
-        $type    = $request->input('date_type');
-        $importe = $request->input('importe',0);
-        $id_rate = $request->input('id_rate');
-        $id_coach= $request->input('id_coach');
-        $date    = $request->input('date');
-        $hour    = $request->input('hour');
-        $timeCita= strtotime($date);
-        /************************************************************/
+      
+      $ID = $request->input('idDate', null);
+      $blocked = $request->input('blocked', null);
+      $id_user = $request->input('id_user',null);
+      $uEmail  = $request->input('email');
+      $uPhone  = $request->input('phone');
+      $type    = $request->input('date_type');
+      $importe = $request->input('importe',0);
+      $id_rate = $request->input('id_rate');
+      $id_coach= $request->input('id_coach');
+      $date    = $request->input('date');
+      $hour    = $request->input('hour');
+      $cHour   = $request->input('customTime');
+      $timeCita= strtotime($date);
+      /*********************************************************************/
+      $oCarbon = Carbon::createFromFormat('d-m-Y H:00:00', "$date $hour:00:00");
+      $date_compl = $oCarbon->format('Y-m-d H:i:00');  
+      /*********************************************************************/
+      if ($blocked){
+        $alreadyExit = Dates::where('date', $date_compl)
+                        ->where('id', '!=', $ID)
+                        ->where('id_coach', $id_coach)
+                        ->first();
+        if ($alreadyExit) {
+          $msg = 'Personal ocupado';
+          return redirect()->back()->withErrors([$msg]);
+        }
+        $oObj = Dates::find($ID);
+        $oObj->id_coach = $id_coach;
+        $oObj->date = $date_compl;
+        $oObj->updated_at = $date;
+        $oObj->save();
+        return redirect()->back();
+      }
+      /*********************************************************************/
+      $validated = $this->validate($request, [
+          'date' => 'required',
+          'id_rate' => 'required',
+          'id_coach' => 'required',
+              ], [
+          'date.required' => 'Fecha requerida',
+          'id_rate.required' => 'Tarifa requerida',
+          'id_coach.required' => 'Coach requerido',
+      ]);
+      /************************************************************/
         if (!$id_user){
           $issetUser = User::where('email',$uEmail)->first();
           if ($issetUser) {
@@ -105,9 +125,7 @@ class DatesController extends Controller {
               $oUser->save();
           }
         }
-        /*********************************************************************/
-        $oCarbon = Carbon::createFromFormat('d-m-Y H:00:00', "$date $hour:00:00");
-        $date_compl = $oCarbon->format('Y-m-d H:i:00');
+
         /************************************************************ */
         $alreadyExit = Dates::where('date', $date_compl)
                         ->where('id', '!=', $ID)
@@ -184,6 +202,7 @@ class DatesController extends Controller {
         $oObj->id_user_rates = $id_user_rates;
         $oObj->date_type = $type;
         $oObj->date = $date_compl;
+        $oObj->customTime = $cHour;
         $oObj->updated_at = $date;
         if ($oObj->save()) {
           if ($type == 'pt'){
@@ -334,5 +353,62 @@ class DatesController extends Controller {
         }
         dd($obj);
       }
+    }
+    
+    function blockDates($type){
+      $coachs = \App\Services\CitasService::getCoachs($type);
+      $cNames = [];
+      if ($coachs) {
+        foreach ($coachs as $item) {
+          $cNames[$item->id] = $item->name;
+        }
+      }
+      
+      return view('calendars.blockDates', [
+          'coachs' => $cNames,
+          'type' => $type
+              ]);
+    
+    }
+    function blockDatesSave(Request $req){
+      
+      $type = $req->input('date_type');
+      $id_coach = $req->input('id_coach');
+      $start = $req->input('start');
+      $end = $req->input('end');
+      $hours = $req->input('hours');
+     
+      $startTime = null;
+      $aux = explode('-', $start);
+      if (is_array($aux) && count($aux)==3)
+        $startTime = strtotime($aux[2].'-'.$aux[1].'-'.$aux[0]);
+      
+      $endTime = null;
+      $aux = explode('-', $end);
+      if (is_array($aux) && count($aux)==3)
+        $endTime = strtotime($aux[2].'-'.$aux[1].'-'.$aux[0]);
+      
+      $oneDay = 24*60*60;
+      if ($startTime && $endTime){
+        while ($startTime<=$endTime){
+          if (date('w',$startTime)>0){
+            foreach ($hours as $h){
+              $oObj = new Dates();
+              $oObj->id_coach = $id_coach;
+              $oObj->id_rate = 0;
+              $oObj->id_user = 0;
+              $oObj->blocked = 1;
+              $oObj->id_user_rates = -1;
+              $oObj->date_type = $type;
+              $oObj->date = date('Y-m-d',$startTime)." $h:00:00";
+              $oObj->save();
+            }
+          }
+          
+          $startTime += $oneDay;
+        }
+      }
+      return redirect()->back()->with(['success'=>'Horarios bloqueados']);
+    
     }
 }

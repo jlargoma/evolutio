@@ -21,7 +21,8 @@
 }
 .table-calendar tbody td.editDate.not{
     max-width: auto !important;
-    width:10%;
+    background-color: #dadada;
+    /*width:10%;*/
 }
 
 .table-calendar tbody td.editDate div {
@@ -96,4 +97,15 @@ ul.selectType li.active {
 }
 .js-dataTable-citas tr .showInform:hover{
     font-weight: bold;
+}
+.events.blocked {
+    min-width: 30px;
+    height: 1em;
+}
+.events.blocked span{
+  width: 27px;
+  height: 4px;
+  background-color: #fffdfd;
+  display: block;
+  transform: rotate(45deg);
 }

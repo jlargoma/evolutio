@@ -107,7 +107,8 @@ class MailController extends Controller
             $email    = $oUser->email;
             $dateTime = strtotime($oDate->date);
             $day = date('d',$dateTime).' de '.getMonthSpanish(date('n',$dateTime),false);
-            $hour = date('H:i',$dateTime);
+            $hour = ($oDate->customTime) ? ($oDate->customTime) : date('H:i',$dateTime);
+            
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return $email.' no es un mail válido';
             try{
               $sended = Mail::send('emails._payment_citaStripe', [

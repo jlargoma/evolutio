@@ -28,6 +28,7 @@
                     </div>
                     <div class="col-xs-2 mx-1em">
                         <button class="btn btn-horarios" data-toggle="modal" data-target="#modalIfrm">Horarios</button>
+                        <button class="btn btn-bloqueo" data-toggle="modal" data-target="#modalIfrm">Bloqueos</button>
                     </div>
                </div>
                 <div class="row">  
@@ -59,7 +60,7 @@
                 </div>
                 </div>
                 
-                @include('fisioterapia.calendar')
+                @include('calendars.calendar')
             </div>
 	</div>
 </div>
@@ -154,6 +155,10 @@ $('#modal_newUser').on('submit','#form-new',function(event){
   $('.btn-horarios').click(function (e) {
     e.preventDefault();
     $('#ifrModal').attr('src','/admin/horariosEntrenador/');
+  });
+  $('.btn-bloqueo').click(function (e) {
+    e.preventDefault();
+    $('#ifrModal').attr('src','/admin/citas/bloqueo-horarios/fisio');
   });
   $('#search_cust').on('keyup',function(){
     var s = $(this).val();

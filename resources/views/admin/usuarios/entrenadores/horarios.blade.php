@@ -33,10 +33,10 @@
                             ?>
                             <tr>
                                 <th>{{$v}}</th>
-                                <td><input type="number" min="8" max="19" name="d_{{$k}}-0" value="{{$times[$k][0]}}"></td>
-                                <td><input type="number" min="8" max="19" name="d_{{$k}}-1" value="{{$times[$k][1]}}"></td>
-                                <td><input type="number" min="8" max="19" name="d_{{$k}}-2" value="{{$times[$k][2]}}"></td>
-                                <td><input type="number" min="8" max="19" name="d_{{$k}}-3" value="{{$times[$k][3]}}"></td>
+                                <td><input type="number" min="8" max="22" name="d_{{$k}}-0" value="{{$times[$k][0]}}"></td>
+                                <td><input type="number" min="8" max="22" name="d_{{$k}}-1" value="{{$times[$k][1]}}"></td>
+                                <td><input type="number" min="8" max="22" name="d_{{$k}}-2" value="{{$times[$k][2]}}"></td>
+                                <td><input type="number" min="8" max="22" name="d_{{$k}}-3" value="{{$times[$k][3]}}"></td>
                             </tr>
                             <?php
                         endforeach;

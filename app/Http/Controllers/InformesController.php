@@ -20,57 +20,6 @@ class InformesController extends Controller {
         //
     }
 
-    public function informeForma() {
-        $plan = array();
-die('no armado');
-        $usuarios = \App\Models\Models\UserRates::whereIn('id_rate', [
-                    63,
-                    69
-                ])->groupBy('id_user')->get();
-
-        foreach ($usuarios as $usuario) {
-            $resumenes = \App\Models\PlanFit::where('id_user', $usuario->user->id)->orderBy('week', 'ASC')->get();
-            if (count($resumenes) > 0) {
-                foreach ($resumenes as $resumen) {
-                    $plan[$usuario->user->id][$resumen->week] = $resumen;
-                }
-            } else {
-                
-            }
-        }
-
-        return view('.admin.informes.informe_nutri', [
-            'usuarios' => $usuarios,
-            'plan' => $plan,
-            'actualWeek' => Carbon::now()->format('W'),
-        ]);
-    }
-
-    public function saveForma(Request $request) {
-        $forma = \App\Models\PlanFit::find($request->id);
-        if (count($forma) > 0) {
-            $forma->weight = $request->weight;
-            $forma->save();
-        } else {
-            $forma = new \App\Models\Planfit();
-
-            $forma->id_user = $request->user;
-            $forma->week = $request->week;
-            $forma->weight = $request->weight;
-            $forma->save();
-        }
-    }
-
-    public function newForma(Request $request) {
-        $forma = new \App\Models\Planfit();
-
-        $forma->id_user = $request->user;
-        $forma->week = $request->week;
-        $forma->weight = $request->weight;
-        $forma->date = Carbon::now();
-        $forma->save();
-    }
-
     /**
      * 
      * @param type $year
@@ -178,7 +127,7 @@ die('no armado');
                 
     }
     
-    private function getChargesRates($year,$month,$day,$search=null) {
+    public function getChargesRates($year,$month,$day,$search=null) {
       
       $sqlURates = \App\Models\UserRates::where('id_charges', '>', 0)
               ->where('rate_month',$month)->where('rate_year',$year);
@@ -199,8 +148,9 @@ die('no armado');
           $rates[] = $item->id_rate;
           
           $charge = $item->charges;
-          $charges[] = $charge;
-          switch ($charge->type_payment){
+          if ($charge){
+            $charges[] = $charge;
+            switch ($charge->type_payment){
               case 'banco':
                 $bank += $charge->import;
                 break;
@@ -211,6 +161,7 @@ die('no armado');
                 $card += $charge->import;
                 break;
             }
+          }
             
       }
 

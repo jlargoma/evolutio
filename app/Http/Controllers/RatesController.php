@@ -95,6 +95,13 @@ class RatesController extends Controller {
     if (!$userRate){
         return redirect()->back()->withErrors(['Tarifa no encontrada']);
     }
+    if ($userRate->charges){
+      return redirect()->back()->withErrors(['Tarifa cobrada.']);
+    }
+    $appointment = \App\Models\Dates::where('id_user_rates',$userRate->id)->first();
+    if ($appointment){
+      return redirect()->back()->withErrors(['Tarifa asociada a una cita.']);
+    }
     $date = getMonthSpanish($userRate->rate_month).' '.$userRate->rate_year;
     if ($userRate->delete()) {
       return redirect()->back()->with('success','Servicio removido para el perdiodo '.$date);

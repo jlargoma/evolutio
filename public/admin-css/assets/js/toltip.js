@@ -1,8 +1,10 @@
 $(document).ready(function () {
   function showInfo(obj, data) {
     var html = '<h3>' + data.n + '</h3>';
-    html += '<h4>' + data.s + '</h4>';
+    if (data.d) html += '<p>' + data.d + '</p>';
+    if (data.cn) html += '<p>' + data.cn + '</p>';
     html += '<p>' + data.p + '</p>';
+    html += '<h4>' + data.s + '</h4>';
     if (data.dc)
       html += '<p>' + data.dc + ' / ' + data.mc + '</p>';
 
