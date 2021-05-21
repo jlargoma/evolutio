@@ -56,7 +56,7 @@ class CustomerController extends Controller {
           }
           $dateTime = strtotime($oDate->date);
           $day = date('d', $dateTime) . ' de ' . getMonthSpanish(date('n', $dateTime),false);
-          $hour = date('H:i', $dateTime);
+          $hour = $oDate->getHour();
           $oRate = $uRates->rate;
           $oCoach = $oDate->coach;
           /** @Todo Controlar si ya está pagado */
@@ -127,7 +127,7 @@ class CustomerController extends Controller {
         
         $dateTime = strtotime($oDate->date);
         $day = date('d', $dateTime) . ' de ' . getMonthSpanish(date('n', $dateTime));
-        $hour = date('H:i', $dateTime);
+        $hour = $oDate->getHour();
         $oRate = $oDate->service;
         $name = 'Pago de su cita de ';
         $items = [];

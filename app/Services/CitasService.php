@@ -135,9 +135,7 @@ class CitasService {
             $date = date('Y-m-d', $time);
             $time = strtotime($date);
 
-            $aux = explode(':', $item->customTime);
-            
-            $dTime = (is_array($aux) && count($aux) == 3) ? $aux[0].':'.$aux[1] : $hour.':00';
+            $dTime = $item->getHour();
             $dTime .= ' '.$days[date('w',$time)];
             $dTime .= ' '.date('d',$time).' '.$months[date('n',$time)];
             

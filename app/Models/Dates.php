@@ -24,4 +24,16 @@ class Dates extends Model
     {
         return $this->hasOne('\App\Models\UserRates', 'id', 'id_user_rates');
     }
+    public function getHour()
+    {
+      if ($this->customTime){
+        $hour= $this->customTime;
+        $aux = explode(':', $hour);
+        if (is_array($aux) && count($aux)>2) $hour = $aux[0].':'.$aux[1];
+        return $hour;
+      }
+      
+      $dateTime = strtotime($this->date);
+      return date('H:i',$dateTime);
+    }
 }
