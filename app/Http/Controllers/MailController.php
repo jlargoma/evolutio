@@ -102,7 +102,7 @@ class MailController extends Controller
 	}
         
         
-    public static function sendEmailPayDateByStripe($oDate, $oUser, $oRate,$oCoach,$pStripe,$importe)
+    public static function sendEmailPayDateByStripe($oDate, $oUser, $oRate,$oCoach,$pStripe,$importe,$subj=null)
 	{
             $email    = $oUser->email;
             $dateTime = strtotime($oDate->date);
@@ -111,6 +111,7 @@ class MailController extends Controller
             
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return $email.' no es un mail válido';
             try{
+              if (!$subj) $subj = 'Solicitud de pago evolutio';
               $sended = Mail::send('emails._payment_citaStripe', [
                       'user'    => $oUser,
                       'obj'     => $oDate,
@@ -120,8 +121,8 @@ class MailController extends Controller
                       'pStripe' => $pStripe,
                       'hour'    => $hour,
                       'day'     => $day,
-              ], function ($message) use ($email) {
-                      $message->subject('Solicitud de pago evolutio');
+              ], function ($message) use ($email,$subj) {
+                      $message->subject($subj);
                       $message->from(config('mail.from.address'), config('mail.from.name'));
                       $message->to($email);
               });

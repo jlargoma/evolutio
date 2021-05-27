@@ -172,9 +172,12 @@ class CitasService {
               $charge = $uRates->charges;
             }
 
+            if ($type == 'pt') $charged = 1;
+              else $charged = ($charge) ? 1 : 0;
+
             $aLst[$time][$hour][] = [
                 'id' => $item->id,
-                'charged' => ($charge) ? 1 : 0,
+                'charged' => $charged,
                 'type' => $item->id_rate,
                 'coach' => $item->id_coach,
                 'name' => $u_name,

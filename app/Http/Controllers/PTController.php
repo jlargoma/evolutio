@@ -23,7 +23,10 @@ class PTController extends Controller {
     public function index($month = null, $coach = 0, $serv = 0) {
         if (!$month) $month = date('Y-m');
         $date = $month . '-01';
-        $calendar = \App\Services\CalendarService::getCalendarWeeks($date);
+
+        $oCalendar = new \App\Services\CalendarService($date);
+        $calendar = $oCalendar->getCalendarWeeks();
+        
         $start = $calendar['firstDay'];
         $finish = $calendar['lastDay'];
         $rslt = CitasService::get_calendars($start,$finish,$serv,$coach,'pt');

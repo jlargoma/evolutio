@@ -47,18 +47,22 @@
           <option></option>
           <?php
           $old = old('id_rate');
-          foreach ($rates as $rate):
-            $class = ($rate->status == 1) ? 'green' : 'blue';
-            $sel = ($rate->id == $old) ? 'selected' : '';
-            ?>
-
-            <option value="<?php echo $rate->id ?>" 
+            foreach ($rateFamily as $k=>$v):
+              echo '<optgroup label="'.$v['n'].'">';
+              foreach ($v['l'] as $rate):
+                $sel = ($rate->id == $old) ? 'selected' : '';
+                ?>
+                
+                <option value="<?php echo $rate->id ?>" 
                     data-price="<?php echo $rate->price ?>"
-                    {{$sel}}
-                    class="<?php echo $class; ?>">
-            <?php echo $rate->name ?>
-            </option>
-<?php endforeach ?>
+                    {{$sel}}>
+                <?php echo $rate->name ?>
+                </option>
+                <?php
+              endforeach;
+              echo '</optgroup>';
+            endforeach; 
+            ?>
         </select>
       </div>
 
@@ -78,24 +82,28 @@
           <input id="importeFinal" type="number" step="0.01" name="importe" class="form-control" value="{{ old('importe') }}"/>
         </div>
       </div>
-      
-
       <div class="col-xs-12 push-20">
         <div class="row push-20">
           <div class="col-xs-6 push-20">
             <div class="box-payment-card">
             <h4>PAGAR AHORA</h4>
-            <?php $old = old('type_payment', 'card'); ?>
-            <select class="likeBtn" name="type_payment" id="type_payment" multiple>
-              <option class='aaaa' value="card" <?php if ($old == 'card') echo 'selected'; ?>>Tarjeta</option>
-              <option value="cash" <?php if ($old == 'cash') echo 'selected'; ?>>Efectivo</option>
-              <option value="banco" <?php if ($old == 'banco') echo 'selected'; ?>>Banco</option>
-            </select>
-            @include('admin.blocks.stripeBox')
-            <div class="text-center">
-              <button class="btn btn-lg btn-success" type="submit" id="submitFormPayment">
-                Cobrar
-              </button>
+            <div class="row">
+              <div class="col-xs-9">
+              <?php $old = old('type_payment', 'card'); ?>
+              <select class="likeBtn" name="type_payment" id="type_payment" multiple>
+                <option class='aaaa' value="card" <?php if ($old == 'card') echo 'selected'; ?>>Tarjeta</option>
+                <option value="cash" <?php if ($old == 'cash') echo 'selected'; ?>>Efectivo</option>
+                <option value="banco" <?php if ($old == 'banco') echo 'selected'; ?>>Banco</option>
+              </select>
+              </div>
+              <div class="col-xs-3">
+                <button class="btn btn-lg btn-success" type="submit" id="submitFormPayment" style="margin-left: -1em;">
+                  Cobrar
+                </button>
+              </div>
+              <div class="col-xs-12">
+              @include('admin.blocks.stripeBox')
+              </div>
             </div>
             </div>
           </div>

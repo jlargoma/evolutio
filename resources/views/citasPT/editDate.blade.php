@@ -96,6 +96,9 @@
                 <button class="btn btn-lg btn-danger btnDeleteCita" type="button">
                     Eliminar
                 </button>
+                <a href="/admin/citas/duplicar/{{$id}}" class="btn btn-lg btn-secondary">
+                  Duplicar
+                </a>
                 @endif
             </div>
         </div>

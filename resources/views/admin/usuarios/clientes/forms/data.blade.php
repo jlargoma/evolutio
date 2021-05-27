@@ -82,7 +82,7 @@
                         if ($v['paid']):
                           ?>
                           <div class="label label2 label-success events openEditCobro" data-cobro="<?php echo $v['cid'] ?>" data-id="<?php echo $v['id'] ?>">
-                            {{$import}} €<toltip data-k="2"/>
+                            {{$import}} €
                           </div>
                           <?php
                           $totalServiceUser += $import;

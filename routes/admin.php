@@ -66,6 +66,8 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
     
 
     /* Citas */
+    Route::get('/citas/duplicar/{id}', 'DatesController@cloneDates');
+    Route::post('/citas/duplicar/{id}', 'DatesController@cloneDatesSave');
     Route::get('/citas/bloqueo-horarios/{type}', 'DatesController@blockDates');
     Route::post('/citas/bloqueo-horarios', 'DatesController@blockDatesSave');
 

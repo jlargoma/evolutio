@@ -1,5 +1,6 @@
 $(document).ready(function () {
-  function showInfo(obj, data) {
+  function showInfo(e, data) {
+    var obj = $('toltip');
     var html = '<h3>' + data.n + '</h3>';
     if (data.d) html += '<p>' + data.d + '</p>';
     if (data.cn) html += '<p>' + data.cn + '</p>';
@@ -17,30 +18,29 @@ $(document).ready(function () {
         right: "-9px"
       };
     } else {
-      var top = event.screenY;
-      if (obj.data('k') == 2)  top-=200;
-        else  top-=120;
+      var top = e.clientY+5;  
+      var left = e.clientX-5;  
+      if (left<0) left = 0;
       var styles = {
         top: top,
-        left: (event.pageX - 100),
+        left: left,
       }
     }
     obj.css(styles).show();
   }
   $('.events').on('mouseleave', function () {
-    $(this).find('toltip').hide();
+    $('toltip').hide();
   });
-  $('.events').on('mouseenter', function () {
+  $('.events').on('mouseenter', function (e) {
     var ID = $(this).data('id');
     for (d in details) {
       if (ID == d) {
-        showInfo($(this).find('toltip'), details[d]);
-        console.log(d, details[d]);
+        showInfo(e, details[d]);
       }
     }
   });
   $('.label').on('mouseleave', function () {
-    $(this).find('toltip').hide();
+    $('toltip').hide();
   });
   $('.label').on('mouseenter', function () {
     var ID = $(this).data('id');

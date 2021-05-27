@@ -65,9 +65,10 @@ function convertDateToShow_text($date, $year = false) {
 
         $aux = explode('-', $date);
         if (is_array($aux) && count($aux) == 3) {
-            if ($year)
-                return $aux[2] . ' ' . getMonthSpanish($aux[1]) . ', ' . ($aux[0] - 2000);
-            return $aux[2] . ' ' . getMonthSpanish($aux[1]);
+          $aux2 = explode(' ', $aux[2]);
+          if ($year)
+              return $aux2[0] . ' ' . getMonthSpanish($aux[1]) . ', ' . ($aux[0] - 2000);
+          return $aux2[0] . ' ' . getMonthSpanish($aux[1]);
         }
     }
     return null;
@@ -76,10 +77,10 @@ function convertDateToShow_text($date, $year = false) {
 function dateMin($date) {
     $date = trim($date);
     if ($date) {
-
         $aux = explode('-', $date);
         if (is_array($aux) && count($aux) == 3) {
-            return $aux[2] . ' ' . getMonthSpanish(intval($aux[1]));
+          $aux2 = explode(' ', $aux[2]);
+          return $aux2[0] . ' ' . getMonthSpanish(intval($aux[1]));
         }
     }
     return null;

@@ -46,6 +46,7 @@
 
             @yield('content')
         </div>
+        <toltip></toltip>
         <style>
             .popup-body{
                 padding: 0px !important;

@@ -41,7 +41,7 @@ trait ClientesTraits {
     $userIDs = $sqlUsers->pluck('id');
     /*     * **************************************************** */
     $aRates = [];
-    $typeRates = TypesRate::whereIn('type', ['gral', 'pt'])->pluck('id');
+    $typeRates = TypesRate::pluck('name','id');
     $oRates = Rates::all();
 //    $oRates = Rates::whereIn('type', $typeRates)->get();
     $rPrices = $rNames = [];
@@ -50,6 +50,9 @@ trait ClientesTraits {
         $aRates[$r->id] = $r;
         $rPrices[$r->id] = $r->price;
         $rNames[$r->id] = $r->name;
+        if (isset($typeRates[$r->type])){
+          $rNames[$r->id] = $typeRates[$r->type].'<br>'.$r->name;
+        }
       }
     }
 
@@ -204,6 +207,7 @@ trait ClientesTraits {
     $user = User::find($id);
     $userID = $user->id;
 
+    $typeRates = TypesRate::pluck('name','id');
     $aRates = $rPrices = $rNames =[];
     $oRates = Rates::where('status', 1)->get();
 
@@ -212,6 +216,9 @@ trait ClientesTraits {
         $aRates[$v->id] = $v;
         $rPrices[$v->id]= $v->price;
         $rNames[$v->id] = $v->name;
+        if (isset($typeRates[$v->type])){
+          $rNames[$v->id] = $typeRates[$v->type].'<br>'.$v->name;
+        }
       }
     }
     /*     * ****************************************************** */
@@ -475,9 +482,18 @@ trait ClientesTraits {
       $card['exp_year'] = $aux['card']['exp_year'];
       $card['last4'] = $aux['card']['last4'];
     }
+    
+    $rateFamily = [];
+    $oTypes = \App\Models\TypesRate::orderBy('name', 'asc')->get();
+    foreach ($oTypes as $item){
+      $aux  = \App\Models\Rates::where('type',$item->id)->orderBy('name', 'asc')->get();
+      $rateFamily[$item->id] = ['n' => $item->name,'l'=>$aux];
+    }
+        
     return view('admin.usuarios.clientes._rate_charge', [
         'user' => $oUser,
         'rates' => Rates::orderBy('status', 'desc')->orderBy('name', 'asc')->get(),
+        'rateFamily' => $rateFamily,
         'stripe' => $stripe,
         'card' => $card
     ]);

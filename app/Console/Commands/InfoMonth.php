@@ -47,13 +47,19 @@ class InfoMonth extends Command {
       $mailContent = $pyg.'<hr/>'.$inform;
       
       $email = 'test@test.cadfd';
+      
+      $emails = [
+        'carlos.biosca24@gmail.com',
+        'jlargo@mksport.es',
+        'pingodevweb@gmail.com'
+      ];
       $sended = \Illuminate\Support\Facades\Mail::send('emails.base', [
               'mailContent'=> $mailContent,
               'tit'=> $tit,
-          ], function ($message) use ($email,$tit) {
+          ], function ($message) use ($emails,$tit) {
               $message->subject($tit);
               $message->from(config('mail.from.address'), config('mail.from.name'));
-              $message->to($email);
+              $message->to($emails);
           });
           
     } catch (\Exception $e) {

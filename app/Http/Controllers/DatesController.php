@@ -227,7 +227,9 @@ class DatesController extends Controller {
             /**************************************************** */
            
             /**************************************************/
-            MailController::sendEmailPayDateByStripe($oObj, $oUser, $oRate,$coach,$pStripe,$importe);
+            $subjet = 'Nueva cita en Evolutio';
+            if ($ID) $subjet = 'Actualización de su cita';
+            MailController::sendEmailPayDateByStripe($oObj, $oUser, $oRate,$coach,$pStripe,$importe,$subjet);
             /*             * ************************************************************** */
           if ($type == 'nutri') return redirect('/admin/citas-nutricion/edit/'.$oObj->id);
           if ($type == 'fisio') return redirect('/admin/citas-fisioterapia/edit/'.$oObj->id);
@@ -410,5 +412,81 @@ class DatesController extends Controller {
       }
       return redirect()->back()->with(['success'=>'Horarios bloqueados']);
     
+    }
+    
+    
+    
+    function cloneDates($id){
+      $obj= Dates::find($id);
+      $cNames = [];
+      $uRate = $obj->uRates;
+      
+      $id_coach = $obj->id_coach;
+      $alreadyUsed = [];
+      
+      $start = substr($obj->date,0,10);
+      $oCalendar = new \App\Services\CalendarService($start);
+      $oCalendar->setLastDayWeeks(6);
+      $calendar = $oCalendar->getCalendarWeeks();
+      
+      $rslt = \App\Services\CitasService::get_calendars($calendar['firstDay'],$calendar['lastDay'],null,$id_coach,$obj->date_type);
+//      dd($rslt);
+      
+      $rslt['calendar'] = $calendar['days'];
+      $rslt['obj'] = $obj;
+      $rslt['uRate'] = $uRate;
+      
+      $times = [];
+      return view('calendars.cloneDates', $rslt);
+    
+    }
+    function cloneDatesSave(Request $req){
+      $datelst = $req->input('datelst');
+      $idDate = $req->input('idDate');
+      
+      $aux = explode(';', $datelst);
+      $aDates = [];
+      if (is_array($aux)){
+        foreach ($aux as $d){
+          if (!empty($d)){
+            $aux2 = explode('-', $d);
+            $aDates[] = date('Y-m-d H',($aux2[0]+($aux2[1]*3600)));
+          }
+        }
+      }
+      
+      $oDate = Dates::find($idDate);
+      $uRate = $oDate->uRates;
+      foreach ($aDates as $d){
+        $timeCita = strtotime($d);
+        $urClone = new UserRates();
+        $urClone->id_user = $uRate->id_user;
+        $urClone->id_rate = $uRate->id_rate;
+        $urClone->rate_year = date('Y', $timeCita);
+        $urClone->rate_month = date('n', $timeCita);
+        $urClone->price = $uRate->price;
+        $urClone->save();
+        
+        $clone = new Dates();
+        $clone->date = $d;
+        $clone->id_rate = $oDate->id_rate;
+        $clone->id_user = $oDate->id_user;
+        $clone->id_coach = $oDate->id_coach;
+        $clone->date_type = $oDate->date_type;
+        $clone->id_user_rates = $urClone->id;
+        $clone->save();
+      }
+      
+      switch ($oDate->date_type){
+          case 'nutri':
+            header('Location: /admin/citas-nutricion/edit/'.$idDate);
+            exit();
+            break;
+          case 'fisio':
+            header('Location: /admin/citas-fisioterapia/edit/'.$idDate);
+            exit();
+            break;
+        }
+      return redirect()->back()->with(['success'=>'Horarios bloqueados']);
     }
 }

@@ -82,13 +82,13 @@
                       foreach ($uRates[$i][$user->id] as $rate):
                         foreach ($rate as $r):
                           if($r['paid']):
-                            $textAux.= '<div class="label label-success openEditCobro" data-cobro="'.$r['cid'].'"  data-id="'.$r['id'].'">';
+                            $textAux.= '<div class="label events label-success openEditCobro" data-cobro="'.$r['cid'].'"  data-id="'.$r['id'].'">';
                           else:
                             $pending = true;
                             $auxPend += $r['price'];
-                            $textAux.= '<div class="label label-danger openCobro" data-rate="'.$r['id'].'" data-id="'.$r['id'].'">';
+                            $textAux.= '<div class="label events label-danger openCobro" data-rate="'.$r['id'].'" data-id="'.$r['id'].'">';
                           endif;
-                          $textAux.= moneda($r['price']).'<toltip/></div>';
+                          $textAux.= moneda($r['price']).'</div>';
                         endforeach;
                       endforeach;
                     endif;
