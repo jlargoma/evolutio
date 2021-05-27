@@ -36,4 +36,8 @@ class Dates extends Model
       $dateTime = strtotime($this->date);
       return date('H:i',$dateTime);
     }
+    public function user()
+    {
+        return $this->hasOne('\App\Models\User', 'id', 'id_user');
+    }
 }
