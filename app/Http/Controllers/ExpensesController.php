@@ -323,4 +323,122 @@ class ExpensesController extends Controller {
     <?php
   }
 
+  /**
+   * 
+   * @param Request $request
+   * @return type
+   */
+  function gastos_import(Request $request){
+    $data = $request->all();
+   
+    $campos = [
+      'date' =>-1,  
+      'concept' =>-1,  
+      'type' =>-1, 
+      'import' =>-1,  
+      'typePayment' =>-1, 
+      'comment' =>-1,
+      'filter' =>-1,
+    ];
+    
+    foreach ($data as $k=>$v){
+      if ($v != '' && !is_array($v)){
+        preg_match('/column_([0-9]*)/', $k, $colID);
+        if (isset($colID[1]) && isset($campos[$v])){
+          $campos[$v] = $colID[1];
+        }
+      } 
+    }
+          
+    $info = [];
+    foreach ($campos as $k=>$v){
+      if (isset($data['cell_'.$v])){
+        $info[$k] = $data['cell_'.$v];
+      }
+    }
+    if (count($info) == 0) return back();
+    
+    /********   FILTRAR REGISTROS   *********************/
+    if (isset($info['filter'])){
+      foreach ($info['filter'] as $k=>$v){
+        if ($v == 1){
+          foreach ($campos as $k2=>$v2){
+            $info[$k2][$k]=null;
+          }
+          
+        }
+      }
+    }
+    /***************************************************/
+    $expensesType = Expenses::getTypes();
+    /***************************************************/
+    
+    $campos = [
+      'date' =>'Fecha',  
+      'concept' =>'Concepto',  
+      'type' =>'Tipo de Gasto', 
+      'import' =>'Precio',  
+      'typePayment' =>'Metodo de Pago', 
+      'comment' =>'Comentario',
+    ];
+    
+    $today = date('Y-m-d');
+    $insert = [];
+    $newEmpty = [
+          'concept'=>null,'date'=>null,'import'=>null,'typePayment'=>null,
+          'type'=>null,'comment'=>''
+        ];
+    
+    
+    $total = count(current($info));
+    for($i = 0; $i<$total; $i++){
+      $new = $newEmpty;
+      foreach ($campos as $k=>$v){
+        
+        $value = '';
+        if (!isset($info[$k])){ continue;}
+        if (!isset($info[$k][$i])){  continue;}
+        if (!($info[$k][$i])){  continue;}
+        $variab = $info[$k][$i];
+        
+        switch ($k){
+          case 'date':
+            $new['date'] =  ($variab != '') ? convertDateToDB($variab) : $today;
+            break;
+          case 'import':
+            $variab = floatval(str_replace(',','.',str_replace('.','', $variab)));
+            $new['import'] = $variab;
+            break;
+          case 'typePayment':
+            $aux = strtolower($variab);
+            $idType = 0;
+            if ($aux == 'banco'){ $idType = 3; }
+            if ($aux == 'cash') { $idType = 2; }
+            $new['typePayment'] = $idType;
+            break;
+          case 'type':
+            $type = array_search($variab,$expensesType);
+            $new['type'] = $type;
+            break;
+          default:
+            $new[$k] = $variab;
+            break;
+        }
+      }
+      $hasVal = false;
+      foreach ($new as $value){
+        if ($value) $hasVal = true;
+      }
+      if ($hasVal)  $insert[] = $new;
+    }
+//    dd($insert);
+    $countInsert = count($insert);
+    if ($countInsert>0)
+      Expenses::insert($insert);
+    
+    return back()->with(['success'=>$countInsert . ' Registros inportados']);
+   
+   
+  }
+  
 }

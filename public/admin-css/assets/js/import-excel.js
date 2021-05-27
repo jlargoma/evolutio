@@ -8,7 +8,6 @@ $(document).ready(function () {
     dropdowm.append('<option value="QUITAR">-QUITAR-</option>');
 //          Fecha Concepto Tipo Método de pago Sitio Comentario
     var lst = [
-      {n: 'site', t: 'Sitio'},
       {n: 'date', t: 'Fecha'},
       {n: 'import', t: 'Monto'},
       {n: 'concept', t: 'Concepto'},

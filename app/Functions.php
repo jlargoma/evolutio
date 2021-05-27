@@ -26,6 +26,19 @@ function getMonthSpanish($m, $min = true) {
     return isset($arrayMonth[$m]) ? $arrayMonth[$m] : '';
 }
 
+function convertDateToDB($date){
+  $date= trim($date);
+  if ($date){
+    $aux = explode('/',$date);
+    if (is_array($aux) && count($aux)==3){
+      $month = ($aux[1]<10) ? '0'.intval($aux[1]) : $aux[1];
+      $day = ($aux[0]<10) ? '0'.intval($aux[0]) : $aux[0];
+      return $aux[2].'-'.$month.'-'.$day;
+    }
+  }
+  return null;
+}
+  
 function convertSpanishDate($date) {
     $aux = explode(',', $date);
     if (isset($aux[1])) {
