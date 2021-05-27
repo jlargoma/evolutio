@@ -450,22 +450,28 @@ class DatesController extends Controller {
         foreach ($aux as $d){
           if (!empty($d)){
             $aux2 = explode('-', $d);
-            $aDates[] = date('Y-m-d H',($aux2[0]+($aux2[1]*3600)));
+            $aDates[] = date('Y-m-d H',($aux2[0]+($aux2[1]*3600))).':00:00';
           }
         }
       }
       
       $oDate = Dates::find($idDate);
       $uRate = $oDate->uRates;
+      
       foreach ($aDates as $d){
-        $timeCita = strtotime($d);
-        $urClone = new UserRates();
-        $urClone->id_user = $uRate->id_user;
-        $urClone->id_rate = $uRate->id_rate;
-        $urClone->rate_year = date('Y', $timeCita);
-        $urClone->rate_month = date('n', $timeCita);
-        $urClone->price = $uRate->price;
-        $urClone->save();
+        if ($oDate->date_type == 'pt'){
+          $id_user_rates = $oDate->id_user_rates;
+        } else {
+          $timeCita = strtotime($d);
+          $urClone = new UserRates();
+          $urClone->id_user = $uRate->id_user;
+          $urClone->id_rate = $uRate->id_rate;
+          $urClone->rate_year = date('Y', $timeCita);
+          $urClone->rate_month = date('n', $timeCita);
+          $urClone->price = $uRate->price;
+          $urClone->save();
+          $id_user_rates = $urClone->id;
+        }
         
         $clone = new Dates();
         $clone->date = $d;
@@ -473,20 +479,20 @@ class DatesController extends Controller {
         $clone->id_user = $oDate->id_user;
         $clone->id_coach = $oDate->id_coach;
         $clone->date_type = $oDate->date_type;
-        $clone->id_user_rates = $urClone->id;
+        $clone->id_user_rates = $id_user_rates;
         $clone->save();
       }
       
-      switch ($oDate->date_type){
-          case 'nutri':
-            header('Location: /admin/citas-nutricion/edit/'.$idDate);
-            exit();
-            break;
-          case 'fisio':
-            header('Location: /admin/citas-fisioterapia/edit/'.$idDate);
-            exit();
-            break;
-        }
-      return redirect()->back()->with(['success'=>'Horarios bloqueados']);
+//      switch ($oDate->date_type){
+//          case 'nutri':
+//            header('Location: /admin/citas-nutricion/edit/'.$idDate);
+//            exit();
+//            break;
+//          case 'fisio':
+//            header('Location: /admin/citas-fisioterapia/edit/'.$idDate);
+//            exit();
+//            break;
+//        }
+      return redirect()->back()->with(['success'=>'Citas Creadas']);
     }
 }

@@ -115,7 +115,7 @@ trait ClientesTraits {
             ->whereIn('id_rate', $RateIDs)
             ->with('charges')
             ->get();
-
+    
     $payments = $noPay = 0;
     $uLstRates = [];
     if ($uRates) {
@@ -136,7 +136,7 @@ trait ClientesTraits {
             'mc'=>'', //Metodo pago
             'dc'=>'', // fecha pago
         ];
-        // si esta pagado, lo busco luego
+        // si esta pagado
         $auxCharges = $v->charges;
         if ($auxCharges) {
           $uLstRates[$idUser][$idRate][] = [
