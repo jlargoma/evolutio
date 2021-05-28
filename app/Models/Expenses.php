@@ -15,10 +15,7 @@ class Expenses extends Model
         'equip_deco' => 'EQUIPACION Y DECORACION',
         'bancario' => 'GASTOS BANCARIOS',
         'impuestos' => 'IMPUESTOS',
-        'limpieza' => 'LIMPIEZA',
         'publicidad' => 'MARKETING Y PUBLICIDAD',
-        'seg_social' => 'SEG SOCIALES',
-        'serv_prof' => 'SERVICIOS PROF INDEPENDIENTES',
         'suministros' => 'SUMINISTROS',
         'varios' => 'VARIOS',
     ];
@@ -26,27 +23,18 @@ class Expenses extends Model
   static function getTypesGroup(){
     return [
             'names'=> [
-              'alquiler' => 'ALQUILER INMUEBLES',
               'comisiones' => 'COMSIONES',
-              'limpieza' => 'LAVANDERIA Y LIMPIEZA',
               'otros' => 'RESTO GASTOS',
-              'empleados' => 'EMPLEADOS',
               'suministros' => 'SUMINISTROS',
               'impuestos' => 'IMPUESTOS',
               'varios' => 'VARIOS',
             ],
             'groups' => [
-                'alquiler' => 'alquiler',
                 'comisiones' => 'comisiones',
                 'equip_deco' => 'comisiones',
                 'bancario' => 'comisiones',
                 'comision_tpv' => 'comisiones',
-                'lavanderia' => 'limpieza',
-                'limpieza'   => 'limpieza',
-                'seg_social' => 'empleados',
-                'serv_prof' => 'empleados',
                 'suministros'=> 'suministros',
-                'equip_deco'=> 'suministros',
                 'varios'=> 'varios',
                 'publicidad'=> 'varios',
                 'otros'=> 'otros',

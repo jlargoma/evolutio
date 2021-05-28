@@ -98,10 +98,11 @@ class PyGController extends Controller {
     if ($oExpenses) {
       foreach ($oExpenses as $e) {
         $m = intval(substr($e->date, 5, 2));
+     
         $aux[$m] += $e->import;
         $aux[0] += $e->import;
         $expensesYear[$year] += $e->import;
-        $g = $gTypeGroup_g[$e->type];
+        $g = isset($gTypeGroup_g[$e->type]) ? $gTypeGroup_g[$e->type] : 'otros';
         if (isset($ggMonth[$g])){
           $ggMonth[$g][$m] += $e->import;
         } else {
@@ -109,7 +110,27 @@ class PyGController extends Controller {
         }
       }
     }
+    //---------------------------------------------------------//
+    $ggMonth['pt'] = $months_empty;
+    $gTypeGroup['names']['pt'] = 'Entrenadores';
+    for($i=0;$i<3;$i++){
+      $auxYear = $year-$i;
+      $cLiq = \App\Models\CoachLiquidation::whereYear('date_liquidation', '=', $auxYear)->get();
+      if ($cLiq) {
+        foreach ($cLiq as $g) {
+          $expensesYear[$auxYear] += $g->total;
+          if ($i == 0){
+            $m = intval(substr($g->date_liquidation, 5, 2));
+            $ggMonth['pt'][$m] += $g->total;
+            $aux[$m] += $g->total;
+            $aux[0] += $g->total;
+          }
+        }
+      }
+    }
+    //---------------------------------------------------------//
     $currentY['Gastos'] = $aux;
+    
     /***************************************/
     $subscs = \App\Models\UsersSuscriptions::count();
     $uActivs = \App\Models\User::where('status',1)->count();

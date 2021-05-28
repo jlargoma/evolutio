@@ -7,6 +7,7 @@ use App\Http\Requests;
 use \Carbon\Carbon;
 use DB;
 use App\Models\Expenses;
+use App\Models\CoachLiquidation;
 
 class ExpensesController extends Controller {
 
@@ -100,7 +101,26 @@ class ExpensesController extends Controller {
     }
 
 
+    //---------------------------------------------------------//
+    $listGastos_g['pt'] = $months_empty;
+    $gTypeGroup['names']['pt'] = 'Entrenadores';
+    for($i=0;$i<3;$i++){
+      $auxYear = $year-$i;
+      $cLiq = CoachLiquidation::whereYear('date_liquidation', '=', $auxYear)->get();
+      if ($cLiq) {
+        foreach ($cLiq as $g) {
+          $month = date('n', strtotime($g->date_liquidation));
+          $yearMonths[$auxYear][$month] += $g->total;
 
+          if ($i == 0){
+            $listGastos_g['pt'][$month] += $g->total;
+            $listGastos_g['pt'][0] += $g->total;
+          }
+        }
+      }
+    }
+    
+    //---------------------------------------------------------//
     //First chart PVP by months
     $dataChartMonths = [];
     foreach ($lstMonths as $k => $v) {

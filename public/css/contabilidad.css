@@ -58,6 +58,7 @@ table.table-resumen tr .static{
   position: absolute;
   border-right: 1px solid #efefef;
   z-index: 9;
+  overflow: hidden;
 }
 table.table-resumen tr .static-2{
   width: 80px;
@@ -68,6 +69,7 @@ table.table-resumen tr .static-2{
   border-right: 1px solid #efefef;
   z-index: 9;
   left: 130px;
+  overflow: hidden;
 }
 table.table-resumen tr .first-col {
   padding-right: 13px !important;
@@ -77,14 +79,10 @@ table.table-resumen tr .first-col-2 {
   padding-right: 13px !important;
   padding-left: 215px!important;
 }
-
-
-
-
-
-
-
-
+table.table-resumen tr th,
+table.table-resumen tr td{
+white-space: nowrap;
+}
 @media(max-width:991px) {
   table tr .static{
     width: 130px;
