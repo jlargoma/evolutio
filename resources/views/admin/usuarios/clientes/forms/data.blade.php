@@ -1,5 +1,5 @@
 <h3 class="text-left">Datos del Usuario
-  <button class="btn btn-default add_rate" data-toggle="modal" data-target="#modalCliente" data-idUser="<?php echo $user->id; ?>">
+  <button class="btn btn-default add_rate" data-idUser="<?php echo $user->id; ?>">
     <i class="fa fa-usd" aria-hidden="true"></i>
   </button>
 </h3>

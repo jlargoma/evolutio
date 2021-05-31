@@ -108,6 +108,14 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
     Route::get('/tarifas/stripe/{id}', 'RatesController@createStripe');
     Route::get('/rates/unassigned/{idUserRate}', 'RatesController@unassignedRate');
     
+    /* Bonos */
+    Route::get('/bonos/listado', 'BonosController@index');
+    Route::get('/bonos/comprar/{uid}/{type?}/{id?}', 'BonosController@show_purcharse');
+    Route::post('/bonos/comprar', 'BonosController@purcharse');
+    Route::post('/bonos/create', 'BonosController@create');
+    Route::get('/bonos/update', 'BonosController@update');
+    Route::get('/bonos/delete/{id}', 'BonosController@delete');
+    
     
     /* Facturacion */
   Route::get('/facturacion/entrenadores', 'UsersController@entrenadores');

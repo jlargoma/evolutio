@@ -121,7 +121,7 @@
 
   @if(!$charge && $id>0)
   <div class="col-xs-12 form-group">
-    @include('fisioterapia.cobrar')
+    @include('calendars.cobrar')
   </div>
   @endif
 </div>

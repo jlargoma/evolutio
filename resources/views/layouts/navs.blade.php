@@ -47,6 +47,9 @@ $uRole = Auth::user()->role;
       <li class="{{ $path == 'admin/tarifas' ? 'active' : '' }}">
           <a href="{{url('/admin/tarifas/listado')}}" class="font-w600"><i class="fa fa-thumb-tack"></i> <span class="sidebar-mini-hide font-w600">Servicios</span></a>
       </li>
+      <li class="{{ $path == 'admin/bonos' ? 'active' : '' }}">
+          <a href="{{url('/admin/bonos/listado')}}" class="font-w600"><i class="fa fa-thumb-tack"></i> <span class="sidebar-mini-hide font-w600">Bonos</span></a>
+      </li>
       <li class="{{ $path == 'admin/ingresos' ? 'active' : '' }}">
           <a href="{{url('/admin/ingresos/')}}" class="font-w600"><i class="fa fa-line-chart"></i> <span class="sidebar-mini-hide font-w600">Contabilidad</span></a>
       </li>

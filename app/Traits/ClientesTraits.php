@@ -221,17 +221,18 @@ trait ClientesTraits {
         }
       }
     }
-    /*     * ****************************************************** */
+    //----------------------//
     foreach ($months as $k => $v) {
       $totalUser[$k] = 0;
       $totalUserNPay[$k] = 0;
     }
 
-    /*     * ****************************************************** */
+    //----------------------//
     $oDates = Dates::where('id_user', $userID)->OrderBy('date')->get();
-    /*     * ****************************************************** */
+    //----------------------//
     $oNotes = UsersNotes::where('id_user', $userID)->OrderBy('created_at')->get();
-    /*     * ****************************************************** */
+    //----------------------//
+    //----------------------//
     $oCharges = Charges::where('id_user', $userID)
                     ->pluck('import', 'id')->toArray();
 
@@ -258,16 +259,16 @@ trait ClientesTraits {
       }
     }
     
-    /*     * ****************************************************** */
+    //----------------------//
     $oRatesSubsc = Rates::select('rates.*', 'types_rate.type')
                     ->join('types_rate', 'rates.type', '=', 'types_rate.id')
                     ->whereIn('types_rate.type', ['gral', 'pt'])->get();
 
     $subscrLst = $user->suscriptions;
-    /*     * ****************************************************** */
+    //----------------------//
     $aCoachs = User::where('role', 'teach')->orderBy('name')->pluck('name', 'id')->toArray();
     $allCoachs = User::all()->pluck('name', 'id')->toArray();
-    /*     * ****************************************************** */
+    //----------------------//
     // CONSENTIMIENTOS
     
     $fileName = $user->getMetaContent('sign_fisioIndiba');
@@ -284,14 +285,14 @@ trait ClientesTraits {
       $sueloPelvico = File::exists($path);
     }
     
-    /*     * ****************************************************** */
+    //----------------------//
     //Invoices
     $invoices = \App\Models\Invoices::whereYear('date', '=', $year)
             ->where('user_id',$userID)
             ->orderBy('date', 'DESC')->get();
     $totalInvoice = $invoices->sum('total_price');
     $invoiceModal = true;
-    /*     * ****************************************************** */
+    //----------------------//
 
     if (count($detail)>0){
       $aux = '';

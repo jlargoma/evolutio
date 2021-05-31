@@ -21,6 +21,7 @@
         <option value="card" @if ($charge->type_payment == "card") selected @endif>Tarjeta</option>
         <option value="cash" @if ($charge->type_payment == "cash") selected @endif>Efectivo</option>
         <option value="banco" @if ($charge->type_payment == "banco") selected @endif>Banco</option>
+        <option value="bono" @if ($charge->type_payment == "bono") selected @endif>Bono</option>
       </select>
     </div>
     <div class="col-md-4">

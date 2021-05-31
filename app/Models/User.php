@@ -62,6 +62,9 @@ class User extends Authenticatable
   public function suscriptions() {
     return $this->hasMany('\App\Models\UsersSuscriptions', 'id_user', 'id');
   }
+  public function bonos() {
+    return $this->hasMany('\App\Models\UserBonos', 'id_user', 'id');
+  }
 
   
   /**********************************************************************/

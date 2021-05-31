@@ -1,0 +1,155 @@
+@extends('layouts.admin-master')
+
+@section('title') Bonoss - Evolutio HTS @endsection
+
+@section('headerButtoms')
+<li class="text-center">
+  <button class="btn btn-sm btn-success new-bono" data-toggle="modal" data-target="#modal-bono">
+    <i class="fa fa-plus"></i> Bonos
+  </button>
+</li>
+@endsection
+
+@section('content')
+<div class="content content-full bg-white">
+  <div class="row" style="padding: 20px 0;">
+    <div class="col-xs-12 col-md-12">
+    <div class="row">
+      <h3 class="text-center">
+        Listado de Bonos
+      </h3>
+      <div class="block-content">
+        <?php if (count($objs) > 0): ?>
+          <table class="table table-bordered table-striped js-dataTable-full table-header-bg">
+            <thead>
+              <tr>
+                <th class="text-center hidden-xs hidden-sm" style="background-color: #46c37b; width: 60px;">id</th>
+                <th class="text-center" style="background-color: #46c37b; min-width: 280px;">Bono</th>
+                <th class="text-center" style="background-color: #46c37b;">Precio</th>
+                <th class="text-center" style="background-color: #46c37b;">Valor del bono</th>
+                <th class="text-center" style="background-color: #46c37b">Cantidad</th>
+                <th class="text-center" style="background-color: #46c37b;min-width: 10%;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>	
+              <?php foreach ($objs as $obj): ?>
+                <tr>
+                  <td class="text-center hidden-xs hidden-sm"><?php echo $obj->id ?></td>
+                  <td class="text-center">
+                    <input type="text" class="form-control editables name-bono-<?php echo $obj->id ?>"  data-id="<?php echo $obj->id; ?>" value="<?php echo $obj->name; ?>" />
+                  </td>
+                  <td class="text-center">
+                    <input type="text"  class="form-control editables price-bono-<?php echo $obj->id ?>" data-id="<?php echo $obj->id; ?>" value="<?php echo $obj->price; ?>" />
+                  </td>
+                  <td class="text-center">
+                    <input type="text"  class="form-control editables value-bono-<?php echo $obj->id ?>" data-id="<?php echo $obj->id; ?>" value="<?php echo $obj->value; ?>" />
+                  </td>
+                  <td class="text-center ">
+                    <input type="text" class="form-control editables quantity-bono-<?php echo $obj->id ?>" data-id="<?php echo $obj->id; ?>" value="<?php echo $obj->quantity; ?>" />
+                  </td>
+                  
+                  
+                  <td class="text-center">
+                    <div class="btn-group">
+                      <!--  -->
+                      <a href="{{ url('/admin/bonos/delete/')}}/<?php echo $obj->id ?>" class="btn btn-md btn-danger" type="button" data-toggle="tooltip" title="" data-original-title="Eliminar Tarifa" onclick="return confirm('Are you sure you want to delete this item?');">
+                        <i class="fa fa-times"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+  <?php endforeach ?>
+            </tbody>
+          </table>
+<?php else: ?>
+          <div class="col-xs-12">
+            <h2 class="text-muted font-w200">
+              No hay <span class="font-w600">Bonoss</span> creada <span class="font-w600"></span>, por favor cree una nueva aquí
+            </h2>
+          </div>
+      <?php endif ?>
+      </div>
+    </div>
+      <br/><br/><hr><br/><br/>
+  <div class="row mt-1em">
+      <h3 class="text-center">Listado de Servicios Antiguos</h3>
+      <div class="block-content oldRatesContent">
+<?php if (count($old) > 0): ?>
+          <table class="table table-bordered table-striped js-dataTable-full table-header-bg">
+            <thead>
+              <tr>
+                <th class="text-center" >Bono</th>
+                <th class="text-center">Precio</th>
+                <th class="text-center">Valor del bono</th>
+                <th class="text-center">Cantidad</th>
+              </tr>
+            </thead>
+            <tbody>	
+            <?php foreach ($old as $rate): ?>
+                <tr>
+                  <td class="text-left ">{{$rate->name}}</td>
+                  <td class="text-center ">{{$rate->price}}</td>
+                  <td class="text-center ">{{$rate->value}}</td>
+                  <td class="text-center ">{{$rate->quantity}}</td>
+                </tr>		
+            <?php endforeach ?>	             
+            </tbody>
+          </table>
+<?php endif ?>
+      </div>
+    </div>
+      
+      
+      
+  </div> 
+</div>
+</div>
+</div>
+<div class="modal fade" id="modal-bono" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="block block-themed block-transparent remove-margin-b">
+        <div class="block-header bg-primary-dark">
+          <ul class="block-options">
+            <li>
+              <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+            </li>
+          </ul>
+        </div>
+        <div class="row block-content" id="content-bono">
+          @include('admin.bonos.new')
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+@endsection
+
+
+@section('scripts')
+<script type="text/javascript">
+  $(document).ready(function () {
+
+
+    $('.editables').change(function (event) {
+            
+        var id = $(this).attr('data-id');
+        var data= {
+            id: id,
+            name: $('.name-bono-' + id).val(),
+            price: $('.price-bono-' + id).val(),
+            value: $('.value-bono-' + id).val(),
+            qty: $('.quantity-bono-' + id).val(),
+        };
+                      
+      $.get('/admin/bonos/update/', data, function(resp){
+        if (resp == 'OK'){
+          window.show_notif('success', 'Bono actualizado');
+        } else {
+          window.show_notif('error', 'Bono no actualizado');
+        }
+      });
+    });
+  });
+</script>
+@endsection

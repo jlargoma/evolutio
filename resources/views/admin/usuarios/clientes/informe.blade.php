@@ -9,6 +9,7 @@
   <li <?php if ($tab == 'notes') echo 'class="active"'; ?>><a data-toggle="tab" href="#notes">Anotaciones</a></li>
   <li <?php if ($tab == 'consent') echo 'class="active"'; ?>><a data-toggle="tab" href="#consent">Consentimiento</a></li>
   <li <?php if ($tab == 'invoice') echo 'class="active"'; ?>><a data-toggle="tab" href="#invoice">Factura</a></li>
+  <li <?php if ($tab == 'bono') echo 'class="active"'; ?>><a data-toggle="tab" href="#bono">Bonos</a></li>
 </ul>
 
 <div class="tab-content box">
@@ -29,6 +30,9 @@
   </div>
   <div id="invoice" class="tab-pane fade <?php if ($tab == 'invoice') echo 'in active'; ?>">
         @include('admin.usuarios.clientes.forms.invoice')
+  </div>
+  <div id="bono" class="tab-pane fade <?php if ($tab == 'bono') echo 'in active'; ?>">
+        @include('admin.usuarios.clientes.forms.bonos')
   </div>
 </div>
 <div class="row">
@@ -85,6 +89,7 @@
           e.preventDefault();
           var id_user = $(this).attr('data-idUser');
           $('#ifrCliente').attr('src','/admin/usuarios/cobrar/tarifa?id_user=' + id_user);
+          $('#modalCliente').modal('show');
         });
         $('.openEditCobro').on('click', function (e) {
             e.preventDefault();
@@ -104,6 +109,14 @@
             }
             $('#modalCliente').modal('show');
         });
+        $('.add_bono').click(function (e) {
+          e.preventDefault();
+          var id_user = $(this).attr('data-idUser');
+          var back = '/ficha/'+id_user
+          $('#ifrCliente').attr('src','/admin/bonos/comprar/' + id_user + back );
+          $('#modalCliente').modal('show');
+        });
+        
         $('.editNote').on('click',function (e) {
             e.preventDefault();
             $('#noteID').val($(this).data('id'));

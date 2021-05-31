@@ -282,6 +282,7 @@ function payMethod($i = null){
         'cash'=>'Metálico',
         'card'=>'Tarjeta',
         'banco'=>'Banco',
+        'bono'=>'Bono',
         ];
     
     if ($i){

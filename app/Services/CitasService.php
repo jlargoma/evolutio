@@ -20,6 +20,7 @@ class CitasService {
       $email   = null;
       $phone   = null;
       $charge  = null;
+      $oUser  = null;
       if ($uRates){
         $price   = $uRates->price;
         $id_serv = $uRates->id_rate;
@@ -54,8 +55,10 @@ class CitasService {
           'price' => $price,
           'card' => $card,
           'id' => $oDate->id,
+          'type' => $oDate->date_type,
           'charge' => $charge,
           'services' => $oServicios,
+          'oUser' => $oUser,
           'users' => User::where('role', 'user')->where('status', 1)->orderBy('name', 'ASC')->get(),
           'coachs' => self::getCoachs($oDate->date_type),
           'blocked' => $oDate->blocked
@@ -67,6 +70,7 @@ class CitasService {
   static function get_create($date,$time,$type) {
     if (!$date) $date = time();
 
+    if($time>0) $time = '0'.$time;
     return [
       'date' => date('d-m-Y', $date),
       'time' => $time,
@@ -80,6 +84,7 @@ class CitasService {
       'id' => -1,
       'charge' => null,
       'price' => 0,
+      'type' => $type,
       'services' => Rates::getByTypeRate($type),
       'users' => User::where('role', 'user')->where('status', 1)->orderBy('name', 'ASC')->get(),
       'coachs' => self::getCoachs($type),

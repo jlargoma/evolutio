@@ -330,6 +330,41 @@ toltip p {
     min-width: 45px;
 }
   
+.line {
+    display: block;
+    height: 1px;
+    border: 1px solid #bfbfbf;
+    margin: 1.5em auto;
+}
+/*-----------------------------------*/
+  .checkBono {
+    padding: 10px 0 10px 12px;
+    margin: 11px 1%;
+    width: 95%;
+    box-shadow: 1px 1px 4px 2px #a5a5a5;
+  }
+  .checkBono.active {
+    background-color: #d1eadc;
+  }
+  .checkBono input.form-control {
+    float: left;
+    width: 19px;
+    margin-top: -7px;
+    margin-right: 8px;
+  }
+  .checkBono label {
+    font-size: 18px;
+  }
+  .checkBono span {
+    display: block;
+  }
+  .checkBono price {
+    float: right;
+    margin: 0 1em;
+    font-size: 26px;
+    font-weight: bold;
+  }
+/*-----------------------------------*/
 @media(max-width:991px) {
   .table-fixed th.static{
     width: 9em;

@@ -304,7 +304,17 @@ class DatesController extends Controller {
                 $idStripe = $resp[1];
                 $cStripe = $resp[2];
             }
-            
+            if ($payType == 'bono'){
+              $bonoLst = $req->input('id_bono', null);
+              $UserBonos = new \App\Models\UserBonos();
+              $resp = $UserBonos->check($bonoLst,$oUser->id);
+              if ($resp != 'OK') 
+                  return redirect()->back()
+                            ->withErrors([$resp])
+                            ->withInput();
+                
+              $value = 0;
+            }
             /*******************************************/
             //Save payment
             $time = strtotime($oDates->date);
@@ -321,6 +331,16 @@ class DatesController extends Controller {
             $oCobro->customer_stripe = $cStripe;
             $oCobro->save();
             
+            if ($payType == 'bono'){
+              $resp = $UserBonos->usar($bonoLst,$oCobro->id);
+              if ($resp != 'OK'){
+                $oCobro->delete();
+                return redirect()->back()
+                            ->withErrors([$resp])
+                            ->withInput();
+                  
+              }
+            }
             /*--------------------------------*/
             $uRate->id_charges = $oCobro->id;
             $uRate->save();
