@@ -15,9 +15,9 @@ if (count($oBonoLst) > 0) {
     
     if ($b->charges_to){
       $uRate = \App\Models\UserRates::where('id_charges',$b->charges_to)->first();
-      
+      $rateName = ($uRate && $uRate->rate) ? $uRate->rate->name : ' -- ';
       $used[] = [
-          $bNames[$b->id_bono],$uRate->rate->name,convertDateToShow_text($b->updated_at)
+          $bNames[$b->id_bono],$rateName,convertDateToShow_text($b->updated_at)
       ];
     } else {
       $notUsed[] = [

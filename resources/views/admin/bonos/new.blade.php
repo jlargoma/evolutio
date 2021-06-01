@@ -1,7 +1,7 @@
 <div class="row push-30">
   <div class="block bg-white">
       <h3 class="text-center">
-        Formulario para añadir Bonoss
+        Formulario para añadir Bonos
       </h3>
     <form class="form-horizontal" action="{{ url('/admin/bonos/create') }}" method="post">
       <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
@@ -26,8 +26,20 @@
         </div>
         <div class="col-md-6 mx-1em">
           <div class="form-material">
-            <input class="form-control" type="number" id="value" name="value" required>
-            <label for="nombre">Valor de cada bono</label>
+            <label for="nombre">Bonos</label>
+            <select class="form-control" name="rate">
+              <option value="all">Todos</option>
+              <?php 
+              foreach ($rateFilter as $k=>$v):
+                echo '<option value="'.$k.'" class="b">'.$v['n'].'</option>';
+                foreach ($v['l'] as $k2=>$v2):
+                  $aux = "$k-$k2";
+                  echo '<option value="'.$aux.'" >&nbsp; - '.$v2.'</option>';
+                endforeach;
+              endforeach; 
+              ?>
+            </select>
+
           </div>
         </div>
       </div>

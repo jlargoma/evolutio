@@ -73,6 +73,10 @@
                             <i class="fa fa-home"></i>
                         </a>
                     </li>
+                    <?php 
+                    $uRole = Auth::user()->role;
+                    if ($uRole == "admin"):
+                    ?>
                     <li class="text-center">
                         <a href="{{ url('admin/informes/cliente-mes') }}" class="btn btn-xs-small btn-sm btn-success font-s16 font-w300" style="padding: 10px 15px;height: 45px;    line-height: 25px;">
                             Inf. Clientes mes
@@ -88,6 +92,13 @@
                             Caja
                         </a>
                     </li>
+                    <?php else: ?>
+                      <li class="text-center">
+                        <button id="button-checkCash" class="btn btn-sm btn-xs-small btn-success font-s16 font-w300" style="padding: 10px 15px;height: 45px;    line-height: 25px;" data-toggle="modal" data-target="#checkCash">
+                            Caja
+                        </button>
+                    </li>
+                    <?php endif; ?>
                 </ul>                
                 
                 <ul class="nav-header pull-left">
@@ -144,7 +155,6 @@
                                 </ul>
                             </div>
                             <div class="row block-content" id="content-checkCash">
-
                             </div>
                         </div>
                     </div>

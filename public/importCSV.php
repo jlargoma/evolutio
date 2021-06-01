@@ -1,4 +1,42 @@
 <?php
+
+$v = ["3084"
+,"3096"
+,"3116"
+,"3119"
+,"4620"
+,"4723"
+,"5234"
+,"5241"
+,"5334"
+,"5361"
+,"5552"
+,"5561"
+,"5564"
+,"5567"
+,"5571"
+,"5584"
+,"5587"
+,"5596"
+,"5612"
+,"5616"
+,"5623"
+,"5627"
+,"5630"
+,"5638"
+,"5642"
+,"5645"
+,"5653"
+,"5658"
+,"5671"
+,"5675"
+,"5704"
+,"5710"];
+foreach ($v as $i){
+    echo 'https://evolutio.tv/wp-admin/post.php?post='.$i.'&action=edit<br>';
+}
+die;
+
 $linea = 0;
 //DELETE FROM `users` where id != 797
 //INSERT INTO users (name,email,telefono,role,created_at) VALUES (SELECT name,email,tel,'user' as role, '2021-04-22' as created_at FROM 0_Temp_users)

@@ -3,7 +3,7 @@
     <i class="fa fa-usd" aria-hidden="true"></i>
   </button>
 </h3>
-<form class="row" action="{{ url('/admin/usuarios/update') }}" method="post">
+<form class="row" action="{{ url('/admin/clientes/update') }}" method="post">
   <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
   <input type="hidden" name="id" value="{{ $user->id }}">
   <div class="col-md-6 ">

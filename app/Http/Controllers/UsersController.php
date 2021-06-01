@@ -188,6 +188,24 @@ class UsersController extends Controller {
     return redirect('/admin/usuarios');
   }
 
+  public function updateCli(Request $request) {
+    $rates = $request->input('id_rates');
+
+    $id = $request->input('id');
+    $userToUpdate = User::find($id);
+    $userToUpdate->name = $request->input('name');
+    $userToUpdate->email = $request->input('email');
+    $userToUpdate->role = $request->input('role', 'user');
+    $userToUpdate->dni = $request->input('dni');
+    $userToUpdate->address = $request->input('address');
+      
+    if ($request->input('password'))
+      $userToUpdate->password = bcrypt($request->input('password'));
+
+    $userToUpdate->telefono = $request->input('telefono');
+    $userToUpdate->save();
+    return redirect()->back()->with('success', 'Cliente actualizado');
+  }
   public function update(Request $request) {
     $rates = $request->input('id_rates');
 

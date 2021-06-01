@@ -1,40 +1,38 @@
 <h3 class="text-left">ANOTACIONES</h3>
 <div class="row">
     <div class="col-md-8 ">
-        <div class="table-responsive">
-            <table class="table">
-                <tbody>
-                    <?php
-                    if ($oNotes):
-                        foreach ($oNotes as $v):
-                            $dateTime = strtotime($v->created_at);
-                            $type = '';
-                            switch ($v->type) {
-                                case 'nutri': $type = 'Nutrición';
-                                    break;
-                                case 'fisio': $type = 'Fisioterapeuta';
-                                    break;
-                                case 'pt': $type = 'Entr. Pers.';
-                                    break;
-                                default: $type = 'Otros';
-                                    break;
-                            }
-                            $personal = isset($allCoachs[$v->id_coach]) ? $allCoachs[$v->id_coach] : '-';
-                            ?>
-                            <tr>
-                                <th width="100px">{{convertDateToShow_text(date('Y-m-d',$dateTime),true)}}<br/>
-                                    {{$type}}<br/>
-                                    {{$personal}}<br/>
-                                    <button class="btn editNote" data-id="{{$v->id}}" data-note="{{$v->note}}">Editar</button></th>
-                                <td>{{$v->note}}</td>
-                            </tr>
-                            <?php
-                        endforeach;
-                    endif;
-                    ?>
-                </tbody>
-            </table>
-        </div>
+        <?php
+        if ($oNotes):
+            foreach ($oNotes as $v):
+                $dateTime = strtotime($v->created_at);
+                $type = '';
+                switch ($v->type) {
+                    case 'nutri': $type = 'Nutrición';
+                        break;
+                    case 'fisio': $type = 'Fisioterapeuta';
+                        break;
+                    case 'pt': $type = 'Entr. Pers.';
+                        break;
+                    default: $type = 'Otros';
+                        break;
+                }
+                $personal = isset($allCoachs[$v->id_coach]) ? $allCoachs[$v->id_coach] : '-';
+                ?>
+                <div>
+                  <div class="row">
+                      <div class="col-md-8"><b>{{$personal}}</b> ({{$type}})</div>
+                    <div class="col-md-4">
+                      {{convertDateToShow_text(date('Y-m-d',$dateTime),true)}}
+                      <button class="btn editNote" data-id="{{$v->id}}" data-note="{{$v->note}}">Editar</button>
+                    </div>
+                  </div>
+                  <p>{{$v->note}}</p>
+                </div>
+        <hr>
+                <?php
+            endforeach;
+        endif;
+        ?>
     </div>
     <div class="col-md-4 ">
         

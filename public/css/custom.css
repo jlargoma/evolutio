@@ -364,6 +364,9 @@ toltip p {
     font-size: 26px;
     font-weight: bold;
   }
+  option.b {
+            font-weight: bold;
+        }
 /*-----------------------------------*/
 @media(max-width:991px) {
   .table-fixed th.static{

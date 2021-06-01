@@ -15,6 +15,7 @@ class BonosController extends Controller {
     return view('/admin/bonos/index', [
         'objs' => Bonos::where('status', 1)->orderBy('name', 'asc')->get(),
         'old' => Bonos::where('status', 0)->orderBy('name', 'asc')->get(),
+        'rateFilter'=>\App\Models\Rates::getTypeRatesGroups()
     ]);
   }
   
@@ -24,10 +25,20 @@ class BonosController extends Controller {
     $oObj->name = $request->input('name');
     $oObj->quantity = $request->input('qty');
     $oObj->price = $request->input('price');
-    $oObj->value = $request->input('value');
+//    $oObj->value = $request->input('value');
     $oObj->status = 1;
+    $rate = $request->input('rate');
+    if ($rate){
+      if ($rate != 'all'){
+        $filerRate = explode('-', $rate);
+        if (count($filerRate) == 2){
+          $oObj->rate_id = $filerRate[1];
+        }
+        $oObj->rate_type = $filerRate[0];
+      }
+    }
     $oObj->save();
-    return redirect()->back()->with(['success'=>'Servicio agregado']);
+    return redirect()->back()->with(['success'=>'Bono agregado']);
   }
 
   public function update(Request $request) {
@@ -36,8 +47,21 @@ class BonosController extends Controller {
     $oObj = Bonos::find($id);
     $oObj->name = $request->input('name');
     $oObj->quantity = $request->input('qty');
-    $oObj->value = $request->input('value');
+//    $oObj->value = $request->input('value');
     $oObj->price = $request->input('price');
+    $rate = $request->input('rate');
+    
+    if ($rate){
+      if ($rate != 'all'){
+        $filerRate = explode('-', $rate);
+        
+        if (count($filerRate) == 2){
+          $oObj->rate_id = $filerRate[1];
+        }
+        $oObj->rate_type = $filerRate[0];
+      }
+    }
+    
     if ($oObj->save()) {
       die('OK');
     }

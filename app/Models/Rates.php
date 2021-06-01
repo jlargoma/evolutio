@@ -30,4 +30,18 @@ class Rates extends Model
         return self::join('types_rate','rates.type','=','types_rate.id')
                 ->pluck('types_rate.name','rates.id')->toArray();
     }
+    
+    static function getTypeRatesGroups(){
+      $rateFilter = [];
+      $oTypes = \App\Models\TypesRate::all();
+      foreach ($oTypes as $item){
+        $aux  = \App\Models\Rates::where('type',$item->id)->get();
+        $aux2 = [];
+        foreach ($aux as $a){
+          $aux2[$a->id] = $a->name;
+        }
+        $rateFilter[$item->id] = ['n' => $item->name,'l'=>$aux2];
+      }
+      return $rateFilter;
+    }
 }
