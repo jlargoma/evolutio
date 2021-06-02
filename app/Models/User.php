@@ -63,7 +63,31 @@ class User extends Authenticatable
     return $this->hasMany('\App\Models\UsersSuscriptions', 'id_user', 'id');
   }
   public function bonos() {
-    return $this->hasMany('\App\Models\UserBonos', 'id_user', 'id');
+    return $this->hasMany('\App\Models\UserBonos');
+  }
+  public function bonosServ($serv) {
+    $lst = [];
+    $total = 0;
+    
+    $oRate = Rates::find($serv);
+    if(!$oRate) return [$total,$lst];
+    
+    $oType = $oRate->typeRate;
+    $oBonos = UserBonos::where('user_id',$this->id)
+            ->where(function ($query) use ($serv, $oRate) {
+                $query->where("rate_id",$serv)
+                ->orWhere('rate_type',$oRate->type);
+            })->get();
+    if ($oBonos){
+      foreach ($oBonos as $b){
+        $name = '--';
+        if ($b->rate_type) $name = $oType->name;
+        if ($b->rate_id) $name = $oRate->name;
+        $lst[] = [$b->id,$name,$b->qty];
+        $total += $b->qty;
+      }
+    }
+    return [$total,$lst];
   }
 
   

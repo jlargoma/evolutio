@@ -1,6 +1,6 @@
 @extends('layouts.popup')
 @section('content')
-<div class="content" style="max-width:975px;">
+<div class="content">
   <div class="col-xs-12 not-padding push-20">
     <h2 class="text-center font-w300">COMPRA DE BONOS</h2>
   </div>
@@ -10,20 +10,39 @@
     <input type="hidden" name="type" value="<?php echo $type; ?>">
     <input type="hidden" name="id_back" value="<?php echo $id_back; ?>">
     <div class="row">
-      @if($oBonos)
-        @foreach($oBonos as $b)
-        <div class="col-md-6 col-xs-12">
-          <div class="checkBono">
-          <input type="radio" name="id_bono" value="{{$b->id}}" class="form-control"/>
-          <label>{{$b->name}}</label>
-          <price>{{moneda($b->price)}}</price>
-          <span>
-            <b>{{$b->quantity}}</b> Bonos de <b>{{moneda($b->value)}}</b> C/U
-          </span>
-          </div>
-        </div>
-        @endforeach
-      @endif
+      <div class="col-md-6 col-xs-12 mt-1em">
+        <table class="table t-center box-shadow" style="margin-top: 2em;">
+          <thead>
+            <tr>
+                <th></th>
+                <th  class="t-left">Bono</th>
+                <th>Servicio</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+              </tr>
+          </thead>   
+            <tbody>
+            @if($oBonos)
+              @foreach($oBonos as $b)
+              <tr class="checkBono">
+                <td><input type="radio" name="id_bono" value="{{$b->id}}" class="form-control"/></td>
+                <td class="t-left"><label>{{$b->name}}</label></td>
+                <td>
+                  <?php 
+                  if ($b->rate_id && isset($rates[$b->rate_id]))
+                    echo $rates[$b->rate_id];
+                  if ($b->rate_type && isset($typesRate[$b->rate_type]))
+                    echo $typesRate[$b->rate_type];
+                  ?>
+                </td>
+                <td>{{$b->qty}}</td>
+                <td>{{moneda($b->price)}}</td>
+              </tr>
+              @endforeach
+            @endif
+          </tbody>
+      </table>
+      </div>
       <div class="col-xs-6">
         <div class="box-payment-card row">
           <h4>PAGAR AHORA</h4>

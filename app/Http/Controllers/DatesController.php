@@ -173,6 +173,7 @@ class DatesController extends Controller {
             $uRate->rate_year = date('Y', $timeCita);
             $uRate->rate_month = date('n', $timeCita);
             $uRate->price = $importe;
+            $uRate->id_rate = $id_rate;
             $uRate->save();
           }else{
             
@@ -305,9 +306,11 @@ class DatesController extends Controller {
                 $cStripe = $resp[2];
             }
             if ($payType == 'bono'){
-              $bonoLst = $req->input('id_bono', null);
-              $UserBonos = new \App\Models\UserBonos();
-              $resp = $UserBonos->check($bonoLst,$oUser->id);
+              $bonoID = $req->input('id_bono', 0);
+              $UserBonos = \App\Models\UserBonos::find($bonoID);
+              if (!$UserBonos) return redirect()->back()->withErrors(['Bono no encontrado'])->withInput();
+              
+              $resp = $UserBonos->check($oUser->id);
               if ($resp != 'OK') 
                   return redirect()->back()
                             ->withErrors([$resp])
@@ -332,7 +335,7 @@ class DatesController extends Controller {
             $oCobro->save();
             
             if ($payType == 'bono'){
-              $resp = $UserBonos->usar($bonoLst,$oCobro->id);
+              $resp = $UserBonos->usar($oCobro->id,$oDates->date_type,$oDates->date);
               if ($resp != 'OK'){
                 $oCobro->delete();
                 return redirect()->back()

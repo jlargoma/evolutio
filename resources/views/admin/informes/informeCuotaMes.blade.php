@@ -71,7 +71,7 @@
                         <table class="table table-striped table-header-bg">
                             <thead>
                                 <tr>
-                                    <th class="text-left bg-complete font-w800">Tarifa</th>
+                                    <th class="text-left bg-complete font-w800">Familia</th>
                                     <th class="text-center bg-complete font-w800">Total</th>
                                 </tr>
                             </thead>
@@ -84,6 +84,33 @@
                                 </td>
                                 <td class="text-center">
                                     <?php $total += $import; echo moneda($import); ?>
+                                </td>
+                            </tr>
+                            @endforeach
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th class="text-left bg-complete font-w800">Total</th>
+                                    <th class="text-center bg-complete font-w800">{{moneda($total)}}</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                     <table class="table table-striped table-header-bg">
+                            <thead>
+                                <tr>
+                                    <th class="text-left bg-complete font-w800">Bono</th>
+                                    <th class="text-center bg-complete font-w800">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                 <?php $total = 0; ?>
+                                @foreach($byBono as $k=>$i)
+                            <tr>
+                                <td class="text-left">
+                                    <?php echo (isset($aBonos[$k])) ? $aBonos[$k] : ' - '; ?>
+                                </td>
+                                <td class="text-center">
+                                    <?php $total += $i; echo moneda($i); ?>
                                 </td>
                             </tr>
                             @endforeach

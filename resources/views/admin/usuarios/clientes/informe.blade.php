@@ -1,6 +1,5 @@
 @extends('layouts.popup')
 @section('content')
-
 <h1 class="text-center"><?php echo $user->name; ?></h1>
 <ul class="nav nav-tabs">
   <li <?php if ($tab == 'datos') echo 'class="active"'; ?>><a data-toggle="tab" href="#datos">Datos</a></li>
@@ -52,7 +51,7 @@
 </div>
 
 <div class="modal fade in" id="modalCliente" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-  <div class="modal-dialog modal-md">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="block block-themed block-transparent remove-margin-b">
         <div class="block-header bg-primary-dark">
@@ -190,7 +189,11 @@
           
         });
         /**************************************************/
-       
+       $('.nav-tabs').on('click','a',function(){
+         var newURL = '/admin/usuarios/informe/{{$user->id}}/';
+         var href =$(this).attr('href');
+         window.history.pushState("", "", newURL+href.slice(1));
+       });
     });
 
   @if($detail)
@@ -229,6 +232,33 @@ td.btnCel {
 }
 div#tableInvoices_filter {
     float: right;
+}
+.lstBono{
+    padding: 10px 0 10px 12px;
+    margin: 11px 1%;
+    width: 95%;
+    box-shadow: 1px 1px 4px 2px #a5a5a5;
+    cursor: pointer;
+}
+.lstBono:hover,
+.lstBono.selected{
+    background-color: #d1eadc;
+}
+.lstBono label{
+    font-size: 17px;
+}
+.lstBono span {
+    float: right;
+    font-size: 34px;
+    margin-top: -8px;
+    margin-right: 1em;
+}
+#bonoLog{
+  max-width: 780px;
+  margin: 1em auto;
+}
+#bonoLog thead th{
+  background-color: #d1eadc;
 }
 </style>
 @endsection

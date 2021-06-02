@@ -6,16 +6,14 @@
       <input type="hidden" name="idDate" value="{{$id}}">
       @endif
       <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
-      <input type="hidden" name="date_type" value="fisio">
+      <input type="hidden" name="date_type" value="{{$date_type}}">
 
       <div class="row">
         <div class="col-xs-12 col-md-4 push-20">
-          <label for="id_user" id="tit_user">
-            @if($id<1) 
-            <i class="fa fa-plus" id="newUser"></i>
-            @endif
-            Cliente</label>
-          <div id="div_user">
+          @if($id<1) 
+            <label for="id_user" id="tit_user">
+            <i class="fa fa-plus" id="newUser"></i>Cliente</label>
+            <div id="div_user">
             <select class="js-select2 form-control" id="id_user" name="id_user" style="width: 100%; cursor: pointer" data-placeholder="Seleccione usuario.."  >
               <option></option>
               <?php foreach ($users as $key => $user): ?>
@@ -27,6 +25,13 @@
             </select>
           </div>
           <input class="form-control" type="text" id="u_name" name="u_name" placeholder="Nombre del usuario" style="display:none"/>
+            @else
+            <input type="hidden" name="id_user" id="id_user" value="{{$oUser->id}}">
+            <label for="id_user" id="tit_user">Cliente</label>
+            <input class="form-control" value="{{$oUser->name}}" disabled=""/>
+            @endif
+            
+          
         </div>
         <div class="col-xs-12 col-md-4 push-20">
           <label for="id_email">Email</label>
@@ -65,7 +70,7 @@
           <input class="form-control" type="time" value="{{$customTime}}" type="text" id="customTime" name="customTime">
         </div>
         <div class="col-xs-3 col-md-2 push-20">
-          <label for="id_coach">Fisioterapeuta</label>
+          <label for="id_coach">{{$date_type_u}}</label>
           <select class="js-select2 form-control" id="id_coach" name="id_coach" style="width: 100%; cursor: pointer" data-placeholder="Seleccione coach.." >
             <option></option>
             <?php foreach ($coachs as $key => $coach): ?>

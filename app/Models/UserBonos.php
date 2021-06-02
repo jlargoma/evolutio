@@ -14,37 +14,62 @@ class UserBonos extends Model
         return $this->hasOne('\App\Models\User', 'id', 'id_user');
     }
 
-    public function bono()
-    {
-        return $this->hasOne('\App\Models\Bonos', 'id', 'id_bono');
-    }
     public function charges()
     {
         return $this->hasOne('\App\Models\Charges', 'id', 'id_charges');
     }
 
-    function check($IDs,$uID){
-      if (!$IDs || count($IDs) == 0)
+    function check($uID){
+      
+      if (!$this->id || $this->id<1)
         return 'Debe seleccionar almenos un Bono';
-
-      $lst = self::whereIN('id',$IDs)
-              ->where('id_user',$uID)
-              ->whereNull('charges_to')
-              ->get();
-      if (count($IDs) != count($lst))
-        return 'Algunos Bonos son inválidos';
+      if($this->user_id != $uID) return 'Bono inválido';
+      if ($this->qty<1) return 'Bono no disponible';
       return 'OK';
     }
     
-    function usar($IDs,$charge){
-      $lst = self::whereIN('id',$IDs)
-              ->whereNull('charges_to')
-              ->get();
-    
-      foreach ($lst as $item){
-        $item->charges_to = $charge;
-        $item->save();
-      }
+    function usar($cID,$date_type,$date){
+      $this->qty = $this->qty-1;
+      $this->save();
+      $this->saveLogDecr($cID,$date_type, $date);
       return 'OK';
+    }
+    
+    function saveLogIncr($oBono,$cID){
+      $total = UserBonosLogs::getTotal($this->id);
+      //-----------------------------------//
+      $obj = new UserBonosLogs();
+      $obj->users_bono_id = $this->id;
+      $obj->charge_id = $cID;
+      $obj->bono_id = $oBono->id;
+      $obj->price = $oBono->price;
+      $obj->incr = $oBono->qty;
+      $obj->total = $total+$oBono->qty;
+      $obj->text = 'Compra: '.$oBono->name;
+      $obj->save();
+      
+    }
+    
+    function saveLogDecr($cID,$date_type, $date){
+      $total = UserBonosLogs::getTotal($this->id);
+      //-----------------------------------//
+      $text = 'Cita ';
+      switch ($date_type){
+        case 'fisio':
+          $text .= 'Fisioterapia';
+          break;
+        case 'nutri':
+          $text .= 'Nutrición';
+          break;
+      }
+      $text .= ': '. dateMin($date);
+      $obj = new UserBonosLogs();
+      $obj->users_bono_id = $this->id;
+      $obj->charge_id = $cID;
+      $obj->decr = 1;
+      $obj->total = $total-1;
+      $obj->text = $text;
+      $obj->save();
+      
     }
 }

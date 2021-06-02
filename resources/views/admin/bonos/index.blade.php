@@ -59,7 +59,7 @@
                     <input type="text"  class="form-control editables price-bono-<?php echo $obj->id ?>" data-id="<?php echo $obj->id; ?>" value="<?php echo $obj->price; ?>" />
                   </td>
                   <td class="text-center ">
-                    <input type="text" class="form-control editables quantity-bono-<?php echo $obj->id ?>" data-id="<?php echo $obj->id; ?>" value="<?php echo $obj->quantity; ?>" />
+                    <input type="text" class="form-control editables qty-bono-<?php echo $obj->id ?>" data-id="<?php echo $obj->id; ?>" value="<?php echo $obj->qty; ?>" />
                   </td>
                   <td class="text-center">
                     <div class="btn-group">
@@ -101,7 +101,7 @@
                   <td class="text-left ">{{$rate->name}}</td>
                   <td class="text-center ">{{$rate->price}}</td>
                   <td class="text-center ">{{$rate->value}}</td>
-                  <td class="text-center ">{{$rate->quantity}}</td>
+                  <td class="text-center ">{{$rate->qty}}</td>
                 </tr>		
             <?php endforeach ?>	             
             </tbody>
@@ -150,7 +150,7 @@
             name: $('.name-bono-' + id).val(),
             price: $('.price-bono-' + id).val(),
             rate: $('.rate-bono-' + id).val(),
-            qty: $('.quantity-bono-' + id).val(),
+            qty: $('.qty-bono-' + id).val(),
         };
                    console.log(data);   
       $.get('/admin/bonos/update/', data, function(resp){

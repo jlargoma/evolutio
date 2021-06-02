@@ -1,6 +1,11 @@
+<?php 
+$oBonoLst = $user->bonosServ($rate->id);
+$tBonos = $oBonoLst[0];
+$oBonoLst = $oBonoLst[1];
+?>
 @extends('layouts.popup')
 @section('content')
-<div class="content" style="max-width:975px;">
+<div class="content" style="max-width:1480px;">
   <div class="col-xs-12 not-padding push-20">
     <h2 class="text-center font-w300">
       COBRO DE <span class="font-w600">{{getMonthSpanish($month,false).' '.$year}}</span> A
@@ -44,6 +49,11 @@
                 <option value="card" selected="">Tarjeta</option>
                 <option value="cash">Efectivo</option>
                 <option value="banco">Banco</option>
+                @if($tBonos>0)
+                <option value="bono" >Bonos ({{$tBonos}})</option>
+                @else
+                <option value="bono" disabled="">Bonos</option>
+                @endif
               </select>
             </div>
             <div class="col-xs-3">
@@ -53,6 +63,24 @@
             </div>
             <div class="col-xs-12">
               @include('admin.blocks.stripeBox')
+              <div id="bonosBox" style="display: none;">
+          <?php 
+          if (count($oBonoLst)>0){
+            foreach ($oBonoLst as $b){
+              ?>
+                <div class="checkBono" >
+                <input type="radio" name="id_bono" value="{{$b[0]}}" class="form-control"/>
+                <label>{{$b[1]}} ({{$b[2]}})</label>
+                </div>
+              <?php
+            }
+          } else {
+            ?>
+            <p class="alert alert-warning">No tiene bonos asignados</p>
+            <?php
+          }
+          ?>
+        </div>
             </div>
           </div>
         </div>
@@ -151,9 +179,25 @@ $(document).ready(function () {
   });
 
 
+    $('#type_payment').change(function (e) {
+        var value = $("#type_payment option:selected").val();
+        if (value == "bono") {
+            $('#bonosBox').show();
+            $('#stripeBox').hide();
+        } else {
+            $('#bonosBox').hide();
+            $('#stripeBox').show();
+        }
 
+    });
 
 });
 </script>
+<style>
+.checkBono {
+    margin: 3em 11px;
+}
+</style>
+        
 @include('admin.blocks.cardScripts')
 @endsection

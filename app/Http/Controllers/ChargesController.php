@@ -38,25 +38,25 @@ class ChargesController extends Controller {
     public function updateCharge(Request $request, $id) {
         $charge = Charges::find($id);
         if (!$charge) {
-            return redirect()->back()->withErrors(['cobro no encontrado']);
+            return back()->withErrors(['cobro no encontrado']);
         }
         if ($request->input('deleted')) {
-//          $appointment = \App\Models\Dates::where('id_charges',$id)->first();
-//          if ($appointment){
-//            $appointment->charged = 0;
-//            $appointment->save();
-//          }
-            
-          UserRates::where('id_charges',$id)->update(['id_charges' => null]);
+          $uRate = UserRates::where('id_charges',$id)->first();
+          if ($uRate){
+            $uRate->id_charges = null;
+            $uRate->save();
+            $charge->delete();
+            return redirect('/admin/clientes/generar-cobro/'.$uRate->id)->with('success', 'cobro Eliminado');
+          }     
           $charge->delete();
-          return redirect()->back()->with('success', 'cobro Eliminado');
+          return back()->with('success', 'cobro Eliminado');
         } else {
             $charge->type_payment = $request->input('type_payment');
             $charge->import = $request->input('importe');
             $charge->discount = $request->input('discount');
             $charge->save();
             UserRates::where('id_charges',$id)->update(['price' => $charge->import]);
-            return redirect()->back()->with('success', 'cobro actualizado');
+            return back()->with('success', 'cobro actualizado');
         }
     }
 
@@ -66,7 +66,7 @@ class ChargesController extends Controller {
       $uRate = UserRates::find($id_uRate);
       
       if (!$uRate) {
-        return redirect()->back()->withErrors(['Tarifa no encontrada']);
+        return back()->withErrors(['Tarifa no encontrada']);
       }
       
       $time = strtotime($uRate->rate_year.'/'.$uRate->rate_month.'/01');
@@ -93,14 +93,14 @@ class ChargesController extends Controller {
             if ($cardLoaded == 0){
                 $validate = \App\Services\StripeCardValidation::validate($req);
                 if ($validate !== 'OK'){
-                    return redirect()->back()
+                    return back()
                             ->withErrors($validate)
                             ->withInput();
                 }
             
                 $resp = $sStripe->subscription_changeCard($oUser, $cc_number, $cc_expide_mm, $cc_expide_yy, $cc_cvc);
                 if ( $resp != 'updated'){
-                    return redirect()->back()
+                    return back()
                             ->withErrors($resp)
                             ->withInput();
                 }
@@ -110,19 +110,44 @@ class ChargesController extends Controller {
             /***********************************/
             $resp = $sStripe->automaticCharge($oUser,round($value*100));
             if ( $resp[0] != 'OK'){
-                return redirect()->back()
+                return back()
                         ->withErrors([$resp[1]])
                         ->withInput();
             }
             $idStripe = $resp[1];
             $cStripe = $resp[2];
         }
+        
+        if ($tpay == 'bono'){
+          $oDates = \App\Models\Dates::where('id_user_rates',$id_uRate)->first();
+          if (!$oDates) 
+            return back()->withErrors(['Los Bonos sólo aplican a Citas'])->withInput();
+          
+          $bonoID = $req->input('id_bono', 0);
+          $UserBonos = \App\Models\UserBonos::find($bonoID);
+          if (!$UserBonos) return back()->withErrors(['Bono no encontrado'])->withInput();
+
+          $resp = $UserBonos->check($uID);
+          if ($resp != 'OK') 
+              return back()
+                        ->withErrors([$resp])
+                        ->withInput();
+
+          
+          $value = 0;
+        }
+            
         $resp = $this->generateePayment($time, $uID, $rID, $tpay, $value, $disc,$idStripe,$cStripe);
        
         if ($resp[0] == 'error') {
-            return redirect()->back()->withErrors([$resp[1]]);
+            return back()->withErrors([$resp[1]]);
         }
-        return redirect()->back()->with('success', $resp[1]);
+        if ($tpay == 'bono'){
+          
+          $UserBonos->usar($resp[2],$oDates->date_type,$oDates->date);
+        }
+        
+        return redirect('/admin/update/cobro/'.$resp[2])->with('success', $resp[1]);
     }
 
     public function chargeUser(Request $req) {
@@ -158,13 +183,13 @@ class ChargesController extends Controller {
                 if ($cardLoaded == 0){
                     $validate = \App\Services\StripeCardValidation::validate($req);
                     if ($validate !== 'OK'){
-                        return redirect()->back()
+                        return back()
                                 ->withErrors($validate)
                                 ->withInput();
                     }
                     $resp = $sStripe->subscription_changeCard($oUser, $cc_number, $cc_expide_mm, $cc_expide_yy, $cc_cvc);
                     if ( $resp != 'updated'){
-                        return redirect()->back()
+                        return back()
                                 ->withErrors([$resp])
                                 ->withInput();
                     }
@@ -174,7 +199,7 @@ class ChargesController extends Controller {
                 /***********************************/
                 $resp = $sStripe->automaticCharge($oUser,round($value*100));
                 if ( $resp[0] != 'OK'){
-                    return redirect()->back()
+                    return back()
                             ->withErrors([$resp])
                             ->withInput();
                 }
@@ -197,9 +222,9 @@ class ChargesController extends Controller {
         }
 
         if ($resp[0] == 'error') {
-            return redirect()->back()->withErrors([$resp[1]]);
+            return back()->withErrors([$resp[1]]);
         }
-        return redirect()->back()->with('success', $resp[1]);
+        return back()->with('success', $resp[1]);
     }
 
     public static function savePaymentRate($time, $uID, $rID, $tpay, $value, $disc,$idStripe,$cStripe){

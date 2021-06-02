@@ -78,10 +78,11 @@ class InformesController extends Controller {
         $cash = 0;
         $card = 0;
         $clients = [];
-        $rates = [];
+        $rates = $bonos = [];
         foreach ($charges as $charge) {
             $clients[] = $charge->id_user;
-            $rates[] = $charge->id_rate;
+            if ($charge->id_rate>0)  $rates[] = $charge->id_rate;
+            if ($charge->bono_id>0)  $bonos[] = $charge->bono_id;
             switch ($charge->type_payment){
               case 'banco':
                 $bank += $charge->import;
@@ -108,6 +109,9 @@ class InformesController extends Controller {
         $aRates =  \App\Models\Rates::whereIn('id', $rates)->get()
                         ->pluck('name', 'id')->toArray();
         
+        $aBonos =  \App\Models\Bonos::whereIn('id', $bonos)->get()
+                        ->pluck('name', 'id')->toArray();
+        
         return [
             'charges' => $charges,
             'extrasCharges' => $extrasCharges,
@@ -122,6 +126,7 @@ class InformesController extends Controller {
             'endDay' => $endDay,
             'aUsers' => $aUsers,
             'aRates' => $aRates,
+            'aBonos' => $aBonos,
                 ];
                 
                 
@@ -232,6 +237,7 @@ class InformesController extends Controller {
         $data['aTRates']= \App\Models\Rates::getRatesTypeRates();
         return view('admin.informes.informeClientesMes',$data);
     }
+    
     public function informeCuotaMes(Request $request, $month = null, $day = null) {
 
         $year = getYearActive();
@@ -254,6 +260,7 @@ class InformesController extends Controller {
         }
         
         foreach ($data['charges'] as $charges){
+          if ($charges->id_rate>0){
             if (!isset($byRate[$charges->id_rate]))
                 $byRate[$charges->id_rate] = 0;
             
@@ -261,10 +268,30 @@ class InformesController extends Controller {
             if (isset($aR_RateType[$charges->id_rate])){
               $byRateT[$aR_RateType[$charges->id_rate]] += $charges->import;
             }
+          }
         }
+        //----------------------------------------------------------//
+        //----  BEGIN: BONOS        --------------------------------//
+        $byBono = [];
+        $aBonos = \App\Models\Bonos::all()->pluck('name','id')->toArray();
+        $oCharges = Charges::where('bono_id', '>', 0)
+                ->whereYear('date_payment','=',$year)
+                ->whereMonth('date_payment','=',$month)->get();
+        foreach ($oCharges as $charges){
+          if (!isset($byBono[$charges->bono_id]))
+              $byBono[$charges->bono_id] = 0;
+          $byBono[$charges->bono_id] += $charges->import;
+        }
+        //----  END: BONOS        --------------------------------//
+        //----------------------------------------------------------//
+                
+      
+        
         $data['byRate'] =  $byRate;
         $data['byTypeRate'] =  $byRateT;
         $data['aRType'] =  $aRType;
+        $data['byBono'] =  $byBono;
+        $data['aBonos'] =  $aBonos;
         return view('admin.informes.informeCuotaMes',$data);
     }
     

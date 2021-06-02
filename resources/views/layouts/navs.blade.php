@@ -8,11 +8,6 @@ $uRole = Auth::user()->role;
             <i class="fa fa-users"></i><span class="sidebar-mini-hide font-w600">Clientes</span>
         </a>
     </li>
-    <li class="{{ $path == 'admin/clientes' ? 'active' : '' }}">
-        <a href="{{ url('/admin/clientes') }}" >
-            <i class="fa fa-users"></i><span class="sidebar-mini-hide font-w600">Clientes</span>
-        </a>
-    </li>
     <li class="{{ (str_contains($path,'citas-pt')) ? 'active' : '' }}">
         <a href="{{ url('/admin/citas-pt') }}" >
             <i class="fa fa-calendar-o"></i><span class="sidebar-mini-hide font-w600">P.T.</span>

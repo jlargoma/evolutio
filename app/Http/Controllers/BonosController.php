@@ -23,18 +23,18 @@ class BonosController extends Controller {
     $oObj = new Bonos();
 
     $oObj->name = $request->input('name');
-    $oObj->quantity = $request->input('qty');
+    $oObj->qty = $request->input('qty');
     $oObj->price = $request->input('price');
 //    $oObj->value = $request->input('value');
     $oObj->status = 1;
     $rate = $request->input('rate');
     if ($rate){
+      $oObj->rate_id = null;
+      $oObj->rate_type = null;
       if ($rate != 'all'){
         $filerRate = explode('-', $rate);
-        if (count($filerRate) == 2){
-          $oObj->rate_id = $filerRate[1];
-        }
-        $oObj->rate_type = $filerRate[0];
+        if (count($filerRate) == 2) $oObj->rate_id = $filerRate[1];
+        else $oObj->rate_type = $filerRate[0];
       }
     }
     $oObj->save();
@@ -46,19 +46,18 @@ class BonosController extends Controller {
     $id = $request->input('id');
     $oObj = Bonos::find($id);
     $oObj->name = $request->input('name');
-    $oObj->quantity = $request->input('qty');
+    $oObj->qty = $request->input('qty');
 //    $oObj->value = $request->input('value');
     $oObj->price = $request->input('price');
     $rate = $request->input('rate');
     
     if ($rate){
+      $oObj->rate_id = null;
+      $oObj->rate_type = null;
       if ($rate != 'all'){
         $filerRate = explode('-', $rate);
-        
-        if (count($filerRate) == 2){
-          $oObj->rate_id = $filerRate[1];
-        }
-        $oObj->rate_type = $filerRate[0];
+        if (count($filerRate) == 2) $oObj->rate_id = $filerRate[1];
+        else $oObj->rate_type = $filerRate[0];
       }
     }
     
@@ -168,18 +167,25 @@ class BonosController extends Controller {
         $oCobro->import = $oBono->price;
         $oCobro->discount = 0;
         $oCobro->type_rate = 0;
+        $oCobro->bono_id = $oBono->id;
         $oCobro->id_stripe = $idStripe;
         $oCobro->customer_stripe = $cStripe;
         $oCobro->save();
     //END PAYMENTS
-    for($i=0;$i<$oBono->quantity;$i++){
-      $obj = new UserBonos();
-      $obj->id_user = $oUser->id;
-      $obj->id_bono = $oBono->id;
-      $obj->price   = $oBono->value;
-      $obj->charges_by = $oCobro->id;
-      $obj->save();
-    }
+        
+        $oUsrBono = $oBono->getBonoUser($oUser->id);
+        if ($oUsrBono){
+          $oUsrBono->qty = $oUsrBono->qty +$oBono->qty;
+        } else {
+          $oUsrBono = new UserBonos();
+          $oUsrBono->user_id   = $oUser->id;
+          $oUsrBono->rate_type = $oBono->rate_type;
+          $oUsrBono->rate_id   = $oBono->rate_id;
+          $oUsrBono->qty = $oBono->qty;
+        }
+
+        $oUsrBono->save(); 
+        $oUsrBono->saveLogIncr($oBono,$oCobro->id);
     $statusPayment = 'Pago realizado correctamente, por ' . payMethod($tpay);
     /*************************************************************/
     $sent = MailController::sendEmailPayBono($oUser, $oBono,$tpay);
@@ -221,11 +227,20 @@ class BonosController extends Controller {
         'card'=>$card,
         'oBonos' => Bonos::where('status', 1)->orderBy('name', 'asc')->get(),
         'type'=>$t,
-        'id_back'=>$id
+        'id_back'=>$id,
+        'rates'=>\App\Models\Rates::pluck('name','id')->toArray(),
+        'typesRate'=> \App\Models\TypesRate::pluck('name','id')->toArray(),
     ]);
       
     }
     die('usuario no encontrado');
+  }
+  
+  function printBonologs($id){
+    $logs = \App\Models\UserBonosLogs::getLst($id);
+    if ($logs){
+      include_once app_path().'/Blocks/bonosLogs.php';
+    }
   }
 
 }

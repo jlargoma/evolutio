@@ -309,9 +309,11 @@ trait ClientesTraits {
     } else {
       $detail = null;
     }
-    
+
     return view('/admin/usuarios/clientes/informe', [
         'aRates' => $aRates,
+        'atypeRates' => $typeRates,
+        'rNames' => $rNames,
         'usedRates' => $usedRates,
         'uLstRates' => $uLstRates,
         'totalUser' => $totalUser,

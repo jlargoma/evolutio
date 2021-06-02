@@ -45,7 +45,8 @@
             </td>
             <td class="text-center">
                 <?php
-                echo (isset($aRates[$charge->id_rate])) ? $aRates[$charge->id_rate] : ' - ';
+                if ($charge->id_rate>0) echo (isset($aRates[$charge->id_rate])) ? $aRates[$charge->id_rate] : ' - ';
+                if ($charge->bono_id>0) echo (isset($aBonos[$charge->bono_id])) ? $aBonos[$charge->bono_id] : ' - ';
                 ?>
             </td>
             <td class="text-center">
