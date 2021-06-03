@@ -40,7 +40,7 @@
     <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
     <input type="hidden" name="id_user" value="<?php echo $user->id; ?>">
     <div class="row">
-      <div class="col-xs-6 col-md-5 push-20">
+      <div class="col-xs-6 col-md-4 push-20">
         <label for="id_rate">Tarifa</label>
         <select class="form-control" id="id_rate" name="id_rate" style="width: 100%; cursor: pointer"
                 placeholder="Seleccione tarifas.." required="">
@@ -66,13 +66,31 @@
         </select>
       </div>
 
+       <div class="col-xs-6 col-md-3 push-20">
+        <label for="id_rate">Personal</label>
+        <select class="form-control" id="id_coach" name="id_coach" style="width: 100%; cursor: pointer"
+                placeholder="Personal asignado" required="">
+          <option></option>
+          <?php
+          $old = old('id_coach');
+          foreach ($coachs as $v):
+            $sel ='';
+            ?>
+            <option value="<?php echo $v->id ?>">
+            <?php echo $v->name ?>
+            </option>
+            <?php
+          endforeach;
+          ?>
+        </select>
+      </div>
       <div class="col-xs-6 col-md-2 push-20">
         <label for="date_payment">Fecha de cobro</label>
         <input class="js-datepicker form-control" type="text" id="date_payment" name="date_payment"
                data-date-format="dd-mm-yyyy" placeholder="dd-mm-yyyy" value="{{ old('date_payment',date('d-m-Y'))}}"
                style="cursor: pointer;" required="">
       </div>
-      <div class="col-xs-6 col-md-2 push-20">
+      <div class="col-xs-6 col-md-1 push-20">
         <label for="type_payment">% DTO</label>
         <input type="text" id="discount" name="discount"  class="form-control only-number" value="{{ old('discount') }}"/>
       </div>
@@ -157,6 +175,7 @@ $(document).ready(function () {
     var type = $(this).data('t');
     var posting = $.post('/admin/cobros/cobrar-usuario', {
     _token: '{{csrf_token()}}',
+    id_coach: $('#id_coach').val(),
     id_rate: $('#id_rate').val(),
     id_user: {{$user->id}},
     u_email: $('#u_email').val(),

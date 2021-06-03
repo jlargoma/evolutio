@@ -45,6 +45,7 @@ class Subscriptions extends Command {
       foreach ($lst as $s){
         $uID = $s->id_user;
         $rID = $s->id_rate;
+        $cID = $s->id_coach;
         $uRate = UserRates::where('id_user',$uID)
                 ->where('rate_year',$year)->where('rate_month',$month)
                 ->where('id_rate', $rID)->first();
@@ -52,6 +53,7 @@ class Subscriptions extends Command {
           $uRate = new UserRates();
           $uRate->id_user = $uID;
           $uRate->id_rate = $rID;
+          $uRate->coach_id = $cID;
           $uRate->price   = $s->price;
           $uRate->rate_year = $year;
           $uRate->rate_month = $month;

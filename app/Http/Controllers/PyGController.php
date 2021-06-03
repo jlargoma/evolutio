@@ -112,7 +112,7 @@ class PyGController extends Controller {
     }
     //---------------------------------------------------------//
     $ggMonth['pt'] = $months_empty;
-    $gTypeGroup['names']['pt'] = 'Entrenadores';
+    $gTypeGroup['names']['pt'] = 'SUELDOS Y SALARIOS';
     for($i=0;$i<3;$i++){
       $auxYear = $year-$i;
       $cLiq = \App\Models\CoachLiquidation::whereYear('date_liquidation', '=', $auxYear)->get();

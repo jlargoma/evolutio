@@ -163,14 +163,15 @@ var myChart = new Chart(ctx, {
 
 
   $('.detail').on('click',function(){
+    var k = $(this).data('id');
     if($(this).data('t') == 'i'){
-      $.get('/admin/ingreso-by-rate/'+$(this).data('id'), function (data) {
+      $.get('/admin/ingreso-by-rate/'+k, function (data) {
         $('#contentModalInfo').html(data);
         $('#modalInfo').modal('show');
       });
     }
     if($(this).data('t') == 'e'){
-      $.get('/admin/gastos-by-byType/'+$(this).data('id'), function (data) {
+      $.get('/admin/gastos-by-byType/'+k, function (data) {
         $('#contentModalInfo').html(data);
         $('#modalInfo').modal('show');
       });

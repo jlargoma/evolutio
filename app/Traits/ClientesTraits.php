@@ -197,6 +197,8 @@ trait ClientesTraits {
         'pStripe' => $pStripe,
         'card' => $card,
         'uRate' => $uRates->id,
+        'coach_id' => $uRates->coach_id,
+        'coachs' => User::getCoachs(),
     ]);
   }
 
@@ -475,7 +477,7 @@ trait ClientesTraits {
   public function rateCharge(Request $request) {
     $stripe = null;
     $oUser = User::find($request->id_user);
-
+   
     $card = null;
     $paymentMethod = $oUser->getPayCard();
     if ($paymentMethod) {
@@ -495,6 +497,7 @@ trait ClientesTraits {
         
     return view('admin.usuarios.clientes._rate_charge', [
         'user' => $oUser,
+        'coachs' => User::getCoachs(),
         'rates' => Rates::orderBy('status', 'desc')->orderBy('name', 'asc')->get(),
         'rateFamily' => $rateFamily,
         'stripe' => $stripe,

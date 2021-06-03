@@ -174,6 +174,7 @@ class DatesController extends Controller {
             $uRate->rate_month = date('n', $timeCita);
             $uRate->price = $importe;
             $uRate->id_rate = $id_rate;
+            $uRate->coach_id = $id_coach;
             $uRate->save();
           }else{
             
@@ -183,6 +184,7 @@ class DatesController extends Controller {
             $uRate->rate_year = date('Y', $timeCita);
             $uRate->rate_month = date('n', $timeCita);
             $uRate->price = $importe;
+            $uRate->coach_id = $id_coach;
             $uRate->save();
           }
         }
@@ -492,6 +494,7 @@ class DatesController extends Controller {
           $urClone->rate_year = date('Y', $timeCita);
           $urClone->rate_month = date('n', $timeCita);
           $urClone->price = $uRate->price;
+          $urClone->coach_id = $uRate->coach_id;
           $urClone->save();
           $id_user_rates = $urClone->id;
         }

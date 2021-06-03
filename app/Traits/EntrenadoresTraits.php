@@ -16,43 +16,10 @@ trait EntrenadoresTraits {
     public function entrenadores($type=null) {
         
         $year = getYearActive();
-        $months = lstMonthsSpanish();
-        unset($months[0]);
-        $sql = User::whereIn('role', [
-                'teach',
-                'teacher',
-                'fisio',
-                'nutri'
-                ]);
-        if ($type == 'activos') $sql->where('status',1);
-        if ($type == 'desactivados') $sql->where('status',0);
-        $users = $sql->orderBy('status', 'DESC')->get();
-        $aLiq = [];
-        $aLiqTotal = [];
-        $oLiquidations = \App\Models\CoachLiquidation::whereYear('date_liquidation', '=', $year)->get();
-        if ($oLiquidations){
-            $aux = [];
-            for($i=1;$i<13;$i++) $aux[$i] = [0=>-1,1=>0];
-            
-            foreach ($oLiquidations as $liq){
-                if (!isset($aLiq[$liq->id_coach]))
-                    $aLiq[$liq->id_coach] = $aux;
-                
-                $aLiq[$liq->id_coach][date('n', strtotime($liq->date_liquidation))] = [$liq->id, intval($liq->total)];
-                if (!isset($aLiqTotal[$liq->id_coach])) $aLiqTotal[$liq->id_coach] = 0;
-                $aLiqTotal[$liq->id_coach] += intval($liq->total);
-            }
-        }
-        
-        return view('/admin/usuarios/entrenadores/index', [
-            'months' => $months,
-            'year' => $year,
-            'users' => $users,
-            'aLiq' => $aLiq,
-            'aLiqTotal' => $aLiqTotal,
-            'type' => $type,
-            'date' => Carbon::now(),
-        ]);
+        $data = \App\Services\CoachLiqService::liqByMonths($year,$type);
+        $data['type'] = $type;
+        $data['date'] = Carbon::now();
+        return view('/admin/usuarios/entrenadores/index',$data);
     }
         
     

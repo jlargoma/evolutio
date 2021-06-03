@@ -90,7 +90,16 @@ class User extends Authenticatable
     return [$total,$lst];
   }
 
-  
+  static function getCoachs($type=null) {
+    $sql = User::where('status', 1);
+    
+    if($type)  $sql->where('role', $type);
+    else $sql->whereIn('role', ['teach','fisio','nutri']);
+    
+    return $sql->orderBy('status', 'DESC')->get();
+  }
+
+
   /**********************************************************************/
   /////////  user_meta //////////////
   public function setMetaContent($key,$content) {

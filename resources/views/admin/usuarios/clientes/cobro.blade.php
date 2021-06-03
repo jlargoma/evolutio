@@ -23,11 +23,29 @@ $oBonoLst = $oBonoLst[1];
     </div>
     <div class="row">
       <div class="col-xs-8">
-        <div class="col-md-4 mb-1em">
+        <div class="col-md-5">
+          <label for="id_rate">Personal</label>
+          <select class="form-control" id="id_coach" name="id_coach" style="width: 100%; cursor: pointer"
+                  placeholder="Personal asignado" required="">
+            <option></option>
+            <?php
+            $old = old('id_coach');
+            foreach ($coachs as $v):
+              $sel = ($coach_id == $v->id) ? 'selected' : '';
+              ?>
+            <option value="<?php echo $v->id ?>" <?php echo $sel; ?>>
+              <?php echo $v->name ?>
+              </option>
+              <?php
+            endforeach;
+            ?>
+          </select>
+        </div>
+        <div class="col-md-2 mb-1em">
           <label for="discount">DTO %:</label>
           <input type="number" id="discount" name="discount" class="form-control"/>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-5">
           <label for="importeFinal">Total:</label>
           <input id="importeFinal" type="number" step="0.01" name="importe" class="form-control"
                  value="<?php echo $importe; ?>"/>
@@ -140,6 +158,7 @@ $(document).ready(function () {
     var posting = $.post('/admin/send/cobro-mail', {
       _token: '{{csrf_token()}}',
       u_rate: '{{$uRate}}',
+      id_coach: $('#id_coach').val(),
       u_email: $('#u_email').val(),
       u_phone: $('#u_phone').val(),
       discount: $('#discount').val(),

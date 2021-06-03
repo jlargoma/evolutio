@@ -27,8 +27,11 @@ class ImportCustomers {
 //      case 'updRates':
 //        $this->updRates();
 //        break;
-      case 'updChargesDate':
-        $this->updChargesDate();
+//      case 'updChargesDate':
+//        $this->updChargesDate();
+//        break;
+      case 'urates':
+        $this->updUserRates();
         break;
     }
   }
@@ -169,4 +172,18 @@ class ImportCustomers {
       }
     }
   
+    /**
+     * http://evol.virtual/admin/import/urates
+     */
+    function updUserRates(){
+      $suscr = \App\Models\UsersSuscriptions::whereNotNull('id_coach')->get();
+      foreach ($suscr as $i){
+      
+        $affected = DB::table('users_rates')
+              ->where('id_user',$i->id_user)
+              ->where('id_rate',$i->id_rate)
+              ->update(['coach_id' => $i->id_coach]);
+        
+      }
+    }
 }

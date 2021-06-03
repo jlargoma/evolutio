@@ -33,13 +33,6 @@ $tGast = $currentY['Gastos'];
             @endforeach
           </tr>
             @endforeach
-          <tr class="subtotal">
-            <td class="static">Subtotal</td>
-            <td class="first-col"></td>
-            @foreach($aux_i as $v)
-            <td>{{moneda($v)}}</td>
-            @endforeach
-          </tr>
        </tbody>
        <thead>
         <tr>
@@ -67,13 +60,6 @@ $tGast = $currentY['Gastos'];
             @endforeach
           </tr>
             @endforeach
-          <tr class="subtotal">
-            <td class="static">Subtotal</td>
-            <td class="first-col"></td>
-            @foreach($aux_e as $v)
-            <td>{{moneda($v)}}</td>
-            @endforeach
-          </tr>
        </tbody>
        <tfoot>
          <tr class="">

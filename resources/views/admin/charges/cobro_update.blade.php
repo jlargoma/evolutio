@@ -24,11 +24,32 @@
         <option value="bono" @if ($charge->type_payment == "bono") selected @endif>Bono</option>
       </select>
     </div>
-    <div class="col-md-4">
+    
+    <div class="col-md-3">
+        <label for="id_rate">Personal</label>
+        <select class="form-control" id="id_coach" name="id_coach" style="width: 100%; cursor: pointer"
+                placeholder="Personal asignado" required="">
+          <option></option>
+          <?php
+          $old = old('id_coach');
+          foreach ($coachs as $v):
+            $sel = ($coach_id == $v->id) ? 'selected' : '';
+            ?>
+          <option value="<?php echo $v->id ?>" <?php echo $sel; ?>>
+            <?php echo $v->name ?>
+            </option>
+            <?php
+          endforeach;
+          ?>
+        </select>
+      </div>
+    
+    
+    <div class="col-md-2">
       <label>Dto</label>
       <input type="number" id="discount" name="discount" class="form-control" value="{{$charge->discount}}" />
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
       <label>Total</label>
       <input id="importeFinal" type="number" step="0.01" name="importe" class="form-control" value="{{ $charge->import}}" />
     </div>

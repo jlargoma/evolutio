@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use \Carbon\Carbon;
+use App\Models\User;
 use App\Models\Rates;
 use App\Models\UserRates;
 use App\Models\Charges;
@@ -17,7 +18,6 @@ class ChargesController extends Controller {
         if (!$charge)
             return view('admin.popup_msg');
         $uRate = UserRates::where('id_charges', $charge->id)->first();
-
         if ($uRate) {
             $date = getMonthSpanish($uRate->rate_month, false) . ' ' . $uRate->rate_year;
         } else {
@@ -31,12 +31,15 @@ class ChargesController extends Controller {
             'date' => $date,
             'user' => $charge->user,
             'importe' => $charge->import,
-            'charge' => $charge
+            'charge' => $charge,
+            'coach_id' => $uRate->coach_id,
+            'coachs' => User::getCoachs(),
         ]);
     }
 
     public function updateCharge(Request $request, $id) {
         $charge = Charges::find($id);
+        $id_coach = $request->input('id_coach', null);
         if (!$charge) {
             return back()->withErrors(['cobro no encontrado']);
         }
@@ -55,7 +58,9 @@ class ChargesController extends Controller {
             $charge->import = $request->input('importe');
             $charge->discount = $request->input('discount');
             $charge->save();
-            UserRates::where('id_charges',$id)->update(['price' => $charge->import]);
+            UserRates::where('id_charges',$id)->update(
+                    ['price' => $charge->import,'coach_id'=>$id_coach]
+                    );
             return back()->with('success', 'cobro actualizado');
         }
     }
@@ -75,8 +80,7 @@ class ChargesController extends Controller {
       $tpay = $req->input('type_payment','cash');
       $value = $req->input('importe', 0);
       $disc = $req->input('discount', '0');
-        
-
+      $id_coach = $req->input('id_coach', null);
         $idStripe=null;$cStripe=null;
         if ($tpay == 'card'){
             $cc_number = $req->input('cc_number', null);
@@ -84,7 +88,7 @@ class ChargesController extends Controller {
             $cc_expide_yy = $req->input('cc_expide_yy', null);
             $cc_cvc = $req->input('cc_cvc', null);
             $cardLoaded = $req->input('cardLoaded', null);
-            $oUser = \App\Models\User::find($uID);
+            $oUser = User::find($uID);
             $sStripe = new \App\Services\StripeService();
 
             /***********************************/
@@ -124,7 +128,7 @@ class ChargesController extends Controller {
             return back()->withErrors(['Los Bonos sólo aplican a Citas'])->withInput();
           
           $bonoID = $req->input('id_bono', 0);
-          $UserBonos = \App\Models\UserBonos::find($bonoID);
+          $UserBonos = UserBonos::find($bonoID);
           if (!$UserBonos) return back()->withErrors(['Bono no encontrado'])->withInput();
 
           $resp = $UserBonos->check($uID);
@@ -137,7 +141,7 @@ class ChargesController extends Controller {
           $value = 0;
         }
             
-        $resp = $this->generateePayment($time, $uID, $rID, $tpay, $value, $disc,$idStripe,$cStripe);
+        $resp = $this->generateePayment($time, $uID, $rID, $tpay, $value, $disc,$idStripe,$cStripe,$id_coach);
        
         if ($resp[0] == 'error') {
             return back()->withErrors([$resp[1]]);
@@ -153,6 +157,7 @@ class ChargesController extends Controller {
     public function chargeUser(Request $req) {
         $month = $req->input('date_payment', null);
         $operation = $req->input('type', 'all');
+        $id_coach = $req->input('id_coach', null);
         if ($month)
             $time = strtotime($month);
         else
@@ -162,7 +167,7 @@ class ChargesController extends Controller {
         $tpay = $req->input('type_payment','cash');
         $value = $req->input('importe', 0);
         $disc = $req->input('discount', 0);
-        $oUser = \App\Models\User::find($uID);
+        $oUser = User::find($uID);
         /************************************************************/
         $resp = ['error','Error al procesar su cobro'];
         if ($operation == 'all' || !$operation){
@@ -206,7 +211,7 @@ class ChargesController extends Controller {
                 $idStripe = $resp[1];
                 $cStripe = $resp[2];
             }
-            $resp = $this->generateePayment($time, $uID, $rID, $tpay, $value, $disc,$idStripe,$cStripe);
+            $resp = $this->generateePayment($time, $uID, $rID, $tpay, $value, $disc,$idStripe,$cStripe,$id_coach);
         } else {
           $u_email = $req->input('u_email',null);
           if ($u_email && $oUser->email != $u_email){
@@ -218,7 +223,7 @@ class ChargesController extends Controller {
             $oUser->telefono = $u_phone;
             $oUser->save();
           }
-          return $this->generateStripeLink($time, $uID, $rID, $tpay, $value, $disc,$operation);
+          return $this->generateStripeLink($time, $uID, $rID, $tpay, $value, $disc,$operation,$id_coach);
         }
 
         if ($resp[0] == 'error') {
@@ -233,7 +238,7 @@ class ChargesController extends Controller {
     }
     
     public static function savePayment($date, $uID, $rID, $tpay, $value, $disc,$idStripe,$cStripe){
-        $oUser = \App\Models\User::find($uID);
+        $oUser = User::find($uID);
         if (!$oUser)
           return ['error', 'Usuario no encontrado'];
         $oRate = Rates::find($rID);
@@ -265,12 +270,11 @@ class ChargesController extends Controller {
         return ['OK', $statusPayment,$oCobro->id];
     }
             
-    function generateePayment($time, $uID, $rID, $tpay, $value, $disc=0,$idStripe=null,$cStripe=null) {
-        $month = date('Y-m-d', $time);
-        $oUser = \App\Models\User::find($uID);
+    function generateePayment($time, $uID, $rID, $tpay, $value, $disc=0,$idStripe=null,$cStripe=null,$id_coach=null) {
+      $month = date('Y-m-d', $time);
+        $oUser = User::find($uID);
         if (!$oUser)
             return ['error', 'Usuario no encontrado'];
-
 
         $oRate = Rates::find($rID);
         if (!$oRate)
@@ -307,6 +311,7 @@ class ChargesController extends Controller {
                     ->first();
             if ($oUserRate) {
                 $oUserRate->id_charges = $oCobro->id;
+                $oUserRate->coach_id = $id_coach;
                 $oUserRate->save();
             } else { //si no tenia asignada la tarifa del mes
                 $oUserRate = new UserRates();
@@ -315,6 +320,7 @@ class ChargesController extends Controller {
                 $oUserRate->rate_year = date('Y', $time);
                 $oUserRate->rate_month = date('n', $time);
                 $oUserRate->id_charges = $oCobro->id;
+                $oUserRate->coach_id = $id_coach;
                 $oUserRate->price = $value;
                 $oUserRate->save();
             }
@@ -332,10 +338,10 @@ class ChargesController extends Controller {
         return ['OK', $statusPayment,$oCobro->id];
     }
 
-    function generateStripeLink($time, $uID, $rID, $tpay, $importe, $disc=0,$operation) {
+    function generateStripeLink($time, $uID, $rID, $tpay, $importe, $disc=0,$operation,$id_coach) {
 
         $month = date('Y-m-d', $time);
-        $oUser = \App\Models\User::find($uID);
+        $oUser = User::find($uID);
         if (!$oUser)
             return ['error', 'Usuario no encontrado'];
 
@@ -355,6 +361,7 @@ class ChargesController extends Controller {
                 $newRate->rate_year = date('Y', $auxTime);
                 $newRate->rate_month = date('n', $auxTime);
                 $newRate->id_charges = null;
+                $newRate->coach_id = $id_coach;
                 $newRate->price = $oRate->price;
                 
                 $newRate->save();
@@ -407,6 +414,7 @@ class ChargesController extends Controller {
         }
         
         $time = strtotime($uRate->rate_year.'/'.$uRate->rate_month.'/01');
+        $id_coach = ($request->input('id_coach'));
         $importe = ($request->input('importe'));
         $u_email = ($request->input('u_email'));
         $u_phone = ($request->input('u_phone'));
@@ -428,6 +436,9 @@ class ChargesController extends Controller {
             $oUser->telefono = $u_phone;
             $oUser->save();
         }
+        
+        $uRate->coach_id = $id_coach;
+        $uRate->save();
         
         $data = [date('Y', $time),date('m', $time),$oUser->id,$importe*100,$oRate->id,$disc];
         $sStripe = new \App\Services\StripeService();

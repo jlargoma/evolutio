@@ -30,7 +30,8 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::get('/see-consent/{id}/{type}', 'UsersController@seeConsent');
   Route::get('/downl-consent/{id}/{type}', 'UsersController@downlConsent');
   Route::get('/usuarios/informe/{id}/{tab?}', 'UsersController@informe');
-
+  Route::get('/usuarios/disable/{id}', 'UsersController@disable');
+  Route::get('/usuarios/activate/{id}', 'UsersController@activate');
   Route::get('/usuarios/nuevo', 'UsersController@newCustomer');
   Route::post('/usuarios/nuevo', 'UsersController@saveCustomer');
 
@@ -171,8 +172,6 @@ Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function () {
   Route::get('/usuarios/actualizar/{id}', 'UsersController@actualizar');
   Route::any('/usuarios/delete/{id}', 'UsersController@delete');
   Route::get('/usuarios/actualizarUsuario/{id}', 'UsersController@actualizarUsuario');
-  Route::get('/usuarios/disable/{id}', 'UsersController@disable');
-  Route::get('/usuarios/activate/{id}', 'UsersController@activate');
   Route::post('/usuarios/update', 'UsersController@update');
   Route::post('usuarios/newInforme', 'UsersController@newInforme');
 
