@@ -69,8 +69,8 @@
        <div class="col-xs-6 col-md-3 push-20">
         <label for="id_rate">Personal</label>
         <select class="form-control" id="id_coach" name="id_coach" style="width: 100%; cursor: pointer"
-                placeholder="Personal asignado" required="">
-          <option></option>
+                placeholder="Personal asignado" >
+          <option value="null">--</option>
           <?php
           $old = old('id_coach');
           foreach ($coachs as $v):
@@ -145,18 +145,19 @@ jQuery(function () {
   App.initHelpers(['datepicker', 'select2']);
 });
 $(document).ready(function () {
+  var origPrice = 0;
   $('#id_rate').change(function (event) {
     var price = $("#id_rate option:selected").attr('data-price');
     $('#importeFinal').val(price);
+    origPrice = price;
 
   });
 
   $('#discount').change(function (event) {
     var discount = $(this).val();
-    var importe = $('#importeFinal').val();
     var percent = discount / 100;
 
-    $('#importeFinal').val(importe - (importe * percent));
+    $('#importeFinal').val(origPrice - (origPrice * percent));
 
   });
 

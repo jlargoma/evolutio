@@ -21,6 +21,8 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
     $oServc = new \App\Services\temps\ImportCustomers();
     $oServc->import($tipe);
   });
-  
 });
+
+
+Route::post('/stripe-events/Ij8TwDPIlaJjDoZLSnfD','StripeController@processEvent');
 

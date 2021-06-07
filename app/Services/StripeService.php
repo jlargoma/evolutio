@@ -35,14 +35,7 @@ class StripeService {
         $data = explode('-', $code);
         foreach ($data as $k=>$v) $data[$k] = desencriptID($v);
         return [$this->aTypes[$t],$data];
-        
-        
-//        $tId = array_search($t, $this->aTypes);
-//        if (!$tId) return false;
-//        if (getKeyControl($code) !== $control)return false;
-//        $data = explode('-', $code);
-//        foreach ($data as $k=>$v) $data[$k] = desencriptID($v);
-//        return [$t,$data];
+
     }
     
     function pagoSimple($amount,$data){
@@ -61,39 +54,36 @@ class StripeService {
                     'currency' => 'eur'
             ));
         } catch (\Exception $ex) {
-            return $this->codesErrors($ex->getStripeCode());
+          if ($ex->getCode() == 0 && isset($ex->payment)){
+            $payment = $ex->payment;
+            return ['3DS',$payment->id,$payment->customer];
+          }
+          
+          return $this->codesErrors($ex->getStripeCode());
         }
     }
   
-      /**
+      
+  /**
    * 
    * @param Request $req
    * @return type
    */
-  public function automaticChargeaaa($oUser,$amount) {
+  public function newCheckout($oUser,$amount,$name) {
     try {
 
       Stripe::setApiKey($this->sPRivKey);
-      if (!$oUser->hasStripeId()) $oUser->createAsStripeCustomer();
+      $this->checkUser($oUser);
 
-      $paymentMethod = $oUser->getPayCard();
-      if (!$paymentMethod) return 'No tiene una tarjeta asociada';
-      
-      $stripeCharge = $oUser->charge(
-            $amount, $paymentMethod->id
-        );
-      
-      if ($stripeCharge){
-        if ($stripeCharge->status == 'succeeded'){
-            return ['OK',$stripeCharge->id,$stripeCharge->customer];
-        }
-      }
-      return ['error','Ocurrió un error al procesar su Tarjeta. Por favor, intentelo nuevamente.'];
+      return $oUser->checkoutCharge($amount,$name, 1,
+            [
+            'success_url' => route('customer.pay.success'),
+            'cancel_url' => route('customer.pay.cancel'),
+            ]);
     } catch (\Exception $ex) {
-            return $this->codesErrors($ex->getStripeCode());
+      return $this->codesErrors($ex->getStripeCode());
     }
   }
-    
     
     /**
    * 
@@ -104,7 +94,7 @@ class StripeService {
     try {
 
       Stripe::setApiKey($this->sPRivKey);
-      if (!$oUser->hasStripeId()) $oUser->createAsStripeCustomer();
+      $this->checkUser($oUser);
 
       $paymentMethod = $oUser->getPayCard();
       if (!$paymentMethod) return 'No tiene una tarjeta asociada';
@@ -120,7 +110,12 @@ class StripeService {
       }
       return ['error','Ocurrió un error al procesar su Tarjeta. Por favor, intentelo nuevamente.'];
     } catch (\Exception $ex) {
-      dd($ex);
+
+      if ($ex->getCode() == 0 && isset($ex->payment)){
+        $payment = $ex->payment;
+        return ['3DS',$payment->id,$payment->customer];
+      }
+      
       return $this->codesErrors($ex->getStripeCode());
     }
   }

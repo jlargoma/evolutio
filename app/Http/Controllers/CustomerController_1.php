@@ -23,7 +23,6 @@ class CustomerController extends Controller {
     $data = $sStripe->getPaymentLinkData($type, $token, $control);
     if (!$data) die('error');
       
-    $payment = false;
     $disc = null;
     if (count($data) == 2) {
 
@@ -39,14 +38,12 @@ class CustomerController extends Controller {
           $name .= ' del ' . $data[0];
           $amount = round($data[3]);
           $oUser = User::find($data[2]);
-          $disc  = isset($data[5]) ? $data[5] : 0;
-          $id_coach = isset($data[6]) ? $data[6] : null;
+          $disc = $data[5];
           break;
         case 'nutri': //$dID,$oUser->id,$importe*100,$oRate->id;
         case 'fisio': //$dID,$oUser->id,$importe*100,$oRate->id;
           $oDate = \App\Models\Dates::find($data[0]);
           $uRates = $oDate->uRates;
-          if ($uRates->id_charges) $payment = true;
           if (!$uRates){
             $oDate->delete();
             die('Usuario eliminado');
@@ -81,42 +78,7 @@ class CustomerController extends Controller {
           break;
       }
     }
-    
-    //--------------------------------------------------------------//
-    //--------------------------------------------------------------//
-    $checkout = null;
-    if (!$payment){
-      $checkout = $sStripe->newCheckout($oUser, $amount,$name);
-      if (is_string($checkout)){
-        die($checkout);
-      }
-
-      $oSession = $checkout->jsonSerialize();
-  //    $payment_id = $oSession->id;
-      $iStripe = $oSession['payment_intent'];
-      $cStripe = $oSession['customer'];
-      $price = round($amount / 100, 2);
-      switch ($typeKey) {
-            case 'rate':
-              $time = strtotime($data[0] . '-' . $data[1] . '-01');
-              \App\Models\Stripe3DS::addNew($oUser->id,$iStripe,$cStripe,'generatePayment',
-                      [
-                        'time'=>$time,'rID'=>$data[4], 
-                        'value'=>$price,'disc'=>$disc,'id_coach'=>$id_coach
-                      ]
-              );
-              break;
-            case 'nutri':
-            case 'fisio':
-              \App\Models\Stripe3DS::addNew($oUser->id,$iStripe,$cStripe,'cita',['dID'=>$oDate->id]);
-              break;
-          }
-    }
-    //--------------------------------------------------------------//
-    //--------------------------------------------------------------//
-    //--------------------------------------------------------------//
-
-    return view('customers.payments.stripe_payment', [
+    return view('customers.stripe_payment', [
         'keyStripe' => config('cashier.key'),
         'amount' => $amount,
         'name' => $name,
@@ -126,20 +88,120 @@ class CustomerController extends Controller {
         'items' => $items,
         'disc'=>$disc,
         'email' => $oUser->email,
-        'checkout' => $checkout,
-        'payment' => $payment,
     ]);
   }
 
+  /*
+   * 
+   */
+  public function pagar(Request $request) {
 
-  public function showResult(Request $request) {
+    $type = $request->input('data_1');
+    $token = $request->input('data_2');
+    $control = $request->input('data_3');
+    $sStripe = new \App\Services\StripeService();
+    $data = $sStripe->getPaymentLinkData($type, $token, $control);
+    $disc = 0;
+    if (!$data)
+      return back()->withErrors(['Error al efectuar el pago (1)']);
+
+    if (count($data) != 2)
+      return back()->withErrors(['Error al efectuar el pago (2)']);
+
+    $type = $data[0];
+    $data = $data[1];
+    //-------------------------------------------------------------------//
+    switch ($type) {
+      case 'rate': //$year,$month,$id_user,$importe*100,$rate,$disc,$id_coach
+        $oRate = \App\Models\Rates::find($data[4]);
+        if (!$oRate)  return back()->withErrors(['Item no encontrado']);
+        $amount = round($data[3]);
+        $time = strtotime($data[0] . '-' . $data[1] . '-01');
+        $uID  = $data[2];
+        $oUser = User::find($uID);
+        $disc  = isset($data[5]) ? $data[5] : 0;
+        $id_coach = isset($data[6]) ? $data[6] : null;
+        break;
+      case 'nutri': //$dID,$oUser->id,$importe*100,$oRate->id;
+      case 'fisio':
+        $oDate = \App\Models\Dates::find($data[0]);
+        if (!$oDate)   return back()->withErrors(['Item no encontrado']);
+        $oUser = $uRates->user;
+        $oRate = $oDate->uRates;
+        if (!$uRates) die('Usuario eliminado');
+        $amount = round($data[2]);
+        $uID   = $oUser->user_id;
+        break;
+    }
+    
+    if (!$oUser) die('Usuario eliminado');
+    
+    $stripeResp = $sStripe->pagoSimple($amount, $request->all());
+    dd($stripeResp);
+    //-------------------------------------------------------------------//
+    //--- TARJETA ---------------------------------------//
+    $CardService = new \App\Services\CardService();
+    dd($request->all());
+    $resp = $CardService->processCard($oUser, $request);
+    if ($resp !== 'OK')  return back()->withErrors($resp)->withInput();
+    //--- COBRAR POR STRIPE ---------------------------------------//
+    $sStripe = new \App\Services\StripeService();
+    $resp = $sStripe->automaticCharge($oUser,round($value*100));
+    if ( $resp[0] !== 'OK'){
+      if ( $resp[0] == '3DS'){
+        //-------------------------------------------------------------/
+        switch ($type) {
+          case 'rate':
+            \App\Models\Stripe3DS::addNew($uID,$resp[1],$resp[2],'generatePayment',
+                    [
+                      'time'=>$time,'rID'=>$data[4], 
+                      'value'=>$amount,'disc'=>$disc,'id_coach'=>$id_coach
+                    ]
+            );
+            break;
+          case 'nutri':
+          case 'fisio':
+            \App\Models\Stripe3DS::addNew($uID,$resp[1],$resp[2],'cita',['dID'=>$oDate->id]);
+            break;
+        }
+        return route(
+             'cashier.payment',
+             [$resp[1],'redirect'=>'resultado']
+        );
+        //-------------------------------------------------------------/
+      } else {
+          return back()->withErrors([$resp[1]]);
+          }
+    }
+    $idStripe = $resp[1];
+    $cStripe = $resp[2];
+    //----------------------------------------------------------------/
+    //----------------------------------------------------------------/
+    $amount = round($amount / 100, 2);
+    switch ($type) {
+      case 'rate': //$year,$month,$id_user,$importe*100,$rate
+        $ChargesService = new \App\Services\ChargesService();
+        $response = $ChargesService->generatePayment(
+                $time, $uID, $oRate->id, 'card', $amount, $disc, $idStripe, $cStripe,$id_coach
+                );
+        break;
+      case 'nutri': //$dID,$oUser->id,$importe*100,$oRate->id;
+      case 'fisio':
+        $oDate = \App\Models\Dates::find($data[0]);
+        $ChargesService = new \App\Services\ChargesDateService();
+        $response = $ChargesService->generatePayment($oDate,'card',$amount,$idStripe, $cStripe);
+        break;
+    }
+
+    if ($response[0] != 'OK') return back()->withErrors([$response[1]]);
+    //----------------------------------------------------------------/
+    //----------------------------------------------------------------/
+
+    return back()->with(['success','Pagado.!']);
+  }
+
+  public function showResult() {
     return view('customers.message');
-  }
-  public function paymentSuccess(Request $request) {
-    return view('customers.payments.stripe_response',['success'=>true,'cancel'=>false]);
-  }
-  public function paymentCancel(Request $request) {
-    return view('customers.payments.stripe_response',['success'=>false,'cancel'=>true]);
   }
   
   public function signConsentSave(Request $request,$code,$control) {
@@ -239,7 +301,5 @@ class CustomerController extends Controller {
     return $response;
   }
 
-
-  
 
 }

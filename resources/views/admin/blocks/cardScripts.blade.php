@@ -67,8 +67,6 @@
                             continue;
                         result += num[i];
                     }
-                    
-                    console.log(cc_expide_mm,cc_expide_yy);
                     $('#cc_expide_mm').val(cc_expide_mm);
                     $('#cc_expide_yy').val(cc_expide_yy);
                     return result;

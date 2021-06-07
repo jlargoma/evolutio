@@ -94,45 +94,39 @@ class BonosController extends Controller {
     $value = $oBono->price;
     $idStripe=null;$cStripe=null;
     if ($tpay == 'card'){
-      $cc_number = $req->input('cc_number', null);
-      $cc_expide_mm = $req->input('cc_expide_mm', null);
-      $cc_expide_yy = $req->input('cc_expide_yy', null);
-      $cc_cvc = $req->input('cc_cvc', null);
-      $cardLoaded = $req->input('cardLoaded', null);
       $oUser = \App\Models\User::find($uID);
       $sStripe = new \App\Services\StripeService();
-      /***********************************/
-      /** GUARDAR TARJETA **/
-      /***********************************/
-      if ($cardLoaded == 0){
-          $validate = \App\Services\StripeCardValidation::validate($req);
-          if ($validate !== 'OK'){
-              return redirect()->back()
-                      ->withErrors($validate)
-                      ->withInput();
-          }
-
-          $resp = $sStripe->subscription_changeCard($oUser, $cc_number, $cc_expide_mm, $cc_expide_yy, $cc_cvc);
-          if ( $resp != 'updated'){
-              return redirect()->back()
-                      ->withErrors($resp)
-                      ->withInput();
-          }
+      //--- NUEVA TARJETA ---------------------------------------//
+      if ($req->input('cardLoaded') == 0){
+        $CardService = new \App\Services\CardService();
+        $resp = $CardService->processCard($oUser, $req);
+        if ($resp !== 'OK')  return back()->withErrors($resp)->withInput();
       }
       /***********************************/
       /** COBRAR POR STRIPE **/
       /***********************************/
       $resp = $sStripe->automaticCharge($oUser,round($value*100));
       if ( $resp[0] != 'OK'){
+         if ( $resp[0] == '3DS'){
+           \App\Models\Stripe3DS::addNew($oUser->id,$resp[1],$resp[2],'asignBono',['bono'=>$oBono->id,'tpay'=>$tpay]);
+          
+          return redirect()->route(
+                    'cashier.payment',
+                    [$resp[1],'redirect'=>'resultado']
+              );
+        
+         } else {
           return redirect()->back()
                   ->withErrors([$resp[1]])
                   ->withInput();
+         }
       }
       $idStripe = $resp[1];
       $cStripe = $resp[2];
     }
     
-    $resp = $this->asignBono($oUser,$oBono,$tpay,$idStripe,$cStripe);
+    $oServ = new \App\Services\BonoService();
+    $resp = $oServ->asignBono($oUser,$oBono,$tpay,$idStripe,$cStripe);
 
     if ($resp[0] == 'error') {
         return redirect()->back()->withErrors([$resp[1]]);
@@ -154,47 +148,6 @@ class BonosController extends Controller {
     }
     return redirect()->back()->with('success', $resp[1]);
   }
-  
-  function asignBono($oUser,$oBono,$tpay,$idStripe=null,$cStripe=null){
-    $date = date('Y-m-d');
-    //BEGIN PAYMENTS
-        $oCobro = new \App\Models\Charges();
-        $oCobro->id_user = $oUser->id;
-        $oCobro->date_payment = $date;
-        $oCobro->id_rate = 0;
-        $oCobro->type_payment = $tpay;
-        $oCobro->type = 1;
-        $oCobro->import = $oBono->price;
-        $oCobro->discount = 0;
-        $oCobro->type_rate = 0;
-        $oCobro->bono_id = $oBono->id;
-        $oCobro->id_stripe = $idStripe;
-        $oCobro->customer_stripe = $cStripe;
-        $oCobro->save();
-    //END PAYMENTS
-        
-        $oUsrBono = $oBono->getBonoUser($oUser->id);
-        if ($oUsrBono){
-          $oUsrBono->qty = $oUsrBono->qty +$oBono->qty;
-        } else {
-          $oUsrBono = new UserBonos();
-          $oUsrBono->user_id   = $oUser->id;
-          $oUsrBono->rate_type = $oBono->rate_type;
-          $oUsrBono->rate_id   = $oBono->rate_id;
-          $oUsrBono->qty = $oBono->qty;
-        }
-
-        $oUsrBono->save(); 
-        $oUsrBono->saveLogIncr($oBono,$oCobro->id);
-    $statusPayment = 'Pago realizado correctamente, por ' . payMethod($tpay);
-    /*************************************************************/
-    $sent = MailController::sendEmailPayBono($oUser, $oBono,$tpay);
-    return ['OK',$statusPayment];
-    if ($sent == 'OK') return ['OK', $statusPayment,$oCobro->id];
-    else return ['error', $sent,$oCobro->id];
-  }
-
-
   
   /**
    * 

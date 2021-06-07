@@ -26,8 +26,8 @@ $oBonoLst = $oBonoLst[1];
         <div class="col-md-5">
           <label for="id_rate">Personal</label>
           <select class="form-control" id="id_coach" name="id_coach" style="width: 100%; cursor: pointer"
-                  placeholder="Personal asignado" required="">
-            <option></option>
+                  placeholder="Personal asignado" >
+            <option value="null">--</option>
             <?php
             $old = old('id_coach');
             foreach ($coachs as $v):

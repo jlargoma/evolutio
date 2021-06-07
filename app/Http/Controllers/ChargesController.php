@@ -8,7 +8,9 @@ use \Carbon\Carbon;
 use App\Models\User;
 use App\Models\Rates;
 use App\Models\UserRates;
+use App\Models\UserBonos;
 use App\Models\Charges;
+use App\Services\ChargesService;
 
 class ChargesController extends Controller {
 
@@ -81,77 +83,73 @@ class ChargesController extends Controller {
       $value = $req->input('importe', 0);
       $disc = $req->input('discount', '0');
       $id_coach = $req->input('id_coach', null);
-        $idStripe=null;$cStripe=null;
-        if ($tpay == 'card'){
-            $cc_number = $req->input('cc_number', null);
-            $cc_expide_mm = $req->input('cc_expide_mm', null);
-            $cc_expide_yy = $req->input('cc_expide_yy', null);
-            $cc_cvc = $req->input('cc_cvc', null);
-            $cardLoaded = $req->input('cardLoaded', null);
-            $oUser = User::find($uID);
-            $sStripe = new \App\Services\StripeService();
-
-            /***********************************/
-            /** GUARDAR TARJETA **/
-            /***********************************/
-            if ($cardLoaded == 0){
-                $validate = \App\Services\StripeCardValidation::validate($req);
-                if ($validate !== 'OK'){
-                    return back()
-                            ->withErrors($validate)
-                            ->withInput();
-                }
-            
-                $resp = $sStripe->subscription_changeCard($oUser, $cc_number, $cc_expide_mm, $cc_expide_yy, $cc_cvc);
-                if ( $resp != 'updated'){
-                    return back()
-                            ->withErrors($resp)
-                            ->withInput();
-                }
-            }
-            /***********************************/
-            /** COBRAR POR STRIPE **/
-            /***********************************/
-            $resp = $sStripe->automaticCharge($oUser,round($value*100));
-            if ( $resp[0] != 'OK'){
-                return back()
-                        ->withErrors([$resp[1]])
-                        ->withInput();
-            }
-            $idStripe = $resp[1];
-            $cStripe = $resp[2];
+      $idStripe=null;$cStripe=null;
+      if ($tpay == 'card'){
+         $oUser = User::find($uID);
+        //--- NUEVA TARJETA ---------------------------------------//
+        if ($req->input('cardLoaded') == 0){
+          $CardService = new \App\Services\CardService();
+          $resp = $CardService->processCard($oUser, $req);
+          if ($resp !== 'OK')  return back()->withErrors($resp)->withInput();
         }
-        
-        if ($tpay == 'bono'){
-          $oDates = \App\Models\Dates::where('id_user_rates',$id_uRate)->first();
-          if (!$oDates) 
-            return back()->withErrors(['Los Bonos sólo aplican a Citas'])->withInput();
-          
-          $bonoID = $req->input('id_bono', 0);
-          $UserBonos = UserBonos::find($bonoID);
-          if (!$UserBonos) return back()->withErrors(['Bono no encontrado'])->withInput();
+        //--- COBRAR POR STRIPE ---------------------------------------//
+        $sStripe = new \App\Services\StripeService();
+        $resp = $sStripe->automaticCharge($oUser,round($value*100));
+        if ( $resp[0] !== 'OK'){
+          if ( $resp[0] == '3DS'){
+            \App\Models\Stripe3DS::addNew($oUser->id,$resp[1],$resp[2],'generatePayment',
+                    [
+                      'time'=>$time,
+                      'rID'=>$rID, 
+                      'value'=>$value, 
+                      'disc'=>$disc,
+                      'id_coach'=>$id_coach  
+                    ]);
+            return redirect()->route(
+                     'cashier.payment',
+                     [$resp[1],'redirect'=>'resultado']
+               );
 
-          $resp = $UserBonos->check($uID);
-          if ($resp != 'OK') 
-              return back()
-                        ->withErrors([$resp])
-                        ->withInput();
-
-          
-          $value = 0;
+          } else {
+           return redirect()->back()
+                   ->withErrors([$resp[1]])
+                   ->withInput();
+          }
         }
+        $idStripe = $resp[1];
+        $cStripe = $resp[2];
+      } // END CARD
+      
+      if ($tpay == 'bono'){
+        $oDates = \App\Models\Dates::where('id_user_rates',$id_uRate)->first();
+        if (!$oDates) 
+          return back()->withErrors(['Los Bonos sólo aplican a Citas'])->withInput();
+
+        $bonoID = $req->input('id_bono', 0);
+        $UserBonos = UserBonos::find($bonoID);
+        if (!$UserBonos) return back()->withErrors(['Bono no encontrado'])->withInput();
+
+        $resp = $UserBonos->check($uID);
+        if ($resp != 'OK') 
+            return back()->withErrors([$resp])->withInput();
+
+        $value = 0;
+      }
             
-        $resp = $this->generateePayment($time, $uID, $rID, $tpay, $value, $disc,$idStripe,$cStripe,$id_coach);
+      $ChargesService = new ChargesService();
+      $resp = $ChargesService->generatePayment(
+              $time, $uID, $rID, $tpay, $value, 
+              $disc,$idStripe,$cStripe,$id_coach);
        
-        if ($resp[0] == 'error') {
-            return back()->withErrors([$resp[1]]);
-        }
-        if ($tpay == 'bono'){
-          
-          $UserBonos->usar($resp[2],$oDates->date_type,$oDates->date);
-        }
-        
-        return redirect('/admin/update/cobro/'.$resp[2])->with('success', $resp[1]);
+      if ($resp[0] == 'error') {
+          return back()->withErrors([$resp[1]]);
+      }
+      if ($tpay == 'bono'){
+
+        $UserBonos->usar($resp[2],$oDates->date_type,$oDates->date);
+      }
+
+      return redirect('/admin/update/cobro/'.$resp[2])->with('success', $resp[1]);
     }
 
     public function chargeUser(Request $req) {
@@ -173,45 +171,43 @@ class ChargesController extends Controller {
         if ($operation == 'all' || !$operation){
             $idStripe=null;$cStripe=null;
             if ($tpay == 'card'){
-                 
-                $cc_number = $req->input('cc_number', null);
-                $cc_expide_mm = $req->input('cc_expide_mm', null);
-                $cc_expide_yy = $req->input('cc_expide_yy', null);
-                $cc_cvc = $req->input('cc_cvc', null);
-                $cardLoaded = $req->input('cardLoaded', null);
-                
-                $sStripe = new \App\Services\StripeService();
-                
-                /***********************************/
-                /** GUARDAR TARJETA **/
-                /***********************************/
-                if ($cardLoaded == 0){
-                    $validate = \App\Services\StripeCardValidation::validate($req);
-                    if ($validate !== 'OK'){
-                        return back()
-                                ->withErrors($validate)
-                                ->withInput();
-                    }
-                    $resp = $sStripe->subscription_changeCard($oUser, $cc_number, $cc_expide_mm, $cc_expide_yy, $cc_cvc);
-                    if ( $resp != 'updated'){
-                        return back()
-                                ->withErrors([$resp])
-                                ->withInput();
-                    }
-                }
-                /***********************************/
-                /** COBRAR POR STRIPE **/
-                /***********************************/
-                $resp = $sStripe->automaticCharge($oUser,round($value*100));
-                if ( $resp[0] != 'OK'){
-                    return back()
-                            ->withErrors([$resp])
-                            ->withInput();
-                }
-                $idStripe = $resp[1];
-                $cStripe = $resp[2];
-            }
-            $resp = $this->generateePayment($time, $uID, $rID, $tpay, $value, $disc,$idStripe,$cStripe,$id_coach);
+              //--- NUEVA TARJETA ---------------------------------------//
+              if ($req->input('cardLoaded') == 0){
+                $CardService = new \App\Services\CardService();
+                $resp = $CardService->processCard($oUser, $req);
+                if ($resp !== 'OK')  return back()->withErrors($resp)->withInput();
+              }
+              //--- COBRAR POR STRIPE ---------------------------------------//
+              $sStripe = new \App\Services\StripeService();
+              $resp = $sStripe->automaticCharge($oUser,round($value*100));
+              if ( $resp[0] !== 'OK'){
+                if ( $resp[0] == '3DS'){
+                    \App\Models\Stripe3DS::addNew($oUser->id,$resp[1],$resp[2],'generatePayment',
+                            [
+                              'time'=>$time,
+                              'rID'=>$rID, 
+                              'value'=>$value, 
+                              'disc'=>$disc,
+                              'id_coach'=>$id_coach  
+                            ]);
+                    return redirect()->route(
+                             'cashier.payment',
+                             [$resp[1],'redirect'=>'resultado']
+                       );
+
+                  } else {
+                   return redirect()->back()
+                           ->withErrors([$resp[1]])
+                           ->withInput();
+                  }
+              }
+              $idStripe = $resp[1];
+              $cStripe = $resp[2];
+            } // END CARD
+            
+            $ChargesService = new ChargesService();
+            $resp = $ChargesService->generatePayment($time, $uID, $rID, $tpay, $value, $disc,$idStripe,$cStripe,$id_coach);
+            
         } else {
           $u_email = $req->input('u_email',null);
           if ($u_email && $oUser->email != $u_email){
@@ -232,10 +228,6 @@ class ChargesController extends Controller {
         return back()->with('success', $resp[1]);
     }
 
-    public static function savePaymentRate($time, $uID, $rID, $tpay, $value, $disc,$idStripe,$cStripe){
-        $objet = new ChargesController();
-        return $objet->generateePayment($time, $uID, $rID, $tpay, $value, $disc,$idStripe,$cStripe);
-    }
     
     public static function savePayment($date, $uID, $rID, $tpay, $value, $disc,$idStripe,$cStripe){
         $oUser = User::find($uID);
@@ -266,77 +258,11 @@ class ChargesController extends Controller {
         //END PAYMENTS
         $statusPayment = 'Pago realizado correctamente, por ' . payMethod($tpay);
         /*************************************************************/
-        MailController::sendEmailPayRate($dataMail, $oUser, $oRate);
+        \App\Services\MailsService::sendEmailPayRate($dataMail, $oUser, $oRate);
         return ['OK', $statusPayment,$oCobro->id];
     }
             
-    function generateePayment($time, $uID, $rID, $tpay, $value, $disc=0,$idStripe=null,$cStripe=null,$id_coach=null) {
-      $month = date('Y-m-d', $time);
-        $oUser = User::find($uID);
-        if (!$oUser)
-            return ['error', 'Usuario no encontrado'];
 
-        $oRate = Rates::find($rID);
-        if (!$oRate)
-            return ['error', 'Tarifa no encontrada'];
-        $dataMail = [
-            'fecha_pago' => $month,
-            'type_payment' => $tpay,
-            'importe' => $value,
-        ];
-        if(!$disc) $disc = 0;
-        //BEGIN PAYMENTS MONTH
-        for ($i = 0; $i < $oRate->mode; $i++) {
-
-            $oCobro = new Charges();
-            $oCobro->id_user = $oUser->id;
-            $oCobro->date_payment = date('Y-m-d');
-            $oCobro->id_rate = $oRate->id;
-            $oCobro->type_payment = $tpay;
-            $oCobro->type = 1;
-            $oCobro->import = $value;
-            $oCobro->discount = $disc;
-            $oCobro->type_rate = $oRate->type;
-            $oCobro->id_stripe = $idStripe;
-            $oCobro->customer_stripe = $cStripe;
-            $oCobro->save();
-
-            /**************************************************** */
-
-            $oUserRate = UserRates::where('id_user', $oUser->id)
-                    ->where('id_rate', $oRate->id)
-                    ->where('rate_month', date('n', $time))
-                    ->where('rate_year', date('Y', $time))
-                    ->whereNull('id_charges')
-                    ->first();
-            if ($oUserRate) {
-                $oUserRate->id_charges = $oCobro->id;
-                $oUserRate->coach_id = $id_coach;
-                $oUserRate->save();
-            } else { //si no tenia asignada la tarifa del mes
-                $oUserRate = new UserRates();
-                $oUserRate->id_user = $oUser->id;
-                $oUserRate->id_rate = $oRate->id;
-                $oUserRate->rate_year = date('Y', $time);
-                $oUserRate->rate_month = date('n', $time);
-                $oUserRate->id_charges = $oCobro->id;
-                $oUserRate->coach_id = $id_coach;
-                $oUserRate->price = $value;
-                $oUserRate->save();
-            }
-            /**************************************************/
-            //Next month
-            $time = strtotime($month . ' +1 month');
-            $month = date('Y-m-d', $time);
-            $value = 0; //solo se factura el primer mes
-            $disc = 0; //solo se factura el primer mes
-        }
-        //END PAYMENTS MONTH
-        $statusPayment = 'Pago realizado correctamente, por ' . payMethod($tpay);
-        /*************************************************************/
-        MailController::sendEmailPayRate($dataMail, $oUser, $oRate);
-        return ['OK', $statusPayment,$oCobro->id];
-    }
 
     function generateStripeLink($time, $uID, $rID, $tpay, $importe, $disc=0,$operation,$id_coach) {
 
@@ -375,7 +301,7 @@ class ChargesController extends Controller {
         //END PAYMENTS MONTH
         /************************************************************** */
         
-        $data = [date('Y', $time),date('m', $time),$uID,$importe*100,$rID,$disc];
+        $data = [date('Y', $time),date('m', $time),$uID,$importe*100,$rID,$disc,$id_coach];
         $sStripe = new \App\Services\StripeService();
         $pStripe = url($sStripe->getPaymentLink('rate',$data));
         switch ($operation){

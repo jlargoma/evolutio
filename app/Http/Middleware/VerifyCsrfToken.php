@@ -15,5 +15,6 @@ class VerifyCsrfToken extends Middleware
         '/offert/payment/bono',
         '/changeActiveYear',
         'stripe/*',
+        'stripe-events/*',
     ];
 }
