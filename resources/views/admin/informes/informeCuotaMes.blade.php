@@ -38,7 +38,7 @@
                 @endforeach
                         </div>
   
-                    <div class="col-md-8 col-xs-12 push-20">
+                    <div class="col-md-6 col-xs-12 push-20">
                         <table class="table table-striped table-header-bg">
                             <thead>
                                 <tr>
@@ -67,23 +67,35 @@
                             </tfoot>
                         </table>
                     </div>
-                   <div class="col-md-4 col-xs-12 push-20">
+                   <div class="col-md-6 col-xs-12 push-20">
                         <table class="table table-striped table-header-bg">
                             <thead>
                                 <tr>
                                     <th class="text-left bg-complete font-w800">Familia</th>
                                     <th class="text-center bg-complete font-w800">Total</th>
+                                    <th class="text-center bg-complete font-w800">Banco</th>
+                                    <th class="text-center bg-complete font-w800">Visa</th>
+                                    <th class="text-center bg-complete font-w800">Cash</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                 <?php $total = 0; ?>
+                                 <?php $total = $tbanco = $tcard = $tcash = 0; ?>
                                 @foreach($byTypeRate as $rt=>$import)
                             <tr>
                                 <td class="text-left">
                                     <?php echo (isset($aRType[$rt])) ? $aRType[$rt] : ' - '; ?>
                                 </td>
                                 <td class="text-center">
-                                    <?php $total += $import; echo moneda($import); ?>
+                                    <?php $total += $import['t']; echo moneda($import['t']); ?>
+                                </td>
+                                <td class="text-center">
+                                    <?php $tbanco += $import['banco']; echo moneda($import['banco']); ?>
+                                </td>
+                                <td class="text-center">
+                                    <?php $tcard += $import['card']; echo moneda($import['card']); ?>
+                                </td>
+                                <td class="text-center">
+                                    <?php $tcash += $import['cash']; echo moneda($import['cash']); ?>
                                 </td>
                             </tr>
                             @endforeach
@@ -92,6 +104,9 @@
                                 <tr>
                                     <th class="text-left bg-complete font-w800">Total</th>
                                     <th class="text-center bg-complete font-w800">{{moneda($total)}}</th>
+                                    <th class="text-center bg-complete font-w800">{{moneda($tbanco)}}</th>
+                                    <th class="text-center bg-complete font-w800">{{moneda($tcard)}}</th>
+                                    <th class="text-center bg-complete font-w800">{{moneda($tcash)}}</th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -151,4 +166,9 @@
       });
 
     </script>
+    <style>
+      .table-striped tr:hover td{
+        background-color: #dedede;
+      }
+    </style>
 @endsection

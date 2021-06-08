@@ -7,7 +7,8 @@ use App\Models\UserRates;
 use App\Models\Dates;
 use Illuminate\Support\Facades\Mail;
 use Log;
-
+use App\Services\LogsService;
+include_once app_path().'/Functions.php';
 /**
  * /checkcrom/Remember/appointment
  */
@@ -27,6 +28,7 @@ class RememberAppointment extends Command {
    */
   protected $description = 'Remember Appointment by email';
 
+  private $sLog;
   /**
    * Create a new command instance.
    *
@@ -43,23 +45,31 @@ class RememberAppointment extends Command {
    */
   public function handle() {
     try {
+      $this->sLog = new LogsService('schedule','Remember Cita');
       $tomorrow = new \DateTime('tomorrow');
       $date = $tomorrow->format('Y-m-d');
+       
       $day = $tomorrow->format('d').' de '.getMonthSpanish($tomorrow->format('n'),false);
       $lst = Dates::whereNull('blocked')
               ->whereDate('date',$date)->get();
-      foreach ($lst as $item){
-        $uRate = $item->uRates;
-        if ($uRate){
-          $price = ($item->date_type == 'pt') ? null : $uRate->price;
-          $sent = $this->sendEmail($item, $uRate->user, $uRate->rate,$item->coach,$price,$day);
-          if (!$sent){
-            Log::error($sent);
+      if (count($lst)>0){
+        foreach ($lst as $item){
+          $uRate = $item->uRates;
+          if ($uRate){
+            $price = ($item->date_type == 'pt') ? null : $uRate->price;
+            $sent = $this->sendEmail($item, $uRate->user, $uRate->rate,$item->coach,$price,$day);
+            if ($sent == 'OK')
+              $this->sLog->info('Enviado ',$item->id);
+            else
+              $this->sLog->error('Enviar: '.$sent,$item->id);
+            
           }
         }
+      } else {
+        $this->sLog->info('No hay citas para '.$date);
       }
     } catch (\Exception $e) {
-      Log::error("Error creando suscripciones");
+      $this->sLog->error('Exception: '.$e->getMessage());
     }
   }
   

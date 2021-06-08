@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use App\Models\UsersSuscriptions;
 use App\Models\UserRates;
 use Log;
+use App\Services\LogsService;
 
 class Subscriptions extends Command {
 
@@ -23,6 +24,9 @@ class Subscriptions extends Command {
    */
   protected $description = 'Create monthly rates';
 
+    
+  private $sLog;
+    
   /**
    * Create a new command instance.
    *
@@ -39,9 +43,14 @@ class Subscriptions extends Command {
    */
   public function handle() {
     try {
+      $this->sLog = new LogsService('schedule','Suscripciones');
       $lst = UsersSuscriptions::all();
       $year = date('Y');
       $month = date('m');
+      if (count($lst)==0)
+        $this->sLog->info('No hay registros para '.$month.'/'.$year);
+      
+      $creadas = $existentes = [];
       foreach ($lst as $s){
         $uID = $s->id_user;
         $rID = $s->id_rate;
@@ -58,11 +67,16 @@ class Subscriptions extends Command {
           $uRate->rate_year = $year;
           $uRate->rate_month = $month;
           $uRate->save();
-
+          $creadas[] = $uRate->id;
+        } else {
+          $existentes[] = $uRate->id;
         }
       }
+        if (count($creadas)>0)  $this->sLog->info('tarifa creadas ',$creadas);
+        if (count($existentes)>0)  $this->sLog->info('tarifa existentes ',$existentes);
     } catch (\Exception $e) {
-    Log::error("Error creando suscripciones");
+      $this->sLog->error('Exception: '.$e->getMessage());
+//    Log::error("Error creando suscripciones");
     }
   }
 }

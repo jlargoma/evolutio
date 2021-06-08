@@ -264,19 +264,27 @@ class InformesController extends Controller {
         $byRate = [];
         $byRateT = [];
         $aRType = \App\Models\TypesRate::all()->pluck('name','id')->toArray();
-        $aR_RateType = \App\Models\Rates::all()->pluck('type','id')->toArray();
-        foreach ($aR_RateType as $k=>$v){
-          $byRateT[$v] = 0;
+        //rate types
+        $aRrt = \App\Models\Rates::all()->pluck('type','id')->toArray();
+        foreach ($aRrt as $k=>$v){
+          $byRateT[$v] = [
+              't'=>0,
+              'banco'=>0,
+              'cash'=>0,
+              'card'=>0,
+          ];
         }
         
-        foreach ($data['charges'] as $charges){
-          if ($charges->id_rate>0){
-            if (!isset($byRate[$charges->id_rate]))
-                $byRate[$charges->id_rate] = 0;
+        foreach ($data['charges'] as $c){
+          if ($c->id_rate>0){
             
-            $byRate[$charges->id_rate] += $charges->import;
-            if (isset($aR_RateType[$charges->id_rate])){
-              $byRateT[$aR_RateType[$charges->id_rate]] += $charges->import;
+            if (!isset($byRate[$c->id_rate]))
+                $byRate[$c->id_rate] = 0;
+            
+            $byRate[$c->id_rate] += $c->import;
+            if (isset($aRrt[$c->id_rate])){
+              $byRateT[$aRrt[$c->id_rate]]['t'] += $c->import;
+              $byRateT[$aRrt[$c->id_rate]][$c->type_payment] += $c->import;
             }
           }
         }
@@ -291,6 +299,7 @@ class InformesController extends Controller {
           if (!isset($byBono[$charges->bono_id]))
               $byBono[$charges->bono_id] = 0;
           $byBono[$charges->bono_id] += $charges->import;
+          $payType[$charges->type_payment] += $charges->import;
         }
         //----  END: BONOS        --------------------------------//
         //----------------------------------------------------------//
