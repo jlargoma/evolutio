@@ -59,32 +59,25 @@ class Expenses extends Model
     
   static function getTypesOrderned(){
     $types =  [
-      'alquiler'=>"ALQUILER INMUEBLES",
-      'comisiones'=>"COMISIONES COMERCIALES", // COMISIONES COMERCIALES</option>
-      'comision_tpv'=>"COMSION TPV",
-      'equip_deco' => 'EQUIPACION Y DECORACION',
-//      'decoracion'=>"DECORACIóN", // DECORACION</option>
-//      'equi_vivienda'=>"EQUIPAMIENTO VIVIENDA", // EQUIPAMIENTO VIVIENDA</option>
-      'bancario'=>"GASTOS BANCARIOS", // GASTOS BANCARIOS</option>
-      'impuestos'=>"IMPUESTOS", // IMPUESTOS</option>
-      'lavanderia'=>"LAVANDERIA", // LAVANDERIA</option>
-      'limpieza'=>"LIMPIEZA", // LIMPIEZA</option>
-      'publicidad'=>"MARKETING Y PUBLICIDAD", // MARKETING Y PUBLICIDAD</option>
-//      'mensaje'=>"MENSAJERIA", // MENAJE</option>
-      'prop_pay'=>"PAGO PROPIETARIOS", //PAGO PROPIETARIO</option>
-      'regalo_bienv'=>"AMENITIES", // REGALO BIENVENIDA</option>
-      'mantenimiento'=>"REPARACION Y CONSERVACION", // REPARACION Y CONSERVACION</option>
-      'sabana_toalla'=>"TEXTIL Y  MENAJE", // SABANAS Y TOALLAS</option>
-      'seg_social'=>"SEG SOCIALES", // SEG SOCIALES</option>
-      'serv_prof'=>"SERVICIOS PROF INDEPENDIENTES", // SERVICIOS PROF INDEPENDIENTES</option>
-      'sueldos'=>"SUELDOS Y SALARIOS", // SUELDOS Y SALARIOS</option>
-      'suministros'=>"SUMINISTROS", 
-      'seguros'=>"PRIMAS SEGUROS", 
-      'representacion'=>"GASTOS REPRESENTACION", 
-      'amenities'=>"AMENITIES", 
-      'varios'=>"VARIOS", // VARIOS</option>
-      'excursion' => 'PROVEEDORES EXCURSIÓN',
-        
+"SUELDOS Y SEG SOCIAL 
+% COMISION GYM
+% COMISION FISIO
+% COMISION COMERCIALES
+ALQUILER NAVE  Y COMUNIDAD
+SUMINISTROS
+RENTING FISIOTERAPIA
+GTO MAT. FISIO
+GTO MAT DEPORTIVO
+GTO BANCARIOS
+GTO TARJETA VISA
+DECORACION
+SOFTWARE
+GESTORÍA
+SEGUROS  
+GASTOS REPRESENTACION
+MARKETING Y PUBLICIDAD
+MENSAJERIA
+OTROS"
     ];
     
     $aux = [];

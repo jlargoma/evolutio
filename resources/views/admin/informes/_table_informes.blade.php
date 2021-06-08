@@ -10,6 +10,7 @@
             <th class="text-center">Importe</th>
             <th class="text-center">MES</th>
             <th class="text-center">Forma pago</th>
+            <th class="text-center">ENTRENADOR/FISIO</th>
         </tr>
         </thead>
         <tbody>
@@ -32,11 +33,13 @@
             <td class="text-center">
                 <b>METALICO</b>
             </td>
+            <td class="text-center">
+            </td>
         </tr>
         <?php endforeach ?>
 		<?php foreach ($charges as $charge): ?>
         <tr>
-            <td class="text-center sorting_disabled"></td>
+            <td class="text-center sorting_disabled">{{$charge->id}}</td>
             <td class="text-center"><b>{{dateMin($charge->date_payment)}}</b></td>
             <td class="text-center">
                 <?php
@@ -76,6 +79,16 @@
                     echo 'TARJETA';
                     break;
                 }
+                ?>
+            </td>
+            <td class="text-center">
+                <?php 
+                $coach = '--';
+                if (isset($aCargesCoachs[$charge->id])){
+                  $aux = $aCargesCoachs[$charge->id];
+                  $coach = isset($aCoachs[$aux]) ? $aCoachs[$aux]: '--'; 
+                }
+                echo $coach;
                 ?>
             </td>
         </tr>

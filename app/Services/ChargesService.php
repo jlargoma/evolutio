@@ -35,6 +35,7 @@ class ChargesService {
   function generatePayment($time, $uID, $rID, $tpay, $value, $disc = 0, $idStripe = null, $cStripe = null, $id_coach = null) {
     $month = date('Y-m-d', $time);
     $oUser = User::find($uID);
+    if ($id_coach == 'null') $id_coach = null;
     if (!$oUser)
       return ['error', 'Usuario no encontrado'];
 

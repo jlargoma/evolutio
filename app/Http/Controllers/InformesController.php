@@ -29,7 +29,7 @@ class InformesController extends Controller {
      * @param type $type_payment
      * @return type
      */
-    private function getCharges($year,$month,$day,$search=null,$type_payment=null,$rate=null) {
+    private function getCharges($year,$month,$day,$search=null,$type_payment=null,$rate=null,$f_coach=null) {
         $sql_charges = Charges::where('import', '!=', 0);
         $sql_CashBox = \App\Models\CashBox::where('import', '!=', 0)
                 ->where('type', 'INGRESO');
@@ -67,12 +67,20 @@ class InformesController extends Controller {
             }
           }
         }
-        
-        
+        //------------------------------------------------------------//
+        if($f_coach){
+          $uR_IDs = \App\Models\UserRates::where('coach_id',$f_coach)->pluck('id_charges');
+          $sql_charges->whereIn('id', $uR_IDs);
+        }
+        //------------------------------------------------------------//
         
         
         $charges = $sql_charges->orderBy('date_payment')->get();
         $extrasCharges = $sql_CashBox->orderBy('date')->get();
+        //------------------------------------------------------------//
+        $CoachsService = new \App\Services\CoachsService();
+        $aCargesCoachs = $CoachsService->getCoachsCharge($sql_charges->pluck('id'));
+        //------------------------------------------------------------//
 
         $bank = 0;
         $cash = 0;
@@ -116,6 +124,7 @@ class InformesController extends Controller {
             'charges' => $charges,
             'extrasCharges' => $extrasCharges,
             'cash' => $cash,
+            'aCargesCoachs' => $aCargesCoachs,
             'card' => $card,
             'bank' => $bank,
             'clients' => $clients,
@@ -197,7 +206,7 @@ class InformesController extends Controller {
     }
     
     
-    public function informeClienteMes(Request $request,$month=null,$day=null,$f_rate=null,$f_method=null) {
+    public function informeClienteMes(Request $request,$month=null,$day=null,$f_rate=null,$f_method=null,$f_coach=null) {
 
         $year = getYearActive();
         if (!$month)
@@ -205,7 +214,7 @@ class InformesController extends Controller {
         if (!$day)
             $day = 'all';
 
-        $data = $this->getCharges($year,$month,$day,null,$f_method,$f_rate);
+        $data = $this->getCharges($year,$month,$day,null,$f_method,$f_rate,$f_coach);
         $lstMonthsSpanish = lstMonthsSpanish();
         unset($lstMonthsSpanish[0]);
         $data['months'] =  $lstMonthsSpanish;
@@ -233,8 +242,9 @@ class InformesController extends Controller {
         $data['filt_rate']= $f_rate;
         $data['filt_method']= $f_method;
         /*****************************************************************/
-        
+        $data['f_coach']= $f_coach;
         $data['aTRates']= \App\Models\Rates::getRatesTypeRates();
+        $data['aCoachs']= User::getCoachs()->pluck('name','id');
         return view('admin.informes.informeClientesMes',$data);
     }
     

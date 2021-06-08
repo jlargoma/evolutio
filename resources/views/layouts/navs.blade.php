@@ -32,7 +32,7 @@ $uRole = Auth::user()->role;
     @if($uRole == "admin")
     <li class="{{ str_contains($path,'admin/entrenadores') ? 'active' : '' }}">
         <a href="{{ url('/admin/entrenadores/activos') }}" >
-            <i class="fa fa-hand-rock-o"></i><span class="sidebar-mini-hide font-w600">Entrenadores</span>
+            <i class="fa fa-hand-rock-o"></i><span class="sidebar-mini-hide font-w600">SUELDOS Y SALARIOS</span>
         </a>
     </li>
     <li class="{{ $path == 'admin/usuarios' ? 'active' : '' }}">

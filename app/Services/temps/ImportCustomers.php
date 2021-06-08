@@ -30,9 +30,9 @@ class ImportCustomers {
 //      case 'updChargesDate':
 //        $this->updChargesDate();
 //        break;
-      case 'urates':
-        $this->updUserRates();
-        break;
+//      case 'urates':
+//        $this->updUserRates();
+//        break;
     }
   }
   public function importCustomer() {

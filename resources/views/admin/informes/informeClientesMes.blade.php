@@ -28,12 +28,12 @@
                         <h2 class="text-center">INFORME DE CUOTAS PAGADAS AL MES</h2>
                     </div>
                     <div class="col-md-12 col-xs-12 push-20">
-                        <div class="col-md-4 col-xs-12">
+                        <div class="col-md-3 col-xs-12">
                             <input type="text" id="searchInform" class="form-control" placeholder="Buscar"
                                    style="margin-top: 24px;"/>
                             <input type="hidden" id="_token" name="_token" value="<?php echo csrf_token(); ?>">
                         </div>
-                        <div class="col-md-8 col-xs-12">
+                        <div class="col-md-9 col-xs-12">
                             <div class="col-md-2 col-xs-4">
                                 <label>Mes</label>
                                 <select id="month" class="form-control">
@@ -55,7 +55,7 @@
                                     endfor; ?>
                                 </select>
                             </div>
-                            <div class="col-md-4 col-xs-6">
+                            <div class="col-md-3 col-xs-6">
                                 <label>Servicio</label>
                                 <select id="f_rate" class="form-control">
                                     <option value="all">Todos</option>
@@ -72,13 +72,27 @@
                                     ?>
                                 </select>
                             </div>
-                            <div class="col-md-4 col-xs-6">
+                            <div class="col-md-2 col-xs-6">
                                 <label>Tipo de Pago</label>
                                 <select id="f_method" class="form-control">
                                     <option value="all">Todos</option>
                                     <option value="banco" <?php if($filt_method == 'banco') echo 'selected' ?>>BANCO</option>
                                     <option value="cash" <?php if($filt_method == 'cash') echo 'selected' ?>>METALICO</option>
                                     <option value="card" <?php if($filt_method == 'card') echo 'selected' ?>>TARJETA</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-xs-6">
+                                <label>ENTRENADOR/FISIO</label>
+                                <select id="f_coach" class="form-control">
+                                   <option></option>
+                                    <?php
+                                    foreach ($aCoachs as $id=>$name):
+                                      $sel = ($f_coach == $id) ? 'selected' : '';
+                                      ?>
+                                    <option value="{{$id}}" <?php echo $sel; ?>>{{$name}}</option>
+                                      <?php
+                                    endforeach;
+                                    ?>
                                 </select>
                             </div>
                         </div>
@@ -94,14 +108,15 @@
 @endsection
 @section('scripts')
     <script type="text/javascript">
-      $('#date, #month, #day,#f_rate,#f_method').change(function (event) {
+      $('#date, #month, #day,#f_rate,#f_method,#f_coach').change(function (event) {
 
         var year = $('#date').val();
         var month = $('#month').val();
         var day = $('#day').val();
         var f_rate = $('#f_rate').val();
         var f_method = $('#f_method').val();
-        window.location = '/admin/informes/cliente-mes/'+month+'/'+day+'/'+f_rate+'/'+f_method;
+        var f_coach = $('#f_coach').val();
+        window.location = '/admin/informes/cliente-mes/'+month+'/'+day+'/'+f_rate+'/'+f_method+'/'+f_coach;
       });
 
       $('#searchInform').keydown(function (evt) {
