@@ -27,9 +27,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
 //      $schedule->command('inspire')->hourly();   
-      $schedule->command('Subscriptions:createRates')->dailyAt('3:00')->timezone('Europe/Madrid');
-      $schedule->command('InfoMonth:weekStatus')->weeklyOn(7, '9:00')->timezone('Europe/Madrid');
-      $schedule->command('Remember:appointment')->dailyAt('7:00')->timezone('Europe/Madrid');
+      $schedule->command('Subscriptions:createRates')->dailyAt('3:00');
+      $schedule->command('InfoMonth:weekStatus')->weeklyOn(7, '9:00');
+      $schedule->command('Remember:appointment')->dailyAt('7:00');
   }
 
     /**

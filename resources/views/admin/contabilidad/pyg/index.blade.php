@@ -68,10 +68,15 @@ function sumMonthValue($m){
           <td class="square" ><span style="background-color: #5c90d2;"></span>BANCO</td>
           <td>{{moneda($pay_method['b'][0])}}</td>
         </tr>
+        <tr>
+          <td class="square" ><span style="background-color: #d25c93;"></span>VISA</td>
+          <td>{{moneda($pay_method['c'][0])}}</td>
+        </tr>
       </table>
     </div>
     <div class="col-xs-12">
 @include('admin.contabilidad.pyg.table')
+@include('admin.contabilidad.pyg.table2')
     </div>
   </div>
 </div>

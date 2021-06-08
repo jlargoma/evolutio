@@ -138,6 +138,13 @@ var myChart = new Chart(ctx, {
         backgroundColor: 'rgb(92,144,210,0.2)',
         borderColor: '#5c90d2',
         borderWidth: 2
+      },
+      {
+        label: 'VISA',
+        data: [<?php for($i=1;$i<13;$i++) echo "'" . round($pay_method['v'][$i]) . "',"; ?>],
+        backgroundColor: 'rgb(210,92,147,0.2)',
+        borderColor: '#d25c93',
+        borderWidth: 2
       }
     ]
   },

@@ -51,22 +51,26 @@ class PyGController extends Controller {
               ->where('rate_year',$year)->get();
       
     $aux = $months_empty;
-    $pay_method = ['c'=>$months_empty,'b'=>$months_empty];
+    $pay_method = ['c'=>$months_empty,'b'=>$months_empty,'v'=>$months_empty];
     foreach ($uRates as $item){
-//    $oCharges = Charges::whereYear('date_payment', '=', $year)->get();
-//    foreach ($oCharges as $c) {
       $c = $item->charges;
       if (!$c)        continue;
-//      $m = intval(substr($c->date_payment, 5, 2));
       $m = $item->rate_month;
       $aux[0] += $c->import;
       $aux[$m] += $c->import;
-      if ($c->type_payment == 'cash'){
-        $pay_method['c'][0] += $c->import;
-        $pay_method['c'][$m] += $c->import;
-      } else {
-        $pay_method['b'][0] += $c->import;
-        $pay_method['b'][$m] += $c->import;
+      switch ($c->type_payment){
+        case 'cash':
+          $pay_method['c'][0] += $c->import;
+          $pay_method['c'][$m] += $c->import;
+          break;
+        case 'card':
+          $pay_method['v'][0] += $c->import;
+          $pay_method['v'][$m] += $c->import;
+          break;
+        case 'banco':
+          $pay_method['b'][0] += $c->import;
+          $pay_method['b'][$m] += $c->import;
+          break;
       }
       $rateGr = isset($aRates[$c->id_rate]) ? $aRates[$c->id_rate] : 3;
       $crLst[$rateGr][$m] += $c->import;
