@@ -298,6 +298,7 @@ class ExpensesController extends Controller {
         echo  '<p class="alert alert-warning">Sin Registros</p>';
         return '';
       }
+      $gTypesNames = $gTypeGroup['names'];
       $gTypeGroup = $gTypeGroup['groups'];
       $auxTypes = [];
       foreach ($gTypeGroup as $k=>$v){

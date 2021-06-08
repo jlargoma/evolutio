@@ -1,4 +1,4 @@
-<h2>Registros de <?php echo strtoupper($gTypeGroup[$type]);?></h2>
+<h2>Registros de <?php echo strtoupper($gTypesNames[$type]);?></h2>
 
 
 <table class="table">

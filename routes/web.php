@@ -21,6 +21,15 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
     $oServc = new \App\Services\temps\ImportCustomers();
     $oServc->import($tipe);
   });
+
+  Route::get('/getTypesOrderned', function(){
+    \App\Models\Expenses::getTypesOrderned();
+  });
+  
+  Route::get('/getByTypes', function(){
+    \App\Models\Expenses::getByTypes();
+  });
+  
 });
 
 
