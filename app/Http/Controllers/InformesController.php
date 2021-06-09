@@ -272,6 +272,7 @@ class InformesController extends Controller {
               'banco'=>0,
               'cash'=>0,
               'card'=>0,
+              'bono'=>0,
           ];
         }
         
@@ -299,7 +300,7 @@ class InformesController extends Controller {
           if (!isset($byBono[$charges->bono_id]))
               $byBono[$charges->bono_id] = 0;
           $byBono[$charges->bono_id] += $charges->import;
-          $payType[$charges->type_payment] += $charges->import;
+//          $payType[$charges->type_payment] += $charges->import;
         }
         //----  END: BONOS        --------------------------------//
         //----------------------------------------------------------//

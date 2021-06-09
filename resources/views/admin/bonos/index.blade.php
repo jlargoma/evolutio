@@ -42,13 +42,12 @@
                     <select class="form-control editables rate-bono-<?php echo $obj->id ?>" data-id="<?php echo $obj->id; ?>">
                         <option value="all">Todos</option>
                         <?php 
-                        $selRate = $obj->rate_type.'-'.$obj->rate_id;
                         foreach ($rateFilter as $k=>$v):
                           $s = ($k == $obj->rate_type)? 'selected' : '';
                           echo '<option value="'.$k.'" '.$s.' class="b">'.$v['n'].'</option>';
                           foreach ($v['l'] as $k2=>$v2):
                             $aux = "$k-$k2";
-                            $s = ($aux == $selRate)? 'selected' : '';
+                            $s = ($k2 == $obj->rate_subf)? 'selected' : '';
                             echo '<option value="'.$aux.'" '.$s.'>&nbsp; - '.$v2.'</option>';
                           endforeach;
                         endforeach; 

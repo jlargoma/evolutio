@@ -15,7 +15,7 @@ class BonosController extends Controller {
     return view('/admin/bonos/index', [
         'objs' => Bonos::where('status', 1)->orderBy('name', 'asc')->get(),
         'old' => Bonos::where('status', 0)->orderBy('name', 'asc')->get(),
-        'rateFilter'=>\App\Models\Rates::getTypeRatesGroups()
+        'rateFilter'=> \App\Models\TypesRate::getWithsubfamily()
     ]);
   }
   
@@ -33,7 +33,7 @@ class BonosController extends Controller {
       $oObj->rate_type = null;
       if ($rate != 'all'){
         $filerRate = explode('-', $rate);
-        if (count($filerRate) == 2) $oObj->rate_id = $filerRate[1];
+        if (count($filerRate) == 2) $oObj->rate_subf = $filerRate[1];
         else $oObj->rate_type = $filerRate[0];
       }
     }
@@ -56,7 +56,7 @@ class BonosController extends Controller {
       $oObj->rate_type = null;
       if ($rate != 'all'){
         $filerRate = explode('-', $rate);
-        if (count($filerRate) == 2) $oObj->rate_id = $filerRate[1];
+        if (count($filerRate) == 2) $oObj->rate_subf = $filerRate[1];
         else $oObj->rate_type = $filerRate[0];
       }
     }
@@ -181,8 +181,8 @@ class BonosController extends Controller {
         'oBonos' => Bonos::where('status', 1)->orderBy('name', 'asc')->get(),
         'type'=>$t,
         'id_back'=>$id,
-        'rates'=>\App\Models\Rates::pluck('name','id')->toArray(),
         'typesRate'=> \App\Models\TypesRate::pluck('name','id')->toArray(),
+        'rate_subf'=> \App\Models\TypesRate::subfamily()
     ]);
       
     }

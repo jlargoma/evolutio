@@ -18,9 +18,9 @@ class Bonos extends Model
       if ($obj) return $obj;
     }
     
-    if ($this->rate_id){
+    if ($this->rate_subf){
       $obj = UserBonos::where('user_id',$uID)
-              ->where('rate_id',$this->rate_id)->first();
+              ->where('rate_subf',$this->rate_subf)->first();
       if ($obj) return $obj;
     }
     

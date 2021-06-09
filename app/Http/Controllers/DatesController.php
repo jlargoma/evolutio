@@ -130,16 +130,15 @@ class DatesController extends Controller {
     /*     * ********************************************************** */
     $alreadyExit = Dates::where('date', $date_compl)
                     ->where('id', '!=', $ID)
-                    ->where(function ($query) use ($id_user, $id_coach) {
-                      $query->where('id_user', $id_user)
-                      ->orWhere('id_coach', $id_coach);
-                    })->first();
-    if ($alreadyExit) {
-      if ($alreadyExit->id_user == $id_user)
-        $msg = 'Usuario ocupado';
-      if ($alreadyExit->id_coach == $id_coach)
-        $msg = 'Personal ocupado';
-      return redirect()->back()->withErrors([$msg]);
+                    ->where('id_coach', $id_coach)->count();
+    if ($alreadyExit>1) {
+      return redirect()->back()->withErrors(['Personal ocupado']);
+    }
+    $alreadyExit = Dates::where('date', $date_compl)
+                    ->where('id', '!=', $ID)
+                    ->where('id_user', $id_user)->count();
+    if ($alreadyExit>1) {
+      return redirect()->back()->withErrors(['Usuario ocupado']);
     }
     /*     * ********************************************************** */
     $coachTimes = CoachTimes::where('id_coach', $id_coach)->first();
@@ -471,4 +470,33 @@ class DatesController extends Controller {
     return redirect()->back()->with(['success' => 'Citas Creadas']);
   }
 
+  public function checkDateDisp(Request $req) {
+        
+    $date = $req->input('date');
+    $time = $req->input('time');
+    $ID   = $req->input('id');
+    $uID  = $req->input('uID');
+    $cID  = $req->input('cID'); //id_coach
+    
+    
+    $aux = explode('-',$date);
+    if (is_array($aux) && count($aux)==3){
+      $date = $aux[2].'-'.$aux[1].'-'.$aux[0];
+    }
+    
+    $dateCompl = $date." $time:00:00";
+    
+    $sqlCoach = Dates::where('date', $dateCompl)->where('id_coach', $cID);
+    $sqlUser  = Dates::where('date', $dateCompl)->where('id_user', $uID);
+                    
+    if ($ID && $ID != 'undefined'){
+      $sqlCoach->where('id', '!=', $ID);
+      $sqlUser->where('id', '!=', $ID);
+    }
+    $useCoach = $sqlCoach->count();
+    $useUser = $sqlUser->count();
+    
+    return ($useCoach>$useUser) ? $useCoach : $useUser;
+   
+  }
 }

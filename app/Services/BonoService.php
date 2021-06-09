@@ -63,6 +63,7 @@ class BonoService {
       $oUsrBono->user_id = $oUser->id;
       $oUsrBono->rate_type = $oBono->rate_type;
       $oUsrBono->rate_id = $oBono->rate_id;
+      $oUsrBono->rate_subf = $oBono->rate_subf;
       $oUsrBono->qty = $oBono->qty;
     }
 

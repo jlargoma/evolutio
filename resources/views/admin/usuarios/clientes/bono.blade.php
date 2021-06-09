@@ -16,7 +16,7 @@
             <tr>
                 <th></th>
                 <th  class="t-left">Bono</th>
-                <th>Servicio</th>
+                <th>Servicio (familia)</th>
                 <th>Cantidad</th>
                 <th>Precio</th>
               </tr>
@@ -29,10 +29,10 @@
                 <td class="t-left"><label>{{$b->name}}</label></td>
                 <td>
                   <?php 
-                  if ($b->rate_id && isset($rates[$b->rate_id]))
-                    echo $rates[$b->rate_id];
+                  if ($b->rate_subf && isset($rate_subf[$b->rate_subf]))
+                    echo $rate_subf[$b->rate_subf];
                   if ($b->rate_type && isset($typesRate[$b->rate_type]))
-                    echo $typesRate[$b->rate_type];
+                    echo '<b>'.$typesRate[$b->rate_type].'</b>';
                   ?>
                 </td>
                 <td>{{$b->qty}}</td>

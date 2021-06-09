@@ -33,4 +33,23 @@ class TypesRate extends Model
       }
       return $lst;
     }
+    
+    static function getWithsubfamily($key=null) {
+      $lst = self::OrderBy('name')->get();
+      $subfs = self::subfamily();
+      $result = [];
+      foreach ($lst as $i){
+        $subtipes = $i->subtipes;
+        $aux = [];
+        if ($subtipes){
+          foreach ($subfs as $k=>$v){
+            if (substr($k,0,1) == $subtipes)
+                $aux[$k]=$v;    
+          }
+        }
+        
+        $result[$i->id] = ['n' => $i->name,'l'=>$aux];
+      }
+      return $result;
+    }
 }

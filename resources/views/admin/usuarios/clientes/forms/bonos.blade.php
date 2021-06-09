@@ -7,12 +7,13 @@
   <div class="col-md-6">
 <?php
 $oBonoLst = $user->bonos;
+$rate_subf = \App\Models\TypesRate::subfamily();
 if (count($oBonoLst) > 0) { ?>
   <?php
   foreach ($oBonoLst as $b) {
     $name = 'Bono sin servicio';
-    if ($b->rate_id && isset($rNames[$b->rate_id]))
-      $name = $rNames[$b->rate_id];
+    if ($b->rate_subf && isset($rate_subf[$b->rate_subf]))
+      $name = $rate_subf[$b->rate_subf];
     if ($b->rate_type && isset($atypeRates[$b->rate_type]))
       $name = $atypeRates[$b->rate_type];
                   ?>
