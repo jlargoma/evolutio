@@ -11,12 +11,13 @@ class Expenses extends Model
   static function getTypes(){
     return [
         'alquiler_nave_y_comunidad' => 'ALQUILER NAVE Y COMUNIDAD',
+        'comision_intermed' => 'COMISION INTERMED',
         'decoracion' => 'DECORACION',
         'gastos_representacion' => 'GASTOS REPRESENTACION',
         'gestorÍa' => 'GESTORÍA',
         'gto_bancarios' => 'GTO BANCARIOS',
         'gto_mat_deportivo' => 'GTO MAT DEPORTIVO',
-        'gto_mat_fisio' => 'GTO MAT. FISIO',
+        'gto_mat._fisio' => 'GTO MAT. FISIO',
         'gto_tarjeta_visa' => 'GTO TARJETA VISA',
         'marketing_y_publicidad' => 'MARKETING Y PUBLICIDAD',
         'mensajeria' => 'MENSAJERIA',
@@ -30,28 +31,30 @@ class Expenses extends Model
   static function getTypesGroup(){
     return [
             'names'=> [
-              'alquiler' => 'ALQUILER',
-              'comisiones' => 'COMSIONES',
-              'impuestos' => 'IMPUESTOS',
+              'alquileres' => 'ALQUILERES',
+              'renting' => 'RENTING',
+              'sueldos_y_salarios' => 'SUELDOS Y SALARIOS',
               'suministros' => 'SUMINISTROS',
-              'servicios' => 'SERVICIOS',
-              'otros' => 'VARIOS',
+              'gasto_material' => 'GASTO MATERIAL',
+              'marketing_y_publicidad' => 'MARKETING Y PUBLICIDAD',
+              'otros' => 'RESTO DE GASTOS',
             ],
             'groups' => [
-                'alquiler_nave_y_comunidad' => 'alquiler',
+                'alquiler_nave_y_comunidad' => 'alquileres',
+                'comision_intermed' => 'otros',
                 'decoracion' => 'otros',
-                'gastos_representacion' => 'servicios',
-                'gestorÍa' => 'servicios',
-                'gto_bancarios' => 'comisiones',
-                'gto_mat_deportivo' => 'suministros',
-                'gto_mat_fisio' => 'suministros',
-                'gto_tarjeta_visa' => 'comisiones',
-                'marketing_y_publicidad' => 'otros',
-                'mensajeria' => 'servicios',
+                'gastos_representacion' => 'otros',
+                'gestorÍa' => 'otros',
+                'gto_bancarios' => 'otros',
+                'gto_mat_deportivo' => 'gasto_material',
+                'gto_mat._fisio' => 'gasto_material',
+                'gto_tarjeta_visa' => 'otros',
+                'marketing_y_publicidad' => 'marketing_y_publicidad',
+                'mensajeria' => 'otros',
                 'otros' => 'otros',
-                'renting_fisioterapia' => 'alquiler',
-                'seguros' => 'servicios',
-                'software' => 'servicios',
+                'renting_fisioterapia' => 'renting',
+                'seguros' => 'otros',
+                'software' => 'otros',
                 'suministros' => 'suministros',
             ]];
         
@@ -73,19 +76,24 @@ class Expenses extends Model
     
   static function getTypesOrderned(){
     $types =  [
-'ALQUILER NAVE Y COMUNIDAD','SUMINISTROS','RENTING FISIOTERAPIA','GTO MAT. FISIO','GTO MAT DEPORTIVO','GTO BANCARIOS','GTO TARJETA VISA','DECORACION','SOFTWARE','GESTORÍA','SEGUROS','GASTOS REPRESENTACION','MARKETING Y PUBLICIDAD','MENSAJERIA','OTROS'
+        'ALQUILER NAVE Y COMUNIDAD','RENTING FISIOTERAPIA','SUMINISTROS','GTO MAT. FISIO',
+        'GTO MAT DEPORTIVO','MARKETING Y PUBLICIDAD','COMISION INTERMED','GTO BANCARIOS',
+        'GTO TARJETA VISA','DECORACION','SOFTWARE','GESTORÍA','SEGUROS','GASTOS REPRESENTACION',
+        'MENSAJERIA','OTROS'
     ];
-    
-//    $aux = [];
-//    foreach ($types as $k=>$v){
-//      $aux[] = $k;
-//    }
-    
     sort($types);
+//    $types =  [
+//        'ALQUILERES','RENTING','SUELDOS Y SALARIOS','SUMINISTROS',
+//        'GASTO MATERIAL','MARKETING Y PUBLICIDAD','RESTO DE GASTOS'
+//        ];
+
     
     foreach ($types as $v){
-      echo "'". strtolower(str_replace(' ','_', $v))."' => '".strtolower(str_replace(' ','_', $v))."',<br/>";
+      echo "'". strtolower(str_replace(' ','_', $v))."' => '"."',<br/>";
     }
+//    foreach ($types as $v){
+//      echo "'". strtolower(str_replace(' ','_', $v))."' => '".strtolower(str_replace(' ','_', $v))."',<br/>";
+//    }
     die;
   }
   

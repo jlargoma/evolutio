@@ -246,6 +246,8 @@ foreach ($typePayment as $k => $v) {
         paym: -1,
       };
       dataTable( $(this).data('val'));
+      $('.selectDate li').removeClass('active');
+      $(this).addClass('active');
 //      location.assign("/admin/gastos/" + val);
     });
   
