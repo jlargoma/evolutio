@@ -80,7 +80,7 @@
                       <?php endif ?>
                     </td>
                     <td class="text-justify"> 
-                      <a  class="btn-user" data-toggle="modal" data-target="#modal-popout" data-idUser="<?php echo $user->id; ?>" type="button" data-toggle="tooltip" title="" data-type="user" data-original-title="Editar Entrenador">
+                      <a class="btn-user" data-toggle="modal" data-target="#modal-popout" data-idUser="<?php echo $user->id; ?>" type="button" data-toggle="tooltip" title="" data-type="user" data-original-title="Editar Entrenador">
                           <b><?php echo ($user->name) ? $user->name : '--'; ?></b>
                       </a>
                     </td>
@@ -115,36 +115,30 @@
                         $totalYear += $totalLiquidationByCoach;
                       endif;
                       ?>
-                      <?php echo number_format(abs($totalLiquidationByCoach), 2, ',', '.'); ?>
+                      <?php echo mformat($totalLiquidationByCoach); ?>
                     </td>
-                    <?php if (isset($aLiq[$user->id])):  ?>
-                    <?php foreach ($months as $k=>$v): 
-                        if ($aLiq[$user->id][$k])
-                        $liq = $aLiq[$user->id][$k];?>
-                      <td class="hidden-xs hidden-sm input"> 
-                          <input class="form-control only-numbers liquidation" type="text" name="liquidation-{{$year.'-'.$k}}"  value="{{$liq[1]}}" data-idLiquidation="{{$liq[0]}}" data-idCoach="<?php echo $user->id ?>" data-dateLiquidation="{{$year.'-'.$k.'-01'}}"/>
-                      </td>
-                      <?php $totalMonthCoach[$k] += $liq[1]; ?>
-                    <?php endforeach; ?>
-                    <?php else: ?>
-                    <?php foreach ($months as $k=>$v): ?>
-                      <td class="hidden-xs hidden-sm input"> 
-                          <input class="form-control only-numbers liquidation" type="text" name="liquidation-{{$year.'-'.$k}}"  value="" data-idLiquidation="" data-idCoach="<?php echo $user->id ?>" data-dateLiquidation="{{$year.'-'.$k.'-01'}}"/>
-                      </td>
-                    <?php endforeach; ?>
-                    <?php endif; ?>
+                    <?php 
+                    foreach ($months as $k=>$v): 
+                      $aux = isset($aLiq[$user->id]) ? $aLiq[$user->id] : null;
+                      $liq = ($aux && isset($aLiq[$user->id][$k])) ? $aLiq[$user->id][$k][1] : 0;
+                      $totalMonthCoach[$k] += $liq;
+                      ?>
+                    <td class="text-center">{{mformat($liq)}}</td>
+                    <?php
+                      endforeach; 
+                      ?>
                   </tr>
                 <?php endforeach ?>
                 <tr>
-                  <td class="text-center" colspan="5" style="color: #fff; background-color: #5c90d2; border-bottom-color: #5c90d2; font-size: 24px;">
+                  <td class="text-center" colspan="5" style="color: #fff; background-color: #5c90d2; border-bottom-color: #5c90d2; font-size: 18px;">
                     TOTAL ANUALES
                   </td>
-                  <td class="text-center"  style="color: #fff; background-color: #5c90d2; border-bottom-color: #5c90d2; font-size: 24px;">
-                    <b><?php echo abs($totalYear); ?>€</b>
+                  <td class="text-center"  style="color: #fff; background-color: #5c90d2; border-bottom-color: #5c90d2; font-size: 16px;">
+                    <b><?php echo mformat($totalYear); ?>€</b>
                   </td>
                   <?php for ($i = 1; $i <= 12; $i++) : ?>
-                    <td class="text-center" style="color: #fff; background-color: #5c90d2; border-bottom-color: #5c90d2; font-size: 24px;">
-                      <b><?php echo $totalMonthCoach[$i]; ?>€</b>
+                    <td class="text-center" style="color: #fff; background-color: #5c90d2; border-bottom-color: #5c90d2; font-size: 16px;">
+                      <b><?php echo moneda($totalMonthCoach[$i]); ?></b>
                     </td>
                   <?php endfor; ?>
                   
@@ -168,8 +162,8 @@
             </li>
           </ul>
         </div>
-        <div class="row block-content" id="content">
-
+        <div class="row block-content" >
+          <iframe id="content"></iframe>
         </div>
       </div>
     </div>
@@ -221,23 +215,7 @@
   .modal-dialog {
     width: 90%;
   }
-  .block-1 {
-    float: left;
-    width: 90px;
-}
-  .block-2 {
-    float: left;
-    width: calc(98% - 450px);
-}
-.block-2 h2,
-.block-2 h4{
-        padding-left: 12px;
-}
-  .block-3 {
-    float: left;
-width: 180px;
-    text-align: center;
-}
+ 
 .table-vtop td{
     vertical-align: top;
 }
@@ -257,6 +235,10 @@ width: 180px;
     max-width: 70px !important;
     text-align: center;
 }
+iframe{
+      width: 100%;
+    overflow: hidden;
+}
 </style>
 <script src="{{ asset('admin-css/assets/js/plugins/datatables/jquery.dataTables.min.js')}}"></script>
 <script src="{{ asset('admin-css/assets/js/pages/base_tables_datatables.js')}}"></script>
@@ -275,10 +257,11 @@ $(document).ready(function () {
   $('.btn-user').click(function (e) {
     e.preventDefault();
     var id = $(this).attr('data-idUser');
+    $('#content').attr('src','/admin/actualizarEntrenador/' + id);
     // alert(id);
-    $.get('/admin/actualizarEntrenador/' + id, function (data) {
-      $('#content').empty().html(data);
-    });
+//    $.get('/admin/actualizarEntrenador/' + id, function (data) {
+//      $('#content').empty().html(data);
+//    });
   });
 
   $('#check-all').click(function () {

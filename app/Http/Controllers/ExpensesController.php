@@ -8,6 +8,7 @@ use \Carbon\Carbon;
 use DB;
 use App\Models\Expenses;
 use App\Models\CoachLiquidation;
+use App\Models\User;
 
 class ExpensesController extends Controller {
 
@@ -150,7 +151,9 @@ class ExpensesController extends Controller {
         'total_year_amount' => $totalYearAmount,
         'yearMonths' => $yearMonths,
         'tYear' => $yearMonths[$year],
-        'typePayment' => Expenses::getTypeCobro()
+        'typePayment' => Expenses::getTypeCobro(),
+        'oCoachs' => User::getCoachs(),
+        'lstUsr'  => User::getCoachs()->pluck('name','id')->toArray()
     ]);
   }
 
@@ -181,6 +184,7 @@ class ExpensesController extends Controller {
     $gasto->import = $request->input('import');
     $gasto->typePayment = $request->input('type_payment');
     $gasto->type = $request->input('type');
+    $gasto->to_user = $request->input('to_user');
     $gasto->comment = $comment ? $comment : '';
     if ($gasto->save()) {
       return 'ok';
@@ -218,8 +222,11 @@ class ExpensesController extends Controller {
           $gasto->typePayment = $val;
           $save = true;
           break;
+        case 'user':
+          $gasto->to_user = $val;
+          $save = true;
+          break;
       }
-
       if ($save) {
         if ($gasto->save()) {
           return "ok";
@@ -256,6 +263,8 @@ class ExpensesController extends Controller {
     ];
     $totalMounth = 0;
     $typePayment = Expenses::getTypeCobro();
+    
+    $lstUsr = User::getCoachs()->pluck('name','id')->toArray();
     if ($gastos) {
       $respo_list = array();
       foreach ($gastos as $item) {
@@ -269,6 +278,8 @@ class ExpensesController extends Controller {
             'type_v' => $item->type,
             'comment' => $item->comment,
             'import' => $item->import,
+            'to_user' => $item->to_user,
+            'usr' => isset($lstUsr[$item->to_user]) ? $lstUsr[$item->to_user] : '--',
         ];
         $totalMounth += $item->import;
       }

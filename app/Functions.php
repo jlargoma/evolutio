@@ -184,6 +184,11 @@ function moneda($mount,$cero=true,$decimals=0){
   
 }
 
+function mformat($mount,$decimals=0){
+  if ($mount != 0) return number_format($mount, $decimals, ',', '.' );
+  return '--';
+}
+
 function str_limit($txt,$limit,$end='...'){
 return \Illuminate\Support\Str::limit($txt,$limit,$end);
 }

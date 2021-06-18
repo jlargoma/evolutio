@@ -111,6 +111,29 @@ class CoachLiquidationController extends Controller
                 $pagosClase[$key][] = $className;
             }
         }
+        
+        //-----------------------------------------------------------//
+        
+        $oExpenses = \App\Models\Expenses::where('to_user',$id)
+                ->whereMonth('date','=',$month)
+                ->whereYear('date','=', $year)
+                ->orderBy('date')
+                ->get();
+        $lstExpType = \App\Models\Expenses::getTypes();
+        if ($oExpenses){
+            foreach ($oExpenses as $item) {
+              $key= $item->type;
+              if (!isset($classLst[$key])){
+               $classLst[$key] = $lstExpType[$key];
+               $pagosClase[$key] = [];
+               $totalClase[$key] = 0;
+              }
+              $totalClase[$key] += $item->import;
+              $time = strtotime($item->date);
+              $className  = date('d',$time).' de '.$lstMonts[date('n',$time)];
+              $pagosClase[$key][] = $className;
+            }
+        }
             
         return compact('pagosClase','totalClase','classLst','ppc','salary');
         

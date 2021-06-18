@@ -27,6 +27,7 @@
                   row += '<td class="editable" data-type="price">' + val.import + '</td>';
                   row += '<td><button data-id="' + val.id + '" type="button" class="del_expense btn btn-danger btn-xs"><i class="fa fa-trash"></i></button>';
                   row += '<td class="editable" data-type="comm">' + val.comment + '</td>';
+                  row += '<td class="editable selects suser" data-type="usr" data-current="' + val.to_user + '">' + val.usr + '</td>';
                   $('#tableItems').append(row);
               });
           } else {
@@ -110,6 +111,21 @@ foreach ($typePayment as $k => $v) {
           select.val(currentElement.data('current'));
           currentElement.html(select);
           break;
+        case 'usr':
+          var select = $('<select>', {class: ' form-control'});
+          select.data('t', 'user');
+<?php
+foreach ($lstUsr as $k => $v) {
+  echo "var option = $('<option></option>');
+                            option.attr('value', '$k');
+                            option.text('$v');
+                            select.append(option);";
+}
+?>
+          currentElement.data('value', currentElement.html());
+          select.val(currentElement.data('current'));
+          currentElement.html(select);
+          break;
         default:
           var input = $('<input>', {type: "text", class: type})
                   .val(currentElement.html())
@@ -176,11 +192,11 @@ foreach ($typePayment as $k => $v) {
     var filters = {
       type: -1,
       paym: -1,
-      site: -1,
+      usr: -1,
     };
     var filterTable = function () {
       var all = false;
-      if (filters.type == -1 && filters.paym == -1 && filters.site == -1) {
+      if (filters.type == -1 && filters.paym == -1 && filters.usr == -1) {
         all = true;
       }
       var total = 0;
@@ -203,10 +219,11 @@ foreach ($typePayment as $k => $v) {
               return;
             }
           }
-//filter by site
-          if (filters.site != -1) {
-            var cell = $(this).find('.s_site');
-            if (cell.data('current') != filters.site) {
+//filter by Users
+          if (filters.usr != -1) {
+            var cell = $(this).find('.suser');
+            console.log(cell.data('current'),filters.usr);
+            if (cell.data('current') != filters.usr) {
               cell.closest('tr').hide();
               return;
             }
@@ -229,9 +246,9 @@ foreach ($typePayment as $k => $v) {
       filters.paym = value;
       filterTable();
     });
-    $('#s_sitio').on('change', function () {
+    $('#s_usr').on('change', function () {
       var value = $(this).val();
-      filters.site = value;
+      filters.usr = value;
       filterTable();
     });
     $('.month_select').on('click', function () {
@@ -241,9 +258,11 @@ foreach ($typePayment as $k => $v) {
       event.preventDefault();
       $('#s_payment').val(-1);
       $('#s_type').val(-1);
+      $('#s_usr').val(-1);
       filters = {
         type: -1,
         paym: -1,
+        usr: -1,
       };
       dataTable( $(this).data('val'));
       $('.selectDate li').removeClass('active');

@@ -275,7 +275,7 @@ class UsersController extends Controller {
         return redirect('/admin/usuarios');
       } elseif ($userToUpdate->role == 'teach' || $userToUpdate->role == 'fisio' || $userToUpdate->role == 'nutri') {
 
-        return redirect('/admin/entrenadores');
+        return back();
       } else {
 
         return redirect()->back()->with('success', 'Cliente actualizado');

@@ -9,13 +9,13 @@
   @include('admin.contabilidad.expenses.resume-by-month')
   </div>
   <div class="row">
-    <div class="col-lg-4 col-md-4 col-xs-12">
+    <div class="col-lg-4 col-md-6 col-xs-12">
        <canvas id="chart_1" style="width: 100%; height: 250px;"></canvas>
     </div>
-    <div class="col-lg-4 col-md-4 col-xs-12">
+    <div class="col-lg-4 col-md-6 col-xs-12">
       <canvas id="chartTotalByYear" style="width: 100%; height: 250px;"></canvas>
     </div>
-    <div class="col-lg-4 col-md-4 col-xs-12">
+    <div class="col-lg-4 col-md-6 col-xs-12">
       <canvas id="chartTotalByMonth" style="width: 100%; height: 250px;"></canvas>
     </div>
   </div>
@@ -65,6 +65,14 @@
         <th class="text-center bg-complete text-white col-md-2">Importe</th>
         <th class="text-center bg-complete text-white">#</th>
         <th class="text-center bg-complete text-white col-md-2">Comentario</th>
+        <th class="text-center bg-complete text-white col-md-2">
+          <select id="s_usr">
+            <option value="-1">Usuario</option>
+            @foreach($lstUsr as $k=>$v)
+            <option value="{{$k}}">{{$v}}</option>
+            @endforeach
+          </select>
+        </th>
         </thead>
         <tbody id="tableItems" class="text-center">
         </tbody>

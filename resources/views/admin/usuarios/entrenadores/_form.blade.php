@@ -1,22 +1,13 @@
+@extends('layouts.popup')
+@section('content')
 <div class="row">
     <div class="block col-md-12 bg-white">
-        <div class="block-1"><img src="http://evolutio.virtual/admin-css/assets/img/profile.png" class="img-responsive" style="max-width: 100%;"></div>
+        <div class="block-1"><img src="/admin-css/assets/img/profile.png" class="img-responsive" style="max-width: 100%;"></div>
         <div class="block-2">
             <h2>{{$user->name}}</h2>
             <h4>{{$user->email}}</h4>
         </div>
-        <div class="block-3">
-            <select class="form-control" id="selectMonth">
-                @foreach($aMonths as $k=>$v)
-                <option value="{{$k}}" <?php echo ($month == $k) ? 'selected' : '' ?>>{{$v.' '.$year}}</option>
-                @endforeach
-            </select>
-        </div>
-        <div class="block-3">
-            <button class="btn btn-success" id="sendLiquid">
-                <i class="fa fa-envelope"></i> enviar
-            </button>
-        </div>
+       
     </div>
 </div>
 
@@ -107,11 +98,28 @@
     </div>
 </div>
 
+<div class="col-md-12">
+  <div class="col-md-8"><h3>Liquidación Mensual</h3></div>
+    <div class="col-md-2">
+      <select class="form-control" id="selectMonth">
+             @foreach($aMonths as $k=>$v)
+             <option value="{{$k}}" <?php echo ($month == $k) ? 'selected' : '' ?>>{{$v.' '.$year}}</option>
+             @endforeach
+         </select>
+    </div>
+    <div class="col-md-2">
+      <button class="btn btn-success" id="sendLiquid">
+              <i class="fa fa-envelope"></i> enviar
+          </button>
+    </div>
+    </div>
 <div class="row">
     <div class="block col-md-12 bg-white">
         <div id="blockLiquid"></div>
     </div>
 </div>
+@endsection
+@section('scripts')
 <script type="text/javascript">
 $(document).ready(function () {
     $('#blockLiquid').load('/admin/liquidacion-Entrenador/{{$user->id}}');
@@ -147,3 +155,23 @@ $(document).ready(function () {
 });
     
 </script>
+<style type="text/css">
+   .block-1 {
+    float: left;
+    width: 90px;
+}
+  .block-2 {
+    float: left;
+    width: calc(98% - 450px);
+}
+.block-2 h2,
+.block-2 h4{
+        padding-left: 12px;
+}
+  .block-3 {
+    float: left;
+width: 180px;
+    text-align: center;
+}
+</style>
+@endsection
