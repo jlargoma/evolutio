@@ -140,8 +140,9 @@ function printColor($id){
   return $lst[$id];
 }
 
-function show_isset($index, $array) {
+function show_isset($index, $array,$get=false) {
     if (isset($array[$index])) {
+      if ($get) return $array[$index];
         echo $array[$index];
     }
 }

@@ -28,7 +28,7 @@ trait EntrenadoresTraits {
         $oUser = User::find($id);
          /******************************************************/
         $month = date('Y-m');
-        $lstMonts = lstMonthsSpanish(false);
+        $lstMonts = lstMonthsSpanish();
         $aMonths  = [];
         $year = getYearActive();
         foreach ($lstMonts as $k=>$v){

@@ -113,7 +113,6 @@ class CoachLiquidationController extends Controller
         }
         
         //-----------------------------------------------------------//
-        
         $oExpenses = \App\Models\Expenses::where('to_user',$id)
                 ->whereMonth('date','=',$month)
                 ->whereYear('date','=', $year)
@@ -167,12 +166,43 @@ class CoachLiquidationController extends Controller
         $anual = 0;
         if ($oLiq){
             foreach ($oLiq as $item){
-                $liqLst[date('Y-m', strtotime($item->date_liquidation))] =$item->total;
-                $anual+=$item->total;
+              $aux = substr($item->date_liquidation,0,7);
+              $liqLst[$aux] =$item->total;
+              $anual+=$item->total;
             }
         }
         /**********************************************************/
-        $aLiq = $this->liquMensual($id,$year,$month);
+        $payMonth = [];
+        $oExpenses = \App\Models\Expenses::where('to_user',$id)
+                ->whereYear('date','=', $year)
+                ->orderBy('date')
+                ->get();
+        $lstExpType = \App\Models\Expenses::getTypes();
+        if ($oExpenses){
+            foreach ($oExpenses as $item) {
+              $aux = substr($item->date,0,7);
+              if (!isset($payMonth[$aux])) $payMonth[$aux] = 0;
+              $payMonth[$aux]+= $item->import;
+            }
+        }
+        //-----------------------------------------------------//
+        //---- BEGIN liquidación mensual    -------------------//
+        $aLiq = null;
+        $liqByM = [];
+        $now = date('m');
+        foreach ($aMonths as $k=>$v){
+          $am = substr($k, 5,2);
+          if ($am>$now){
+            $liqByM[$k] = 0;
+          } else {
+            $aux = $this->liquMensual($id,$year,$am);
+            if ($am==$month) $aLiq =$aux;
+            $liqByM[$k] = $aux['salary']+ array_sum($aux['totalClase']);
+          }
+        }
+        //---- END liquidación mensual    ---------------------//
+        //-----------------------------------------------------//
+        
 
         return view('/admin/usuarios/entrenadores/liquidacion',[ 
                                                 'user' => User::find($id),
@@ -180,6 +210,8 @@ class CoachLiquidationController extends Controller
                                                 'totalClase' => $aLiq['totalClase'],
                                                 'salary' => $aLiq['salary'],
                                                 'classLst' => $aLiq['classLst'],
+                                                'payMonth' => $payMonth,
+                                                'liqByM' => $liqByM,
                                                 'date' => $date,
                                                 'aMonths'=>$aMonths,
                                                 'year' => $year,

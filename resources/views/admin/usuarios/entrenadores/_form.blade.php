@@ -99,15 +99,13 @@
 </div>
 
 <div class="col-md-12">
-  <div class="col-md-8"><h3>Liquidación Mensual</h3></div>
-    <div class="col-md-2">
-      <select class="form-control" id="selectMonth">
-             @foreach($aMonths as $k=>$v)
-             <option value="{{$k}}" <?php echo ($month == $k) ? 'selected' : '' ?>>{{$v.' '.$year}}</option>
-             @endforeach
-         </select>
+  <div class="col-md-3"><h3>Liquidación Mensual</h3></div>
+    <div class="col-md-8" id="selectMonth">
+      @foreach($aMonths as $k=>$v)
+      <button type="button" data-v="{{$k}}" class="btn <?php echo ($month == $k) ? 'active' : '' ?>">{{$v}}</button>
+      @endforeach
     </div>
-    <div class="col-md-2">
+    <div class="col-md-1">
       <button class="btn btn-success" id="sendLiquid">
               <i class="fa fa-envelope"></i> enviar
           </button>
@@ -124,19 +122,21 @@
 $(document).ready(function () {
     $('#blockLiquid').load('/admin/liquidacion-Entrenador/{{$user->id}}');
     
-    $('#selectMonth').on('change',function (event) {
-        var val = $(this).val();
+    var currentMonth = "{{$month}}";
+    $('#selectMonth').on('click','button',function (event) {
+        var val = $(this).data('v');
         $('#blockLiquid').load('/admin/liquidacion-Entrenador/{{$user->id}}/'+val);
         $('#sendLiquid').attr("disabled", false);
+        $('#selectMonth').find('button').removeClass('active');
+        $(this).addClass('active');
+        currentMonth = val;
     });
     $('#blockLiquid').on('change','.liquidation',function (event) {
         var id_coach = {{$user->id}};
         var date = $(this).data('k');
         var importe = $(this).val();
         $.get('/admin/payment-Entrenador/', {id_coach: id_coach, importe: importe, date: date}).done(function (resp) {
-          if (resp !== 'OK'){
-              alert(resp);
-          }
+          $('#blockLiquid').load('/admin/liquidacion-Entrenador/{{$user->id}}/'+currentMonth);
         });
       });
     $('#sendLiquid').on('click',function (event) {
@@ -172,6 +172,9 @@ $(document).ready(function () {
     float: left;
 width: 180px;
     text-align: center;
+}
+button.btn.active {
+    background-color: #4ec37a;
 }
 </style>
 @endsection
