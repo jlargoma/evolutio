@@ -110,7 +110,7 @@
                         <?php 
                         if(isset($pagosClase[$key])):
                             foreach ($pagosClase[$key] as $turno){
-                            echo '<small>'.$turno.'</small>';
+                            echo '<br/><small>'.$turno.'</small>';
                             }
                         endif;
                         ?>

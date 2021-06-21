@@ -76,14 +76,14 @@ class CoachLiquidationController extends Controller
         }
         /**********************************************************/
         $oTurnos = Dates::where('id_coach',$id)
-                ->where('status',1)
-                ->where('charged',1)
                 ->whereMonth('date','=',$month)
                 ->whereYear('date','=', $year)
+                ->join('users_rates','users_rates.id','=','id_user_rates')
+                ->whereNotNull('users_rates.id_charges')
                 ->with('user')->with('service')
                 ->orderBy('date')
                 ->get();
-       
+
         $totalClase = array();
         $pagosClase = array();
         $classLst = [];
@@ -149,7 +149,6 @@ class CoachLiquidationController extends Controller
             $year = getYearActive();
             $month = date('m');
         }
-        
         /**********************************************************/
         $lstMonts = lstMonthsSpanish();
         $aMonths  = [];
