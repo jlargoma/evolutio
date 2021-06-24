@@ -55,17 +55,17 @@
     </div>
   </div>
   <div class="row mt-2">
-    <div class="col-md-4 col-xs-12 text-center">
+    <div class="col-md-4 col-xs-4 text-center">
       <button class="btn btn-info btn-lg " id="open_invoice" type="button" data-id="{{$charge->id}}" title="Factura">
         <i class="fa fa-files-o"></i> Factura
       </button>
     </div>
-    <div class="col-md-4 col-xs-12 text-center">
+    <div class="col-md-4 col-xs-4 text-center">
       <button class="btn btn-lg btn-success" type="submit">
         Actualizar
       </button>
     </div>
-    <div class="col-md-4 col-xs-12  text-center">
+    <div class="col-md-4 col-xs-4  text-center">
       <button class="btn btn-lg btn-danger" type="button" id="delete">
         Eliminar
       </button>

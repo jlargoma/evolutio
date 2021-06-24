@@ -14,7 +14,8 @@
                 <input type="hidden" id="coachsFilter" value="{{$coach}}">
                 <input type="hidden" id="selectMonth" value="{{$month}}">
                 <div class="row">
-                    <div class="col-xs-10">
+                    <div class="col-md-10">
+                      <div class="mbl-tabs">
                     <ul class="coachsFilter">
                        <li data-val="0" class="select_0 <?php echo ($coach == 0) ? 'active' : ''?>">
                            TODOS
@@ -26,7 +27,8 @@
                     @endforeach
                     </ul>
                     </div>
-                    <div class="col-xs-2 mx-1em">
+                    </div>
+                    <div class="col-md-2 mx-1em">
                         <button class="btn btn-horarios" data-toggle="modal" data-target="#modalIfrm">Horarios</button>
                         <button class="btn btn-bloqueo" data-toggle="modal" data-target="#modalIfrm">Bloqueos</button>
                     </div>
@@ -36,13 +38,15 @@
                   <input type="search" id="search_cust" class="form-control" placeholder="Buscar clientes">
                 </div>
                 <div class="col-md-8 col-xs-12">
+                  <div class="mbl-tabs">
                 <ul class="selectDate">
                 @foreach($aMonths as $k=>$v)
                 <li data-val="{{$k}}" class="<?php echo ($month == $k) ? 'active' : ''?>">
-                    {{$v.' '.$year}}
+                    {{$v}}
                 </li>
                 @endforeach
                 </ul>
+                </div>
                 </div>
                 <div class="col-md-2 col-xs-12 mx-1em">
                     <select id="servSelect" class="form-control">

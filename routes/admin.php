@@ -160,6 +160,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function () {
   /* Entrenadores */
   Route::get('/sendEmail/trainer/{id}', 'UsersController@sendEmailEntrenadores');
   Route::get('/actualizarEntrenador/{id}', 'UsersController@updEntrenador');
+  Route::get('/paymentsEntrenador/{id}', 'CoachLiquidationController@paymentsEntrenador');
   Route::get('/liquidacion-Entrenador/{id}/{date?}', 'CoachLiquidationController@liquidEntrenador');
   Route::get('/enviar-liquidacion-Entrenador/{id}/{date?}', 'CoachLiquidationController@enviarEmailLiquidacion');
   Route::get('/payment-Entrenador/', 'CoachLiquidationController@store');

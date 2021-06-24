@@ -52,6 +52,8 @@
                 padding: 0px !important;
             }
         </style>
+        <link rel="stylesheet" type="text/css" href="{{ asset('/admin-css/assets/css/styles.css')}}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('/admin-css/assets/css/mobile.css')}}">
         @yield('scripts')
     </body>
 </html>

@@ -1,6 +1,6 @@
 <h3 class="text-left">ANOTACIONES</h3>
 <div class="row">
-    <div class="col-md-8 ">
+    <div class="col-md-8 col-xs-12 ">
         <?php
         if ($oNotes):
             foreach ($oNotes as $v):
@@ -34,14 +34,12 @@
         endif;
         ?>
     </div>
-    <div class="col-md-4 ">
-        
-   
+    <div class="col-md-4 col-xs-12">
         <form  action="{{ url('/admin/usuarios/notes') }}" method="post">
             <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
             <input type="hidden" name="uid" value="{{ $user->id }}">
             <input type="hidden" name="id" id="noteID" value="">
-            <div class="form-material">
+            <div class="form-simple">
                 <label for="name">Nota</label>
                 <textarea name="note" id="note" class="form-control" style="min-height: 50vh; border: 1px solid #cecece;padding: 9px;"></textarea>
             </div>

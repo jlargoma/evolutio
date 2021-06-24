@@ -3,10 +3,10 @@
     Listado de Ingresos de <b><?php echo $year?></b>
 </h2>
 <div class="table-responsive" >
-    <table class="table">
+    <table class="table ticomes">
        <thead>
         <tr>
-          <th class="static">Servicio</th>
+          <th class="static thBlue">Servicio</th>
           <th class="first-col"></th>
           <th class="">Total<br>{{sumMonthValue($totals)}}</th>
           @foreach($monts as $k=>$v)

@@ -10,7 +10,7 @@ $tGast = $currentY['Gastos'];
     <table class="table">
       <thead>
         <tr>
-          <th class="static">Ingresos</th>
+          <th class="static thBlue">Ingresos</th>
           <th class="first-col"></th>
           <th class="">Total <br/>({{ moneda($tIngr[0])}})</th>
           @foreach($monts as $k=>$v)
@@ -36,7 +36,7 @@ $tGast = $currentY['Gastos'];
        </tbody>
        <thead>
         <tr>
-          <th class="static">Gastos</th>
+          <th class="static thBlue">Gastos</th>
           <th class="first-col"></th>
           <th class="">Total <br/>({{ moneda($tGast[0])}})</th>
           @foreach($monts as $k=>$v)
@@ -63,7 +63,7 @@ $tGast = $currentY['Gastos'];
        </tbody>
        <tfoot>
          <tr class="">
-            <td class="static">RESULTADO</td>
+           <td class="static thBlue" style="height: 48px">RESULTADO</td>
             <td class="first-col"></td>
             @foreach($aux_e as $k=>$v)
             <td>{{moneda($aux_i[$k]-$v)}}</td>

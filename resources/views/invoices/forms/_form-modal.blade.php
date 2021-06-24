@@ -15,8 +15,8 @@
       <input type="hidden" name="confirm" value="1">
     
       
-      <h3 class="row col-xs-12 invoice">Emisor:</h3>
-      <div class=" row col-xs-12 bg-white mb-1em">
+      <h3 class=" invoice">Emisor:</h3>
+      <div class="  bg-white mb-1em">
         <select name="emisor" class="form-control">
           <option value="">--</option>
           @if($emisores)
@@ -26,8 +26,8 @@
           @endif
         </select>
       </div>
-      <h3 class="row col-xs-12 invoice">Cliente:</h3>
-      <div class="row col-xs-12 bg-white">
+      <h3 class="col-xs-12 invoice">Cliente:</h3>
+      <div class="col-xs-12 bg-white">
           <div class="col-md-4 col-xs-12 push-20">
             <label for="">Nombre</label>
             <input type="text" name="name" class="form-control" value="{{$oInvoice->name ?? ''}}">
@@ -49,9 +49,9 @@
             <input type="text" name="phone" class="form-control" value="{{$oInvoice->phone ?? ''}}">
           </div>
         </div>
-        <h3 class="row col-xs-12 invoice">Items: <button class="btn pull-right" type="button" id="addItem" >+Item</button></h3>
+        <h3 class=" invoice">Items: <button class="btn pull-right" type="button" id="addItem" >+Item</button></h3>
         
-        <div class="row col-xs-12">
+        <div class="">
           <div class="table-responsive">
             <table class="table">
               <thead>
@@ -92,7 +92,7 @@
           </div>
         </div>
       </div>
-      <div class="row col-xs-12  text-center">
+      <div class="  text-center">
         
         <button class="btn btn-complete" type="submit" >Guardar</button>
         @if($oInvoice->id>0)

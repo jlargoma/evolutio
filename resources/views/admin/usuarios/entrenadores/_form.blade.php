@@ -1,7 +1,7 @@
 @extends('layouts.popup')
 @section('content')
-<div class="row">
-    <div class="block col-md-12 bg-white">
+<div class="row block bg-white">
+    <div class="col-xs-12 my-2">
         <div class="block-1"><img src="/admin-css/assets/img/profile.png" class="img-responsive" style="max-width: 100%;"></div>
         <div class="block-2">
             <h2>{{$user->name}}</h2>
@@ -9,47 +9,43 @@
         </div>
        
     </div>
-</div>
-
-
-<div class="row">
-    <div class="block col-md-12 bg-white">
+    <div class="col-xs-12">
         <form class="form-horizontal" action="{{ url('/admin/usuarios/update') }}" method="post">
             <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
             <input type="hidden" name="id" value="{{ $user->id }}">
-            <div class="col-md-12 col-xs-12 push-20">
+            <div class="row">
 
-                <div class="col-lg-4 col-md-4">
+                <div class="col-lg-4 col-sm-4">
                     <div class="form-material">
                         <input class="form-control" type="text" id="name" name="name" required value="<?php echo $user->name ?>">
                         <label for="name">Nombre</label>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-4  push-20">
+                <div class="col-lg-3 col-sm-4  push-20">
                     <div class="form-material">
                         <input type="text" id="email" class="form-control" name="email" required value="<?php echo $user->email ?>">
                         <label for="email">E-mail</label>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-4  push-20">
+                <div class="col-lg-3 col-sm-4  push-20">
                     <div class="form-material">
                         <input class="form-control" type="number" id="telefono" name="telefono" required maxlength="9" value="<?php echo $user->telefono ?>">
                         <label for="telefono">Teléfono</label>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-4  push-20">
+                <div class="col-lg-2 col-sm-4  push-20">
                     <div class="form-material">
                         <input class="form-control" type="text" id="iban" name="iban" maxlength="20" value="<?php echo $user->iban ?>" >
                         <label for="iban">IBAN</label>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-4 push-20">
+                <div class="col-lg-2 col-sm-4 push-20">
                     <div class="form-material">
                         <input class="form-control" type="password" id="password" name="password" value="">
                         <label for="password">Contraseña</label>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-4 push-20">
+                <div class="col-lg-2 col-sm-4 push-20">
                     <div class="form-material">
                         <select class="form-control" id="role" name="role" style="width: 100%;" data-placeholder="Seleccione una role" required>
                             <option value="user" <?php if ($user->role == "user") echo "selected";?>>Usuario/Cliente</option>
@@ -62,33 +58,33 @@
                     </div>
                 </div>
                 
-                <div class="col-lg-2 col-md-4 push-20">
+                <div class="col-lg-2 col-sm-4 push-20">
                     <div class="form-material">
                         <input class="form-control" type="text" id="salario_base" name="salario_base" maxlength="20" value="{{$salario_base}}" >
                         <label for="salario_base">Salario Base</label>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-4 push-20">
+                <div class="col-lg-2 col-sm-4 push-20">
                     <div class="form-material">
                         <input class="form-control" type="text" id="ss" name="ss" maxlength="18" value="<?php echo $user->ss ?>">
                         <label for="ss">Seg. soc</label>
                     </div>
                 </div>
                     
-                <div class="col-lg-2 col-md-4 push-20">
+                <div class="col-lg-2 col-sm-4 push-20">
                     <div class="form-material">
                         <input class="form-control" type="text" id="ppc" name="ppc" maxlength="18" value="{{$ppc}}">
                         <label for="ppc">P.P.C</label>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-4 push-20">
+                <div class="col-lg-2 col-sm-4 push-20">
                     <div class="col-xs-2 mx-1em">
                         <button class="btn btn-horarios" type="button" data-id="{{ $user->id }}">Horarios</button>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-12 col-xs-12 push-20 text-center">
+            <div class=" text-center my-2">
                 <button class="btn btn-success" type="submit">
                     <i class="fa fa-floppy-o" aria-hidden="true"></i> Actualizar
                 </button>
@@ -97,29 +93,35 @@
 
     </div>
 </div>
-
-<div class="col-md-12">
+<div class="row block">
+  <div class="col-xs-12">
+    <h3 class="mt-1">Pagos Realizados</h3>
+<div id="blockPayments"></div>
+</div>
+</div>
+<div class="row">
   <div class="col-md-3"><h3>Liquidación Mensual</h3></div>
-    <div class="col-md-8" id="selectMonth">
+  
+    <div class="col-xs-9" id="selectMonth">
       @foreach($aMonths as $k=>$v)
       <button type="button" data-v="{{$k}}" class="btn <?php echo ($month == $k) ? 'active' : '' ?>">{{$v}}</button>
       @endforeach
     </div>
-    <div class="col-md-1">
+    <div class="col-xs-3">
       <button class="btn btn-success" id="sendLiquid">
               <i class="fa fa-envelope"></i> enviar
           </button>
     </div>
-    </div>
-<div class="row">
     <div class="block col-md-12 bg-white">
         <div id="blockLiquid"></div>
     </div>
 </div>
+
 @endsection
 @section('scripts')
 <script type="text/javascript">
 $(document).ready(function () {
+    $('#blockPayments').load('/admin/paymentsEntrenador/{{$user->id}}');
     $('#blockLiquid').load('/admin/liquidacion-Entrenador/{{$user->id}}');
     
     var currentMonth = "{{$month}}";
@@ -131,12 +133,12 @@ $(document).ready(function () {
         $(this).addClass('active');
         currentMonth = val;
     });
-    $('#blockLiquid').on('change','.liquidation',function (event) {
+    $('#blockPayments').on('change','.liquidation',function (event) {
         var id_coach = {{$user->id}};
         var date = $(this).data('k');
         var importe = $(this).val();
         $.get('/admin/payment-Entrenador/', {id_coach: id_coach, importe: importe, date: date}).done(function (resp) {
-          $('#blockLiquid').load('/admin/liquidacion-Entrenador/{{$user->id}}/'+currentMonth);
+           $('#blockPayments').load('/admin/paymentsEntrenador/{{$user->id}}');
         });
       });
     $('#sendLiquid').on('click',function (event) {

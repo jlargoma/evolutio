@@ -68,8 +68,7 @@
             <header id="header-navbar" class="content-mini content-mini-full">                
                 <ul class="nav-header pull-right">
                     <li class="text-center">
-                        <a href="{{ url('/admin/clientes') }}" class="btn btn-sm btn-success font-s16 font-w300"
-                        style="padding: 10px 15px;height: 45px;    line-height: 25px;">
+                        <a href="{{ url('/admin/clientes') }}" class="btn btn-success btn-home">
                             <i class="fa fa-home"></i>
                         </a>
                     </li>
@@ -78,23 +77,23 @@
                     if ($uRole == "admin"):
                     ?>
                     <li class="text-center">
-                        <a href="{{ url('admin/informes/cliente-mes') }}" class="btn btn-xs-small btn-sm btn-success font-s16 font-w300" style="padding: 10px 15px;height: 45px;    line-height: 25px;">
+                        <a href="{{ url('admin/informes/cliente-mes') }}" class="btn btn-success btn-home">
                             Inf. Clientes mes
                         </a>
                     </li>
                     <li class="text-center">
-                        <a href="{{ url('admin/informes/cuotas-mes') }}" class="btn btn-xs-small btn-sm btn-success font-s16 font-w300" style="padding: 10px 15px;height: 45px;    line-height: 25px;">
+                        <a href="{{ url('admin/informes/cuotas-mes') }}" class="btn btn-success btn-home">
                             Inf. Cuotas Mes
                         </a>
                     </li>
                     <li class="text-center">
-                        <a href="{{ url('admin/informes/caja') }}" class="btn btn-xs-small btn-sm btn-success font-s16 font-w300" style="padding: 10px 15px;height: 45px;    line-height: 25px;">
+                        <a href="{{ url('admin/informes/caja') }}" class="btn btn-success btn-home">
                             Caja
                         </a>
                     </li>
                     <?php else: ?>
                       <li class="text-center">
-                        <button id="button-checkCash" class="btn btn-sm btn-xs-small btn-success font-s16 font-w300" style="padding: 10px 15px;height: 45px;    line-height: 25px;" data-toggle="modal" data-target="#checkCash">
+                        <button id="button-checkCash" class="btn btn-success btn-home" data-toggle="modal" data-target="#checkCash">
                             Caja
                         </button>
                     </li>
@@ -184,7 +183,8 @@
         <script src="{{ asset('/js/vendor/notify.min.js') }}" ></script>
         <script src="{{ asset('/admin-css/assets/js/app.js') }}" ></script>
         <script src="{{ asset('/admin-css/assets/js/custom.js') }}" ></script>
-
+        <link rel="stylesheet" type="text/css" href="{{ asset('/admin-css/assets/css/styles.css')}}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('/admin-css/assets/css/mobile.css')}}">
         @yield('scripts')
 
         <script>

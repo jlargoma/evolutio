@@ -25,6 +25,7 @@ function btn_downlConsent($uID,$sign,$type){
 
 ?>
 <h3 class="text-left">CONSENTIMIENTOS</h3>
+<div class="table-responsive">
 <table class="table">
   <tr data-id="fisioIndiba">
     <th>CONSENTIMIENTO FISIOTERAPIA CON INDIBA</th>
@@ -67,3 +68,4 @@ function btn_downlConsent($uID,$sign,$type){
     <td class="btnCel"><?php echo btn_seeConsent($user->id,$sueloPelvico,'sueloPelvico'); ?></td>
   </tr>
 </table>
+  </div>

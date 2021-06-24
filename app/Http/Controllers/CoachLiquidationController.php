@@ -137,18 +137,32 @@ class CoachLiquidationController extends Controller
         return compact('pagosClase','totalClase','classLst','ppc','salary');
         
     }
-    public function liquidEntrenador($id, $date = null)
-    {
+    public function liquidEntrenador($id, $date = null){
+      
+      if (!$date) $date = date('Y-m');
+       $aux = explode('-', $date);
+       if (count($aux) == 2){
+           $year  = $aux[0];
+           $month = $aux[1];
+       } else {
+           $year = getYearActive();
+           $month = date('m');
+       }
         
-        if (!$date) $date = date('Y-m');
-        $aux = explode('-', $date);
-        if (count($aux) == 2){
-            $year  = $aux[0];
-            $month = $aux[1];
-        } else {
-            $year = getYearActive();
-            $month = date('m');
-        }
+      $aLiq = $this->liquMensual($id,$year,$month);
+      return view('/admin/usuarios/entrenadores/liquidacion',[ 
+              'pagosClase' => $aLiq['pagosClase'],
+              'totalClase' => $aLiq['totalClase'],
+              'salary' => $aLiq['salary'],
+              'classLst' => $aLiq['classLst'],
+              ]);
+       
+            
+    }
+    public function paymentsEntrenador($id){
+        
+        $year = getYearActive();
+        $month = date('m');
         /**********************************************************/
         $lstMonts = lstMonthsSpanish();
         $aMonths  = [];
@@ -195,7 +209,6 @@ class CoachLiquidationController extends Controller
             $liqByM[$k] = 0;
           } else {
             $aux = $this->liquMensual($id,$year,$am);
-            if ($am==$month) $aLiq =$aux;
             $liqByM[$k] = $aux['salary']+ array_sum($aux['totalClase']);
           }
         }
@@ -203,19 +216,14 @@ class CoachLiquidationController extends Controller
         //-----------------------------------------------------//
         
 
-        return view('/admin/usuarios/entrenadores/liquidacion',[ 
+        return view('/admin/usuarios/entrenadores/payments',[ 
                                                 'user' => User::find($id),
-                                                'pagosClase' => $aLiq['pagosClase'],
-                                                'totalClase' => $aLiq['totalClase'],
-                                                'salary' => $aLiq['salary'],
-                                                'classLst' => $aLiq['classLst'],
                                                 'payMonth' => $payMonth,
                                                 'liqByM' => $liqByM,
-                                                'date' => $date,
                                                 'aMonths'=>$aMonths,
-                                                'year' => $year,
                                                 'liqLst' => $liqLst,
                                                 'anual' => $anual,
+            'year'=>$year
                                                 ]);
 
 

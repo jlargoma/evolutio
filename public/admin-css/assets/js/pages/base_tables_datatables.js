@@ -3,8 +3,9 @@
  *  Author     : pixelcave
  *  Description: Custom JS code used in Tables Datatables Page
  */
-
 var BaseTableDatatables = function() {
+  
+    var isMobile=false;
     // Init full DataTable, for more examples you can check out https://www.datatables.net/
     var initDataTableFull = function() {
         jQuery('.js-dataTable-full').dataTable({
@@ -16,16 +17,27 @@ var BaseTableDatatables = function() {
 
 
     var initDataTableFullClient = function() {
-
-        jQuery('.js-dataTable-full-clients').dataTable({
+        var opt = {
             initComplete: function() {
                             $('div.loading').remove();
                             $('#containerTableResult').show();
                         },
-            columnDefs: [ { orderable: false, targets: [0,3,8] } ],
-            pageLength: 500,
-            lengthMenu: [[500], [500]]
-        });
+            columnDefs: [ { orderable: false, targets: [0,2,3,7] } ],
+            pageLength: 100,
+            paging:  true,
+            pagingType: "full_numbers",
+            scrollX: false,
+            scrollCollapse: false,
+            fixedColumns:null,
+            oLanguage: {sSearch: ""}
+        };
+        if (isMobile){
+          opt.pageLength = 30;
+          opt.scrollX = true;
+          opt.scrollCollapse = true;
+          opt.fixedColumns = {leftColumns: 2};
+        }
+        jQuery('.js-dataTable-full-clients').dataTable(opt);
     };
 
     var initDataTableFullBank = function() {
@@ -215,13 +227,15 @@ var BaseTableDatatables = function() {
 
     return {
         init: function() {
+          if (screen.width<481) isMobile = true;
+          
             // Init Datatables
-            bsDataTables();
-            initDataTableSimple();
-            initDataTableFull();
-            initDataTableCitas();
-            initDataTableFullClient();
-            initDataTableFullBank();
+//            bsDataTables();
+//            initDataTableSimple();
+//            initDataTableFull();
+//            initDataTableCitas();
+        if(typeof dataTableClient !='undefined') initDataTableFullClient();
+//            initDataTableFullBank();
         }
     };
 }();

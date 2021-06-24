@@ -1,6 +1,6 @@
 <h2>Registros de <?php echo strtoupper($gTypesNames[$type]);?></h2>
 
-
+<div class="table-responsive">
 <table class="table">
   <tr>
     <th>Fecha</th>
@@ -23,3 +23,4 @@
     }
      ?>
 </table>
+</div>

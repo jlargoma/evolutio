@@ -162,9 +162,7 @@
             </li>
           </ul>
         </div>
-        <div class="row block-content" >
-          <iframe id="content"></iframe>
-        </div>
+        <iframe id="content"></iframe>
       </div>
     </div>
   </div>

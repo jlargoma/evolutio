@@ -64,8 +64,8 @@
     </div>
     <div class="col-md-3  push-20">
       <div class="form-material">
-        <label for="price">Precio</label>
         <input class="form-control" type="number" id="r_price" name="r_price" step="0.01" required value="">
+        <label for="price">Precio</label>
       </div>
     </div>
     <div class="col-md-2  push-20">

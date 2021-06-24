@@ -20,9 +20,7 @@ tr.d3{
 tr.d2 td {
   background-color: #dedede;
 }
-table tr th.static{ text-align: left;}
-table tr td.static{ text-align: left; cursor: pointer;}
-table tr.d3 .static{ cursor: initial;}
+
 .btnImportExcel{background-color: #10cfbd;float: left;padding: 7px;color: #FFF;}
 #importExcel{
   width: 80%;
@@ -50,64 +48,3 @@ select.colExcel {
   padding: 7px;
 }
 
-
-table.table-resumen tr .static{
-  width: 130px;
-  overflow-x: scroll;
-  margin-top: 1px;
-  position: absolute;
-  border-right: 1px solid #efefef;
-  z-index: 9;
-  overflow: hidden;
-}
-table.table-resumen tr .static-2{
-  width: 80px;
-  text-align: center;
-  overflow-x: scroll;
-  margin-top: 1px;
-  position: absolute;
-  border-right: 1px solid #efefef;
-  z-index: 9;
-  left: 130px;
-  overflow: hidden;
-}
-table.table-resumen tr .first-col {
-  padding-right: 13px !important;
-  padding-left: 135px!important;
-}
-table.table-resumen tr .first-col-2 {
-  padding-right: 13px !important;
-  padding-left: 215px!important;
-}
-table.table-resumen tr th,
-table.table-resumen tr td{
-white-space: nowrap;
-}
-@media(max-width:991px) {
-  table tr .static{
-    width: 130px;
-    overflow-x: scroll;
-    margin-top: 1px;
-    position: absolute;
-    border-right: 1px solid #efefef;
-    z-index: 9;
-  }
-  table tr .static-2{
-    width: 80px;
-    text-align: center;
-    overflow-x: scroll;
-    margin-top: 1px;
-    position: absolute;
-    border-right: 1px solid #efefef;
-    z-index: 9;
-    left: 130px;
-  }
-  table tr .first-col {
-    padding-right: 13px !important;
-    padding-left: 135px!important;
-  }
-  table tr .first-col-2 {
-    padding-right: 13px !important;
-    padding-left: 215px!important;
-  }
-}

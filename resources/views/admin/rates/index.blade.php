@@ -18,19 +18,19 @@
       <h3 class="text-center">
         Listado de Servicios
       </h3>
-      <div class="block-content">
+      <div class="table-responsive">
         <?php if (count($services) > 0): ?>
           <table class="table table-bordered table-striped js-dataTable-full table-header-bg">
             <thead>
               <tr>
-                <th class="text-center hidden-xs hidden-sm" style="background-color: #46c37b; width: 60px;">id</th>
-                <th class="text-center" style="background-color: #46c37b">Familia</th>
-                <th class="text-center" style="background-color: #46c37b">SUBFAMILIA</th>
-                <th class="text-center" style="background-color: #46c37b; min-width: 280px;">Servicio</th>
-                <th class="text-center" style="background-color: #46c37b; width: 90px;">Precio</th>
-                <th class="text-center" style="background-color: #46c37b; width: 90px;">Nº Ses<span class="hidden-xs hidden-sm">ion / sem</span></th>
-                <th class="text-center" style="background-color: #46c37b">Periodicidad</th>
-                <th class="text-center" style="background-color: #46c37b;min-width: 10%;">Acciones</th>
+                <th class="text-center hidden-xs hidden-sm">id</th>
+                <th class="text-center">Familia</th>
+                <th class="text-center">SUBFAMILIA</th>
+                <th class="text-center">Servicio</th>
+                <th class="text-center">Precio</th>
+                <th class="text-center">Nº Ses<span class="hidden-xs hidden-sm">ion / sem</span></th>
+                <th class="text-center">Periodicidad</th>
+                <th class="text-center">Acciones</th>
               </tr>
             </thead>
             <tbody>	
@@ -38,7 +38,7 @@
               <?php foreach ($serv as $rate): ?>
                 <tr>
                   <td class="text-center hidden-xs hidden-sm"><?php echo $rate->id ?></td>
-                  <td class="text-center ">
+                  <td class="text-center td1">
                     <select class="form-control editables type-rate-<?php echo $rate->id ?>" data-id="<?php echo $rate->id; ?>">
                       <?php foreach ($types as $k=>$v): ?>
                         <option value="<?php echo $k ?>" <?php if ($k == $rate->type) {
@@ -61,7 +61,7 @@
                     <?php endforeach ?>
                     </select>
                   </td>
-                  <td class="text-center">
+                  <td class="text-center td1">
                     <input type="text" class="form-control editables name-rate-<?php echo $rate->id ?>"  data-id="<?php echo $rate->id; ?>" value="<?php echo $rate->name; ?>" />
                   </td>
                   <td class="text-center">
@@ -228,4 +228,10 @@
     });
   });
 </script>
+<style>
+.td1 {
+    min-width: 11em;
+    padding: 16px 1px 0 !important;
+}
+</style>
 @endsection

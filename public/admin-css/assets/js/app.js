@@ -102,6 +102,7 @@ var App = function() {
 
     // Resizes #main-container to fill empty space if exists
     var uiHandleMain = function() {
+      return null;
         var $hWindow     = jQuery(window).height();
         var $hHeader     = $lHeader.outerHeight();
         var $hFooter     = $lFooter.outerHeight();

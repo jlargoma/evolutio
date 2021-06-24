@@ -18,49 +18,48 @@ $oBonoLst = $oBonoLst[1];
     <input type="hidden" id="importeCobrar" value="<?php echo $rate->price; ?>">
     <div class="col-md-12 push-20">
       <h2 class="text-center font-w300">
-        Cuota a cobrar <span class="font-w600"><?php echo $rate->typeRate->name . ': ' . $rate->name; ?></span> {{moneda($rate->price)}}
-      </h2>
+        Cuota a cobrar <span class="font-w600 mbl-br"><?php echo $rate->typeRate->name . ': ' . $rate->name; ?></span>{{moneda($rate->price)}}</h2>
     </div>
     <div class="row">
-      <div class="col-xs-8">
-        <div class="col-md-5">
-          <label for="id_rate">Personal</label>
-          <select class="form-control" id="id_coach" name="id_coach" style="width: 100%; cursor: pointer"
-                  placeholder="Personal asignado" >
-            <option value="null">--</option>
-            <?php
-            $old = old('id_coach');
-            foreach ($coachs as $v):
-              $sel = ($coach_id == $v->id) ? 'selected' : '';
-              ?>
-            <option value="<?php echo $v->id ?>" <?php echo $sel; ?>>
-              <?php echo $v->name ?>
-              </option>
-              <?php
-            endforeach;
+      <div class="col-md-4 col-xs-12">
+        <label for="id_rate">Personal</label>
+        <select class="form-control" id="id_coach" name="id_coach" style="width: 100%; cursor: pointer"
+                placeholder="Personal asignado" >
+          <option value="null">--</option>
+          <?php
+          $old = old('id_coach');
+          foreach ($coachs as $v):
+            $sel = ($coach_id == $v->id) ? 'selected' : '';
             ?>
-          </select>
-        </div>
-        <div class="col-md-2 mb-1em">
-          <label for="discount">DTO %:</label>
-          <input type="number" id="discount" name="discount" class="form-control"/>
-        </div>
-        <div class="col-md-5">
-          <label for="importeFinal">Total:</label>
-          <input id="importeFinal" type="number" step="0.01" name="importe" class="form-control"
-                 value="<?php echo $importe; ?>"/>
-        </div>
+          <option value="<?php echo $v->id ?>" <?php echo $sel; ?>>
+            <?php echo $v->name ?>
+            </option>
+            <?php
+          endforeach;
+          ?>
+        </select>
       </div>
-      <div class="col-xs-4 text-right">
+      <div class="col-md-2 col-xs-6 mb-1em">
+        <label for="discount">DTO %:</label>
+        <input type="number" id="discount" name="discount" class="form-control"/>
+      </div>
+      <div class="col-md-3 col-xs-6">
+        <label for="importeFinal">Total:</label>
+        <input id="importeFinal" type="number" step="0.01" name="importe" class="form-control"
+               value="<?php echo $importe; ?>"/>
+      </div>
+      <div class="col-md-3 col-xs-12 text-right mbl-tc">
           <a class="btn btn-lg btn-danger mt-1"
              href="{{ url('/admin/rates/unassigned')}}/<?php echo $uRate; ?>">
             <i class="fa fa-trash"></i> Desasignar
           </a>
       </div>
-      <div class="col-xs-6">
+    </div>
+    <div class="row">
+      <div class="col-md-6 col-xs-12">
         <div class="box-payment-card row">
           <h4>PAGAR AHORA</h4>
-          <div class="col-xs-12">
+          <div class="row">
             
             <div class="col-xs-9">
               <select class="likeBtn" name="type_payment" id="type_payment" multiple>
@@ -103,7 +102,7 @@ $oBonoLst = $oBonoLst[1];
           </div>
         </div>
       </div>
-      <div class="col-xs-6 col-md-6">
+      <div class="col-xs-12 col-md-6">
         @include('admin.blocks.stripe-actions')
       </div>
     </div>

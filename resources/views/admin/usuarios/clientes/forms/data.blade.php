@@ -7,7 +7,7 @@
   <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
   <input type="hidden" name="id" value="{{ $user->id }}">
   <div class="col-md-6 ">
-    <div class="form-material">
+    <div class="form-material mt-2">
       <input class="form-control" type="text" id="name" name="name" required value="<?php echo $user->name ?>">
       <label for="name">Nombre</label>
     </div>
@@ -21,7 +21,7 @@
     </div>
   </div>
   <div class="col-md-6 ">
-    <div class="form-material">
+    <div class="form-material mt-2">
       <input class="form-control" type="text" id="dni" name="dni" value="<?php echo $user->dni ?>">
       <label for="name">DNI</label>
     </div>
@@ -36,7 +36,13 @@
       <label for="password">Contraseña</label>
     </div>
   </div>
-  <div class="col-md-6 mt-1">
+  <div class="col-md-3 mt-1">
+    <select name="status" class="form-control">
+      <option value="1" <?php if($user->status == 1) echo "selected"; ?>>Activo</option>
+      <option value="0" <?php if($user->status != 1) echo "selected"; ?>>No Activo</option>
+    </select>
+  </div>
+  <div class="col-md-3 mt-1">
     <button class="btn btn-success" type="submit">
       <i class="fa fa-floppy-o" aria-hidden="true"></i> Actualizar
     </button>
@@ -46,11 +52,12 @@
 
 <div class="col-md-12 push-30 bg-white" style="padding: 20px 0px;">
 
-  <div class="row table-responsive">
+  <div class="table-responsive">
     <table class="table table-bordered table-striped table-header-bg">
       <thead>
         <tr>
-          <th class="text-center">{{$year}}</th>
+          <th class="text-center static">{{$year}}</th>
+          <th class="first-col"></th>
           <?php foreach ($months as $month): ?>
             <th class="text-center"><?php echo $month; ?></th>
           <?php endforeach ?>
@@ -67,7 +74,8 @@
             $totalNoPay = 0;
             ?>
             <tr>
-              <td class="text-center"><b>{{$name}}</b></td>
+              <td class="text-center static"><b>{{$name}}</b></td>
+              <td class="first-col"></td>
               <?php foreach ($months as $key => $month): ?>
                 <td class="text-center">
                   <?php
@@ -121,26 +129,26 @@
             </tr>
           <?php endforeach ?>
 
-        <tr>
-          <td class="text-center" style="color: #fff; background-color: #5c90d2; border-bottom-color: #5c90d2; font-size: 18px;">
+        <tr class="tbl_totales">
+          <td class="static" >
             <b>TOTALES</b>
           </td>
+          <td class="first-col"></td>
           <?php foreach ($months as $key => $month): ?>
-            <td class="text-center" style="color: #fff; background-color: #5c90d2; border-bottom-color: #5c90d2; font-size: 18px;">
-              <?php echo $totalUser[$key] ?>€
+            <td>
+              <?php echo moneda($totalUser[$key]);?>
             </td>
           <?php endforeach; ?>
-          <td class="text-center" style="color: #fff; background-color: #5c90d2; border-bottom-color: #5c90d2; font-size: 18px;">
-            <h3 class="text-center">
-              <?php echo $totalAnualUser //+ $totAnualBonoUser + $totAnualBonoEspUser;   ?>€
-            </h3>
+          <td >
+              <?php  echo moneda($totalAnualUser); //+ $totAnualBonoUser + $totAnualBonoEspUser;   ?>
           </td>
         </tr>
         @if($totalAnualNP>0)
         <tr>
-          <td class="text-center" style="background-color: #ffc3c3;">
+          <td class="text-center static" style="background-color: #ffc3c3;">
             <b>DEBE</b>
           </td>
+          <td class="first-col"></td>
           <?php foreach ($months as $key => $month): ?>
             <td class="text-center" style="background-color: #ffc3c3;">
               <?php echo moneda($totalUserNPay[$key]); ?>

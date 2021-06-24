@@ -17,10 +17,10 @@ function sumMonthValue($m){
 <div class="content">
 <div class="row">
   
-  <div class="col-xs-6">
+  <div class="col-sm-6">
     <canvas id="chartTotalByYear" style="width: 100%; height: 250px;"></canvas>
   </div>
-  <div class="col-xs-6">
+  <div class="col-sm-6">
       <canvas id="chartTotalByMonth" style="width: 100%; height: 250px;"></canvas>
   </div>
   <div class="col-xs-12">

@@ -144,7 +144,7 @@ class IncomesController extends Controller {
     $pMeth = payMethod();
     
  ?>
-
+<div class="table-responsive">
 <table class="table">
   <tr>
     <th>Fecha</th>
@@ -165,6 +165,7 @@ class IncomesController extends Controller {
     }
      ?>
 </table>
+  </div>
     <?php
   }
 }

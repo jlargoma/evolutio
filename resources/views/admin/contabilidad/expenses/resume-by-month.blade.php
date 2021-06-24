@@ -1,5 +1,5 @@
 <h3>Resumen Gastos / Mes</h3>
-<div class=" table-responsive">
+<div class="table-responsive">
   <table class="table table-resumen">
     <thead>
       <tr class="resume-head">

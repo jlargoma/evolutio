@@ -3,19 +3,18 @@
 
 @section('content')
 @include('admin.contabilidad._button-contabiliad')
-<div class="content">
 <h2>Gastos <button type="button" class="btn btn-success" id="addNew_ingr" type="button" data-toggle="modal" data-target="#modalAddNew"><i class="fa fa-plus-circle"></i> Añadir</button></h2>
   <div class="col-lg-12 col-md-12 col-xs-12">
   @include('admin.contabilidad.expenses.resume-by-month')
   </div>
   <div class="row">
-    <div class="col-lg-4 col-md-6 col-xs-12">
+    <div class="col-lg-4 col-sm-6 col-xs-12">
        <canvas id="chart_1" style="width: 100%; height: 250px;"></canvas>
     </div>
-    <div class="col-lg-4 col-md-6 col-xs-12">
+    <div class="col-lg-4 col-sm-6 col-xs-12">
       <canvas id="chartTotalByYear" style="width: 100%; height: 250px;"></canvas>
     </div>
-    <div class="col-lg-4 col-md-6 col-xs-12">
+    <div class="col-lg-4 col-sm-6 col-xs-12">
       <canvas id="chartTotalByMonth" style="width: 100%; height: 250px;"></canvas>
     </div>
   </div>
@@ -23,6 +22,7 @@
   <br/> <br/> <br/>
 
   <div class="col-md-8 col-xs-12">
+    <div class="mbl-tabs">
     <ul class="selectDate">
       @foreach($lstMonths as $k=>$v)
       <li data-val="{{$k}}" class="<?php echo ($current == $k) ? 'active' : '' ?>">
@@ -30,6 +30,7 @@
       </li>
       @endforeach
     </ul>
+  </div>
   </div>
   <div class="col-md-2 col-xs-6">
     <h3>Total Selec. <span id="totalMounth">0</span></h3>
@@ -183,11 +184,11 @@
     .table-responsive th select option {
       color: #008ff7;
     }
-    table.table-resumen tr .static{
-          width: 210px;
+    table.table-resumen tr th.static{
+      background-color: #5c90d2;
     }
     table.table-resumen tr .static-2{
-      left: 230px;
+      left: 130px;
     }
   </style>
    

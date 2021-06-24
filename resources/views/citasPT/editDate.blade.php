@@ -30,7 +30,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-xs-3 col-md-2  push-20">
+                <div class="col-xs-5 col-md-2  push-20">
                     <label for="date">Fecha</label>
                     <input class="js-datepicker form-control" value="{{$date}}" type="text" id="date" name="date" placeholder="Fecha y hora..." style="cursor: pointer;" data-date-format="dd-mm-yyyy"/>
                 </div>
@@ -52,11 +52,11 @@
 
                     </select>
                 </div>
-                <div class="col-xs-3 col-md-1  push-20">
+                <div class="col-xs-4 col-md-1  push-20">
                   <label for="date">Hora Exacta</label>
                   <input class="form-control" type="time" value="{{$customTime}}" type="text" id="customTime" name="customTime">
                 </div>
-                <div class="col-xs-3 col-md-2 push-20">
+                <div class="col-xs-6 col-md-2 push-20">
                     <label for="id_coach">Entrenador</label>
                     <select class="js-select2 form-control" id="id_coach" name="id_coach" style="width: 100%; cursor: pointer" data-placeholder="Seleccione coach.." >
                         <option></option>

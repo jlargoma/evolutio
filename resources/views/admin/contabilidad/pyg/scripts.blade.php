@@ -29,7 +29,6 @@ $ij = 0;
 if ($crLst) {
     foreach ($crLst as $k => $v) {
       $valueAux = ($v[0]>0) ? round(($v[0]/$tIncomes)*100) : 0;
-      echo $valueAux.' - '.$tIncomes.'<br>';
       $bColor_1[] = '"'.printColor($ij).'"';
       $labels_1[] = "'$oRateTypes[$k]'";
       $values_1[] = $valueAux;

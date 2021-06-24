@@ -1,6 +1,7 @@
 @extends('layouts.popup')
 @section('content')
 <h1 class="text-center"><?php echo $user->name; ?></h1>
+<div class="nav-box">
 <ul class="nav nav-tabs">
   <li <?php if ($tab == 'datos') echo 'class="active"'; ?>><a data-toggle="tab" href="#datos">Datos</a></li>
   <li <?php if ($tab == 'servic') echo 'class="active"'; ?>><a data-toggle="tab" href="#servic">Suscripciones</a></li>
@@ -10,7 +11,7 @@
   <li <?php if ($tab == 'invoice') echo 'class="active"'; ?>><a data-toggle="tab" href="#invoice">Factura</a></li>
   <li <?php if ($tab == 'bono') echo 'class="active"'; ?>><a data-toggle="tab" href="#bono">Bonos</a></li>
 </ul>
-
+</div>
 <div class="tab-content box">
   <div id="datos" class="tab-pane fade <?php if ($tab == 'datos') echo 'in active'; ?>">
       @include('admin.usuarios.clientes.forms.data')
@@ -251,7 +252,7 @@ div#tableInvoices_filter {
     float: right;
     font-size: 34px;
     margin-top: -8px;
-    margin-right: 1em;
+    margin-right: 7px;
 }
 #bonoLog{
   max-width: 780px;

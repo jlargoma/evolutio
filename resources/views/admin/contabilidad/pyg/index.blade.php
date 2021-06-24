@@ -17,15 +17,17 @@ function sumMonthValue($m){
 
   <div class="row">
 
-    <div class="col-md-4 col-xs-12">
+    <div class="col-lg-4 col-sm-6 col-xs-12">
       <canvas id="chart_incomesYear" style="width: 100%; height: 250px;"></canvas>
     </div>
-    <div class="col-md-4 col-xs-12">
+    <div class="col-lg-4 col-sm-6 col-xs-12">
       <canvas id="chart_expensesYear" style="width: 100%; height: 250px;"></canvas>
     </div>
-    <div class="col-md-4 col-xs-12">
+    <div class="col-lg-4 col-sm-6 col-xs-12">
       <canvas id="chartTotalByMonth" style="width: 100%; height: 250px;"></canvas>
     </div>
+  </div>
+    <div class="row">
     <div class="col-md-4 col-xs-6">
       <div class="box"><h2>Ingresos {{$year}}</h2><span>{{moneda($incomesYear[$year])}}</span></div>
     </div>
@@ -44,17 +46,17 @@ function sumMonthValue($m){
           @endif
         </span></div>
     </div>
-    <div class="col-lg-3 col-md-6 col-xs-6 col-smal">
+    <div class="col-lg-3 col-md-6 col-xs-12 col-smal">
       <div class="box"><h2>Suscripciones activas</h2><span>{{$subscs}}</span></div>
       <div class="box"><h2>Clientes activos</h2><span>{{$uActivs}}</span></div>
     </div>
-    <div class="col-lg-3 col-md-6 col-xs-6 chart_1">
+    <div class="col-lg-3 col-sm-6 col-xs-12 chart_1">
       <canvas id="chart_1" width="50" height="50"></canvas>
     </div>
-    <div class="col-lg-4 col-md-4 col-xs-6 chart_2">
+    <div class="col-lg-4 col-sm-6 col-xs-12 chart_2">
       <canvas id="myChart" width="400" height="200"></canvas>
     </div>
-    <div class="col-lg-2 col-md-2 col-xs-6">
+    <div class="col-lg-2 col-sm-6 col-xs-12">
       <table class="table">
         <tr>
           <th>Total</th>

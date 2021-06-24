@@ -100,16 +100,17 @@
           <input id="importeFinal" type="number" step="0.01" name="importe" class="form-control" value="{{ old('importe') }}"/>
         </div>
       </div>
-      <div class="col-xs-12 push-20">
-        <div class="row push-20">
-          <div class="col-xs-6 push-20">
+    </div>
+    
+      <div class="row">
+          <div class="col-md-6 col-xs-12 push-20">
             <div class="box-payment-card">
             <h4>PAGAR AHORA</h4>
             <div class="row">
               <div class="col-xs-9">
               <?php $old = old('type_payment', 'card'); ?>
               <select class="likeBtn" name="type_payment" id="type_payment" multiple>
-                <option class='aaaa' value="card" <?php if ($old == 'card') echo 'selected'; ?>>Tarjeta</option>
+                <option value="card" <?php if ($old == 'card') echo 'selected'; ?>>Tarjeta</option>
                 <option value="cash" <?php if ($old == 'cash') echo 'selected'; ?>>Efectivo</option>
                 <option value="banco" <?php if ($old == 'banco') echo 'selected'; ?>>Banco</option>
               </select>
@@ -125,14 +126,12 @@
             </div>
             </div>
           </div>
-          <div class="col-xs-6 push-20">
+          <div class="col-xs-12 col-md-6 push-20">
             @include('admin.blocks.stripe-actions')
           </div>
-        </div>
         <input type="hidden" id="importeCobrar">
       </div>
 
-    </div>
   </form>
 </div>
 @endsection

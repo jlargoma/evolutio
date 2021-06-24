@@ -11,7 +11,7 @@ $oBonoLst = $oBonoLst[1];
     <div class="box-payment-card">
       <h4>PAGAR AHORA</h4>
       <div class="row">
-        <div class="col-xs-9">
+        <div class="col-md-9">
           <select class="likeBtn" name="type_payment" id="type_payment" multiple>
             <option value="card" selected="">Tarjeta</option>
             <option value="cash">Efectivo</option>
@@ -23,7 +23,7 @@ $oBonoLst = $oBonoLst[1];
             @endif
           </select>
         </div>
-        <div class="col-xs-3">
+        <div class="col-md-3">
           <button class="btn btn-lg btn-success sendForm" type="button" data-id="chargeDate">
             Cobrar
           </button>

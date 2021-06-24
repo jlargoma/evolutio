@@ -1,73 +1,59 @@
 <table class="table table-striped js-dataTable-full-clients table-header-bg">
     <thead>
         <tr>
-            <th class="text-center hidden-xs hidden-sm sorting_disabled"></th>
-            <th class="text-center">Nombre Cliente<br></th>
-            <th class="text-center sorting_disabled">Acciones</th>
-            <th class="text-center sorting_disabled">Tel<span class="hidden-xs hidden-sm">éfono</span><br></th>
-            <th class="text-center hidden-xs hidden-sm sorting_disabled">Entrenador<br></th>
-            <th class="text-center hidden-xs hidden-sm">
+            <th class="text-center tc0 hidden-xs hidden-sm"></th>
+            <th class="text-center tc1">Nombre Cliente<br></th>
+            <th class="text-center tc2">Acciones</th>
+            <th class="text-center tc3">Tel<span class="hidden-xs hidden-sm">éfono</span><br></th>
+            <th class="text-center tc4">
                 <?php
                 $aux = ($month == 1) ? 12 : $month - 1;
                 echo $months[$aux];
                 ?>
-                <label class="text-danger">
-                    (<?php echo $toPay[0] ?>)
-                </label>
+                <label class="text-danger">{{moneda($toPay[0])}}</label>
             </th>
-            <th class="text-center hidden-xs hidden-sm">
+            <th class="text-center tc4">
                 <?php
                 $aux = $month;
                 echo $months[$aux];
                 ?>
-                <label class="text-danger">
-                    (<?php echo $toPay[1] ?>)
-                </label>
+                <label class="text-danger">{{moneda($toPay[1])}}</label>
             </th>
-            <th class="text-center hidden-xs hidden-sm">
+            <th class="text-center tc4">
                 <?php
                 $aux = ($month == 12) ? 1 : $month + 1;
                 echo $months[$aux];
                 ?>
-                <label class="text-danger">
-                    (<?php echo $toPay[2] ?>)
-                </label>
+                <label class="text-danger">{{moneda($toPay[2])}}</label>
             </th>
-            <th class="text-center sorting_desc" id="estado-payment">Estado</th>
+            <th class="text-center sorting_desc hidden-xs hidden-sm" id="estado-payment">Estado</th>
             
         </tr>
     </thead>
     <tbody>
         <?php foreach ($users as $key => $user): ?>
             <tr>
-                <td class="text-center hidden-xs hidden-sm" style="width: 60px!important">
+                <td class="text-center hidden-xs hidden-sm tc0">
                     <label class="css-input switch switch-sm switch-success">
                         <?php $checked = ($user->status == 1) ? 'checked' : ''; ?>
                         <input type="checkbox" class="switchStatus" data-id="<?php echo $user->id ?>" <?php echo $checked ?>><span></span>
                     </label>
                 </td>
-                <td class="text-justify"> 
+                <td class="text-left tc1"> 
                     <a  class="openUser" data-id="<?php echo $user->id; ?>"  data-type="user" data-original-title="Editar user" ><b><?php echo $user->name; ?></b></a>
                 </td>
-                <td class="text-center">
+                <td class="text-center tc2">
                     <button class="btn btn-default add_rate" data-toggle="modal" data-target="#modalCliente" data-idUser="<?php echo $user->id; ?>">
                         <i class="fa fa-usd" aria-hidden="true"></i>
                     </button>
                 </td>
-                <td class="text-center">
+                <td class="text-center tc3">
                     <span class="hidden-xs hidden-sm"><?php echo $user->telefono; ?></span>
                     <span class="hidden-lg hidden-md">
                         <a href="tel:<?php echo $user->telefono; ?>">
                             <i class="fa fa-phone"></i>
                         </a>
                     </span>
-                </td>
-                <td class="text-center">
-                    <?php 
-                    if ($user->userCoach){
-                    show_isset($user->userCoach->id_coach,$aCoachs);
-                    } else  echo '-';
-                    ?>
                 </td>
                 <?php 
                 $auxMonth = $month - 2;
@@ -93,12 +79,12 @@
                       endforeach;
                     endif;
                         ?>
-                    <td class="text-center" data-order="<?php echo $auxPend; ?>">
+                    <td class="text-center tc4 <?php if($i==1) echo 'yb'; ?>" data-order="<?php echo $auxPend; ?>">
                           
                           <?php echo $textAux; ?>
                     </td>
                 <?php endfor; ?>
-                <td class="text-center" data-order="<?php echo $pending ? 1 : (($pending === false) ? 0:'');?>" >
+                <td class="text-center hidden-xs hidden-sm" data-order="<?php echo $pending ? 1 : (($pending === false) ? 0:'');?>" >
                   <?php 
                   if ($pending === false){
                     echo '<i class="fa fa-circle text-success" aria-hidden="true"></i>';

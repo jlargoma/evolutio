@@ -1,3 +1,4 @@
+<div class="table-responsive">
 <table class="table t-center">
   <thead>
     <tr>
@@ -25,6 +26,7 @@
     ?>
   </tbody>
 </table>
+  </div>
 <style>
   .total-log{
     font-size: 25px;

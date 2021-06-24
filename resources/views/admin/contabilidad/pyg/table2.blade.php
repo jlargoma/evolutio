@@ -11,20 +11,17 @@ foreach ($monts as $k=>$v){
 </h2>
 <div class="table-responsive" >
     <table class="table">
-      <thead>
         <tr>
-          <th class="static">Tipo</th>
+          <th class="static thBlue">Tipo</th>
           <th class="first-col"></th>
           <th class="">Total <br/>({{ moneda(array_sum($auxTM))}})</th>
           @foreach($monts as $k=>$v)
           <th>{{$v}} <br/>({{ moneda($auxTM[$k])}})</th>
           @endforeach
         </tr>
-       </thead>
-       <tbody>
          @foreach($pay_method as $k1=>$v1)
           <tr>
-            <td class="stati"><?php echo $pmName[$k1]; ?></td>
+            <td class="static"><?php echo $pmName[$k1]; ?></td>
             <td class="first-col"></td>
             <td><b>{{ moneda($v1[0])}}</b></td>
             @foreach($monts as $k=>$v)
@@ -32,8 +29,6 @@ foreach ($monts as $k=>$v){
             @endforeach
           </tr>
             @endforeach
-       </tbody>
-       
 </table>
 </div>
 <!--    TABLA                                  -->

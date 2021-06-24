@@ -11,11 +11,13 @@
     <input type="hidden" name="id_back" value="<?php echo $id_back; ?>">
     <div class="row">
       <div class="col-md-6 col-xs-12 mt-1em">
-        <table class="table t-center box-shadow" style="margin-top: 2em;">
+        <div class="table-responsive">
+        <table class="table t-center tableBono" style="margin-top: 2em;">
           <thead>
             <tr>
-                <th></th>
-                <th  class="t-left">Bono</th>
+                <th class="static"></th>
+                <th  class="t-left static-2">Bono</th>
+                <td class="first-col"></td>
                 <th>Servicio (familia)</th>
                 <th>Cantidad</th>
                 <th>Precio</th>
@@ -24,9 +26,10 @@
             <tbody>
             @if($oBonos)
               @foreach($oBonos as $b)
-              <tr class="checkBono">
-                <td><input type="radio" name="id_bono" value="{{$b->id}}" class="form-control"/></td>
-                <td class="t-left"><label>{{$b->name}}</label></td>
+              <tr > 
+                <td class="static"><input type="radio" name="id_bono" value="{{$b->id}}" class="form-control"/></td>
+                <td class="t-left static-2"><label>{{$b->name}}</label></td>
+                <td class="first-col"></td>
                 <td>
                   <?php 
                   if ($b->rate_subf && isset($rate_subf[$b->rate_subf]))
@@ -42,8 +45,9 @@
             @endif
           </tbody>
       </table>
+          </div>
       </div>
-      <div class="col-xs-6">
+      <div class="col-sm-6 col-xs-12 mt-1em">
         <div class="box-payment-card row">
           <h4>PAGAR AHORA</h4>
           <div class="col-xs-12">
@@ -154,5 +158,35 @@ $(document).ready(function () {
 
 });
 </script>
+<style>
+  .tableBono .static{
+    width: 20px;
+    padding: 11px 0 !important;
+}
+
+  @media only screen and (max-width: 426px){
+  .tableBono .static{
+    width: 25px;
+    overflow-x: scroll;
+    margin-top: 1px;
+    position: absolute;
+    border-right: 1px solid #efefef;
+    background-color: #f5f5f5;
+    z-index: 9;
+    padding: 5px 2px !important;
+    height: 50px;
+  }
+  .tableBono .static-2{
+    background-color: #f5f5f5;
+    left: 45px;
+    width: 110px;
+        padding-left: 0;
+    text-align: left;
+  }
+  .tableBono tr .first-col {
+    padding-left: 130px !important;
+  }
+  }
+</style>
 @include('admin.blocks.cardScripts')
 @endsection
