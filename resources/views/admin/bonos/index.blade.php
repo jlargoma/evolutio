@@ -1,6 +1,6 @@
 @extends('layouts.admin-master')
 
-@section('title') Bonoss - Evolutio HTS @endsection
+@section('title') Bonos - Evolutio HTS @endsection
 
 @section('headerButtoms')
 <li class="text-center">
@@ -12,13 +12,10 @@
 
 @section('content')
 <div class="content content-full bg-white">
-  <div class="row" style="padding: 20px 0;">
-    <div class="col-xs-12 col-md-12">
-    <div class="row">
       <h3 class="text-center">
         Listado de Bonos
       </h3>
-      <div class="block-content">
+      <div class="table-responsive">
         <?php if (count($objs) > 0): ?>
           <table class="table table-bordered table-striped js-dataTable-full table-header-bg">
             <thead>
@@ -112,9 +109,6 @@
       
       
   </div> 
-</div>
-</div>
-</div>
 <div class="modal fade" id="modal-bono" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
   <div class="modal-dialog modal-md">
     <div class="modal-content">
