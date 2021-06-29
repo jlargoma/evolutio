@@ -65,99 +65,7 @@ class CoachLiquidationController extends Controller
     }
     
       
-    private function liquMensual($id,$year,$month) {
-        $lstMonts = lstMonthsSpanish();
-        $typePT = 2;
-        
-        $taxCoach = CoachRates::where('id_user', $id)->first();
-        
-        $ppc = $salary = $comm = 0;
-        if ($taxCoach){
-            $ppc = $taxCoach->ppc;
-            $comm = $taxCoach->comm/100;
-            $salary = $taxCoach->salary;
-        }
-        
-        
-        
-        /**********************************************************/
-        
-        $oLiq = CoachLiquidation::where('id_coach',$id)
-                    ->whereYear('date_liquidation' ,'=', $year)
-                    ->whereMonth('date_liquidation' ,'=', $month)
-                    ->first();
-        if ($oLiq){
-          if ($oLiq->salary) $salary = $oLiq->salary;
-        }
-        
-        
-        /**********************************************************/
-        /** @ToDo ver si es sólo citas o todos los cobros */
-        $oTurnos = Dates::where('id_coach',$id)
-                ->whereMonth('date','=',$month)
-                ->whereYear('date','=', $year)
-                ->join('users_rates','users_rates.id','=','id_user_rates')
-                ->whereNotNull('users_rates.id_charges')
-                ->with('user')->with('service')->with('uRates')
-                ->orderBy('date')
-                ->get();
-
-        $totalClase = array();
-        $pagosClase = array();
-        $classLst = [];
-        
-        if ($oTurnos){
-            foreach ($oTurnos as $item) {
-                $key= $item->service->id;
-                if (!isset($classLst[$key])){
-                 $classLst[$key] = $item->service->name;
-                 $pagosClase[$key] = [];
-                 $totalClase[$key] = 0;
-                }
-                
-                $import = 0;
-                if ($item->uRates && $item->uRates->charges)
-                $import = $item->uRates->charges->import;
-               
-                $totalClase[$key] += $import*$comm;
-               
-                if ($item->service->type == $typePT) {
-                    /* 50€ precio de entrenamiento personal */
-                    $totalClase[$key] += 50;
-                }else{
-                    $totalClase[$key] += $ppc;
-                }
-               
-                $time = strtotime($item->date);
-                $className  = date('d',$time).' de '.$lstMonts[date('n',$time)];
-                $className .= ' a las '.date('h a',$time);
-                $className .= ' (cliente : '.$item->user->name.')';
-                $pagosClase[$key][] = $className;
-            }
-        }
-        
-        //-----------------------------------------------------------//
-        $oExpenses = \App\Models\Expenses::where('to_user',$id)
-                ->whereMonth('date','=',$month)
-                ->whereYear('date','=', $year)
-                ->orderBy('date')
-                ->get();
-        $lstExpType = \App\Models\Expenses::getTypes();
-        $totalExtr = $nExtr = [];
-        if ($oExpenses){
-            foreach ($oExpenses as $item) {
-              $key= $item->type;
-              if (!isset($totalExtr[$key])){
-               $totalExtr[$key] = 0;
-               $nExtr[$key] = $lstExpType[$key];
-              }
-              $totalExtr[$key] += $item->import;
-            }
-        }
-            
-        return compact('pagosClase','totalClase','totalExtr','nExtr','classLst','ppc','salary');
-        
-    }
+    
     public function liquidEntrenador($id, $date = null){
       
       if (!$date) $date = date('Y-m');
@@ -169,8 +77,8 @@ class CoachLiquidationController extends Controller
            $year = getYearActive();
            $month = date('m');
        }
-        
-      $aLiq = $this->liquMensual($id,$year,$month);
+      $sCoachLiq = new \App\Services\CoachLiqService();
+      $aLiq = $sCoachLiq->liquMensual($id,$year,$month);
       return view('/admin/usuarios/entrenadores/liquidacion',[ 
               'pagosClase' => $aLiq['pagosClase'],
               'totalClase' => $aLiq['totalClase'],
@@ -229,6 +137,7 @@ class CoachLiquidationController extends Controller
         //---- BEGIN liquidación mensual    -------------------//
         $aLiq = null;
         $liqByM = [];
+        $sCoachLiq = new \App\Services\CoachLiqService();
         $now = date('m');
         foreach ($aMonths as $k=>$v){
           if (!isset($CommLst[$k]) || $CommLst[$k] == null){
@@ -236,11 +145,9 @@ class CoachLiquidationController extends Controller
             if ($am>$now){
               $liqByM[$k] = 0;
             } else {
-              $aux = $this->liquMensual($id,$year,$am);
-//              if ($am == $now) dd($aux);
+              $aux = $sCoachLiq->liquMensual($id,$year,$am);
               $CommLst[$k] = array_sum($aux['totalClase']);
               $CommLst[0] += array_sum($aux['totalClase']);
-//              $liqByM[$k] = $aux['salary']+ array_sum($aux['totalClase']);
             }
           }
         }

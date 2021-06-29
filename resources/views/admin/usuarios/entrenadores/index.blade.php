@@ -115,7 +115,7 @@
               <?php
               foreach ($months as $k => $v):
                 $aux = isset($aLiq[$user->id]) ? $aLiq[$user->id] : null;
-                $liq = ($aux && isset($aLiq[$user->id][$k])) ? $aLiq[$user->id][$k][1] : 0;
+                $liq = ($aux && isset($aLiq[$user->id][$k])) ? $aLiq[$user->id][$k] : 0;
                 $totalMonthCoach[$k] += $liq;
                 ?>
                 <td class="text-center">{{mformat($liq)}}</td>
@@ -242,6 +242,13 @@ th.static {
 }
 .table-responsive.t-entrenadores .first-col{
   padding-left: 143px !important;
+}
+@media(min-width:991px) {
+  .table-responsive.t-entrenadores .first-col {
+    padding: 0px !important;
+    max-width: 0px !important;
+    min-width: 0px !important;
+  }
 }
 </style>
 <script src="{{ asset('admin-css/assets/js/plugins/datatables/jquery.dataTables.min.js')}}"></script>

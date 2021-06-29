@@ -1,7 +1,7 @@
 <h2>Registros de SUELDOS Y SALARIOS</h2>
 
 <div class="table-responsive">
-<table class="table t-center">
+<table class="table t-center nowrap">
   <tr>
     <th class="t-left">Coach</th>
     <th>Tipo</th>
@@ -50,11 +50,12 @@
         <?php if (isset($d['aLiq'][$user->id])): ?>
           <?php
           foreach ($d['months'] as $k => $v):
+            $liq = 0;
             if ($d['aLiq'][$user->id][$k])
               $liq = $d['aLiq'][$user->id][$k];
             ?>
-            <td><?php echo moneda($liq[1]); ?></td>
-            <?php $totalMonthCoach[$k] += $liq[1]; ?>
+            <td><?php echo moneda($liq); ?></td>
+            <?php $totalMonthCoach[$k] += $liq; ?>
           <?php endforeach; ?>
         <?php else: ?>
         <?php foreach ($d['months'] as $k => $v): ?>

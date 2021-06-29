@@ -7,11 +7,12 @@ use \Carbon\Carbon;
 use DB;
 use App\Models\Expenses;
 use App\Models\Charges;
+use App\Services\CoachLiqService;
 
 class PyGController extends Controller {
 
   public function index() {
-    /*     * ********************************************* */
+    //---------------------------------------------------------//
     $year = getYearActive();
     $lstMonths = lstMonthsSpanish(false);
     unset($lstMonths[0]);
@@ -19,7 +20,7 @@ class PyGController extends Controller {
     for ($i = 0; $i < 13; $i++)  $months_empty[$i] = 0;
 
     
-    /*     * ********************************************************* */
+    //---------------------------------------------------------//
     $gastos = Expenses::whereYear('date', '=', $year)->get();
     $gType = Expenses::getTypes();
     $gTypeGroup = Expenses::getTypesGroup();
@@ -28,24 +29,18 @@ class PyGController extends Controller {
     $crLst = [];
     foreach ($gTypeGroup_g as $k=>$v) $ggMonth[$v] = $months_empty;
     $ggMonth['otros'] = $months_empty;
-    /*     * ********************************************************* */
-    
-        
+    //---------------------------------------------------------//
     $oRateTypes = \App\Models\TypesRate::orderBy('name')->pluck('name','id')->toArray();
     $aRates = \App\Models\Rates::orderBy('name')->pluck('type','id')->toArray();
     foreach ($oRateTypes as $k=>$v) $crLst[$k] = $months_empty;
-
-    /*     * ********************************************************* */
+    //---------------------------------------------------------//
     $incomesYear = $expensesYear = [];
     $currentY = [];
-
-    /*     * ********************************************************* */
-    
+    //---------------------------------------------------------//
     for ($i = 2; $i >= 0; $i--) {
       $yAux = $year - $i;
       $incomesYear[$yAux] = Charges::whereYear('date_payment', '=', $yAux)->sum('import');
     }
-    
     //----------------------------------------------------------//
     $uRates = \App\Models\UserRates::where('id_charges', '>', 0)
               ->where('rate_year',$year)->get();
@@ -119,15 +114,15 @@ class PyGController extends Controller {
     $gTypeGroup['names']['pt'] = 'SUELDOS Y SALARIOS';
     for($i=0;$i<3;$i++){
       $auxYear = $year-$i;
-      $cLiq = \App\Models\CoachLiquidation::whereYear('date_liquidation', '=', $auxYear)->get();
-      if ($cLiq) {
-        foreach ($cLiq as $g) {
-          $expensesYear[$auxYear] += $g->total;
+      $sCoachLiq = CoachLiqService::liqByMonths($auxYear);
+      
+      foreach ($sCoachLiq['aLiq'] as $liq){
+        foreach ($liq as $m=>$t){
+          $expensesYear[$auxYear]  += $t;
           if ($i == 0){
-            $m = intval(substr($g->date_liquidation, 5, 2));
-            $ggMonth['pt'][$m] += $g->total;
-            $aux[$m] += $g->total;
-            $aux[0] += $g->total;
+            $ggMonth['pt'][$m] += $t;
+            $aux[$m] += $t;
+            $aux[0] += $t;
           }
         }
       }

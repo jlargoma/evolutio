@@ -6,7 +6,7 @@ $tGast = $currentY['Gastos'];
 <h2 class="font-w600">
     Listado de Ingresos / Gastos de <b><?php echo $year?></b>
 </h2>
-<div class="table-responsive" >
+<div class="table-responsive nowrap" >
     <table class="table">
       <thead>
         <tr>

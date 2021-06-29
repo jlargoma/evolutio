@@ -9,6 +9,7 @@ use DB;
 use App\Models\Expenses;
 use App\Models\CoachLiquidation;
 use App\Models\User;
+use App\Services\CoachLiqService;
 
 class ExpensesController extends Controller {
 
@@ -107,20 +108,18 @@ class ExpensesController extends Controller {
     $gTypeGroup['names']['pt'] = 'SUELDOS Y SALARIOS';
     for($i=0;$i<3;$i++){
       $auxYear = $year-$i;
-      $cLiq = CoachLiquidation::whereYear('date_liquidation', '=', $auxYear)->get();
-      if ($cLiq) {
-        foreach ($cLiq as $g) {
-          $month = date('n', strtotime($g->date_liquidation));
-          $yearMonths[$auxYear][$month] += $g->total;
-
+      $sCoachLiq = CoachLiqService::liqByMonths($auxYear);
+      
+      foreach ($sCoachLiq['aLiq'] as $liq){
+        foreach ($liq as $month=>$t){
+          $yearMonths[$auxYear][$month] += $t;
           if ($i == 0){
-            $listGastos_g['pt'][$month] += $g->total;
-            $listGastos_g['pt'][0] += $g->total;
+            $listGastos_g['pt'][$month] += $t;
+            $listGastos_g['pt'][0] += $t;
           }
         }
       }
     }
-    
     //---------------------------------------------------------//
     //First chart PVP by months
     $dataChartMonths = [];
