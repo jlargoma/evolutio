@@ -122,6 +122,7 @@ class InvoicesController extends Controller {
     $prices = $request->input('price',[]);
     $charge_id = $request->input('charge_id',null);
     $user_id = $request->input('user_id',null);
+    $date = $request->input('date',null);
     
     $oInvoice = null;
     if ($id) $oInvoice = Invoices::find($id);
@@ -153,7 +154,7 @@ class InvoicesController extends Controller {
       $oInvoice->phone_business    = $aEmisor['phone'];
       $oInvoice->zip_code_business = $aEmisor['zipcode'];
     }
-    
+    if ($date) $oInvoice->date = $date;
     $oInvoice->user_id = $user_id;
     $oInvoice->name = $request->input('name');
     $oInvoice->nif  = $request->input('nif');

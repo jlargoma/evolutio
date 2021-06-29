@@ -39,13 +39,13 @@
                         <label for="iban">IBAN</label>
                     </div>
                 </div>
-                <div class="col-lg-2 col-sm-4 push-20">
+                <div class="col-lg-4 col-sm-4 push-20">
                     <div class="form-material">
                         <input class="form-control" type="password" id="password" name="password" value="">
                         <label for="password">Contraseña</label>
                     </div>
                 </div>
-                <div class="col-lg-2 col-sm-4 push-20">
+                <div class="col-lg-4 col-sm-4 push-20">
                     <div class="form-material">
                         <select class="form-control" id="role" name="role" style="width: 100%;" data-placeholder="Seleccione una role" required>
                             <option value="user" <?php if ($user->role == "user") echo "selected";?>>Usuario/Cliente</option>
@@ -57,7 +57,9 @@
                         <label for="role">Role</label>
                     </div>
                 </div>
-                
+              <div class="col-lg-4 col-sm-4 push-20" style="height: 4em;">
+                  <div class="form-material"><label>&nbsp;</label></div>
+                </div>
                 <div class="col-lg-2 col-sm-4 push-20">
                     <div class="form-material">
                         <input class="form-control" type="text" id="salario_base" name="salario_base" maxlength="20" value="{{$salario_base}}" >
@@ -78,7 +80,13 @@
                     </div>
                 </div>
                 <div class="col-lg-2 col-sm-4 push-20">
-                    <div class="col-xs-2 mx-1em">
+                    <div class="form-material">
+                        <input class="form-control" type="text" id="comm" name="comm" maxlength="18" value="{{$comm}}">
+                        <label for="ppc">% Comisión</label>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-sm-4 push-20">
+                    <div class="col-xs-2 mx-1em pull-right">
                         <button class="btn btn-horarios" type="button" data-id="{{ $user->id }}">Horarios</button>
                     </div>
                 </div>
@@ -133,14 +141,26 @@ $(document).ready(function () {
         $(this).addClass('active');
         currentMonth = val;
     });
-    $('#blockPayments').on('change','.liquidation',function (event) {
-        var id_coach = {{$user->id}};
-        var date = $(this).data('k');
-        var importe = $(this).val();
-        $.get('/admin/payment-Entrenador/', {id_coach: id_coach, importe: importe, date: date}).done(function (resp) {
-           $('#blockPayments').load('/admin/paymentsEntrenador/{{$user->id}}');
-        });
+    
+    var saveLiq = function(obj,type){
+      var data = {
+        id_coach: {{$user->id}},
+        importe: obj.val(),
+        date: obj.data('k'),
+        type: type,
+        _token: '{{csrf_token()}}',
+      };
+      $.post('/admin/payment-Entrenador', data).done(function (resp) {
+         $('#blockPayments').load('/admin/paymentsEntrenador/{{$user->id}}');
       });
+    }
+    
+    $('#blockPayments').on('change','.liquidation',function (event) {
+        saveLiq($(this),'liq');
+    });
+    $('#blockPayments').on('change','.commision',function (event) {
+        saveLiq($(this),'comm');
+    });
     $('#sendLiquid').on('click',function (event) {
         var id_coach = {{$user->id}};
         var date = $('#selectMonth option:selected').val();

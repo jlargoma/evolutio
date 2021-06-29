@@ -255,19 +255,16 @@ class UsersController extends Controller {
     if ($userToUpdate->role == 'teach' || $userToUpdate->role == 'fisio' || $userToUpdate->role == 'nutri') {
       $userToUpdate->iban = $request->input('iban');
       $userToUpdate->ss = $request->input('ss');
-      $CoachRates = \App\Models\CoachRates::where('id_user', $userToUpdate->id)->get();
+      $CoachRates = \App\Models\CoachRates::where('id_user', $userToUpdate->id)->first();
 
-      if (count($CoachRates) > 0) {
-        $CoachRates[0]->salary = $request->input('salario_base');
-        $CoachRates[0]->ppc = $request->input('ppc');
-        $CoachRates[0]->save();
-      } else {
+      if (!$CoachRates) {
         $CoachRates = new \App\Models\CoachRates();
         $CoachRates->id_user = $userToUpdate->id;
-        $CoachRates->salary = $request->input('salario_base');
-        $CoachRates->ppc = $request->input('ppc');
-        $CoachRates->save();
       }
+      $CoachRates->salary = $request->input('salario_base');
+      $CoachRates->ppc = $request->input('ppc');
+      $CoachRates->comm = $request->input('comm');
+      $CoachRates->save();
     }
 
     if ($userToUpdate->save()) {

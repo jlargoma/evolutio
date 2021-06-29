@@ -6,9 +6,17 @@
               <th class="text-center static" style="height: 66px;">{{$year}}</th>
                 <th class="first-col"></th>
                 @foreach($aMonths as $k=>$v)
-                <th class="text-center">{{$v}}</th>
+                <?php 
+                  $aux = (isset($liqLst[$k])) ? $liqLst[$k] : 0;
+                  $aux += (isset($CommLst[$k])) ? $CommLst[$k] : 0;
+                  $aux += (isset($payMonth[$k])) ? $payMonth[$k] : 0;
+                ?>
+                <th class="text-center">{{$v}}<br>{{moneda($aux)}}</th>
                 @endforeach
-                <th class="text-center">Total</th>
+                 <?php 
+                  $aux = $liqLst[0] + $CommLst[0] + $payMonth[0];
+                ?>
+                <th class="text-center">Total<br>{{moneda($aux)}}</th>
                 
             </tr>
         </thead>
@@ -31,11 +39,29 @@
                            value="{{$aux}}">
                 </td>
                 @endforeach
-                <td class="text-center">{{moneda($anual)}}</td>
+                <td class="text-center">{{moneda($liqLst[0])}}</td>
+            </tr>
+              <td class="text-center static" style="height: 56px;">
+                    <b>Comisiones</b>
+                </td>
+                <td class="first-col"></td>
+                @foreach($aMonths as $k=>$v)
+                <?php 
+                  $aux = (isset($CommLst[$k])) ? $CommLst[$k] : 0;
+                  $result[$k] += $aux;
+                ?>
+                <td class="text-center">
+                    <input type="number" 
+                           data-k="{{$k}}" 
+                           class="form-control commision" 
+                           value="{{$aux}}">
+                </td>
+                @endforeach
+                <td class="text-center">{{moneda($CommLst[0])}}</td>
             </tr>
             <tr>
                 <td class="text-center static">
-                    <b>PAGADO</b>
+                    <b>Extraordinarios</b>
                 </td>
                 <td class="first-col"></td>
                 @foreach($aMonths as $k=>$v)
@@ -50,42 +76,10 @@
                 <td class="text-center">{{moneda(array_sum($payMonth))}}</td>
             </tr>
         </tbody>
-        <tfoot>
-          <tr>
-            <td class="static">Total</td>
-            <td class="first-col"></td>
-                @foreach($aMonths as $k=>$v)
-                <td>
-                  {{moneda($result[$k])}}
-                </td>
-                @endforeach
-                <td>{{moneda(array_sum($result))}}</td>
-            </tr>
-          <tr>
-            <td class="static">Dif.</td>
-            <td class="first-col"></td>
-            <?php
-            foreach($liqByM as $k=>$v):
-              $dif = $result[$k]-$v;
-              $class = ($dif>0) ? 'td-gren' : 'td-red';
-              if ($dif == 0) $class = '';
-              ?>
-            <td class="{{$class}}">{{moneda($dif)}}</td>
-              <?php
-            endforeach;
-            ?>
-            
-              <?php 
-                $dif = array_sum($result) - array_sum($liqByM);
-                $class = ($dif>0) ? 'td-gren' : 'td-red';
-                if ($dif == 0) $class = '';
-              ?>
-            <td class="{{$class}}">{{moneda($dif)}}</td>
-          </tr>
-        </tfoot>
     </table>
  
 </div>
+<small><b>Importante:</b> Los cambios en <i>Comisiones</i> no se refleja en la <i>Liquidación Mensual</i></small>
 <style>
 
 .table-liq td{
@@ -94,7 +88,8 @@
     min-width: 80px;
 }
     
-input.form-control.liquidation {
+input.form-control.liquidation,
+input.form-control.commision {
     padding: 2px !important;
         border-left: none;
     text-align: center;
@@ -123,6 +118,10 @@ tfoot tr td.td-red {
 }
 td.td-gren {
     background-color: #55f755;
+}
+.first-col {
+    max-width: 0px !important;
+    min-width: 0px !important;
 }
 </style>
   

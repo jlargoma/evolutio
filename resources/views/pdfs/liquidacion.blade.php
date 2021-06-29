@@ -94,6 +94,15 @@
                         </tr>
                         <?php $total += $totalClase[$key]; ?>
                     <?php endforeach ?>
+                        <?php foreach ($totalExtr as $key => $pago): ?>
+                <?php $i++ ?>
+                <tr>
+                    <td class="text-center"><strong><?php echo $i ?></strong></td>
+                    <td class="text-left font-s18 turnos">{{$nExtr[$key]}}</td>
+                    <td class="text-right font-s20"><strong><?php echo $pago ?>€</strong></td>
+                </tr>
+                <?php $total += $pago; ?>
+            <?php endforeach ?>
                 </tbody>
                 <tfoot>
                     <tr>

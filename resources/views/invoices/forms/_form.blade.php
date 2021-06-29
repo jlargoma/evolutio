@@ -22,7 +22,8 @@
     
       
       <h3 class=" invoice">Emisor:</h3>
-      <div class=" bg-white mb-1em">
+      <div class="row bg-white mb-1em">
+        <div class="col-md-8 col-xs-12 push-20">
         <label>Data Fiscal</label>
         <select name="emisor" class="form-control">
           <option value="">--</option>
@@ -32,6 +33,15 @@
           @endforeach
           @endif
         </select>
+        </div>
+        <div class="col-md-4 col-xs-12 push-20">
+          <label for="">Fecha</label>
+          <input name="date" class="js-datepicker form-control" type="text" id="date" name="fecha"
+                           data-date-format="yyyy-mm-dd" placeholder="yyyy-mm-dd"
+                           value="{{$oInvoice->date ?? ''}}"
+                           style="cursor: pointer;"
+                           required="">
+        </div>
       </div>
       <h3 class="invoice">Cliente:</h3>
       <div class="row bg-white">

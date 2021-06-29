@@ -5,6 +5,7 @@
       <div class="col-logo">
         <img src="{{url('/assets/evolutiofit_logo_invoice.png')}}" class="img-responsive">
         <div class="inv_numb"><?php echo $oInvoice->num ?></div>
+        <div><b><?php echo convertDateToShow($oInvoice->date,true) ?></b></div>
       </div>
       <div class="col-xs-5 info-empresa">
 

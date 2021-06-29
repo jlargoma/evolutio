@@ -30,9 +30,12 @@
     border-top: 1px solid #6d5cae !important;
   }
 </style>
+<script src="{{asset('/admin-css/assets/js/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
+<script src="{{asset('/admin-css/assets/js/plugins/bootstrap-datetimepicker/moment.min.js')}}"></script>
+<link rel="stylesheet" href="{{asset('/admin-css/assets/js/plugins/bootstrap-datepicker/bootstrap-datepicker3.min.css')}}">
 <script>
   $(function () {
-    
+    App.initHelpers(['datepicker']);
     function removeIVA(price,iva){
       return parseFloat(price / (1 + iva/100),2);
     }
