@@ -39,7 +39,8 @@ class PyGController extends Controller {
     //---------------------------------------------------------//
     for ($i = 2; $i >= 0; $i--) {
       $yAux = $year - $i;
-      $incomesYear[$yAux] = Charges::whereYear('date_payment', '=', $yAux)->sum('import');
+      $incomesYear[$yAux] = Charges::getSumYear($yAux);
+//      $incomesYear[$yAux] = Charges::whereYear('date_payment', '=', $yAux)->sum('import');
     }
     //----------------------------------------------------------//
     $uRates = \App\Models\UserRates::where('id_charges', '>', 0)
@@ -70,6 +71,20 @@ class PyGController extends Controller {
       $rateGr = isset($aRates[$c->id_rate]) ? $aRates[$c->id_rate] : 3;
       $crLst[$rateGr][$m] += $c->import;
     }
+    //--------------------------------------------------------------------//
+    $oBonos = Charges::whereYear('date_payment', '=', $year)
+              ->where('bono_id','>',0)->get();
+    $oRateTypes['bono'] = 'BONOS';
+    $crLst['bono'] = $months_empty;
+    foreach ($oBonos as $item){
+      $m = intval(substr($item->date_payment,5,7));
+      $aux[0] += $item->import;
+      $aux[$m] += $item->import;
+      $crLst['bono'][$m] += $item->import;
+    }
+    //--------------------------------------------------------------------//
+    
+    
     $currentY['Ingresos'] = $aux;
     
     $tIncomes = 0;

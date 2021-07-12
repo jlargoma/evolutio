@@ -20,26 +20,23 @@ class IncomesController extends Controller {
     
     
     
-    /************************************************/
+    //----------------------------------//
     $family = \App\Models\TypesRate::subfamily();
     $familyTotal = [];
     foreach ($family as $k=>$v) $familyTotal[$k] = $mm;
-    /************************************************/
+    //----------------------------------//
     $uRates = \App\Models\UserRates::where('id_charges', '>', 0)
               ->where('rate_year',$year)->get();
     foreach ($uRates as $item){
       $c = $item->charges;
       if (!$c)        continue;
-//    $oCharges = Charges::whereYear('date_payment','=',$year)->get();
-//    foreach ($oCharges as $c){
       $rate = $c->id_rate;
       if (!isset($crLst[$rate])) $crLst[$rate] = $mm;
-//      $m = intval(substr($c->date_payment,5,2));
       $m = $item->rate_month;
       $crLst[$rate][$m] += $c->import;
     }
     
-    /************************************************/
+    //----------------------------------//
     $oRateTypes = \App\Models\TypesRate::orderBy('name')->get();
     $lst = [];
     foreach ($oRateTypes as $t){
@@ -83,7 +80,28 @@ class IncomesController extends Controller {
         $lst[$r->type]['lst'][$r->id]['name'] = $r->name;
       }
     }
-    /************************************************/
+    //----------------------------------//
+    //BONOS
+    $oBonos = Charges::whereYear('date_payment', '=', $year)
+              ->where('bono_id','>',0)->get();
+    
+    $auxB = $mm;
+    $auxB['name'] = 'BONOS';
+    $auxB['slst']  = [];
+    $aux_lst  = [];
+    $aBonos = \App\Models\Bonos::pluck('name','id');
+    foreach ($aBonos as $k=>$v){
+      $aux_lst[$k] = $mm;
+      $aux_lst[$k]['name'] = $v;
+    }
+    foreach ($oBonos as $item){
+      $m = intval(substr($item->date_payment,5,7));
+      $auxB[$m] += $item->import;
+      $aux_lst[$item->bono_id][$m] += $item->import;
+    }
+    $auxB['lst'] = $aux_lst;
+    $lst['bonos'] = $auxB;
+    //----------------------------------//
     
     $byYears = $tByYears = [];
     for($i=2;$i>=0;$i--){
@@ -97,7 +115,7 @@ class IncomesController extends Controller {
         $tByYears[$yAux] += $c->import;
       }
     }
-    /************************************************/
+    //----------------------------------//
     $totals = $mm;
     foreach ($lst as $i){
       foreach ($mm as $k=>$v){
@@ -106,7 +124,7 @@ class IncomesController extends Controller {
         }
       }
     }
-    /************************************************/
+    //----------------------------------//
     return view('admin.contabilidad.incomes.index',[
         'year'=>$year,
         'monts'=>$monts,
@@ -121,51 +139,30 @@ class IncomesController extends Controller {
 
   function byRate($rateID){
     $year = getYearActive();
+    $pMeth = payMethod();
+    
+    if ($rateID == 'bono'){
+      $oBonoCharges = Charges::whereYear('date_payment', '=', $year)
+              ->where('bono_id','>',0)->get();
+      $aBonos = \App\Models\Bonos::pluck('name','id')->toArray();
+      
+      include_once app_path().'/Blocks/BonosDetail.php';
+      return '';
+    }
+    
     $oType = \App\Models\TypesRate::find($rateID);
     $servic = \App\Models\Rates::getByTypeRateID($rateID)
             ->pluck('name', 'id')->toArray();
     
-    ?>
-<h2>Registors de <?php echo $oType->name;?></h2>
-<?php
-    if (count($servic)== 0){
-      echo  '<p class="alert alert-warning">Sin Registros</p>';
-      return '';
-    }
-    $oCharges = Charges::whereYear('date_payment', '=', $year)
+    $oCharges = null;
+    if (count($servic)>0){
+      $oCharges = Charges::whereYear('date_payment', '=', $year)
             ->whereIn('id_rate', array_keys($servic))
             ->orderBy('date_payment')->get();
+    }
      
-    if (count($oCharges)== 0){
-      echo  '<p class="alert alert-warning">Sin Registros</p>';
-      return '';
-    }
     
-    $pMeth = payMethod();
-    
- ?>
-<div class="table-responsive">
-<table class="table">
-  <tr>
-    <th>Fecha</th>
-    <th>Servicio</th>
-    <th>Monto</th>
-    <th>Met. Pago</th>
-  </tr>
-    <?php
-    foreach ($oCharges as $c){
-      ?>
-<tr>
-  <td><?php echo dateMin($c->date_payment);?></td>
-  <td><?php echo $servic[$c->id_rate];?></td>
-  <td><?php echo moneda($c->import);?></td>
-  <td><?php echo isset($pMeth[$c->type_payment]) ? $pMeth[$c->type_payment] : 'Otro';?></td>
-</tr>
-      <?php
-    }
-     ?>
-</table>
-  </div>
-    <?php
+    include_once app_path().'/Blocks/IncomesDetail.php';
+
   }
 }
