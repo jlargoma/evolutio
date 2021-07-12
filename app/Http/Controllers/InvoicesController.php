@@ -12,9 +12,21 @@ use App\Models\Rates;
 
 class InvoicesController extends Controller {
 
-  public function index($order = null) {
+  public function index($order = null,Request $req) {
+    
+    $dates = $req->input('dates',null);
     $year = getYearActive();
     $sql_invoices = Invoices::whereYear('date', '=', $year);
+    if ($dates){
+      $aDates = explode(' - ', $dates);
+      if (count($aDates) == 2){
+        $start = convertDateToDB($aDates[0]);
+        $end   = convertDateToDB($aDates[1]);
+        $sql_invoices->where('date','>=',$start);
+        $sql_invoices->where('date','<=',$end);
+      }
+    }
+    
     $orderDate = '';
     if ($order) {
       switch ($order) {

@@ -1,4 +1,8 @@
 <div class="table-responsive">
+  <div class="date-filter">
+    <label for="date">Filtro Fechas:</label>
+    <input type="text" class="js-datepicker  form-control" name="fecha" id="fecha" value="<?php echo date('d-m-Y') ?>" style="font-size: 12px">
+  </div>
   <table class="table table-data table-striped" id="tableInvoices" >
     <thead>
       <tr>

@@ -128,6 +128,7 @@
             <td class="tdbg" colspan="4">
               TOTAL ANUALES
             </td>
+            <td class="text-center hidden-xs hidden-sm tdbg"> </td>
             <td class="tdbg">
               <b><?php echo mformat($totalYear); ?>€</b>
             </td>
