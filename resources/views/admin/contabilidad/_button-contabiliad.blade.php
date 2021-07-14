@@ -11,7 +11,8 @@ if ($posicion > 0) {
 $items = [
     'ingresos'=>'Ingresos',
     'gastos'=>'Gastos',
-    'perdidas-ganancias'=>'CTA P&G'
+    'perdidas-ganancias'=>'CTA P&G',
+    'bonos-clientes'=>'Bonos'
 ];
 ?>
 <div class="col-md-12 col-xs-12 push-20">

@@ -18,6 +18,10 @@ class UserBonos extends Model
     {
         return $this->hasOne('\App\Models\Charges', 'id', 'id_charges');
     }
+    public function logs()
+    {
+        return $this->hasOne('\App\Models\UserBonosLogs');
+    }
 
     function check($uID){
       
@@ -39,7 +43,7 @@ class UserBonos extends Model
       $total = UserBonosLogs::getTotal($this->id);
       //-----------------------------------//
       $obj = new UserBonosLogs();
-      $obj->users_bono_id = $this->id;
+      $obj->user_bonos_id = $this->id;
       $obj->charge_id = $cID;
       $obj->bono_id = $oBono->id;
       $obj->price = $oBono->price;
@@ -64,7 +68,7 @@ class UserBonos extends Model
       }
       $text .= ': '. dateMin($date);
       $obj = new UserBonosLogs();
-      $obj->users_bono_id = $this->id;
+      $obj->user_bonos_id = $this->id;
       $obj->charge_id = $cID;
       $obj->decr = 1;
       $obj->total = $total-1;
