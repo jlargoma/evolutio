@@ -214,11 +214,12 @@ class BonosController extends Controller {
         $aUB[$ub->user_id] = [];
       
       $t = $ub->rate_id ? $ub->rate_id : $ub->rate_subf;
-      $data = ['type'=>$t,'i'=>0,'d'=>0,'t'=>$ub->qty];
+      $data = ['type'=>$t,'i'=>0,'d'=>0,'t'=>$ub->qty,'p'=>0];
       $lst = $ub->logs()->orderBy('created_at')->get();
       foreach ($lst as $l){
         if ($l->incr) $data['i'] += $l->incr;
         if ($l->decr) $data['d'] += $l->decr;
+        $data['p'] += $l->price;
       }
       
       $aUB[$ub->user_id][$ub->id] = $data;

@@ -43,6 +43,7 @@ function sumMonthValue($m){
           <th>Ingresos</th>
           <th>Egresos</th>
           <th>Balance</th>
+          <th>Cobrado</th>
           <th>Historial</th>
         </tr>  
       </thead>
@@ -62,6 +63,7 @@ function sumMonthValue($m){
           <td>{{$item['i']}}</td>
           <td>{{$item['t']}}</td>
           <td>{{$item['t']}}</td>
+          <td>{{moneda($item['p'])}}</td>
           <td class="history" data-id="{{$ubID}}" data-b="{{$nbono}}" data-c="{{$cname}}"><i class="fa fa-history"></i></td>
         </tr>
         @endforeach
