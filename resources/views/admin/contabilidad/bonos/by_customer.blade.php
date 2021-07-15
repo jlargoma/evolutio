@@ -40,10 +40,10 @@ function sumMonthValue($m){
         <tr>
           <th>Cliente</th>
           <th>Bonos</th>
-          <th>Ingresos</th>
-          <th>Egresos</th>
-          <th>Balance</th>
-          <th>Cobrado</th>
+          <th>Ingresos<br>{{$totals['i']}}</th>
+          <th>Egresos<br>{{$totals['d']}}</th>
+          <th>Balance<br>{{$totals['t']}}</th>
+          <th>Cobrado<br>{{moneda($totals['p'])}}</th>
           <th>Historial</th>
         </tr>  
       </thead>

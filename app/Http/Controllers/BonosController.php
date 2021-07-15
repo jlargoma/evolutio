@@ -209,6 +209,7 @@ class BonosController extends Controller {
     
     $rate_subf = \App\Models\TypesRate::subfamily();
     $aUB = [];
+    $totals = ['i'=>0,'d'=>0,'t'=>0,'p'=>0];
     foreach ($oUsrBonos as $ub){
       if (!isset($aUB[$ub->user_id]))
         $aUB[$ub->user_id] = [];
@@ -222,6 +223,11 @@ class BonosController extends Controller {
         $data['p'] += $l->price;
       }
       
+      $totals['i'] += $data['i'];
+      $totals['d'] += $data['d'];
+      $totals['t'] += $data['t'];
+      $totals['p'] += $data['p'];
+      
       $aUB[$ub->user_id][$ub->id] = $data;
     }
     
@@ -229,7 +235,7 @@ class BonosController extends Controller {
     $aUsers = \App\Models\User::whereIN('id',array_keys($aUB))->pluck('name','id')->toArray();
     $aRates = \App\Models\Rates::all()->pluck('name','id')->toArray();
     $rateFilter = \App\Models\TypesRate::getWithsubfamily();
-    return view('admin.contabilidad.bonos.by_customer', compact('aUB','aUsers','aRates','rate_subf','rateFilter','filter'));
+    return view('admin.contabilidad.bonos.by_customer', compact('aUB','aUsers','aRates','rate_subf','rateFilter','filter','totals'));
   }
 
 }
