@@ -1,5 +1,6 @@
 <h2>Registors de Bonos</h2>
 <?php
+echo $oBonoCharges->sum('import');
 if ($oBonoCharges && count($oBonoCharges)>0):
   ?>
   <div class="table-responsive">

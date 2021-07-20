@@ -1,4 +1,4 @@
-<h2>Registros de <?php echo strtoupper($gTypesNames[$type]);?></h2>
+<h2>Registros de <?php echo strtoupper($gTypesNames[$type]).': '.moneda($items->sum('import'))?></h2>
 
 <div class="table-responsive">
 <table class="table">

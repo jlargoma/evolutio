@@ -1,7 +1,7 @@
-<h2>Registors de <?php echo $oType->name; ?></h2>
 <?php
 if ($oCharges && count($oCharges)>0):
   ?>
+  <h2>Registors de <?php echo $oType->name.': '.moneda($oCharges->sum('import')) ?></h2>
   <div class="table-responsive">
     <table class="table">
       <tr>
@@ -26,5 +26,8 @@ if ($oCharges && count($oCharges)>0):
   </div>
   <?php
 else:
-  ?><p class="alert alert-warning">Sin Registros</p><?php
+  ?>
+  <h2>Registors de <?php echo $oType->name; ?></h2>
+  <p class="alert alert-warning">Sin Registros</p>
+  <?php
 endif;
