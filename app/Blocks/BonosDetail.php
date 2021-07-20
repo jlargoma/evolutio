@@ -1,8 +1,7 @@
-<h2>Registors de Bonos</h2>
 <?php
-echo $oBonoCharges->sum('import');
 if ($oBonoCharges && count($oBonoCharges)>0):
   ?>
+  <h2>Registors de Bonos: <?php echo moneda($oBonoCharges->sum('import')) ?></h2>
   <div class="table-responsive">
     <table class="table">
       <tr>
@@ -27,5 +26,7 @@ if ($oBonoCharges && count($oBonoCharges)>0):
   </div>
   <?php
 else:
-  ?><p class="alert alert-warning">Sin Registros</p><?php
+  ?>
+  <h2>Registors de Bonos</h2>
+  <p class="alert alert-warning">Sin Registros</p><?php
 endif;
