@@ -18,7 +18,7 @@
     @if($invoices)
     @foreach($invoices as $item)
     <tr>
-      <td class="text-left" >
+      <td class="text-left" data-order="{{$item->date}}">
         <?php echo convertDateToShow_text($item->date, true); ?>
       </td>
       <td class="text-center"><?php echo $item->num?></td>
