@@ -191,10 +191,19 @@ class InvoicesController extends Controller {
     if (count($invItems)>0)  
       $oInvoice->setMetaContent('items', serialize ($invItems));
     
+    //Guardar los datos del cliente
+    if ($user_id>0){
+      $oUser = \App\Models\User::find($user_id);
+      if ($oUser){
+        $oUser->dni  = $request->input('nif');
+        $oUser->address  = $request->input('address');
+        $oUser->save();
+      }
+    }
+    
     if ($request->input('confirm',null)) {
       $items = $oInvoice->getMetaContent('items');
       if ($items) $items = unserialize($items);
-//      $aRoomsLst = \App\Rooms::getRoomList();
       return view('invoices.invoice_confirm', ['oInvoice'=>$oInvoice,'items'=>$items]);
     }
     return redirect(route('invoice.edit',$oInvoice->id));
