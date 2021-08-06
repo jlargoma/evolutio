@@ -27,7 +27,7 @@ $count = 1;
       <label>APELLIDOS</label>
     </div>
     <div class="form-material mt-3">
-      <input class="form-control" type="text" id="dni" name="dni" value="<?php echo $user->dni ?>">
+      <input class="form-control" type="text" id="valora_tutor" name="valora_tutor" value="{{$valora['valora_tutor']}}">
       <label for="name">*FIRMA DEL TUTOR (en menores de edad)</label>
     </div>
   </div>

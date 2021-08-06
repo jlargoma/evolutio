@@ -14,7 +14,8 @@ trait ValoracionTraits {
 
   public function get_valoracionFields() {
   
-    $f = ['valora_date','valora_years','valora_lastname','valora_concl','valora_dni','valora_sign']; 
+    $f = ['valora_date','valora_years','valora_lastname',
+        'valora_concl','valora_dni','valora_sign','valora_tutor']; 
     for($i=1;$i<10;$i++) $f[] = 'valora_q'.$i;
     for($i=1;$i<5;$i++) $f[] = 'valora_q2_'.$i;
     for($i=1;$i<7;$i++) $f[] = 'valora_q3_'.$i;
