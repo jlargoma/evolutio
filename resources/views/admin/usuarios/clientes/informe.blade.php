@@ -10,6 +10,7 @@
   <li <?php if ($tab == 'consent') echo 'class="active"'; ?>><a data-toggle="tab" href="#consent">Consentimiento</a></li>
   <li <?php if ($tab == 'invoice') echo 'class="active"'; ?>><a data-toggle="tab" href="#invoice">Factura</a></li>
   <li <?php if ($tab == 'bono') echo 'class="active"'; ?>><a data-toggle="tab" href="#bono">Bonos</a></li>
+  <li <?php if ($tab == 'valoracion') echo 'class="active"'; ?>><a data-toggle="tab" href="#valoracion">Valoración</a></li>
 </ul>
 </div>
 <div class="tab-content box">
@@ -33,6 +34,9 @@
   </div>
   <div id="bono" class="tab-pane fade <?php if ($tab == 'bono') echo 'in active'; ?>">
         @include('admin.usuarios.clientes.forms.bonos')
+  </div>
+  <div id="valoracion" class="tab-pane fade <?php if ($tab == 'valoracion') echo 'in active'; ?>">
+        @include('admin.usuarios.clientes.forms.valoracion')
   </div>
 </div>
 <div class="row">
@@ -175,6 +179,25 @@
             _token: '{{csrf_token()}}',
             id_user: {{$user->id}},
             type: type
+          });
+          posting.done(function (data) {
+            if (data[0] == 'OK') {
+              window.show_notif('success', data[1]);
+            } else {
+              window.show_notif('error', data[1]);
+            }
+          });
+          posting.fail(function (data) {
+            window.show_notif('error', 'UPs, algo salió mal');
+          });
+          
+          
+        });
+        /**************************************************/
+        $('.sendValora').on('click', function () {
+          var posting = $.post('/admin/usuarios/send-valoracion', {
+            _token: '{{csrf_token()}}',
+            id_user: {{$user->id}},
           });
           posting.done(function (data) {
             if (data[0] == 'OK') {

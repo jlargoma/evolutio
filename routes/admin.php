@@ -14,6 +14,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::get('/clientes/generar-cobro/{rate}', 'UsersController@clienteRateCharge');
   Route::get('/clientes/{month?}', 'UsersController@clientes');
   Route::post('/clientes/update', 'UsersController@updateCli');
+  Route::post('/clientes/setValora', 'UsersController@setValora');
   Route::get('/get-mail/{id?}', 'UsersController@getMail');
   Route::get('/get-rates/{id?}', 'UsersController@getRates');
   Route::get('/clientes-export', 'UsersController@exportClients');
@@ -27,6 +28,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::post('/usuarios/sign', 'UsersController@addSign');
   Route::get('/usuarios/sign/{file?}', 'UsersController@getSign');
   Route::post('/usuarios/send-consent', 'UsersController@sendConsent');
+  Route::post('/usuarios/send-valoracion', 'UsersController@sendValoracion');
   Route::get('/see-consent/{id}/{type}', 'UsersController@seeConsent');
   Route::get('/downl-consent/{id}/{type}', 'UsersController@downlConsent');
   Route::get('/usuarios/informe/{id}/{tab?}', 'UsersController@informe');

@@ -121,6 +121,28 @@ class User extends Authenticatable
     return null;
   }
   
+  
+  public function setMetaContentGroups($metaDataUPD,$metaDataADD) {
+    $d = [];
+    if (count($metaDataUPD))
+      foreach ($metaDataUPD as $k=>$v) $d[] = ['user_id'=>$this->id,'meta_key'=>$k,'meta_value'=>$v];
+    
+    if (count($metaDataADD))
+      foreach ($metaDataADD as $k=>$v) $d[] = ['user_id'=>$this->id,'meta_key'=>$k,'meta_value'=>$v];
+    
+    if (count($d))
+      DB::table('user_meta')->upsert($d, ['user_id', 'meta_key'], ['meta_value']);
+
+  }
+  
+  public function getMetaContentGroups($keys) {
+    
+    return DB::table('user_meta')
+            ->where('user_id',$this->id)->whereIn('meta_key',$keys)
+            ->pluck('meta_value','meta_key')->toArray();
+    
+  }
+  
   function getPayCard(){
       
     $paymentMethod = null;
@@ -128,10 +150,6 @@ class User extends Authenticatable
     return $this->paymentMethods()->first();
     } catch (\Exception $ex) {
       return null;
-      /*$ex->getMessage();*/
-      
     }
-    
-//    $obj = $this->paymentMethods()->first();
   }
 }

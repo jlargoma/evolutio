@@ -15,10 +15,11 @@ use App\Models\User;
 use App\Models\UserRates;
 use \App\Traits\EntrenadoresTraits;
 use \App\Traits\ClientesTraits;
+use \App\Traits\ValoracionTraits;
 
 class UsersController extends Controller {
 
-  use EntrenadoresTraits,
+  use EntrenadoresTraits,ValoracionTraits,
       ClientesTraits;
 
   public function index() {

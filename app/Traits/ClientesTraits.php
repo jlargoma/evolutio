@@ -295,6 +295,10 @@ trait ClientesTraits {
     $totalInvoice = $invoices->sum('total_price');
     $invoiceModal = true;
     //----------------------//
+    //----------------------//
+    //Invoices
+    $valoracion = $this->get_valoracion($user);
+    //----------------------//
 
     if (count($detail)>0){
       $aux = '';
@@ -336,6 +340,7 @@ trait ClientesTraits {
         'invoices' => $invoices,
         'totalInvoice' => $totalInvoice,
         'invoiceModal' => $invoiceModal,
+        'valora' => $valoracion,
     ]);
   }
 

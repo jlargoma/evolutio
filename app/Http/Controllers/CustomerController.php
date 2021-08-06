@@ -8,9 +8,12 @@ use App\Http\Requests;
 use Mail;
 use App\Models\User;
 use App\Models\UserRates;
+use \App\Traits\ValoracionTraits;
 
 class CustomerController extends Controller {
 
+  use ValoracionTraits;
+  
   public function index() {
     die();
   }
