@@ -36,12 +36,12 @@ $count = 1;
       <?php $count++; ?>
     </div>
     @if($count == 7)
-        <div class="col-md-12 mt-1 printBreak">
-    <br/><br/>
-  </div>
-  <div class="block-logo">
-    <img src="/assets/logo-retina.png" alt="Evolutio" class="logo"/>
-  </div>
+    <div class="col-md-12 mt-1 printBreak">
+      <br/><br/>
+    </div>
+    <div class="block-logo">
+      <img src="/assets/logo-retina.png" alt="Evolutio" class="logo"/>
+    </div>
     @endif
     @endforeach
   </div>
@@ -63,7 +63,7 @@ $count = 1;
     </table>
   </div>
   <div class="col-md-12 mt-1 printBreak">
-    
+
     <br/><br/>
   </div>
   <div class="block-logo">
@@ -111,7 +111,7 @@ $count = 1;
     </div>
   </div>
   <div class="col-md-12 mt-1 printBreak">
-    
+
     <br/><br/>
   </div>
   <div class="block-logo">
@@ -119,6 +119,7 @@ $count = 1;
   </div>
   <div class="col-md-12 mt-1 movilidad">
     <h4 class="mt-1">MOVILIDAD</h4>
+    <?php $count=0; ?>
     @foreach($valora['qstion6'] as $i=>$q)
     <div class="form-material mt-2">
       <h5>{{$q}}</h5>
@@ -126,10 +127,20 @@ $count = 1;
       <div class="field txt"><?php echo nl2br($valora[$i]); ?></div>
     </div>
     <br/><br/>
+    <?php $count++; ?>
+    @if($count == 3)
+    <div class="col-md-12 mt-1 printBreak">
+      <br/><br/>
+    </div>
+    <div class="block-logo">
+      <img src="/assets/logo-retina.png" alt="Evolutio" class="logo"/>
+    </div>
+    @endif
+
     @endforeach
   </div>
   <div class="col-md-12 mt-1 printBreak">
-    
+
     <br/><br/>
   </div>
   <div class="block-logo">
@@ -153,7 +164,7 @@ $count = 1;
     <img src="/img/valoracion/trenSupM.png">
   </div>
   <div class="col-md-12 mt-1 printBreak">
-    
+
     <br/><br/>
   </div>
   <div class="block-logo">
@@ -215,7 +226,7 @@ $count = 1;
     </div>
   </div>
   <div class="col-md-12 mt-1 printBreak">
-    
+
     <br/><br/>
   </div>
   <div class="block-logo">
