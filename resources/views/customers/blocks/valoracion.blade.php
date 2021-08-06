@@ -94,7 +94,7 @@ $count = 1;
           @endforeach
         </table>
       </div>
-      <div class="col-md-12 mt-1">
+      <div class="col-md-12 mt-1 table-responsive">
         <table class="table">
           <tr>
             @foreach($valora['qstion5'] as $i=>$q)

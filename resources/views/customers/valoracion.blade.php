@@ -60,6 +60,12 @@
     padding: 5px;
     margin: 1em auto;
   }
+        @media screen {
+        .paging h1{
+          padding-top: 2em;
+        }
+        .printBreak,.block-logo{display: none;}
+      }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
 <script type="text/javascript">
