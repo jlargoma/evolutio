@@ -92,22 +92,78 @@
         color: #FFF;
         font-weight: bold;
       }
-       @media print {
-        .btn-print{display: none;}
+
+      .formValora .field.txt {
+    min-height: 7em !important;
+}
+      @page {
+        size: letter;
+        margin: .5in;
       }
+      header, footer {
+        width: 100%; height: .5in;
+      }
+      header {
+        position: absolute;
+        top: 0;
+        height: 60px;
+        background-color: white;
+        width: 800px;
+        text-align: center;
+      }
+
+      .logo{
+        width: 175px;
+      }
+      @media screen {
+        .paging h1{
+          padding-top: 2em;
+        }
+        .printBreak,.block-logo{display: none;}
+      }
+      @media print {
+        .btn-print{display: none;}
+
+        table.paging thead td, table.paging tfoot td {
+          height: .5in;
+        }
+
+/*        header, footer {
+          position: fixed;
+          left: 0px;
+          width: 100%;
+        }
+        header{
+          top: 0px;
+        }
+        footer {
+          bottom: 0px !important;
+          text-align: center;
+          height:10px;
+        }*/
+        .paging{
+          padding: 8em 0px;
+        }
+        .printBreak{
+          break-before: page;
+        }
+      }
+
     </style>
   </head>
   <body>
-    <h1>VALORACIÓN DE SALUD Y PREPARACIÓN AL ENTRENAMIENTO</h1>
-    <div class="text-left">
+    <header>
+      <img src="/assets/logo-retina.png" alt="Evolutio" class="logo"/>
+    </header>
+    <div class="paging">
+
+      <h1>VALORACIÓN DE SALUD Y PREPARACIÓN AL ENTRENAMIENTO</h1>
       @include('customers.blocks.valoracion')
-    </div>
-    <div class="text-center">
-      <small >Evolutio <?php echo date('Y'); ?></small>
+
     </div>
     <div class="btn-print">
       <button onclick="window.print();">Imprimir</button>
-      </div>
+    </div>
 
   </body>
 </html>

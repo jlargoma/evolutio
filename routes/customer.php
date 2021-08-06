@@ -11,7 +11,7 @@ Route::get('/firmar-consentimiento/{token}/{control}', 'CustomerController@signC
 Route::post('/firmar-consentimiento/{token}/{control}', 'CustomerController@signConsentSave');
 Route::get('/valoracion/{token}/{control}', 'CustomerController@seeValoracion');
 Route::post('/firmar-valoracion/{token}/{control}', 'CustomerController@signValoracion');
-Route::post('/descargar-valoracion/{token}/{control}', 'CustomerController@downlValoracion');
+Route::get('/descargar-valoracion/{token}/{control}', 'CustomerController@downlValoracion');
 
 Route::get('/resultado', 'CustomerController@showResult');
 Route::get('/cobro-completado', 'CustomerController@paymentSuccess')->name('customer.pay.success');

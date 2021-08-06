@@ -186,22 +186,16 @@ $count = 1;
     <button class="btn btn-success" type="submit">
       <i class="fa fa-floppy-o" aria-hidden="true"></i> Actualizar
     </button>
-    <button class="btn btn-info" type="button">
-      <i class="fa fa-envelope" aria-hidden="true"></i> Enviar mail
-    </button>
     <button type="button" title="Enviar / Re-enviar mail de valoración" class="btn btn-info sendValora">
         <i class="fa fa-envelope"></i> Enviar
       </button>
     <a class="btn btn-default" type="button" href="{{$valora['url']}}" target="_blank">
       <i class="fa fa-link" aria-hidden="true"></i> Abrir firma
     </a>
-    <button class="btn btn-success" type="button" onclick="$('#valoraDwnl').submit()" >
-    <i class="fa fa-file" aria-hidden="true"></i> Descargar
-  </button>
+    <a class="btn btn-success" href="{{$valora['url_dwnl']}}" target="_blank" >
+    <i class="fa fa-file" aria-hidden="true"></i> Imprimir / Descargar
+  </a>
   </div>
-</form>
-<form action="{{$valora['url_dwnl']}}" method="POST" id="valoraDwnl">
-   <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
 </form>
 <style>
   .formValora img{

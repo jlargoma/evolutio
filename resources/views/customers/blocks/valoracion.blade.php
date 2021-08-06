@@ -26,7 +26,6 @@ $count = 1;
       <div class="field">{{$user->dni}}</div>
     </div>
   </div>
-
   <div class="col-md-12 mt-1 qstion1">
     <h4 class="mt-1">ANTECEDENTES MÉDICOS Y DE ACTIVIDAD </h4>
     <u>Por favor, conteste a estas preguntas con sinceridad y de forma detallada cuando proceda:</u>
@@ -36,7 +35,21 @@ $count = 1;
       <div class="field">{{$valora[$i]}}</div>
       <?php $count++; ?>
     </div>
+    @if($count == 7)
+        <div class="col-md-12 mt-1 printBreak">
+    <br/><br/>
+  </div>
+  <div class="block-logo">
+    <img src="/assets/logo-retina.png" alt="Evolutio" class="logo"/>
+  </div>
+    @endif
     @endforeach
+  </div>
+  <div class="col-md-12 mt-1 printBreak">
+    <br/><br/>
+  </div>
+  <div class="block-logo">
+    <img src="/assets/logo-retina.png" alt="Evolutio" class="logo"/>
   </div>
   <div class="col-md-12 mt-1">
     <h4 class="mt-1">ECÓGRAFO: VALORACIÓN ABDOMINAL Y ACTIVACIÓN DEL TRANSVERSO</h4>
@@ -49,46 +62,60 @@ $count = 1;
       @endforeach
     </table>
   </div>
+  <div class="col-md-12 mt-1 printBreak">
+    
+    <br/><br/>
+  </div>
+  <div class="block-logo">
+    <img src="/assets/logo-retina.png" alt="Evolutio" class="logo"/>
+  </div>
   <div class="col-md-12 mt-1">
     <h4 class="mt-1">COMPOSICIÓN CORPORAL Y MEDICIONES</h4>
     <div class="row">
-    <div class="col-md-6 mt-1">
-      <table class="table">
-        <tr><th colspan="2">BIOIMPEDANCIA</th></tr>
-        @foreach($valora['qstion3'] as $i=>$q)
-        <tr>
-          <td>{{$q}}</td>
-          <td><div class="field"><?php echo nl2br($valora[$i]); ?></div></td>
-        </tr>
-        @endforeach
-      </table>
-    </div>
-    <div class="col-md-6 mt-1">
-      <table class="table">
-        <tr><th colspan="2">PERIMETRO (CENTÍMETROS)</th></tr>
-        @foreach($valora['qstion4'] as $i=>$q)
-        <tr>
-          <td>{{$q}}</td>
-          <td><div class="field"><?php echo nl2br($valora[$i]); ?></div></td>
-        </tr>
-        @endforeach
-      </table>
-    </div>
-    <div class="col-md-12 mt-1">
-      <table class="table">
-        <tr>
-          @foreach($valora['qstion5'] as $i=>$q)
-          <th>{{$q}}</th>
+      <div class="col-md-6 mt-1">
+        <table class="table">
+          <tr><th colspan="2">BIOIMPEDANCIA</th></tr>
+          @foreach($valora['qstion3'] as $i=>$q)
+          <tr>
+            <td>{{$q}}</td>
+            <td><div class="field"><?php echo nl2br($valora[$i]); ?></div></td>
+          </tr>
           @endforeach
-        </tr>
-        <tr>
-          @foreach($valora['qstion5'] as $i=>$q)
-          <td><div class="field"><?php echo nl2br($valora[$i]); ?></div></td>
-          @endforeach
-        </tr>
-      </table>
-    </div>
+        </table>
       </div>
+      <div class="col-md-6 mt-1">
+        <table class="table">
+          <tr><th colspan="2">PERIMETRO (CENTÍMETROS)</th></tr>
+          @foreach($valora['qstion4'] as $i=>$q)
+          <tr>
+            <td>{{$q}}</td>
+            <td><div class="field"><?php echo nl2br($valora[$i]); ?></div></td>
+          </tr>
+          @endforeach
+        </table>
+      </div>
+      <div class="col-md-12 mt-1">
+        <table class="table">
+          <tr>
+            @foreach($valora['qstion5'] as $i=>$q)
+            <th>{{$q}}</th>
+            @endforeach
+          </tr>
+          <tr>
+            @foreach($valora['qstion5'] as $i=>$q)
+            <td><div class="field"><?php echo nl2br($valora[$i]); ?></div></td>
+            @endforeach
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12 mt-1 printBreak">
+    
+    <br/><br/>
+  </div>
+  <div class="block-logo">
+    <img src="/assets/logo-retina.png" alt="Evolutio" class="logo"/>
   </div>
   <div class="col-md-12 mt-1 movilidad">
     <h4 class="mt-1">MOVILIDAD</h4>
@@ -98,13 +125,21 @@ $count = 1;
       <p>{{$valora['qstion6_stext'][$i]}}</p>
       <div class="field txt"><?php echo nl2br($valora[$i]); ?></div>
     </div>
+    <br/><br/>
     @endforeach
+  </div>
+  <div class="col-md-12 mt-1 printBreak">
+    
+    <br/><br/>
+  </div>
+  <div class="block-logo">
+    <img src="/assets/logo-retina.png" alt="Evolutio" class="logo"/>
   </div>
   <div class="col-md-12 mt-1">
     <h4 class="mt-1">FUERZA DE TREN SUPERIOR</h4>
     <h5>TEST: PUSHUP </h5>
     <p>El objetivo de la prueba es valorar la fuerza y resistencia del tren superior.<br/>
-    Se debe realizar el mayor número posible de flexiones en una única serie.</p>
+      Se debe realizar el mayor número posible de flexiones en una única serie.</p>
     <table class="table ">
       @foreach($valora['qstion7'] as $i=>$q)
       <tr>
@@ -117,11 +152,18 @@ $count = 1;
     <img src="/img/valoracion/trenSupH.png">
     <img src="/img/valoracion/trenSupM.png">
   </div>
+  <div class="col-md-12 mt-1 printBreak">
+    
+    <br/><br/>
+  </div>
+  <div class="block-logo">
+    <img src="/assets/logo-retina.png" alt="Evolutio" class="logo"/>
+  </div>
   <div class="col-md-12  mt-1">
     <h4 class="mt-1">FUERZA DE TREN INFERIOR</h4>
     <h5>TEST: PUSHUP </h5>
     <p>El objetivo de la prueba es valorar la fuerza y resistencia del tren inferior.<br/>
-    Se debe realizar el mayor número posible de flexiones en una única serie.</p>
+      Se debe realizar el mayor número posible de flexiones en una única serie.</p>
     <table class="table">
       @foreach($valora['qstion8'] as $i=>$q)
       <tr>
@@ -140,7 +182,13 @@ $count = 1;
     </table>
     <img>
   </div>
+  <div class="col-md-12 mt-1 printBreak">
 
+    <br/><br/>
+  </div>
+  <div class="block-logo">
+    <img src="/assets/logo-retina.png" alt="Evolutio" class="logo"/>
+  </div>
   <div class="col-md-12  mt-1">
     <h4 class="mt-1">RESISTENCIA CARDIOVASCULAR</h4>
     <h5>TEST: SKI </h5>
@@ -165,6 +213,13 @@ $count = 1;
       - Entre 1´30¨ y 1´59: RESISTENCIA ACEPTABLE<br>
       - 2 minutos: BUENA CONDICIÓN FÍSICA.<br>
     </div>
+  </div>
+  <div class="col-md-12 mt-1 printBreak">
+    
+    <br/><br/>
+  </div>
+  <div class="block-logo">
+    <img src="/assets/logo-retina.png" alt="Evolutio" class="logo"/>
   </div>
   <div class="col-md-12  mt-1">
     <h4 class="mt-1">CONCLUSIONES Y RECOMENDACIONES GENERALES</h4>
@@ -244,7 +299,7 @@ $count = 1;
     color: #464646;
     font-size: 13px;
     min-height: 2.1em;
-}
+  }
   .formValora label {
     font-size: 14px;
   }
@@ -252,9 +307,9 @@ $count = 1;
     min-height: 7em;
   }
 
-.formValora .table tr {
+  .formValora .table tr {
     border: 1px solid #464646;
-}
+  }
   .formValora .table .td_1{
     width: 25%;
   }
@@ -263,5 +318,5 @@ $count = 1;
     padding: 18px 5px !important;
     font-size: 13px !important;
   }
- 
+
 </style>

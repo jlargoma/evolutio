@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
+use PDF;
+
 
 
 trait ValoracionTraits {
@@ -187,6 +189,15 @@ trait ValoracionTraits {
         $fileName = str_replace('signs/','', $fileName);
       }
     }
+    
+    
+     $pdf = PDF::loadView('pdfs.valoracion',[
+        'valora' => $valoracion,
+        'user' => $oUser,
+        'sign_donwl' => $sign,
+        'fileName' => $fileName,
+    ]);
+        return $pdf->stream('aaaaaa'.time(). '.pdf');
 
     return view('pdfs.valoracion', [
         'valora' => $valoracion,
