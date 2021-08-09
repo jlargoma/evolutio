@@ -107,23 +107,23 @@ class BonoService {
 
     $oUsrBono = $oBono->getBonoUser($oUser->id);
     if ($oUsrBono) {
-      $oUsrBono->qty = $total = $oUsrBono->qty + $oBono->qty;
+      $oUsrBono->qty = $oUsrBono->qty + $oBono->qty;
     } else {
       $oUsrBono = new UserBonos();
       $oUsrBono->user_id = $oUser->id;
       $oUsrBono->rate_type = $oBono->rate_type;
       $oUsrBono->rate_id = $oBono->rate_id;
       $oUsrBono->rate_subf = $oBono->rate_subf;
-      $oUsrBono->qty  = $total = $oBono->qty;
+      $oUsrBono->qty  = $oBono->qty;
     }
 
+    $total = $oUsrBono->qty;
     $oUsrBono->save();
     
     
 //    $total = \App\Models\UserBonosLogs::getTotal($oUsrBono->id);
     //-----------------------------------//
     $obj = new \App\Models\UserBonosLogs();
-    $total+=$oBono->qty;
     $obj->user_bonos_id = $oUsrBono->id;
     $obj->charge_id = $oCobro->id;
     $obj->bono_id = $oBono->id;
