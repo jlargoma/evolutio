@@ -78,5 +78,76 @@ class BonoService {
     else
       return ['error', $sent, $oCobro->id];
   }
+  
+  /**
+   * 
+   * @param type $oUser
+   * @param type $oBono
+   * @param type $tpay
+   * @param type $idStripe
+   * @param type $cStripe
+   * @return type
+   */
+  function asignBonoAuto($oUser, $oBono, $tpay,$date,$price,$uses) {
+    //BEGIN PAYMENTS
+    $oCobro = new Charges();
+    $oCobro->id_user = $oUser->id;
+    $oCobro->date_payment = $date;
+    $oCobro->id_rate = 0;
+    $oCobro->type_payment = $tpay;
+    $oCobro->type = 1;
+    $oCobro->import = $price;
+    $oCobro->discount = 0;
+    $oCobro->type_rate = 0;
+    $oCobro->bono_id = $oBono->id;
+    $oCobro->id_stripe = null;
+    $oCobro->customer_stripe = null;
+    $oCobro->save();
+    //END PAYMENTS
+
+    $oUsrBono = $oBono->getBonoUser($oUser->id);
+    if ($oUsrBono) {
+      $oUsrBono->qty = $total = $oUsrBono->qty + $oBono->qty;
+    } else {
+      $oUsrBono = new UserBonos();
+      $oUsrBono->user_id = $oUser->id;
+      $oUsrBono->rate_type = $oBono->rate_type;
+      $oUsrBono->rate_id = $oBono->rate_id;
+      $oUsrBono->rate_subf = $oBono->rate_subf;
+      $oUsrBono->qty  = $total = $oBono->qty;
+    }
+
+    $oUsrBono->save();
+    
+    
+//    $total = \App\Models\UserBonosLogs::getTotal($oUsrBono->id);
+    //-----------------------------------//
+    $obj = new \App\Models\UserBonosLogs();
+    $total+=$oBono->qty;
+    $obj->user_bonos_id = $oUsrBono->id;
+    $obj->charge_id = $oCobro->id;
+    $obj->bono_id = $oBono->id;
+    $obj->price = $price;
+    $obj->incr = $oBono->qty;
+    $obj->total = $total;
+    $obj->text = 'Compra: '.$oBono->name;
+    $obj->created_at = $date;
+    $obj->save();
+    
+    
+    foreach ($uses as $d){
+      $obj = new \App\Models\UserBonosLogs();
+      $total--;
+      $text = 'Bono utilizado (Migración)';
+      $obj->user_bonos_id = $oUsrBono->id;
+      $obj->charge_id = null;
+      $obj->decr = 1;
+      $obj->total = $total;
+      $obj->text = $text;
+      $obj->created_at = $d;
+      $obj->save();
+    }
+    
+  }
 
 }

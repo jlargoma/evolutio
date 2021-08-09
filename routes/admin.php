@@ -189,8 +189,11 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::post('/userRates', 'FunctionalControler@save_userRates');
 });
 
-Route::get('/checkcrom/{command}/{param}', function ($command, $param) {
-  $artisan = \Artisan::call($command . ":" . $param);
-  $output = \Artisan::output();
-  return $output;
-}); //->middleware('admin');
+//Route::get('/checkcrom/{command}/{param}', function ($command, $param) {
+//  $artisan = \Artisan::call($command . ":" . $param);
+//  $output = \Artisan::output();
+//  return $output;
+//}); //->middleware('admin');
+Route::group(['middleware' => 'auth'], function () {
+  Route::get('/importarRegistro', 'FunctionalControler@importarRegistro');
+});
