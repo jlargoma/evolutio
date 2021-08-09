@@ -121,7 +121,7 @@ class BonoService {
     $oUsrBono->save();
     
     
-//    $total = \App\Models\UserBonosLogs::getTotal($oUsrBono->id);
+//    $total = $total; //\App\Models\UserBonosLogs::getTotal($oUsrBono->id);
     //-----------------------------------//
     $obj = new \App\Models\UserBonosLogs();
     $obj->user_bonos_id = $oUsrBono->id;
@@ -147,6 +147,10 @@ class BonoService {
       $obj->created_at = $d;
       $obj->save();
     }
+    
+        
+    $oUsrBono->qty -= count($uses);
+    $oUsrBono->save();
     
   }
 

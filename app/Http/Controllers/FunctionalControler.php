@@ -92,10 +92,7 @@ class FunctionalControler extends Controller {
         $aux = $this->dateDB($datos[$i]);
         if ($aux) $dates[] = $aux;
       }
-    
 //      var_dump($name,$dates);
-      
-
       $resp = $oServ->asignBonoAuto($oUser, $oBono, $tpay,$create,$datos[4],$dates);
       echo $oUser->id.', '.$name.','.$oBono->name.'<br>';
     }
