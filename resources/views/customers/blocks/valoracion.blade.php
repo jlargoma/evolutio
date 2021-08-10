@@ -23,7 +23,7 @@ $count = 1;
     </div>
     <div class="form-material mt-2">
       <label for="name">*FIRMA DEL TUTOR (en menores de edad)</label>
-      <div class="field">{{$user->dni}}</div>
+      <div class="field">{{$valora['valora_tutor']}}</div>
     </div>
   </div>
   <div class="col-md-12 mt-1 qstion1">
@@ -234,7 +234,7 @@ $count = 1;
   </div>
   <div class="col-md-12  mt-1">
     <h4 class="mt-1">CONCLUSIONES Y RECOMENDACIONES GENERALES</h4>
-    <div class="field txt">{{$valora['valora_concl']}}</div>
+    <div class="field txt"><?php echo nl2br($valora['valora_concl']); ?></div>
   </div>
   <div class="col-md-12  mt-1" style="text-align: center;">
     <h4 class="mt-1">FIRMA Y DNI DE CLIENTE<br/>(o padre/madre/tutor legal en caso de menores de edad)</h4>

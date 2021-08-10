@@ -44,11 +44,17 @@ class Invoices extends Model
   /**********************************************************************/
   /////////  invoice_meta //////////////
   public function setMetaContent($key,$content) {
-    DB::table('invoices_meta')
-    ->updateOrInsert(
-        ['invoice_id' => $this->id, 'meta_key' => $key],
-        ['meta_value' => $content]
-    );
+    
+    
+    $updated =  DB::table('invoices_meta')->where('invoice_id',$this->id)
+              ->where('meta_key',$key)
+              ->update(['meta_value' => $content]);
+
+    if (!$updated) {
+      DB::table('invoices_meta')->insert(
+            ['invoice_id' => $this->id, 'meta_key' => $key,'meta_value' => $content]
+        );
+    }
   }
   public function getMetaContent($key) {
     

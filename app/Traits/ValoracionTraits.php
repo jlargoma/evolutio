@@ -156,8 +156,11 @@ trait ValoracionTraits {
         else  $metaDataADD[$f] = $req[$f];
       }
     }
+    if ($request->input('delSign')){
+      $metaDataUPD['valora_sign'] = null;
+    }
     $oUser->setMetaContentGroups($metaDataUPD,$metaDataADD);
-        
+    
     return redirect('/admin/usuarios/informe/' . $uID . '/valoracion')->with('success','Registro actualizado.');
 
   }
@@ -295,7 +298,7 @@ trait ValoracionTraits {
     $storage = \Illuminate\Support\Facades\Storage::disk('local');
     $storage->put($fileName, $decoded_image);
     
-    return redirect('/resultado')->with(['success' => 'Firma Guardada']);
+    return back()->with(['success' => 'Firma Guardada']);
   
   }
 

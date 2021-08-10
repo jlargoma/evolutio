@@ -172,9 +172,9 @@ $count = 1;
   <div class="col-md-12  mt-1">
     <h4 class="mt-1">FIRMA Y DNI DE CLIENTE<br/>(o padre/madre/tutor legal en caso de menores de edad)</h4>
     <div class="boxSign">
-      
       @if($valora['valora_sign'])
       <img src="/admin/usuarios/sign/{{$valora['valora_sign']}}" >
+      <input type="checkbox" name="delSign">Borrar firma
       @else
       <p>Documento no Firmado</p>
       @endif

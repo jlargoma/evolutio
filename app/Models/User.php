@@ -104,12 +104,19 @@ class User extends Authenticatable
   /**********************************************************************/
   /////////  user_meta //////////////
   public function setMetaContent($key,$content) {
-    DB::table('user_meta')
-    ->updateOrInsert(
-        ['user_id' => $this->id, 'meta_key' => $key],
-        ['meta_value' => $content]
-    );
+    
+    $updated =  DB::table('user_meta')->where('user_id',$this->id)
+              ->where('meta_key',$key)
+              ->update(['meta_value' => $content]);
+
+    if (!$updated) {
+      DB::table('user_meta')->insert(
+            ['user_id' => $this->id, 'meta_key' => $key,'meta_value' => $content]
+        );
+    }
+    return null;
   }
+  
   public function getMetaContent($key) {
     
     $oMeta = DB::table('user_meta')
@@ -123,15 +130,23 @@ class User extends Authenticatable
   
   
   public function setMetaContentGroups($metaDataUPD,$metaDataADD) {
-    $d = [];
-    if (count($metaDataUPD))
-      foreach ($metaDataUPD as $k=>$v) $d[] = ['user_id'=>$this->id,'meta_key'=>$k,'meta_value'=>$v];
+    if (count($metaDataUPD)){
+      $d = [];
+      foreach ($metaDataUPD as $k=>$v){
+        $updated =  DB::table('user_meta')->where('user_id',$this->id)
+              ->where('meta_key',$k)
+              ->update(['meta_value' => $v]);
+        if (!$updated) {
+          $metaDataADD[$k] = $v;
+        }
+      }
+    }
     
-    if (count($metaDataADD))
+    if (count($metaDataADD)){
+      $d = [];
       foreach ($metaDataADD as $k=>$v) $d[] = ['user_id'=>$this->id,'meta_key'=>$k,'meta_value'=>$v];
-    
-    if (count($d))
-      DB::table('user_meta')->upsert($d, ['user_id', 'meta_key'], ['meta_value']);
+      DB::table('user_meta')->insert($d);
+    }
 
   }
   

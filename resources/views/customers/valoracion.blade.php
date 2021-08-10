@@ -2,9 +2,21 @@
 
 @section('content')
 <h1>VALORACIÓN DE SALUD Y PREPARACIÓN AL ENTRENAMIENTO</h1>
+@if (session('success'))
+  <div class="alert alert-success">
+    {{ session('success') }}
+  </div>
+  @endif
 <div class="text-left">
   @include('customers.blocks.valoracion')
 </div>
+
+@if($valora['valora_sign'])
+<img src="/admin/usuarios/sign/{{$valora['valora_sign']}}" ><br/>
+ <a class="btn btn-success" href="{{$valora['url_dwnl']}}" target="_blank" >
+    <i class="fa fa-file" aria-hidden="true"></i> Imprimir / Descargar
+  </a>
+@else
 <form  action="{{ $url }}" method="post" style="width: 325px; margin: 1em auto;"> 
   <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
   <input type="hidden" name="sign"  id="sign" value="">
@@ -19,6 +31,7 @@
     <i class="fa fa-trash" aria-hidden="true"></i> Limpiar
   </button>
 </form>
+@endif
 @endsection
 @section('scripts')
 <style>
