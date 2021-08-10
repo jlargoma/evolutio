@@ -12,7 +12,7 @@
 </div>
 
 @if($valora['valora_sign'])
-<img src="/admin/usuarios/sign/{{$valora['valora_sign']}}" ><br/>
+<img src="/public-sign/{{$valora['valora_sign']}}" ><br/>
  <a class="btn btn-success" href="{{$valora['url_dwnl']}}" target="_blank" >
     <i class="fa fa-file" aria-hidden="true"></i> Imprimir / Descargar
   </a>

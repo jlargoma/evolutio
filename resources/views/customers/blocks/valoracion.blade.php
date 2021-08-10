@@ -239,7 +239,7 @@ $count = 1;
   <div class="col-md-12  mt-1" style="text-align: center;">
     <h4 class="mt-1">FIRMA Y DNI DE CLIENTE<br/>(o padre/madre/tutor legal en caso de menores de edad)</h4>
     @if(isset($sign_donwl))
-    <img src="/admin/usuarios/sign/{{$valora['valora_sign']}}" class="boxSign">
+    <img src="/public-sign/{{$valora['valora_sign']}}" class="boxSign">
     @endif
     <div class="fieldSing">DNI:{{$valora['valora_dni']}}</div>
   </div>

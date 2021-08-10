@@ -9,6 +9,8 @@ use Mail;
 use App\Models\User;
 use App\Models\UserRates;
 use \App\Traits\ValoracionTraits;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class CustomerController extends Controller {
 
@@ -243,6 +245,21 @@ class CustomerController extends Controller {
   }
 
 
+  function getSign($file) {
+
+    $path = storage_path('/app/signs/' .$file);
+    if (!File::exists($path)) {
+      abort(404);
+    }
+
+    $file = File::get($path);
+    $type = File::mimeType($path);
+
+    $response = \Response::make($file, 200);
+    $response->header("Content-Type", $type);
+
+    return $response;
+  }
   
 
 }
