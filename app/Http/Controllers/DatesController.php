@@ -207,18 +207,25 @@ class DatesController extends Controller {
     $oObj->customTime = $cHour;
     $oObj->updated_at = $date;
     if ($oObj->save()) {
-      if ($type == 'pt') {
-        return redirect('/admin/citas-pt/edit/' . $oObj->id);
-      }
-      /*       * ************************************************************* */
+      
+      
       $timeCita = strtotime($oObj->date);
       $service = Rates::find($oObj->id_rate);
       $coach = User::find($oObj->id_coach);
-
+      $oRate = Rates::find($oObj->id_rate);
       /*       * *************************************** */
+      if ($type == 'pt') {
+        
+        
+        $subjet = 'Nueva cita en Evolutio';
+        if ($ID)  $subjet = 'Actualización de su cita';
+      
+        MailController::sendEmailCita($oObj, $oUser, $oRate, $coach, $importe, $subjet);
+        return redirect('/admin/citas-pt/edit/' . $oObj->id);
+      }
+      /*       * ************************************************************* */
       //crear el pago
       $pStripe = null;
-      $oRate = Rates::find($oObj->id_rate);
       if (!$ID) {
         $data = [$oObj->id, $oUser->id, $importe * 100, $oRate->id];
         $sStripe = new \App\Services\StripeService();

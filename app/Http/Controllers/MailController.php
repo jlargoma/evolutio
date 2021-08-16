@@ -105,5 +105,36 @@ class MailController extends Controller
             }
             return 'OK';
 	}
+    public static function sendEmailCita($oDate, $oUser, $oRate,$oCoach,$importe,$subj=null)
+	{
+            $email    = $oUser->email;
+            $dateTime = strtotime($oDate->date);
+            $day = date('d',$dateTime).' de '.getMonthSpanish(date('n',$dateTime),false);
+            $hour = $oDate->getHour();
+            
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return $email.' no es un mail válido';
+            try{
+              
+              if (!$subj)  $subj = 'Recordatorio de su Cita de Evolutio';
+              
+              $sended = Mail::send('emails._remember_citaStripe', [
+                      'user'    => $oUser,
+                      'obj'     => $oDate,
+                      'rate'    => $oRate,
+                      'importe' => $importe,
+                      'oCoach'  => $oCoach,
+                      'hour'    => $hour,
+                      'day'     => $day,
+              ], function ($message) use ($email,$subj) {
+                      $message->subject($subj);
+                      $message->from(config('mail.from.address'), config('mail.from.name'));
+                      $message->to($email);
+              });
+            } catch (\Exception $ex) {
+              return ($ex->getMessage());
+            }
+            return 'OK';
+              
+	}
 
 }
