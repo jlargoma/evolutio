@@ -172,9 +172,9 @@ $count = 1;
   </div>
   <div class="col-md-12  mt-1">
     <h4 class="mt-1">FUERZA DE TREN INFERIOR</h4>
-    <h5>TEST: PUSHUP </h5>
-    <p>El objetivo de la prueba es valorar la fuerza y resistencia del tren inferior.<br/>
-      Se debe realizar el mayor número posible de flexiones en una única serie.</p>
+    <h5>TEST: SIT TO STAND </h5>
+    <p>El objetivo de esta prueba es valorar la fuerza y capacidad funcional del tren inferior.<br/>
+      Hay que levantarse y sentarse en una silla el mayor número de veces por minuto.</p>
     <table class="table">
       @foreach($valora['qstion8'] as $i=>$q)
       <tr>
@@ -240,8 +240,8 @@ $count = 1;
     <h4 class="mt-1">FIRMA Y DNI DE CLIENTE<br/>(o padre/madre/tutor legal en caso de menores de edad)</h4>
     @if(isset($sign_donwl))
     <img src="/public-sign/{{$valora['valora_sign']}}" class="boxSign">
-    @endif
     <div class="fieldSing">DNI:{{$valora['valora_dni']}}</div>
+    @endif
   </div>
 </div>
 <style>

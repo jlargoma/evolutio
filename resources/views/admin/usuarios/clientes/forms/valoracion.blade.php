@@ -121,9 +121,9 @@ $count = 1;
   </div>
   <div class="col-md-12  mt-1">
     <h4 class="mt-1">FUERZA DE TREN INFERIOR</h4>
-    <h5>TEST: PUSHUP </h5>
-    <p>El objetivo de la prueba es valorar la fuerza y resistencia del tren inferior.</p>
-    <p>Se debe realizar el mayor número posible de flexiones en una única serie.</p>
+    <h5>TEST: SIT TO STAND </h5>
+    <p>El objetivo de esta prueba es valorar la fuerza y capacidad funcional del tren inferior.</p>
+    <p>Hay que levantarse y sentarse en una silla el mayor número de veces por minuto.</p>
     <table class="table">
       @foreach($valora['qstion8'] as $i=>$q)
       <tr>
@@ -180,7 +180,10 @@ $count = 1;
       @endif
       
     </div>
+    <div class="form-inline text-center mt-1">
+    <label>DNI</label>
     <input type="text" class="form-control" name="valora_dni" value="{{$valora['valora_dni']}}" placeholder="DNI">
+    </div>
   </div>
   <div class="col-md-12  mt-1">
     <button class="btn btn-success" type="submit">

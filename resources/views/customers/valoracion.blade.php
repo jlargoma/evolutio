@@ -7,12 +7,19 @@
     {{ session('success') }}
   </div>
   @endif
+  @if (session('error'))
+  <div class="alert alert-danger">
+    {{ session('error') }}
+  </div>
+  @endif
 <div class="text-left">
   @include('customers.blocks.valoracion')
 </div>
 
 @if($valora['valora_sign'])
 <img src="/public-sign/{{$valora['valora_sign']}}" ><br/>
+    <div class="fieldSing">DNI:{{$valora['valora_dni']}}</div>
+
  <a class="btn btn-success" href="{{$valora['url_dwnl']}}" target="_blank" >
     <i class="fa fa-file" aria-hidden="true"></i> Imprimir / Descargar
   </a>
@@ -23,6 +30,10 @@
   <h5>Firma</h5>
   <div class="sing-box">
     <canvas width="320" height="300" id="cSign"></canvas>
+  </div>
+  <div>
+  <label><strong>DNI</strong></label>
+  <input type="text" id="dni" name="dni" required="">
   </div>
   <button class="btn btn-success" type="button" id="saveSign">
     <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
@@ -90,6 +101,10 @@ $(document).ready(function () {
   });
   $('#saveSign').on('click', function (e) {
     e.preventDefault();
+    if ($('#dni').val() == ''){
+      alert('Debe ingresar su DNI para continuar');
+      return null;
+    }
     $('#sign').val(signaturePad.toDataURL()); // save image as PNG
     $(this).closest('form').submit();
   });

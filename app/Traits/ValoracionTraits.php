@@ -285,6 +285,13 @@ trait ValoracionTraits {
     }
     $uID  = $oUser->id;
     $sign = $request->input('sign');
+    $dni = $request->input('dni');
+    if (trim($dni) == '') {
+      return back()->with(['error' => 'El DNI es obligatorio']);
+    }
+    $oUser->setMetaContent('valora_dni',$dni);
+    
+    
     $encoded_image = explode(",", $sign)[1];
     $decoded_image = base64_decode($encoded_image);
     $type = 'valora_sign';
