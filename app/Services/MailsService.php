@@ -30,7 +30,8 @@ class MailsService {
 
   public static function sendEmailPayRate($data, $oUser, $oRate) {
 
-    $date = Carbon::createFromFormat('Y-m-d', $data['fecha_pago']);
+    
+    $date = self::convertDateToShow_text($data['fecha_pago']);
     $typePayment = $data['type_payment'];
     $importe = $data['importe'];
     $email = $oUser->email;
@@ -54,6 +55,21 @@ class MailsService {
     }
 
     return 'OK';
+  }
+
+  
+  public static function convertDateToShow_text($date, $year = false) {
+    $date = trim($date);
+    if ($date) {
+      $MonthSpanish = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+        $aux = explode('-', $date);
+        if (is_array($aux) && count($aux) == 3) {
+          $aux2 = explode(' ', $aux[2]);
+          return $aux2[0] . ' ' . $MonthSpanish[intval($aux[1])]. ', ' . $aux[0];
+        }
+    }
+    return $date;
   }
 
 }

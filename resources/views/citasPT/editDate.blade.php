@@ -71,7 +71,7 @@
                 <div class="col-xs-6 col-md-4 push-20">
                     <label for="id_type_rate">Servicio</label>
                     <select class="form-control" id="id_rate" name="id_rate" style="width: 100%;" data-placeholder="Seleccione un servicio" required >
-                        <option></option>
+                      <option value="-1"></option>
                         <?php foreach ($services as $key => $service): ?>
                             <option value="<?php echo $service->id; ?>"  <?php if (isset($id_serv) && $id_serv == $service->id) echo 'selected' ?>>
                                 <?php echo $service->name; ?>

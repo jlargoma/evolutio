@@ -166,6 +166,8 @@ class DatesController extends Controller {
               ->where('rate_month', date('n', $timeCita))
               ->where('rate_year', date('Y', $timeCita))
               ->first();
+      if (!$uRate)
+        $uRate = \App\Services\ValoracionService::getURate($oUser->id,$id_rate,$timeCita,$id_coach);
     } else {
       $uRate = UserRates::find($oObj->id_user_rates);
       if ($uRate) {
@@ -440,6 +442,12 @@ class DatesController extends Controller {
 
     foreach ($aDates as $d) {
       if ($oDate->date_type == 'pt') {
+        $has = UserRates::where('id_user',$oDate->id_user)
+                ->where('id_rate',$oDate->id_rate)
+                ->where('active',1)->first();
+        if (!$has){
+          return redirect()->back()->with(['error' => 'Servicio no habilitado']); 
+        }
         $id_user_rates = $oDate->id_user_rates;
       } else {
         $timeCita = strtotime($d);

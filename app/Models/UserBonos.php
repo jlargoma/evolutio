@@ -65,6 +65,9 @@ class UserBonos extends Model
         case 'nutri':
           $text .= 'Nutrición';
           break;
+        case 'valora':
+          $text .= 'Valoración';
+          break;
       }
       $text .= ': '. dateMin($date);
       $obj = new UserBonosLogs();

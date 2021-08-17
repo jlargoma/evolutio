@@ -173,8 +173,10 @@ class UsersController extends Controller {
     return ['', ''];
 //        return ($oUser) ? $oUser->email : '';
   }
-  public function getRates($id) {
-    $aLst = UserRates::where('id_user',$id)->pluck('id_rate')->toArray();
+  public function getRates($uID) {
+    $aLst = UserRates::where('id_user',$uID)
+            ->where('active',1)->pluck('id_rate')->toArray();
+    \App\Services\ValoracionService::RateLstID($uID,$aLst);
     return response()->json(array_unique($aLst));
   }
 

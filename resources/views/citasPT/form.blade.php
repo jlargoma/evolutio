@@ -86,6 +86,7 @@ jQuery(function () {
                 $('#NC_email').val(data[0]);
                 $('#NC_phone').val(data[1]);
             });
+            $( "#id_rate").val(-1)
             $.get('/admin/get-rates/' + id, function(data) {
               
               $( "#id_rate option" ).each(function( index ) {
