@@ -75,6 +75,32 @@ class MailController extends Controller
 		return (!$sended) ? true : false;
 	}
         
+     public static function sendEmailPuncharseBonoByStripe($data,$oUser,$oBono,$pStripe)
+	{
+
+		$typePayment = $data['type_payment'];
+		$importe     = $data['importe'];
+		$email       = $oUser->email;
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return $email.' no es un mail válido';
+        try{
+          $sended = Mail::send('emails._payment_BonoStripe', [
+              'type'        => 'Compra de Bono',
+              'user'        => $oUser,
+              'bono_name'   => $oBono->name,
+              'importe'     => $importe,
+              'pStripe'     => $pStripe
+          ], function ($message) use ($email) {
+              $message->subject('Solicitud de compra de Bonos Evolutio');
+              $message->from(config('mail.from.address'), config('mail.from.name'));
+              $message->to($email);
+          });
+        } catch (\Exception $ex) {
+          return ($ex->getMessage());
+        }
+         
+        return 'OK';
+		return (!$sended) ? true : false;
+	}
         
     public static function sendEmailPayDateByStripe($oDate, $oUser, $oRate,$oCoach,$pStripe,$importe,$subj=null)
 	{

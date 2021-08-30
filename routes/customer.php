@@ -1,6 +1,7 @@
 <?php
 
 Route::get('/pago-simple/{type}/{token}/{control}', 'CustomerController@pagoSimple');
+Route::get('/copra-de-bonos/{token}/{control}', 'CustomerController@comprarBonos');
 Route::post('/pago', 'CustomerController@pagar');
 Route::post('/stripe_charge', 'CustomerController@stripeCharge');
 

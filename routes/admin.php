@@ -88,6 +88,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::get('/generar/cobro', 'ChargesController@generarCobro');
   Route::get('/update/cobro/{id}', 'ChargesController@updateCobro');
   Route::post('/send/cobro-mail', 'ChargesController@sendCobroMail');
+  Route::post('/send/cobro-bono', 'ChargesController@sendCobroBono');
   Route::post('/send/cobro-gral', 'ChargesController@sendCobroGral');
   Route::post('/cobros/cobrar', 'ChargesController@cobrar');
   Route::post('/cobros/cobrar/{id}', 'ChargesController@updateCharge');

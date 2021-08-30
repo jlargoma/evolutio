@@ -4,7 +4,7 @@
   <div class="col-xs-12 not-padding push-20">
     <h2 class="text-center font-w300">COMPRA DE BONOS</h2>
   </div>
-  <form class="form-toPayment" method="post" action="{{ url('/admin/bonos/comprar') }}">
+  <form class="form-toPayment" method="post" action="{{ url('/admin/bonos/comprar') }}" id="BonoPunch">
     <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
     <input type="hidden" name="id_user" value="<?php echo $user->id; ?>">
     <input type="hidden" name="type" value="<?php echo $type; ?>">
@@ -65,6 +65,7 @@
             </div>
             <div class="col-xs-12">
               @include('admin.blocks.stripeBox')
+              @include('admin.blocks.stripe-actions')
             </div>
           </div>
         </div>
@@ -113,9 +114,10 @@ $(document).ready(function () {
 
   $('.btnStripe').on('click', function () {
     var type = $(this).data('t');
-    var posting = $.post('/admin/send/cobro-mail', {
+    var posting = $.post('/admin/send/cobro-bono', {
       _token: '{{csrf_token()}}',
-      u_bono: 1,
+      u_ID: <?php echo $user->id; ?>,
+      u_bono:  $('input[name=id_bono]:checked', '#BonoPunch').val(),
       u_email: $('#u_email').val(),
       u_phone: $('#u_phone').val(),
       importe: $('#importeFinal').val(),

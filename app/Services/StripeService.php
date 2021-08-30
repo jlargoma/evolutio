@@ -10,7 +10,7 @@ class StripeService {
     private  $sKey;
     private  $sPRivKey;
     private   $aTypes = [
-      '','rate','sucrip','nutri','fisio'
+      '','rate','sucrip','nutri','fisio','bono'
     ];
     public function __construct()
     {
@@ -21,6 +21,9 @@ class StripeService {
     function getPaymentLink($type,$data){
         foreach ($data as $k=>$v) $data[$k] = encriptID ($v);
         $code = implode('-', $data);
+        
+        if ($type == 'bono')
+          return '/copra-de-bonos/'.$code.'/'.getKeyControl($code);
         
         $tId = array_search($type, $this->aTypes);
         return '/pago-simple/'.$tId.'/'.$code.'/'.getKeyControl($code);

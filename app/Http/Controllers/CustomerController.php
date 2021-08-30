@@ -136,6 +136,65 @@ class CustomerController extends Controller {
     ]);
   }
 
+    public function comprarBonos($token = null, $control = null) {
+    $amount = 15000;
+    $name = '';
+    $items = null;
+    $sStripe = new \App\Services\StripeService();
+    $data = $sStripe->getPaymentLinkData(5, $token, $control);
+//    dd($data);
+    if (!$data) die('error');
+      
+    $payment = false;
+    $disc = null;
+    if (count($data) == 2) {
+
+      $typeKey = $data[0];
+      $data = $data[1];
+      //$oUser->id,$importe*100,$oBono->id,$disc
+      $oBono = \App\Models\Bonos::find($data[2]);
+      $name = 'Compra de bono de '
+              . $oBono->name;
+      $amount = round($data[1]);
+      $oUser = User::find($data[0]);
+      $disc  = isset($data[5]) ? $data[5] : 0;
+    }
+    //--------------------------------------------------------------//
+    //--------------------------------------------------------------//
+    $checkout = null;
+    if (!$payment){
+      $checkout = $sStripe->newCheckout($oUser, $amount,$name);
+      if (is_string($checkout)){
+        die($checkout);
+      }
+
+      $oSession = $checkout->jsonSerialize();
+      $iStripe = $oSession['payment_intent'];
+      $cStripe = $oSession['customer'];
+      $price = round($amount / 100, 2);
+      \App\Models\Stripe3DS::addNew($oUser->id,$iStripe,$cStripe,'asignBono',
+              [
+                  'bono'=>$oBono->id,'value'=>$price,'disc'=>$disc,'tpay'=>'card'
+              ]);
+    }
+    //--------------------------------------------------------------//
+    //--------------------------------------------------------------//
+    //--------------------------------------------------------------//
+
+    return view('customers.payments.stripe_payment', [
+        'keyStripe' => config('cashier.key'),
+        'amount' => $amount,
+        'name' => $name,
+        'type' => 'bono',
+        'token' => $token,
+        'control' => $control,
+        'items' => $items,
+        'disc'=>$disc,
+        'email' => $oUser->email,
+        'checkout' => $checkout,
+        'payment' => $payment,
+    ]);
+  }
 
   public function showResult(Request $request) {
     return view('customers.message');
