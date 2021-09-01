@@ -73,6 +73,8 @@ class PTController extends Controller {
      */
     public function edit($id) {
       $data = CitasService::get_edit($id);
+      $sValora = new \App\Services\ValoracionService();
+      $data['is_valora'] = $sValora->isRate($data['id_serv']);
       if ($data){
         return view('citasPT.form',$data);
       } else {

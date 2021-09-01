@@ -95,7 +95,7 @@ class User extends Authenticatable
     $sql = User::where('status', 1);
     
     if($type)  $sql->where('role', $type);
-    else $sql->whereIn('role', ['teach','fisio','nutri']);
+    else $sql->whereIn('role', ['teach','fisio','nutri','empl']);
     
     return $sql->orderBy('status', 'DESC')->get();
   }

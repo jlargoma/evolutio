@@ -53,6 +53,7 @@
                             <option value="teach" <?php if ($user->role == "teach") echo "selected";?>>Entrenador</option>
                             <option value="fisio" <?php if ($user->role == "fisio") echo "selected";?>>Fisioterapia</option>
                             <option value="nutri" <?php if ($user->role == "nutri") echo "selected";?>>Nutricionista</option>
+                            <option value="empl" <?php if ($user->role == "empl") echo "selected";?>>Empleado</option>
                         </select>
                         <label for="role">Role</label>
                     </div>
@@ -163,8 +164,8 @@ $(document).ready(function () {
     });
     $('#sendLiquid').on('click',function (event) {
         var id_coach = {{$user->id}};
-        var date = $('#selectMonth option:selected').val();
-        var dateText = $('#selectMonth option:selected').text();
+        var date = $('#selectMonth .active').data('v');
+        var dateText = $('#selectMonth  .active').text();
         var that = $(this);
         $.get('/admin/enviar-liquidacion-Entrenador/'+id_coach+'/'+date).done(function (resp) {
           if (resp == 'OK'){

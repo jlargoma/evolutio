@@ -18,7 +18,8 @@ class CoachLiqService {
                 'teach',
                 'teacher',
                 'fisio',
-                'nutri'
+                'nutri',
+                'empl'
     ]);
     if ($type == 'activos')
       $sql->where('status', 1);

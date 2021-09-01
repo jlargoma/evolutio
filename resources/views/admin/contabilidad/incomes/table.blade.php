@@ -53,11 +53,11 @@
               <?php 
               if (count($d2)<1) continue; ?>
               <tr class="d3 d1_{{$k1}} ">
-                <td class="static">{{$d2['name']}}</td>
+                <td class="static"><?php echo isset($d2['name']) ? $d2['name']:""; ?></td>
                 <td class="first-col"></td>
                 <td><b>{{sumMonthValue($d2)}}</b></td>
                 @foreach($monts as $k=>$v)
-                <td>{{moneda($d2[$k])}}</td>
+                <td><?php echo isset($d2[$k]) ? moneda($d2[$k]):""; ?></td>
                 @endforeach
               </tr>
               @endforeach

@@ -19,7 +19,7 @@
                         <input type="text" class="form-control" readonly="" value="{{$card['exp_month'].' / '.$card['exp_year']}}">
                     </div>
                     <div class="form-group">
-                        <button type="button" class="btn btn-info" id="changeCreditCard">Cambiar</button>
+                        <button type="button" class="btn btn-danger" id="changeCreditCard">Eliminar</button>
                     </div>
                 </div>
                 @endif

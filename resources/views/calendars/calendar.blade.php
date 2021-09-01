@@ -34,7 +34,7 @@ function printEvents($lst){
             </tr>
         </thead>
         <tbody>
-            @for($i=8; $i<22; $i++)
+            @for($i=8; $i<23; $i++)
             <tr>
                 @foreach($days as $k=>$d)
                 <?php $dk= $k+1; //corrige -> no hay domingos ?>

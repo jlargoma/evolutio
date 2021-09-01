@@ -179,8 +179,8 @@ class CoachLiquidationController extends Controller
             $year = getYearActive();
             $month = date('m');
         }
-        
-        $aData = $this->liquMensual($id,$year,$month);
+        $sCoachLiq = new \App\Services\CoachLiqService();
+        $aData = $sCoachLiq->liquMensual($id,$year,$month);
         $user = User::find($id);
         $aData['user'] = $user;
         $aData['mes'] = getMonthSpanish($month,false).' '.$year;

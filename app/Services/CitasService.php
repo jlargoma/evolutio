@@ -133,6 +133,7 @@ class CitasService {
     $detail = [];
     $days = listDaysSpanish();
     $months = lstMonthsSpanish();
+    $sValora = new ValoracionService();
     if ($oLst) {
         foreach ($oLst as $item) {
             $time = strtotime($item->date);
@@ -176,9 +177,9 @@ class CitasService {
               $u_name = ($uRates->user) ? $uRates->user->name : null;
               $charge = $uRates->charges;
             }
-
-            if ($type == 'pt') $charged = 1;
-              else $charged = ($charge) ? 1 : 0;
+            if ($type == 'pt' && !$sValora->isRate($uRates->id_rate))
+              $charged = 1;
+            else $charged = ($charge) ? 1 : 0;
 
             $aLst[$time][$hour][] = [
                 'id' => $item->id,

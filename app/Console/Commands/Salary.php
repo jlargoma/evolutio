@@ -55,7 +55,8 @@ class Salary extends Command {
                 'teach',
                 'teacher',
                 'fisio',
-                'nutri'
+                'nutri',
+                'empl'
               ])->where('status', 1)->pluck('id');
 //dd($users);
       foreach ($users as $uID) {

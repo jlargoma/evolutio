@@ -79,6 +79,13 @@
                         <?php endforeach ?>
                     </select>
                 </div>
+                <div class="col-xs-6 col-md-2 mt-1">
+                  @if($id>0 && $is_valora && !$charge)   
+                   <button class="btn btn-lg btn-user btn-danger" type="button" data-idUser="{{$id_user}}">
+                    No Cobrado
+                  </button>
+                  @endif
+                </div>
             </div>
         </form>
 

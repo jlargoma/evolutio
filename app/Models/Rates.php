@@ -19,6 +19,7 @@ class Rates extends Model
     static function getByTypeRate($type){
         return self::select('rates.*')
                 ->join('types_rate','rates.type','=','types_rate.id')
+                ->where('status',1)
                 ->where('types_rate.type',$type)->get();
     }
     static function getByTypeRateID($id){

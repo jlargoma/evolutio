@@ -97,6 +97,7 @@ class IncomesController extends Controller {
     foreach ($oBonos as $item){
       $m = intval(substr($item->date_payment,5,7));
       $auxB[$m] += $item->import;
+      if (!isset($aux_lst[$item->bono_id][$m])) $aux_lst[$item->bono_id][$m] = 0;
       $aux_lst[$item->bono_id][$m] += $item->import;
     }
     $auxB['lst'] = $aux_lst;
