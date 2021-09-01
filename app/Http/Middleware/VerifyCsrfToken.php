@@ -16,5 +16,6 @@ class VerifyCsrfToken extends Middleware
         '/changeActiveYear',
         'stripe/*',
         'stripe-events/*',
+        'admin/clientes/autosaveValora'
     ];
 }

@@ -310,4 +310,15 @@ trait ValoracionTraits {
   }
 
 
+  public function autosaveValora(Request $req) {
+    $uID    = $req->input('id');
+    $field = $req->input('field');
+    $val   = $req->input('val');
+    $oUser = User::find($uID);
+    if ($oUser){
+      $oUser->setMetaContent($field,$val);
+      die('ok');
+    }
+    die('error');
+  }
 }

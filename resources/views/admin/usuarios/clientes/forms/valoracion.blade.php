@@ -9,25 +9,25 @@ $count = 1;
   <input type="hidden" name="id" value="{{ $user->id }}">
   <div class="col-md-6 ">
     <div class="form-material mt-3">
-      <input class="form-control" type="text" id="name" name="name" required value="<?php echo $user->name ?>">
+      <input class="form-control autosaveValora" type="text" id="name" name="name" required value="<?php echo $user->name ?>">
       <label for="name">NOMBRE</label>
     </div>
     <div class="form-material mt-3">
-      <input class="form-control" type="number" id="valora_years" name="valora_years"  maxlength="9" value="{{$valora['valora_years']}}">
+      <input class="form-control autosaveValora" type="number" id="valora_years" name="valora_years"  maxlength="9" value="{{$valora['valora_years']}}">
       <label for="telefono">EDAD</label>
     </div>
     <div class="form-material mt-3">
-      <input class="form-control" type="date" id="valora_date" name="valora_date" value="{{$valora['valora_date']}}">
+      <input class="form-control autosaveValora" type="date" id="valora_date" name="valora_date" value="{{$valora['valora_date']}}">
       <label for="telefono">FECHA DE VALORACIÓN</label>
     </div>
   </div>
   <div class="col-md-6 ">
     <div class="form-material mt-3">
-      <input type="text" id="lastname" class="form-control" name="valora_lastname" value="{{$valora['valora_lastname']}}">
+      <input type="text" id="lastname" class="form-control autosaveValora" name="valora_lastname" value="{{$valora['valora_lastname']}}">
       <label>APELLIDOS</label>
     </div>
     <div class="form-material mt-3">
-      <input class="form-control" type="text" id="valora_tutor" name="valora_tutor" value="{{$valora['valora_tutor']}}">
+      <input class="form-control autosaveValora" type="text" id="valora_tutor" name="valora_tutor" value="{{$valora['valora_tutor']}}">
       <label for="name">*FIRMA DEL TUTOR (en menores de edad)</label>
     </div>
   </div>
@@ -37,7 +37,7 @@ $count = 1;
     <u>Por favor, conteste a estas preguntas con sinceridad y de forma detallada cuando proceda:</u>
     @foreach($valora['qstion1'] as $i=>$q)
     <div class="form-material mt-3">
-      <input type="text" id="{{$i}}" class="form-control" name="{{$i}}" value="{{$valora[$i]}}">
+      <input type="text" id="{{$i}}" class="form-control autosaveValora" name="{{$i}}" value="{{$valora[$i]}}">
       <label>{{$count.'. '.$q}}</label>
       <?php $count++; ?>
     </div>
@@ -47,7 +47,7 @@ $count = 1;
     <h4 class="mt-1">ECÓGRAFO: VALORACIÓN ABDOMINAL Y ACTIVACIÓN DEL TRANSVERSO</h4>
     @foreach($valora['qstion2'] as $i=>$q)
     <div class="form-material mt-3">
-      <textarea id="{{$i}}" class="form-control" name="{{$i}}">{{$valora[$i]}}</textarea>
+      <textarea id="{{$i}}" class="form-control autosaveValora" name="{{$i}}">{{$valora[$i]}}</textarea>
       <label>{{$q}}</label>
     </div>
     @endforeach
@@ -60,7 +60,7 @@ $count = 1;
         @foreach($valora['qstion3'] as $i=>$q)
         <tr>
           <td>{{$q}}</td>
-          <td><input type="text" id="{{$i}}" class="form-control" name="{{$i}}" value="{{$valora[$i]}}"></td>
+          <td><input type="text" id="{{$i}}" class="form-control autosaveValora" name="{{$i}}" value="{{$valora[$i]}}"></td>
         </tr>
         @endforeach
       </table>
@@ -71,7 +71,7 @@ $count = 1;
         @foreach($valora['qstion4'] as $i=>$q)
         <tr>
           <td>{{$q}}</td>
-          <td><input type="text" id="{{$i}}" class="form-control" name="{{$i}}" value="{{$valora[$i]}}"></td>
+          <td><input type="text" id="{{$i}}" class="form-control autosaveValora" name="{{$i}}" value="{{$valora[$i]}}"></td>
         </tr>
         @endforeach
       </table>
@@ -85,7 +85,7 @@ $count = 1;
         </tr>
         <tr>
           @foreach($valora['qstion5'] as $i=>$q)
-          <td><input type="text" id="{{$i}}" class="form-control" name="{{$i}}" value="{{$valora[$i]}}"></td>
+          <td><input type="text" id="{{$i}}" class="form-control autosaveValora" name="{{$i}}" value="{{$valora[$i]}}"></td>
           @endforeach
         </tr>
       </table>
@@ -97,7 +97,7 @@ $count = 1;
     <div class="form-material mt-3">
       <h5>{{$q}}</h5>
       <p>{{$valora['qstion6_stext'][$i]}}</p>
-      <textarea id="{{$i}}" class="form-control" name="{{$i}}">{{$valora[$i]}}</textarea>
+      <textarea id="{{$i}}" class="form-control autosaveValora" name="{{$i}}">{{$valora[$i]}}</textarea>
       <?php $count++; ?>
     </div>
     @endforeach
@@ -111,7 +111,7 @@ $count = 1;
       @foreach($valora['qstion7'] as $i=>$q)
       <tr>
         <td>{{$q}}</td>
-        <td><input type="text" id="{{$i}}" class="form-control" name="{{$i}}" value="{{$valora[$i]}}"></td>
+        <td><input type="text" id="{{$i}}" class="form-control autosaveValora" name="{{$i}}" value="{{$valora[$i]}}"></td>
       </tr>
       @endforeach
     </table>
@@ -128,7 +128,7 @@ $count = 1;
       @foreach($valora['qstion8'] as $i=>$q)
       <tr>
         <td>{{$q}}</td>
-        <td><input type="text" id="{{$i}}" class="form-control" name="{{$i}}" value="{{$valora[$i]}}"></td>
+        <td><input type="text" id="{{$i}}" class="form-control autosaveValora" name="{{$i}}" value="{{$valora[$i]}}"></td>
       </tr>
       @endforeach
     </table>
@@ -153,7 +153,7 @@ $count = 1;
       @foreach($valora['qstion9'] as $i=>$q)
       <tr>
         <td>{{$q}}</td>
-        <td><input type="text" id="{{$i}}" class="form-control" name="{{$i}}" value="{{$valora[$i]}}"></td>
+        <td><input type="text" id="{{$i}}" class="form-control autosaveValora" name="{{$i}}" value="{{$valora[$i]}}"></td>
       </tr>
       @endforeach
     </table>
@@ -167,7 +167,7 @@ $count = 1;
   </div>
   <div class="col-md-12  mt-1">
     <h4 class="mt-1">CONCLUSIONES Y RECOMENDACIONES GENERALES</h4>
-    <textarea class="form-control" name="valora_concl">{{$valora['valora_concl']}}</textarea>
+    <textarea class="form-control autosaveValora" name="valora_concl">{{$valora['valora_concl']}}</textarea>
   </div>
   <div class="col-md-12  mt-1">
     <h4 class="mt-1">FIRMA Y DNI DE CLIENTE<br/>(o padre/madre/tutor legal en caso de menores de edad)</h4>
@@ -182,7 +182,7 @@ $count = 1;
     </div>
     <div class="form-inline text-center mt-1">
     <label>DNI</label>
-    <input type="text" class="form-control" name="valora_dni" value="{{$valora['valora_dni']}}" placeholder="DNI">
+    <input type="text" class="form-control autosaveValora" name="valora_dni" value="{{$valora['valora_dni']}}" placeholder="DNI">
     </div>
   </div>
   <div class="col-md-12  mt-1">
@@ -256,7 +256,7 @@ $count = 1;
     text-align: center;
     border: 1px solid #c3c3c3;
 }
-  .formValora textarea.form-control{
+  .formValora textarea.form-control autosaveValora{
     min-height: 8em;
   }
 

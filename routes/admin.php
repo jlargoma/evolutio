@@ -15,6 +15,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::get('/clientes/{month?}', 'UsersController@clientes');
   Route::post('/clientes/update', 'UsersController@updateCli');
   Route::post('/clientes/setValora', 'UsersController@setValora');
+  Route::post('/clientes/autosaveValora', 'UsersController@autosaveValora');
   Route::get('/get-mail/{id?}', 'UsersController@getMail');
   Route::get('/get-rates/{id?}', 'UsersController@getRates');
   Route::get('/clientes-export', 'UsersController@exportClients');

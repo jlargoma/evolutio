@@ -212,6 +212,15 @@
           
           
         });
+        $('.autosaveValora').on('change', function () {
+          var posting = $.post('/admin/clientes/autosaveValora', {
+            id: {{$user->id}},
+            field: $(this).attr('name'),
+            val: $(this).val(),
+          }).done(function (data) {
+            console.log(data);
+          });
+        });
         /**************************************************/
        $('.nav-tabs').on('click','a',function(){
          var newURL = '/admin/usuarios/informe/{{$user->id}}/';
