@@ -21,7 +21,7 @@ $tGast = $currentY['Gastos'];
        <tbody>
          @foreach($crLst as $k1=>$v1)
           <tr>
-            <td class="static detail" data-t="i" data-id="{{$k1}}">{{$oRateTypes[$k1]}}</td>
+            <td class="static detail" data-t="i" data-id="{{$k1}}">{{$oRateTypes[$k1]}} <i class="fa fa-eye"></i></td>
             <td class="first-col"></td>
             <?php 
             $aux_i[0]+= $v1[0];
@@ -47,7 +47,7 @@ $tGast = $currentY['Gastos'];
        <tbody>
           @foreach($ggMonth as $k1=>$v1)
           <tr>
-            <td class="static detail" data-t="e" data-id="{{$k1}}">{{$ggNames[$k1]}}</td>
+            <td class="static detail" data-t="e" data-id="{{$k1}}">{{$ggNames[$k1]}} <i class="fa fa-eye"></i></td>
             <td class="first-col"></td>
             <?php 
             $sumMonthValue = sumMonthValue($v1);

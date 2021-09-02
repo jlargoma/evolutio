@@ -56,8 +56,14 @@ class BonosController extends Controller {
       $oObj->rate_type = null;
       if ($rate != 'all'){
         $filerRate = explode('-', $rate);
-        if (count($filerRate) == 2) $oObj->rate_subf = $filerRate[1];
-        else $oObj->rate_type = $filerRate[0];
+        if (count($filerRate) == 2){
+          $oObj->rate_subf = $filerRate[1];
+          $oObj->rate_type = null;
+        }
+        else{
+          $oObj->rate_subf = null;
+          $oObj->rate_type = $filerRate[0];
+        }
       }
     }
     
