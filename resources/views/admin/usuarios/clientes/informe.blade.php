@@ -125,6 +125,7 @@
             e.preventDefault();
             $('#noteID').val($(this).data('id'));
             $('#note').val($(this).data('note'));
+            $('#coach_note').val($(this).data('coach'));
             $('#delNote').show();
             $('#newNote').show();
         });

@@ -39,7 +39,7 @@ trait ClientesTraits {
     $sqlUsers->with('userCoach');
     $users = $sqlUsers->orderBy('name', 'asc')->get();
     $userIDs = $sqlUsers->pluck('id');
-    /*     * **************************************************** */
+    //---------------------------------------------//
     $aRates = [];
     $typeRates = TypesRate::pluck('name','id');
     $oRates = Rates::all();
@@ -56,7 +56,7 @@ trait ClientesTraits {
       }
     }
 
-    /*     * **************************************************** */
+    //---------------------------------------------//
     $arrayPaymentMonthByUser = array();
     $date = date('Y-m-d', strtotime($year . '-' . $month . '-01' . ' -1 month'));
     $toPay = $uRates = $uCobros = [];
@@ -234,7 +234,6 @@ trait ClientesTraits {
     //----------------------//
     $oNotes = UsersNotes::where('id_user', $userID)->OrderBy('created_at')->get();
     //----------------------//
-    //----------------------//
     $oCharges = Charges::where('id_user', $userID)
                     ->pluck('import', 'id')->toArray();
 
@@ -269,7 +268,7 @@ trait ClientesTraits {
     $subscrLst = $user->suscriptions;
     //----------------------//
     $aCoachs = User::where('role', 'teach')->orderBy('name')->pluck('name', 'id')->toArray();
-    $allCoachs = User::all()->pluck('name', 'id')->toArray();
+    $allCoachs = User::getCoachs()->pluck('name', 'id');
     //----------------------//
     // CONSENTIMIENTOS
     
@@ -341,6 +340,7 @@ trait ClientesTraits {
         'totalInvoice' => $totalInvoice,
         'invoiceModal' => $invoiceModal,
         'valora' => $valoracion,
+        'u_current'=>Auth::user()->id
     ]);
   }
 
@@ -514,17 +514,18 @@ trait ClientesTraits {
     $uID = $request->input('uid');
     $id = $request->input('id');
     $note = $request->input('note');
+    $idCoach = $request->input('coach',Auth::user()->id);
+    $oCoach = User::find($idCoach);
     $oNote = null;
     if ($id > 0)
       $oNote = UsersNotes::find($id);
     if (!$oNote) {
       $oNote = new UsersNotes();
-      $oNote->id_coach = Auth::user()->id;
-      $oNote->type = Auth::user()->role;
       $oNote->id_user = $uID;
     }
 
-
+    $oNote->id_coach = $idCoach;
+    $oNote->type = ($oCoach) ? $oCoach->role : '';
     $oNote->note = $note;
     $oNote->save();
 

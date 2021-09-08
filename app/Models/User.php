@@ -94,8 +94,11 @@ class User extends Authenticatable
   static function getCoachs($type=null) {
     $sql = User::where('status', 1);
     
-    if($type)  $sql->where('role', $type);
-    else $sql->whereIn('role', ['teach','fisio','nutri','empl']);
+    if($type){
+      if (is_array($type)) $sql->whereIn('role', $type);
+      else $sql->where('role', $type);
+    }
+    else $sql->whereIn('role', ['admin','teach','fisio','nutri','empl']);
     
     return $sql->orderBy('status', 'DESC')->get();
   }

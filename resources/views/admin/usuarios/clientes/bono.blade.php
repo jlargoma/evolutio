@@ -65,6 +65,8 @@
             </div>
             <div class="col-xs-12">
               @include('admin.blocks.stripeBox')
+            </div>
+            <div class="col-xs-12">
               @include('admin.blocks.stripe-actions')
             </div>
           </div>

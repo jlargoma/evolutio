@@ -17,7 +17,7 @@
        <tbody>
           @foreach($lst as $k1=>$d1)
           <tr class="d1" data-k="{{$k1}}">
-            <td class="static"><i class="fa fa-plus-circle"></i>{{$d1['name']}}</td>
+            <td class="static"><i class="fa fa-eye"></i> {{$d1['name']}}</td>
             <td class="first-col"></td>
             <td><b>{{sumMonthValue($d1)}}</b></td>
             @foreach($monts as $k=>$v)
@@ -27,7 +27,7 @@
             @if(count($d1['slst'])>0)
               @foreach($d1['slst'] as $k2=>$d2)
                 <tr class="d2 d1_{{$k1}} " data-k="{{$k1}}_{{$k2}}" >
-                  <td class="static">{{$family[$k2]}}</td>
+                  <td class="static"><i class="fa fa-eye"></i> {{$family[$k2]}}</td>
                   <td class="first-col"></td>
                   <td><b>{{sumMonthValue($familyTotal[$k2])}}</b></td>
                   @foreach($monts as $k=>$v)
