@@ -19,6 +19,7 @@ class Expenses extends Model
         'gto_mat_deportivo' => 'GTO MAT DEPORTIVO',
         'gto_mat._fisio' => 'GTO MAT. FISIO',
         'gto_tarjeta_visa' => 'GTO TARJETA VISA',
+        'impuestos' => 'IMPUESTOS',
         'marketing_y_publicidad' => 'MARKETING Y PUBLICIDAD',
         'mensajeria' => 'MENSAJERIA',
         'otros' => 'OTROS',
@@ -32,6 +33,7 @@ class Expenses extends Model
     return [
             'names'=> [
               'alquileres' => 'ALQUILERES',
+              'impuestos' => 'IMPUESTOS',
               'renting' => 'RENTING',
               'sueldos_y_salarios' => 'SUELDOS Y SALARIOS',
               'suministros' => 'SUMINISTROS',
@@ -56,6 +58,7 @@ class Expenses extends Model
                 'seguros' => 'otros',
                 'software' => 'otros',
                 'suministros' => 'suministros',
+                'impuestos' => 'impuestos',
             ]];
         
   }

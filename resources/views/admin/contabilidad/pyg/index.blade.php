@@ -60,7 +60,7 @@ function sumMonthValue($m){
       <table class="table">
         <tr>
           <th>Total</th>
-          <th>{{moneda($pay_method['c'][0]+$pay_method['b'][0])}}</th>
+          <th>{{moneda($pay_method['c'][0]+$pay_method['b'][0]+$pay_method['v'][0])}}</th>
         </tr>
         <tr>
           <td class="square" ><span style="background-color: rgba(52,162,99,1);"></span>METALICO</td>
@@ -72,7 +72,7 @@ function sumMonthValue($m){
         </tr>
         <tr>
           <td class="square" ><span style="background-color: #d25c93;"></span>VISA</td>
-          <td>{{moneda($pay_method['c'][0])}}</td>
+          <td>{{moneda($pay_method['v'][0])}}</td>
         </tr>
       </table>
     </div>

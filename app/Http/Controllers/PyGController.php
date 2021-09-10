@@ -76,11 +76,26 @@ class PyGController extends Controller {
               ->where('bono_id','>',0)->get();
     $oRateTypes['bono'] = 'BONOS';
     $crLst['bono'] = $months_empty;
-    foreach ($oBonos as $item){
-      $m = intval(substr($item->date_payment,5,7));
-      $aux[0] += $item->import;
-      $aux[$m] += $item->import;
-      $crLst['bono'][$m] += $item->import;
+    foreach ($oBonos as $c){
+      $m = intval(substr($c->date_payment,5,7));
+      $aux[0] += $c->import;
+      $aux[$m] += $c->import;
+      $crLst['bono'][$m] += $c->import;
+      
+      switch ($c->type_payment){
+        case 'cash':
+          $pay_method['c'][0] += $c->import;
+          $pay_method['c'][$m] += $c->import;
+          break;
+        case 'card':
+          $pay_method['v'][0] += $c->import;
+          $pay_method['v'][$m] += $c->import;
+          break;
+        case 'banco':
+          $pay_method['b'][0] += $c->import;
+          $pay_method['b'][$m] += $c->import;
+          break;
+      }
     }
     //--------------------------------------------------------------------//
     
