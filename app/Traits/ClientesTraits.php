@@ -16,6 +16,8 @@ use App\Models\Dates;
 use App\Models\UsersNotes;
 use App\Models\UserRates;
 use App\Models\Charges;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\UsersExport;
 
 trait ClientesTraits {
 
@@ -432,51 +434,7 @@ trait ClientesTraits {
   }
 
   public function exportClients() {
-    $array_excel = [];
-    $array_excel[] = [
-        'Nombre',
-        'Email',
-        'Telefono',
-        'Estado',
-        'Servicios'
-    ];
-
-    $aRates = Rates::all()->pluck('name', 'id')->toArray();
-    $oUserRates = UserRates::where('active', 1)->get();
-    $aUserRates = [];
-    if ($oUserRates) {
-      foreach ($oUserRates as $i) {
-        if (!isset($aUserRates[$i->id_user]))
-          $aUserRates[$i->id_user] = [];
-        if (isset($aRates[$i->id_rate])) {
-          $aUserRates[$i->id_user][] = $aRates[$i->id_rate];
-        }
-      }
-      foreach ($aUserRates as $k => $v)
-        $aUserRates[$k] = array_unique($aUserRates[$k]);
-    }
-//                dd($aUserRates);
-
-    \Maatwebsite\Excel\Facades\Excel::create('clientes', function ($excel) use ($array_excel, $aUserRates) {
-
-      $excel->sheet('clientes_activos_inactivos', function ($sheet) use ($array_excel, $aUserRates) {
-
-        $users = User::where('role', 'user')->get();
-
-        foreach ($users as $user) {
-          $serv = isset($aUserRates[$user->id]) ? implode(', ', $aUserRates[$user->id]) : '';
-          $array_excel[] = [
-              $user->name,
-              $user->email,
-              $user->telefono,
-              $user->status ? 'ACTIVO' : 'NO ACTIVO',
-              $serv
-          ];
-        }
-
-        $sheet->fromArray($array_excel, null, 'A1', false, false);
-      });
-    })->export('xls');
+    return Excel::download(new UsersExport, 'clientes_'.date('Y_m_d').'.xlsx');
   }
 
   public function rateCharge(Request $request) {

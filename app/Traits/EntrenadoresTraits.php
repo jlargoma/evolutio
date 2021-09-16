@@ -17,6 +17,9 @@ trait EntrenadoresTraits {
     $data = \App\Services\CoachLiqService::liqByMonths($year, $type);
     $data['type'] = $type;
     $data['date'] = Carbon::now();
+    
+    $auxMonths = [0=>0];
+    for($i=1;$i<13;$i++) $auxMonths[$i] = 0;
     //---------------------------------------------------------------//
     // get expenses asociated
     $oExpenses = \App\Models\Expenses::where('to_user', '>', 0)
@@ -27,6 +30,11 @@ trait EntrenadoresTraits {
     if ($oExpenses) {
       foreach ($oExpenses as $item) {
         $auxM = intval(substr($item->date, 5, 2));
+        if (!isset($data['aLiq'][$item->to_user])){
+          $data['aLiq'][$item->to_user] = $auxMonths;
+          $data['aLiqTotal'][$item->to_user] = 0;
+        }
+        
         $data['aLiq'][$item->to_user][$auxM] += $item->import;
         $data['aLiqTotal'][$item->to_user] += $item->import;
       }
