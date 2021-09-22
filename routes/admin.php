@@ -112,8 +112,11 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::post('/bonos/create', 'BonosController@create');
   Route::get('/bonos/update', 'BonosController@update');
   Route::get('/bonos/delete/{id}', 'BonosController@delete');
+  Route::get('/bonos/sharedBono/{id}/{serv_id}', 'BonosController@sharedBono');
+  Route::get('/bonos/sharedBono-get/{id}/{serv_id}', 'BonosController@sharedBono_getlst');
   Route::get('/bonos/comprar/{uid}/{type?}/{id?}', 'BonosController@show_purcharse');
   Route::post('/bonos/comprar', 'BonosController@purcharse');
+  Route::post('/bonos/sharedBono', 'BonosController@sharedBono_save');
   Route::get('/bonologs/{id}', 'BonosController@printBonologs');
   Route::get('/bonos-clientes', 'BonosController@getByUsers');
 

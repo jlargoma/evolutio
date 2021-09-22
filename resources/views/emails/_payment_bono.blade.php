@@ -1,5 +1,5 @@
 <?php
-$tit = 'Nueva cita en Evolutio';
+$tit = 'Nueva Compra en Evolutio';
 ?>
 @include('emails.head')
 

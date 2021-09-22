@@ -27,6 +27,9 @@ $oBonoLst = $oBonoLst[1];
           <button class="btn btn-lg btn-success sendForm" type="button" data-id="chargeDate">
             Cobrar
           </button>
+          <button class="btn btn-lg btn-success sharedBono" type="button" data-id="chargeDate">
+            Bono Compartido
+          </button>
         </div>
         <div class="col-xs-12">
         @include('admin.blocks.stripeBox')
@@ -56,6 +59,8 @@ $oBonoLst = $oBonoLst[1];
     @include('admin.blocks.stripe-buttons')
   </div>
 </form>
+    
+@include('calendars.shareBonos')
 
 <script type="text/javascript">
 $(document).ready(function () {
@@ -70,11 +75,33 @@ $(document).ready(function () {
         }
 
     });
+    $('.sharedBono').on('click',function(e){
+      e.preventDefault();
+      $('#content-sharedBono').empty().load('/admin/bonos/sharedBono/{{$oUser->id}}/{{$id_serv}}');
+      $('#modal-shareBonos').modal();
+    });
 });
 </script>
 <style>
 .checkBono {
     margin: 3em 11px;
+}
+button.btn.btn-lg.btn-success.sharedBono {
+    font-size: 12px;
+    padding: 6px;
+    margin-top: 3px;
+}
+#modal-shareBonos span#select2-id_userBono-container {
+    padding: 8px;
+}
+#modal-shareBonos div#lstBonos {
+    padding: 0;
+}
+#modal-shareBonos .checkBono {
+    margin: 11px;
+}
+#modal-shareBonos .checkBono label {
+    font-size: 14px;
 }
 </style>
         

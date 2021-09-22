@@ -79,4 +79,40 @@ class UserBonos extends Model
       $obj->save();
       
     }
+    
+    /**
+     * Busca un bono similar o crea uno para el $uID
+     * @param type $uID
+     * @param type $uBonoOrig
+     */
+    function getBonoToOtherUser($uID,$uBonoOrig){
+        if ($uBonoOrig->rate_type && $uBonoOrig->rate_subf){
+          $obj = UserBonos::where('user_id',$uID)
+                  ->where('rate_type',$uBonoOrig->rate_type)
+                  ->where('rate_subf',$uBonoOrig->rate_subf)
+                  ->first();
+        
+          if ($obj) return $obj;
+        }
+        
+        if ($uBonoOrig->rate_type){
+          $obj = UserBonos::where('user_id',$uID)
+                  ->where('rate_type',$uBonoOrig->rate_type)->first();
+          if ($obj) return $obj;
+        }
+
+        if ($uBonoOrig->rate_subf){
+          $obj = UserBonos::where('user_id',$uID)
+                  ->where('rate_subf',$uBonoOrig->rate_subf)->first();
+          if ($obj) return $obj;
+        }
+        
+        $oUsrBono = new UserBonos();
+        $oUsrBono->user_id = $uID;
+        $oUsrBono->rate_type = $uBonoOrig->rate_type;
+        $oUsrBono->rate_id = $uBonoOrig->rate_id;
+        $oUsrBono->rate_subf = $uBonoOrig->rate_subf;
+        $oUsrBono->qty = 0;
+        return $oUsrBono;
+    }
 }

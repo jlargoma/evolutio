@@ -153,5 +153,52 @@ class BonoService {
     $oUsrBono->save();
     
   }
+  
+   /**
+   * 
+   * @param type $oUser
+   * @param type $oBono
+   * @param type $tpay
+   * @param type $idStripe
+   * @param type $cStripe
+   * @return type
+   */
+  function bonoCompartido($oUserFrom, $oUserTo, $oUsrBono,$qty) {
+    //decremento el bono del usuario
+    $total = $oUsrBono->qty - $qty;
+
+    if ($total<0) return 'Error: Bonos insuficientes';
+    $oUsrBono->qty = $total;
+    $oUsrBono->save();
+    //-----------------------------------//
+    $obj = new \App\Models\UserBonosLogs();
+    $obj->user_bonos_id = $oUsrBono->id;
+    $obj->charge_id = -1;
+    $obj->bono_id = null;
+    $obj->price = 0;
+    $obj->decr = $qty;
+    $obj->total = $total;
+    $obj->text = 'Compartido a: '.$oUserTo->name;
+    $obj->save();
+    
+    //incremento el bono del otro usuario
+    $oUsrBonoTo = $oUsrBono->getBonoToOtherUser($oUserTo->id,$oUsrBono);
+    $oUsrBonoTo->qty = $oUsrBonoTo->qty + $qty;
+    $total = $oUsrBonoTo->qty;
+    $oUsrBonoTo->save();
+    //-----------------------------------//
+    $obj = new \App\Models\UserBonosLogs();
+    $obj->user_bonos_id = $oUsrBonoTo->id;
+    $obj->charge_id = -1;
+    $obj->bono_id = null;
+    $obj->price = 0;
+    $obj->incr = $qty;
+    $obj->total = $total;
+    $obj->text = 'Compartido por: '.$oUserFrom->name;
+    $obj->save();
+    
+    return 'OK';
+    
+  }
 
 }

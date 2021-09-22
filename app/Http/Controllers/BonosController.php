@@ -243,5 +243,64 @@ class BonosController extends Controller {
     $rateFilter = \App\Models\TypesRate::getWithsubfamily();
     return view('admin.contabilidad.bonos.by_customer', compact('aUB','aUsers','aRates','rate_subf','rateFilter','filter','totals'));
   }
+  
+  function sharedBono_save(Request $req) {
+    
+    $oUserTo = \App\Models\User::find($req->input('uID'));
+    $oUserFrom = \App\Models\User::find($req->input('id_userBono'));
+    $oUserBonos = \App\Models\UserBonos::find($req->input('id_bono'));
+    
+    $errors = [];
+    if (!$oUserFrom) $errors[] = 'Usuario no encontrado';
+    if (!$oUserTo) $errors[] = 'Usuario no encontrado';
+    if (!$oUserBonos) $errors[] = 'Bono no encontrado';
+    
+    if (count($errors)>0)
+    return redirect()->back()->withErrors($errors);
+    
+    
+    
+    
+    $sBono = new \App\Services\BonoService();
+    $resp = $sBono->bonoCompartido($oUserFrom, $oUserTo, $oUserBonos,1);
+    if ($resp == 'OK') return redirect()->back()->with(['success'=>'Bono compartido.']);
+    
+    return redirect()->back()->withErrors ([$resp]);
+  }
 
+  
+  function sharedBono($uID,$serv){
+
+    $users = \App\Models\User::where('status', 1)->where('role', 'user')
+            ->orderBy('name')->get();
+    
+    return view('admin.bonos.sharedBono', compact('uID','serv','users'));
+    $oBonos = UserBonos::where('user_id',$uID)->get();
+    dd($oBonos);
+  }
+  
+  function sharedBono_getlst($uID,$serv){
+
+    $oUser = \App\Models\User::find($uID);
+    $oBonoLst = $oUser->bonosServ($serv);
+    $tBonos = $oBonoLst[0];
+    $oBonoLst = $oBonoLst[1];
+    
+     if (count($oBonoLst)>0){
+        foreach ($oBonoLst as $b){
+          ?>
+            <div class="checkBono" >
+              <input type="radio" name="id_bono" value="<?php echo $b[0]; ?>" class="form-control"/>
+              <label><?php echo $b[1]; ?> (<?php echo $b[2]; ?>)</label>
+            </div>
+          <?php
+        }
+      } else {
+        ?>
+        <p class="alert alert-warning">No tiene bonos asignados</p>
+        <?php
+      }
+          
+  
+  }
 }
