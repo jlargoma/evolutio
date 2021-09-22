@@ -180,13 +180,20 @@ class CitasService {
             if ($type == 'pt' && !$sValora->isRate($uRates->id_rate))
               $charged = 1;
             else $charged = ($charge) ? 1 : 0;
-
+            //------------------------------------
+            $halfTime = false;
+            if ($item->customTime){
+              $dateTime = explode(' ', $item->date);
+              $halfTime = ($dateTime[1] != $item->customTime);
+            }
+            //------------------------------------
             $aLst[$time][$hour][] = [
                 'id' => $item->id,
                 'charged' => $charged,
                 'type' => $item->id_rate,
                 'coach' => $item->id_coach,
                 'name' => $u_name,
+                'halfTime'=>$halfTime
             ];
             $detail[$item->id] = [
                 'n' => $u_name,

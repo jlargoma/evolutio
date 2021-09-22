@@ -10,11 +10,12 @@ function printEvents($lst){
       . '</div>';
     } else {
       $payment = ($item['charged'] != 1) ? '<span class="no-pay"></span>' : '';
+      $halfTime = ($item['halfTime']) ? '½ ' : '';
       echo '<div '
       . 'data-id="'.$item['id'].'" '
       . 'data-name="'. strtolower($item['name']).'" '
       . 'class="eventType_'.$item['coach'].' events">'
-          .$payment.str_limit($item['name'],10)
+          .$payment.$halfTime.str_limit($item['name'],10)
           .'<toltip/>'
       . '</div>';
     }
