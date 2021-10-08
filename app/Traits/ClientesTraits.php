@@ -213,7 +213,8 @@ trait ClientesTraits {
 
     $typeRates = TypesRate::pluck('name','id');
     $aRates = $rPrices = $rNames =[];
-    $oRates = Rates::where('status', 1)->get();
+//    $oRates = Rates::where('status', 1)->get();
+    $oRates = Rates::all();
 
     if ($oRates) {
       foreach ($oRates as $k => $v) {

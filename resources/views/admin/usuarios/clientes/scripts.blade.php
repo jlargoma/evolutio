@@ -66,9 +66,8 @@ $('.openEditCobro').on('click', function (e) {
     window.location = '/admin/clientes/' + month;
   });
 
-  $('.switchStatus').change(function (event) {
+  $('#containerTableResult').on('change', '.switchStatus', function (event) {
     var id = $(this).attr('data-id');
-
     if ($(this).is(':checked')) {
       $.get('/admin/usuarios/activate/' + id, function (data) {
       });

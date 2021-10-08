@@ -287,6 +287,8 @@ class UsersController extends Controller {
   public function disable($id) {
     $usuario = User::find($id);
     $usuario->status = 0;
+    if ($usuario->save()) die('OK');
+    else die('ERROR');
     if ($usuario->save()) {
       if ($usuario->role == 'admin') {
         return redirect('/admin/usuarios');
@@ -301,20 +303,8 @@ class UsersController extends Controller {
   public function activate($id) {
     $usuario = User::find($id);
     $usuario->status = 1;
-    if ($usuario->save()) {
-
-      if ($usuario->role == 'admin') {
-
-        return redirect('/admin/usuarios');
-      } elseif ($usuario->role == 'teach' || $usuario->role == 'teacher') {
-
-        return redirect('/admin/entrenadores');
-      } else {
-
-        return redirect('/admin/clientes');
-//                echo "ACTUALIZADO";
-      }
-    }
+    if ($usuario->save()) die('OK');
+    else die('ERROR');
   }
 
   public function actualizarUsuario($id) {

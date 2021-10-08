@@ -20,13 +20,17 @@ class Expenses extends Model
         'gto_mat._fisio' => 'GTO MAT. FISIO',
         'gto_tarjeta_visa' => 'GTO TARJETA VISA',
         'impuestos' => 'IMPUESTOS',
+        'limpieza' => 'LIMPIEZA',
         'marketing_y_publicidad' => 'MARKETING Y PUBLICIDAD',
         'mensajeria' => 'MENSAJERIA',
         'otros' => 'OTROS',
         'renting_fisioterapia' => 'RENTING FISIOTERAPIA',
         'seguros' => 'SEGUROS',
+        'seguros_soc' => 'SEGUROS SOCIALES',
+        'servicios_prof' => 'SERVICIOS PROF INDEPENDIENTES',
         'software' => 'SOFTWARE',
         'suministros' => 'SUMINISTROS',
+        'varios' => 'VARIOS',
     ];
   }
   static function getTypesGroup(){
@@ -56,9 +60,13 @@ class Expenses extends Model
                 'otros' => 'otros',
                 'renting_fisioterapia' => 'renting',
                 'seguros' => 'otros',
-                'software' => 'otros',
+                'software' => 'sueldos_y_salarios',
+                'seguros_soc' => 'sueldos_y_salarios',
+                'servicios_prof' => 'sueldos_y_salarios',
                 'suministros' => 'suministros',
+                'limpieza' => 'suministros',
                 'impuestos' => 'impuestos',
+                'varios' => 'otros',
             ]];
         
   }
