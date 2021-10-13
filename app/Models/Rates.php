@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Rates extends Model
 {
+  const noShow = [38,41,37,36];
     public function users()
     {
         return $this->hasMany('\App\Models\UserRates','id', 'id_rate');
@@ -20,6 +21,7 @@ class Rates extends Model
         return self::select('rates.*')
                 ->join('types_rate','rates.type','=','types_rate.id')
                 ->where('status',1)
+                ->whereNotIn('rates.id',self::noShow)
                 ->where('types_rate.type',$type)->get();
     }
     static function getByTypeRateID($id){
@@ -32,16 +34,29 @@ class Rates extends Model
                 ->pluck('types_rate.name','rates.id')->toArray();
     }
     
-    static function getTypeRatesGroups(){
+    /**
+     * Get Rates group by Type
+     * 
+     * @param type $name => just name and ID
+     * @return type
+     */
+    static function getTypeRatesGroups($name=true){
+      
       $rateFilter = [];
-      $oTypes = \App\Models\TypesRate::all();
+      $oTypes = \App\Models\TypesRate::orderBy('name', 'asc')->get();
       foreach ($oTypes as $item){
-        $aux  = \App\Models\Rates::where('type',$item->id)->get();
-        $aux2 = [];
-        foreach ($aux as $a){
-          $aux2[$a->id] = $a->name;
+        $aux  = Rates::where('type',$item->id)
+                ->whereNotIn('id',self::noShow)
+                ->orderBy('name', 'asc')->get();
+        if ($name){
+          $aux2 = [];
+          foreach ($aux as $a){
+            $aux2[$a->id] = $a->name;
+          }
+          $rateFilter[$item->id] = ['n' => $item->name,'l'=>$aux2];
+        } else {
+          $rateFilter[$item->id] = ['n' => $item->name,'l'=>$aux];
         }
-        $rateFilter[$item->id] = ['n' => $item->name,'l'=>$aux2];
       }
       return $rateFilter;
     }

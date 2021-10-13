@@ -43,9 +43,18 @@
                     <a  class="openUser" data-id="<?php echo $user->id; ?>"  data-type="user" data-original-title="Editar user" ><b><?php echo $user->name; ?></b></a>
                 </td>
                 <td class="text-center tc2">
-                    <button class="btn btn-default add_rate" data-toggle="modal" data-target="#modalCliente" data-idUser="<?php echo $user->id; ?>">
+                    <button class="btn btn-default openAdd" data-idUser="<?php echo $user->id; ?>">
                         <i class="fa fa-usd" aria-hidden="true"></i>
                     </button>
+                  
+                  <div class="boxAddServBono" style="display:none">
+                    <button class="btn btn-default add_rate" data-toggle="modal" data-target="#modalCliente" data-iduser="<?php echo $user->id; ?>">
+                        <i class="fa fa-usd" aria-hidden="true"></i> Asignar Servicios
+                    </button>
+                    <button class="btn btn-default add_bono" data-iduser="<?php echo $user->id; ?>">
+                      <i class="fa fa-plus-circle" aria-hidden="true"></i> Asignar Bonos
+                    </button>
+                  </div>
                 </td>
                 <td class="text-center tc3">
                     <span class="hidden-xs hidden-sm"><?php echo $user->telefono; ?></span>

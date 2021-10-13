@@ -39,6 +39,11 @@
     min-width: 120px;
 }
 th label.text-danger{display: block}
+.boxAddServBono {
+    position: absolute;
+    background-color: #9a9a9a;
+    padding: 5px;
+}
 </style>
 @endsection
 

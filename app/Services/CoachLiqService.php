@@ -159,6 +159,7 @@ class CoachLiqService {
   function liquMensual($id, $year, $month) {
 
     $data = $this->liqMensualBasic($id, $year, $month);
+    
     //-----------------------------------------------------------//
     $oExpenses = \App\Models\Expenses::where('to_user', $id)
             ->whereMonth('date', '=', $month)

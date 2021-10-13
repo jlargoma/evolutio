@@ -57,6 +57,27 @@ $('.openEditCobro').on('click', function (e) {
     var id_user = $(this).attr('data-idUser');
     $('#ifrCliente').attr('src','/admin/usuarios/cobrar/tarifa?id_user=' + id_user);
   });
+  
+  $('.add_bono').click(function (e) {
+    e.preventDefault();
+    var id_user = $(this).attr('data-idUser');
+    var back = '/ficha/'+id_user
+    $('#ifrCliente').attr('src','/admin/bonos/comprar/' + id_user + back );
+    $('#modalCliente').modal('show');
+  });
+  
+  var openAddSB = null;
+  $('.openAdd').click(function (e) {
+    e.preventDefault();
+    $('.boxAddServBono').hide();
+    console.log(openAddSB,$(this).data('iduser'));
+    if (openAddSB != $(this).data('iduser')){
+      openAddSB = $(this).data('iduser')
+      $(this).closest('td').find('.boxAddServBono').show();
+    } else {
+      openAddSB = null;
+    }
+  });
 
 
 

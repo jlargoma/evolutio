@@ -1,6 +1,9 @@
 <h3 class="text-left">Datos del Usuario
   <button class="btn btn-default add_rate" data-idUser="<?php echo $user->id; ?>">
-    <i class="fa fa-usd" aria-hidden="true"></i>
+    <i class="fa fa-usd" aria-hidden="true"></i> Asignar Servicio
+  </button>
+  <button class="btn btn-default add_bono" data-idUser="<?php echo $user->id; ?>">
+    <i class="fa fa-plus-circle" aria-hidden="true"></i> Asignar Bono
   </button>
 </h3>
 <form class="row" action="{{ url('/admin/clientes/update') }}" method="post">

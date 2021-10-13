@@ -452,13 +452,7 @@ trait ClientesTraits {
       $card['last4'] = $aux['card']['last4'];
     }
     
-    $rateFamily = [];
-    $oTypes = \App\Models\TypesRate::orderBy('name', 'asc')->get();
-    foreach ($oTypes as $item){
-      $aux  = \App\Models\Rates::where('type',$item->id)->orderBy('name', 'asc')->get();
-      $rateFamily[$item->id] = ['n' => $item->name,'l'=>$aux];
-    }
-        
+    $rateFamily = \App\Models\Rates::getTypeRatesGroups(false);
     return view('admin.usuarios.clientes._rate_charge', [
         'user' => $oUser,
         'coachs' => User::getCoachs(),

@@ -74,10 +74,12 @@ class User extends Authenticatable
     
     $rate_subf = TypesRate::subfamily();
     $oType = $oRate->typeRate;
+    $ubRsubfamily = ($oRate->subfamily) ? $oRate->subfamily : -1;
+    $ubRateType   = ($oRate->type) ? $oRate->type : -1; 
     $oBonos = UserBonos::where('user_id',$this->id)
-            ->where(function ($query) use ($oRate) {
-                $query->where("rate_subf",$oRate->subfamily)
-                ->orWhere('rate_type',$oRate->type);
+            ->where(function ($query) use ($ubRateType,$ubRsubfamily) {
+                $query->where("rate_subf",$ubRsubfamily)
+                ->orWhere('rate_type',$ubRateType);
             })->get();
     if ($oBonos){
       foreach ($oBonos as $b){
