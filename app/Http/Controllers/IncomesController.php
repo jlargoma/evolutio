@@ -142,6 +142,13 @@ class IncomesController extends Controller {
         }
       }
     }
+    foreach ($lst['bonos']['lst'] as $id => $bono){
+      foreach ($bono as $b_mont => $b_val){
+        if (is_numeric($b_mont)){
+          $lst['bonos'][$b_mont] += $b_val;
+        }
+      }
+    }
     //----------------------------------//
     //INGRESOS TOTAL ANUAL
     $byYears = $tByYears = [];
