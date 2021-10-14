@@ -118,6 +118,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::post('/bonos/comprar', 'BonosController@purcharse');
   Route::post('/bonos/sharedBono', 'BonosController@sharedBono_save');
   Route::get('/bonologs/{id}', 'BonosController@printBonologs');
+  Route::post('/bonos/updCant', 'BonosController@updBonologs');
   Route::get('/bonos-clientes', 'BonosController@getByUsers');
 
   /* informes */

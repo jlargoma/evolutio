@@ -202,6 +202,34 @@ class BonosController extends Controller {
     }
   }
   
+  function updBonologs(Request $req) {
+    
+    $motiv = $req->input('motiv', null);
+    $qty   = $req->input('qty', null);
+    $id    = $req->input('id', null);
+    
+    if (trim($motiv) == '')
+      return back()->withErrors(['El motivo es requerido']);
+    
+    $qty = intval($qty);
+    $oUsrBono = UserBonos::find($id);
+    if ($oUsrBono){
+      $oUsrBono->qty = $qty;
+      $oUsrBono->save();
+      
+      $obj = new \App\Models\UserBonosLogs();
+      $obj->user_bonos_id = $id;
+      $obj->charge_id = null;
+      $obj->decr = null;
+      $obj->total = $qty;
+      $obj->text = $motiv;
+      $obj->save();
+      return back()->with(['success'=>'Bonos actualizados']);
+    }
+    
+    return back()->withErrors(['Bono no encontrado']);
+  }
+  
   //------------------------------------------------------------------------//
   //----  INFORMES                  ---------------------------------------//
   //----------------------------------------------------------------------//

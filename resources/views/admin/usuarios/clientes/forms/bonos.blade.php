@@ -42,5 +42,23 @@ if (count($oBonoLst) > 0) { ?>
         $(this).addClass('selected');
         $('#bonoLog').load('/admin/bonologs/'+$(this).data('id'));
       })
+      
+      
+//      $('#bonoLog').on('submit','#updBonoBalance',function (event) {
+//        event.preventDefault();
+//        var form = $(this);
+//        var ID = form.find('#updBonoBalanceID').val();
+//        $.post(form.attr('action'), form.serialize()).done(function(resp) {
+//        if (resp == 'OK'){
+//          alert('Bono actualizado');
+//          $('#bonoLog').load('/admin/bonologs/'+ID);
+//        } else {
+//          alert(resp);
+//        }
+//      });
+//   
+//      });
+      
+      
     });
 </script>
