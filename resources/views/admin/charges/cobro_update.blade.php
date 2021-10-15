@@ -17,7 +17,8 @@
   <div class="row">
     <div class="col-md-4">
       <label for="type_payment">Forma de pago</label>
-      <select class="form-control" name="type_payment" id="type_payment">
+      <select class="form-control" name="type_payment" id="type_payment" 
+        <?php if($charge->type_payment == "card" || $charge->type_payment == "bono") echo 'disabled'; ?>>
         <option value="card" @if ($charge->type_payment == "card") selected @endif>Tarjeta</option>
         <option value="cash" @if ($charge->type_payment == "cash") selected @endif>Efectivo</option>
         <option value="banco" @if ($charge->type_payment == "banco") selected @endif>Banco</option>

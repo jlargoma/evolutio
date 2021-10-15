@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Bonos;
 use App\Models\UserBonos;
 use App\Models\Charges;
+use App\Models\UserBonosLogs;
 
 class BonoService {
 
@@ -121,9 +122,9 @@ class BonoService {
     $oUsrBono->save();
     
     
-//    $total = $total; //\App\Models\UserBonosLogs::getTotal($oUsrBono->id);
+//    $total = $total; //UserBonosLogs::getTotal($oUsrBono->id);
     //-----------------------------------//
-    $obj = new \App\Models\UserBonosLogs();
+    $obj = new UserBonosLogs();
     $obj->user_bonos_id = $oUsrBono->id;
     $obj->charge_id = $oCobro->id;
     $obj->bono_id = $oBono->id;
@@ -136,7 +137,7 @@ class BonoService {
     
     
     foreach ($uses as $d){
-      $obj = new \App\Models\UserBonosLogs();
+      $obj = new UserBonosLogs();
       $total--;
       $text = 'Bono utilizado (Migración)';
       $obj->user_bonos_id = $oUsrBono->id;
@@ -171,7 +172,7 @@ class BonoService {
     $oUsrBono->qty = $total;
     $oUsrBono->save();
     //-----------------------------------//
-    $obj = new \App\Models\UserBonosLogs();
+    $obj = new UserBonosLogs();
     $obj->user_bonos_id = $oUsrBono->id;
     $obj->charge_id = -1;
     $obj->bono_id = null;
@@ -187,7 +188,7 @@ class BonoService {
     $total = $oUsrBonoTo->qty;
     $oUsrBonoTo->save();
     //-----------------------------------//
-    $obj = new \App\Models\UserBonosLogs();
+    $obj = new UserBonosLogs();
     $obj->user_bonos_id = $oUsrBonoTo->id;
     $obj->charge_id = -1;
     $obj->bono_id = null;
@@ -201,4 +202,29 @@ class BonoService {
     
   }
 
+  
+  function restoreBonoCharge($chargeID) {
+    $obj = UserBonosLogs::where('charge_id',$chargeID)->first();
+    if ($obj){
+      $oUsrBono = UserBonos::find($obj->user_bonos_id);
+      if ($oUsrBono){
+        //reintegro la cantidad utilizada
+        $total = ($oUsrBono->qty) + ($obj->decr);
+        $oUsrBono->qty  = $total;
+        $oUsrBono->save();
+        
+        //Agrego el nuevo log
+        
+        $newObj = new UserBonosLogs();
+        $newObj->user_bonos_id = $oUsrBono->id;
+        $newObj->charge_id = -1;
+        $newObj->bono_id = null;
+        $newObj->price = 0;
+        $newObj->incr = $obj->decr;
+        $newObj->total = $total;
+        $newObj->text = 'Cobro eliminado -> '. $obj->text;
+        $newObj->save();
+      }
+    }
+  }
 }

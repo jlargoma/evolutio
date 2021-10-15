@@ -47,12 +47,17 @@ class ChargesController extends Controller {
         }
         if ($request->input('deleted')) {
           $uRate = UserRates::where('id_charges',$id)->first();
+          $sBonos = new \App\Services\BonoService();
           if ($uRate){
             $uRate->id_charges = null;
             $uRate->save();
             $charge->delete();
+            //devuelvo el bono
+            $sBonos->restoreBonoCharge($id);
             return redirect('/admin/clientes/generar-cobro/'.$uRate->id)->with('success', 'cobro Eliminado');
           }     
+          //devuelvo el bono
+          $sBonos->restoreBonoCharge($id);
           $charge->delete();
           return back()->with('success', 'cobro Eliminado');
         } else {
