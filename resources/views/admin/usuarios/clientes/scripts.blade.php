@@ -67,7 +67,7 @@ $('.openEditCobro').on('click', function (e) {
   });
   
   var openAddSB = null;
-  $('.openAdd').click(function (e) {
+  $('#containerTableResult').on('click','.openAdd',function (e) {
     e.preventDefault();
     $('.boxAddServBono').hide();
     console.log(openAddSB,$(this).data('iduser'));

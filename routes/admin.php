@@ -188,6 +188,11 @@ Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function () {
 
   /* Facturacion */
   Route::get('/facturacion/entrenadores', 'UsersController@entrenadores');
+  
+  
+  Route::get('/manual/bonos', 'ManualController@bonos');
+  Route::get('/manual/citas', 'ManualController@citas');
+  
 });
 
 Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {

@@ -61,4 +61,8 @@ $(document).ready(function () {
         currency: 'EUR',
         minimumFractionDigits: 0
      })
+         
+    $('.subMenu.open').on('click', function () {
+        $(this).find('ul').slideToggle('slow');
+    })
 });
