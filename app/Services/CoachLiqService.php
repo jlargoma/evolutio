@@ -93,9 +93,10 @@ class CoachLiqService {
 
     $taxCoach = CoachRates::where('id_user', $id)->first();
 
-    $ppc = $salary = $comm = 0;
+    $ppc = $salary = $comm = $pppt = 0;
     if ($taxCoach) {
       $ppc = $taxCoach->ppc;
+      $pppt = $taxCoach->pppt;
       $comm = $taxCoach->comm / 100;
       $salary = $taxCoach->salary;
     }
@@ -140,8 +141,8 @@ class CoachLiqService {
         $totalClase[$key] += $import * $comm;
 
         if ($item->service->type == $typePT) {
-          /* 50€ precio de entrenamiento personal */
-          $totalClase[$key] += 50;
+          /* precio de entrenamiento personal */
+          $totalClase[$key] += $pppt;
         } else {
           $totalClase[$key] += $ppc;
         }

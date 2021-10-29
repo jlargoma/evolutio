@@ -90,3 +90,8 @@ div[class*="col-xs-"]{
   margin-bottom:1em;
 }
 th{white-space: nowrap;}
+.form-material small {
+    st: uppercase;
+    font-style: italic;
+    font-size: 10px;
+}

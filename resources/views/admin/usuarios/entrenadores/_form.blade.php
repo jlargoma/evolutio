@@ -78,6 +78,14 @@
                     <div class="form-material">
                         <input class="form-control" type="text" id="ppc" name="ppc" maxlength="18" value="{{$ppc}}">
                         <label for="ppc">P.P.C</label>
+                        <small>Precio por Cita</small>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-sm-4 push-20">
+                    <div class="form-material">
+                        <input class="form-control" type="text" id="pppt" name="pppt" maxlength="18" value="{{$pppt}}">
+                        <label for="ppc">P.P.PT</label>
+                        <small>Precio por Cita PT</small>
                     </div>
                 </div>
                 <div class="col-lg-2 col-sm-4 push-20">
@@ -86,11 +94,9 @@
                         <label for="ppc">% Comisión</label>
                     </div>
                 </div>
-                <div class="col-lg-2 col-sm-4 push-20">
-                    <div class="col-xs-2 mx-1em pull-right">
-                        <button class="btn btn-horarios" type="button" data-id="{{ $user->id }}">Horarios</button>
-                    </div>
-                </div>
+<!--                <div class="col-lg-2 col-sm-4 push-20">
+                  <button class="btn btn-horarios" type="button" data-id="{{ $user->id }}">Horarios</button>
+                </div>-->
             </div>
 
             <div class=" text-center my-2">

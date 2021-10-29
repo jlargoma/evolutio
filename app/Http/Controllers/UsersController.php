@@ -266,6 +266,7 @@ class UsersController extends Controller {
       }
       $CoachRates->salary = $request->input('salario_base');
       $CoachRates->ppc = $request->input('ppc');
+      $CoachRates->pppt = $request->input('pppt');
       $CoachRates->comm = $request->input('comm');
       $CoachRates->save();
     }
