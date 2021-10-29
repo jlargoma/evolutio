@@ -15,7 +15,7 @@ if (count($oBonoLst) > 0) { ?>
     if ($b->rate_subf && isset($rate_subf[$b->rate_subf]))
       $name = $rate_subf[$b->rate_subf];
     if ($b->rate_type && isset($atypeRates[$b->rate_type]))
-      $name = $atypeRates[$b->rate_type];
+      $name = $atypeRates[$b->rate_type].' (General)';
                   ?>
       <div class="lstBono" data-id="{{$b->id}}" >
         <label>{!!$name!!}</label>

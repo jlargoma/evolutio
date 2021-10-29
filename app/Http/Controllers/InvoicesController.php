@@ -94,17 +94,34 @@ class InvoicesController extends Controller {
     
     if (!$data['items'] || count($data['items']) == 0){
       $detail = '';
-      if ($oRateUser && $oCharge){
-        $oRate  = $oRateUser->rate;
-        $detail = 'Servicio ';
-        if ($oRate) $detail .= $oRate->name;
-        $detail .= PHP_EOL.'*Fecha: '. convertDateToShow_text($oCharge->date_payment,true).'*';
-        $data['items'][] = [
-          'detail'=> $detail,
-          'iva'   => 0,
-          'price' => $oCharge->import,
-        ];
+      if ($oCharge){
+        if ($oRateUser){
+          $oRate  = $oRateUser->rate;
+          $detail = 'Servicio ';
+          if ($oRate) $detail .= $oRate->name;
+          $detail .= PHP_EOL.'*Fecha: '. convertDateToShow_text($oCharge->date_payment,true).'*';
+          $data['items'][] = [
+            'detail'=> $detail,
+            'iva'   => 0,
+            'price' => $oCharge->import,
+          ];
+        }
+
+        if ($oCharge->bono_id>0){
+          $oBono = \App\Models\Bonos::find($oCharge->bono_id);
+          if ($oBono){
+            $detail = 'Servicio ';
+            if ($oBono) $detail .= $oBono->name;
+            $detail .= PHP_EOL.'*Fecha: '. convertDateToShow_text($oCharge->date_payment,true).'*';
+            $data['items'][] = [
+              'detail'=> $detail,
+              'iva'   => 0,
+              'price' => $oCharge->import,
+            ];
+          }
+        }
       }
+        
     }
     $oInvoice = $data['oInvoice'];
     if (!$oInvoice->id){

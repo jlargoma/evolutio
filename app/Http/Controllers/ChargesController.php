@@ -20,11 +20,21 @@ class ChargesController extends Controller {
         if (!$charge)
             return view('admin.popup_msg');
         $uRate = UserRates::where('id_charges', $charge->id)->first();
+        $coach_id = null;
         if ($uRate) {
             $date = getMonthSpanish($uRate->rate_month, false) . ' ' . $uRate->rate_year;
+            $coach_id = $uRate->coach_id;
         } else {
             $time = strtotime($charge->date_payment);
             $date = getMonthSpanish(date('n', $time), false) . ' ' . date('Y', $time);
+        }
+        
+        $oBono = null;
+        if ($charge->bono_id>0){
+          $oBono = \App\Models\Bonos::find($charge->bono_id);
+          if (!$oBono){
+            $oBono = 'not_found';
+          }
         }
 
         return view('admin.charges.cobro_update', [
@@ -34,7 +44,8 @@ class ChargesController extends Controller {
             'user' => $charge->user,
             'importe' => $charge->import,
             'charge' => $charge,
-            'coach_id' => $uRate->coach_id,
+            'coach_id' => $coach_id,
+            'oBono' => $oBono,
             'coachs' => User::getCoachs(),
         ]);
     }
@@ -61,14 +72,17 @@ class ChargesController extends Controller {
           $charge->delete();
           return back()->with('success', 'cobro Eliminado');
         } else {
-            $charge->type_payment = $request->input('type_payment');
-            $charge->import = $request->input('importe');
-            $charge->discount = $request->input('discount');
-            $charge->save();
+          $charge->import = $request->input('importe');
+          if ($request->input('type_payment')) $charge->type_payment = $request->input('type_payment');
+          if ($request->input('discount'))  $charge->discount = $request->input('discount');
+          $charge->save();
+          
+          if (!$charge->bono_id || $charge->bono_id<1){
             UserRates::where('id_charges',$id)->update(
-                    ['price' => $charge->import,'coach_id'=>$id_coach]
-                    );
-            return back()->with('success', 'cobro actualizado');
+                  ['price' => $charge->import,'coach_id'=>$id_coach]
+                  );
+          }
+          return back()->with('success', 'cobro actualizado');
         }
     }
 

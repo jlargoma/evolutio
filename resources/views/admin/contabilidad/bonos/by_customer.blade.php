@@ -61,7 +61,7 @@ function sumMonthValue($m){
           ?>
           <td>{{$nbono}}</td>
           <td>{{$item['i']}}</td>
-          <td>{{$item['t']}}</td>
+          <td>{{$item['d']}}</td>
           <td>{{$item['t']}}</td>
           <td>{{moneda($item['p'])}}</td>
           <td class="history" data-id="{{$ubID}}" data-b="{{$nbono}}" data-c="{{$cname}}"><i class="fa fa-history"></i></td>

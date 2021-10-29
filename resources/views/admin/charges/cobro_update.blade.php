@@ -5,6 +5,52 @@
 <h2 class="text-center font-w300">
   ACTUALIZAR COBRO DE <b>{{$date}}</b> A <span class="font-w600"><?php echo strtoupper($user->name); ?></span>
 </h2>
+<?php 
+$disableType = ($charge->type_payment == "card" || $charge->type_payment == "bono");
+?>
+@if($oBono)
+  @if($oBono == 'not_found')
+  <div class="alert alert-danger">Bono no encontrado</div>
+  @else
+  <h3 class="text-center font-w300 mt-1">
+    Actualizar cobro de <span class="font-w600">{{$oBono->name}}</span>
+  </h3>
+  @endif
+  
+  <form class="fomr-horizontal content-md" method="post" action="{{ url('/admin/cobros/cobrar/' . $charge->id) }}" id="forms">
+    <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+    <input type="hidden" name="discount" value="0">
+    <p class="text-danger text-center font-w600 font-s32" ><?php echo $oBono->price; ?>€</p>
+    <div class="row">
+      <div class="col-md-4">
+        <label for="type_payment">Forma de pago</label>
+        <select class="form-control" name="type_payment" id="type_payment" 
+          <?php if($disableType) echo 'disabled'; ?>>
+          <option value="card" @if ($charge->type_payment == "card") selected @endif>Tarjeta</option>
+          <option value="cash" @if ($charge->type_payment == "cash") selected @endif>Efectivo</option>
+          <option value="banco" @if ($charge->type_payment == "banco") selected @endif>Banco</option>
+        </select>
+      </div>
+     <div class="col-md-3">
+        <label>Importe</label>
+        <input id="importeFinal" type="number" step="0.01" name="importe" class="form-control" value="{{ $charge->import}}" />
+      </div>
+     <div class="col-md-5 col-xs-4 text-center">
+        <button class="btn btn-info btn-lg  mt-1" id="open_invoice" type="button" data-id="{{$charge->id}}" title="Factura">
+          <i class="fa fa-files-o"></i> Factura
+        </button>
+      
+        <button class="btn btn-lg btn-success  mt-1" type="submit">
+          Actualizar
+        </button>
+      </div>
+    </div>
+    
+  </div>
+  </form>
+  
+  
+@else
 <h3 class="text-center font-w300 mt-1">
   Cuota a actualizar <span class="font-w600"><?php echo $rate->typeRate->name.': '.$rate->name; ?></span>
 </h3>
@@ -18,7 +64,7 @@
     <div class="col-md-4">
       <label for="type_payment">Forma de pago</label>
       <select class="form-control" name="type_payment" id="type_payment" 
-        <?php if($charge->type_payment == "card" || $charge->type_payment == "bono") echo 'disabled'; ?>>
+        <?php if($disableType) echo 'disabled'; ?>>
         <option value="card" @if ($charge->type_payment == "card") selected @endif>Tarjeta</option>
         <option value="cash" @if ($charge->type_payment == "cash") selected @endif>Efectivo</option>
         <option value="banco" @if ($charge->type_payment == "banco") selected @endif>Banco</option>
@@ -74,6 +120,7 @@
   </div>
 </div>
 </form>
+@endif
 @endsection
 @section('scripts')
 <script src="{{asset('/admin-css/assets/js/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>

@@ -260,9 +260,23 @@ trait ClientesTraits {
         $totalUser[$i] = $resp[1];
         $totalUserNPay[$i] = $resp[2];
         $detail[] = $resp[3];
+        $uLstRates[$i]['bonos'] = [];
       }
     }
     
+    //*************************************************//
+    //******  AGREGO LA COMPRA DE BONOS ***************//
+    $usedRates['bonos'] = "BONOS";
+    $lstBonos = \App\Models\Bonos::all()->pluck('name','id')->toArray();
+    $bonoCharges = Charges::where('id_user',$userID)
+            ->where('bono_id','>',0)
+            ->whereYear('date_payment','=',$year)
+            ->get();
+    foreach ($bonoCharges as $item){
+      $mounth = substr($item->date_payment, 5,2);
+      $uLstRates[$mounth]['bonos'][] =  ['price'=>$item->import,'paid'=>1,'cid'=>$item->id,'id'=>'bono'];
+    }
+    //*************************************************//
     //----------------------//
     $oRatesSubsc = Rates::select('rates.*', 'types_rate.type')
                     ->join('types_rate', 'rates.type', '=', 'types_rate.id')

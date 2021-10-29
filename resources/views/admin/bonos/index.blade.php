@@ -71,7 +71,7 @@
 <?php else: ?>
           <div class="col-xs-12">
             <h2 class="text-muted font-w200">
-              No hay <span class="font-w600">Bonoss</span> creada <span class="font-w600"></span>, por favor cree una nueva aquí
+              No hay <span class="font-w600">Bonos</span> creada <span class="font-w600"></span>, por favor cree una nueva aquí
             </h2>
           </div>
       <?php endif ?>

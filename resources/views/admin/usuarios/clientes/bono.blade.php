@@ -39,7 +39,7 @@
                   ?>
                 </td>
                 <td>{{$b->qty}}</td>
-                <td>{{moneda($b->price)}}</td>
+                <td><input type="text" name="price_{{$b->id}}" value="{{$b->price}}" class="form-control only-numbers"></td>
               </tr>
               @endforeach
             @endif
@@ -68,6 +68,7 @@
             </div>
             <div class="col-xs-12">
               @include('admin.blocks.stripe-actions')
+              <small><strong>Importante:</strong> Se cobrará el valor original del Bono seleccionado</small>
             </div>
           </div>
         </div>
