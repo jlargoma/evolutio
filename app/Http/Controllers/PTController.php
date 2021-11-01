@@ -29,7 +29,7 @@ class PTController extends Controller {
         
         $start = $calendar['firstDay'];
         $finish = $calendar['lastDay'];
-        $rslt = CitasService::get_calendars($start,$finish,$serv,$coach,'pt');
+        $rslt = CitasService::get_calendars($start,$finish,$serv,$coach,'pt',$calendar['days']);
         $rslt['calendar'] = $calendar['days'];
         $rslt['month'] = $month;
         /*******************************************/

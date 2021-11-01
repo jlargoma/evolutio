@@ -92,7 +92,7 @@ class CitasService {
      ];
   }
   
-  static function get_calendars($start,$finish,$serv,$coach,$type) {
+  static function get_calendars($start,$finish,$serv,$coach,$type,$lstDays=null) {
         
     $times = [];    
     /**************************************************** */
@@ -134,6 +134,7 @@ class CitasService {
     $days = listDaysSpanish();
     $months = lstMonthsSpanish();
     $sValora = new ValoracionService();
+    $daysCoatch = [];
     if ($oLst) {
         foreach ($oLst as $item) {
             $time = strtotime($item->date);
@@ -145,11 +146,15 @@ class CitasService {
             $dTime .= ' '.$days[date('w',$time)];
             $dTime .= ' '.date('d',$time).' '.$months[date('n',$time)];
             
-            if (!isset($aLst[$time]))
+            if (!isset($aLst[$time])){
                 $aLst[$time] = [];
-            if (!isset($aLst[$time][$hour]))
-                $aLst[$time][$hour] = [];
-            
+                $daysCoatch[$time] = [];
+            }
+            if (!isset($aLst[$time][$hour])){
+              $aLst[$time][$hour] = [];
+              $daysCoatch[$time][$hour] = [];
+            }
+            $daysCoatch[$time][$hour][$item->id_coach] = 1;
             if ($item->blocked){
               $aLst[$time][$hour][] = [
                 'id' => $item->id,
@@ -235,6 +240,8 @@ class CitasService {
     } else {
       $detail = null;
     }
+    
+    $avails = self::timeAvails($daysCoatch,$coachs,$lstDays,$coach);
     return  [
         'servLst' => $servLst,
         'serv' => $serv,
@@ -246,6 +253,7 @@ class CitasService {
         'coach'  => $coach,
         'times'  => $times,
         'detail' => $detail,
+        'avails' => $avails,
     ];
   }
   
@@ -254,5 +262,73 @@ class CitasService {
       return User::where('role', 'teach')->where('status', 1)->get();
     
     return User::where('role', $type)->where('status', 1)->get();
+  }
+  
+  static function timeAvails($daysCoatch,$coachs,$lstDays,$coachID=null){
+    $tCoach = [];
+    if ($coachID){
+      $tCoach[$coachID]=1;
+    } else {
+      foreach ($coachs as $i)  $tCoach[$i->id]=1;
+    } 
+    
+    $disponibles = [];
+    for($i=1; $i<7; $i++){
+      $aux = [];
+      for($j=8; $j<23; $j++){
+        $aux[$j] = $tCoach;
+      }
+      $disponibles[$i] = $aux;
+    }
+
+    $coachTimes = \App\Models\CoachTimes::whereIn('id_coach', array_keys($tCoach))->pluck('times','id_coach'); 
+    if ($coachTimes){
+      foreach ($coachTimes as $idCoach => $t){
+        $times = json_decode($t,true);
+        if (is_array($times)){
+          foreach ($times as $d=>$hs){
+            foreach ($hs as $h=>$enable){
+              $disponibles[$d][$h][$idCoach] = $enable;
+            }
+          }
+        }
+      }
+    }
+    $wDay = listDaysSpanish(true);
+    $used = [];
+    if ($lstDays){
+      foreach ($lstDays as $k=>$days){
+       
+          foreach($days as $k=>$d){
+            $time = $d['time'];
+            $wID = array_search($d['day'], $wDay);
+            
+            /////////////////////
+            $aux = [];
+            for($h=8; $h<23; $h++){
+              $aux2 = [];
+              foreach ($disponibles[$wID][$h] as $cID => $cAvail){
+                if ($cAvail == 1) $aux2[] = $cID;
+              }
+              $aux[$h] = $aux2;
+            }
+            /////////////////////
+            if (isset($daysCoatch[$time])){
+              foreach ($daysCoatch[$time] as $h=>$item){
+                $aux4 = isset($aux[$h]) ? $aux[$h] : [];
+                foreach ($item as $cID=>$u){
+                  $aux3 = array_search($cID, $aux4);
+                  if ($aux3 !== false) unset($aux[$h][$aux3]);
+                }
+              }
+            }
+            /////////////////////
+            
+            $used[$time] = $aux;
+        }
+ 
+      }
+    }
+    return $used;
   }
 }

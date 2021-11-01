@@ -25,7 +25,7 @@
   /*width:10%;*/
 }
 
-.table-calendar tbody td.editDate div {
+.table-calendar tbody td.editDate .lst_events div {
   max-width: 100px;
   display: inline-block;
   border-radius: 4px;
@@ -73,7 +73,7 @@ ul.coachsFilter li {
   display: inline-block;
   padding: 11px;
   border-radius: 7px;
-  margin: 0 1em;
+  margin: 0 1px;
   font-weight: 600;
   cursor: pointer;
 }
@@ -112,6 +112,19 @@ ul.selectType li.active {
   background-color: #fffdfd;
   display: block;
   transform: rotate(45deg);
+}
+button.btn.btn-success.btnAvails {
+    float: left;
+    border-radius: 12px;
+    background-color: #5c90d2;
+    font-weight: bold;
+}
+span.dateAvail{
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    border-radius: 5px;
+    margin-left: 6px;
 }
 @media only screen and (max-width: 426px){
 

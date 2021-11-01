@@ -29,7 +29,7 @@ class FisioController extends Controller {
         
         $start = $calendar['firstDay'];
         $finish = $calendar['lastDay'];
-        $rslt = CitasService::get_calendars($start,$finish,$serv,$coach,'fisio');
+        $rslt = CitasService::get_calendars($start,$finish,$serv,$coach,'fisio',$calendar['days']);
         $rslt['calendar'] = $calendar['days'];
         $rslt['month'] = $month;
         /*******************************************/

@@ -28,7 +28,7 @@ class NutriController extends Controller {
         
         $start = $calendar['firstDay'];
         $finish = $calendar['lastDay'];
-        $rslt = CitasService::get_calendars($start,$finish,$serv,$coach,'nutri');
+        $rslt = CitasService::get_calendars($start,$finish,$serv,$coach,'nutri',$calendar['days']);
         $rslt['calendar'] = $calendar['days'];
         $rslt['month'] = $month;
         /*******************************************/

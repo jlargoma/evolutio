@@ -78,6 +78,9 @@
                   case 'card':
                     echo 'TARJETA';
                     break;
+                  case 'bono':
+                    echo 'BONO';
+                    break;
                 }
                 ?>
             </td>

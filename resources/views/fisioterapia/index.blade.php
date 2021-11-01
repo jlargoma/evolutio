@@ -39,6 +39,7 @@
                 </div>
                 <div class="col-md-8 col-xs-12">
                   <div class="mbl-tabs">
+                  <button class="btn btn-success btnAvails" type="button">DISPONIBLES</button>
                 <ul class="selectDate">
                 @foreach($aMonths as $k=>$v)
                 <li data-val="{{$k}}" class="<?php echo ($month == $k) ? 'active' : ''?>">
@@ -82,6 +83,7 @@
             color: #FFF;
         }
     .eventType_{{$k}} {background-color: {{$v}};}
+    .coach_{{$k}} {background-color: {{$v}};}
     @endforeach
     .time.not{
         background-color: #ddd;
@@ -103,7 +105,7 @@ $('.addDate').click(function(event){
     $('#ifrModal').attr('src','/admin/citas-fisioterapia/create/'+dateForm+'/'+timeForm);
     $('#modalIfrm').modal();
 });
-$('.editDate').on('click','div',function(event){
+$('.editDate').on('click','.events',function(event){
     event.preventDefault();
     var id = $(this).data('id');
     $('#ifrModal').attr('src','/admin/citas-fisioterapia/edit/'+id);
@@ -182,6 +184,16 @@ $('#modal_newUser').on('submit','#form-new',function(event){
   @if($detail)
     var details = {!!$detail!!};
   @endif
+  $('.btnAvails').on('click',function(){
+    if ( $('.availDate').css('display') == 'none' ){
+      $('.editDate').find('.lst_events').hide();
+      $('.editDate').find('.availDate').show();
+    } else {
+      $('.editDate').find('.lst_events').show();
+      $('.editDate').find('.availDate').hide();
+    }
+        
+  });
 </script>
 <script src="{{asset('/admin-css/assets/js/toltip.js')}}"></script>
 @endsection

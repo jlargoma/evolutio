@@ -129,7 +129,7 @@ function getYearActive() {
 }
 
 function colors() {
-    return ['#9b59ff', '#295d9b', '#10cfbd', 'red', '#871282', '#066572', '#a7dae7', '#1fa7c0', '#b2d33d', '#3aaa49'];
+    return ['#9b59ff', '#295d9b', '#10cfbd', '#ffa116', '#871282', '#066572', '#a7dae7', '#1fa7c0', '#b2d33d', '#3aaa49'];
 }
 function printColor($id){
   $lst = colors();
