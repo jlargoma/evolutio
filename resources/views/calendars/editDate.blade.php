@@ -10,7 +10,9 @@
     <div class="col-xs-12 col-md-4 push-20">
       @if($id<1) 
       <label for="id_user" id="tit_user">
-        <i class="fa fa-plus" id="newUser"></i>Cliente</label>
+        <i class="fa fa-plus" id="newUser"></i>Cliente
+        <span><input type="checkbox" id="is_group" name="is_group">Es un Grupo</span>
+      </label>
       <div id="div_user">
         <select class="js-select2 form-control" id="id_user" name="id_user" style="width: 100%; cursor: pointer" data-placeholder="Seleccione usuario.."  >
           <option></option>

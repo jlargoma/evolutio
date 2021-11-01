@@ -103,7 +103,13 @@ ul.selectType li.active {
   height: 1em;
   opacity: 0.7;
 }
-.events.blocked:hover {
+.events.group {
+  padding: 1px 4px !important;
+  border: 2px solid #5c90d2;
+  opacity: 0.75;
+}
+.events.blocked:hover,
+.events.group:hover{
   opacity: 1.0;
 }
 .events.blocked span{

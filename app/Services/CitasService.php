@@ -15,7 +15,7 @@ class CitasService {
       $uRates = $oDate->uRates;
       $id_serv = $oDate->id_rate;
       $card    = null;
-      $price   = 0; 
+      $price   = $oDate->price;
       $id_user = -1;
       $email   = null;
       $phone   = null;
@@ -61,7 +61,8 @@ class CitasService {
           'oUser' => $oUser,
           'users' => User::where('role', 'user')->where('status', 1)->orderBy('name', 'ASC')->get(),
           'coachs' => self::getCoachs($oDate->date_type),
-          'blocked' => $oDate->blocked
+          'blocked' => $oDate->blocked,
+          'isGroup' => $oDate->is_group
       ];
     }
     return null;
@@ -158,15 +159,15 @@ class CitasService {
             if ($item->blocked){
               $aLst[$time][$hour][] = [
                 'id' => $item->id,
-                'charged' => 2,
+                'charged' => ($item->is_group) ? 3 : 2,
                 'type' => $item->id_rate,
                 'coach' => $item->id_coach,
-                'name' => 'bloqueo',
+                'name' => ($item->is_group) ? 'grupo' : 'bloqueo'
               ];
               $detail[$item->id] = [
-                  'n' => 'bloqueo',
+                  'n' => ($item->is_group) ? 'Cita Grupal' : 'bloqueo',
                   'p'=> '',
-                  's'=> '-',
+                  's'=> ($item->service) ? $item->service->name : '-',
                   'cn' => isset($cNames[$item->id_coach]) ? $cNames[$item->id_coach] : '-',
                   'mc'=>'', //Metodo pago
                   'dc'=>'', // fecha pago

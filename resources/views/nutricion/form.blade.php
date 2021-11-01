@@ -10,7 +10,11 @@ $date_type_u = "Nutricionista";
 $date_type = 'nutri'
 ?>
 @if($blocked)<!-- es un bloqueo -->
-  @include('calendars.editBlock')
+  @if($isGroup)
+    @include('calendars.editGroup')
+  @else
+    @include('calendars.editBlock')
+  @endif
 @else
   @include('calendars.editDate')
 @endif
@@ -101,6 +105,19 @@ jQuery(function () {
                 $('#id_user').val('0');
                 $('#tit_user').text('Nuevo Cliente');
             });
+          $('#is_group').click(function (e) {
+            if($(this).is(':checked')){
+              $('#id_user').val('0').attr('disabled',true);
+              $('#NC_email').val('').attr('disabled',true);
+              $('#NC_phone').val('').attr('disabled',true);
+              $('#u_name').val('').attr('disabled',true);
+            } else {
+              $('#id_user').val('0').attr('disabled',false);
+              $('#NC_email').val('').attr('disabled',false);
+              $('#NC_phone').val('').attr('disabled',false);
+              $('#u_name').val('').attr('disabled',false);
+            }
+          });
         @endif
 
         $('.btn-user').click(function (e) {
@@ -147,5 +164,17 @@ jQuery(function () {
       font-weight: bold;
    }
    input#customTime {padding: 0px 4px;}
+   #tit_user{
+      width: 100% !important;
+    }
+    #tit_user span{
+      float: right;
+      padding-right: 11px;
+      margin-top: -3px;
+    }
+    #tit_user span input{
+      margin-right: 6px;
+      height: 13px;
+    }
  </style>
 @endsection

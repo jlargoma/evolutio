@@ -9,7 +9,11 @@
             <input type="hidden" name="date_type" value="pt">
             <div class="row">
                 <div class="col-xs-12 col-md-4 push-20">
-                  <label for="id_user" id="tit_user">Cliente</label>
+                  <label for="id_user" id="tit_user">Cliente
+                  @if($id<1)
+                  <span><input type="checkbox" id="is_group" name="is_group">Es un Grupo</span>
+                  @endif
+                  </label>
                     <select class="js-select2 form-control" id="id_user" name="id_user" style="width: 100%; cursor: pointer" data-placeholder="Seleccione usuario.."  >
                         <option></option>
                         <?php foreach ($users as $key => $user): ?>
