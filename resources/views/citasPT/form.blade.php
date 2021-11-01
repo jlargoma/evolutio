@@ -101,8 +101,36 @@ jQuery(function () {
         });
         
         $('.sendForm').on('click', function(){
-            $('#'+$(this).data('id')).submit();
+          var oForm = $('#'+$(this).data('id'));
+          var data = {
+            id: oForm.find('#idDate').val(),
+            date: oForm.find('#date').val(),
+            time: oForm.find('#hour').val(),
+            uID: oForm.find('#id_user').val(),
+            cID: oForm.find('#id_coach').val(),
+            _token: '{{csrf_token()}}',
+          };
+          $.post('/admin/citas/checkDisp',data, function(resp) {
+                        
+            if (resp == 'bloqueo'){
+              window.show_notif('error', 'Horario bloqueado para el Entrenador');
+              return;
+            }
+            
+            if (resp>1){
+              window.show_notif('error', 'Horario no disponible');
+            } else {
+              if (resp == 1){
+                if (confirm('Ya hay una cita para ese momento, continuar de todas maneras?')){
+                  oForm.submit();
+                }
+              } else {
+                oForm.submit();
+              }
+            }
+          });
         });
+        
         $(".btnDeleteCita").click(function () {
             if (confirm('Eliminar la Cita?'))
                 location.assign("/admin/citas/delete/{{$id}}");

@@ -127,7 +127,14 @@ class DatesController extends Controller {
       }
     }
 
-    /*     * ********************************************************** */
+    /************************************************************ */
+    $alreadyExit = Dates::where('date', $date_compl)
+                    ->where('id', '!=', $ID)
+                    ->where('blocked', 1)
+                    ->where('id_coach', $id_coach)->first();
+    if ($alreadyExit) {
+      return redirect()->back()->withErrors(['Horario bloqueado']);
+    }
     $alreadyExit = Dates::where('date', $date_compl)
                     ->where('id', '!=', $ID)
                     ->where('id_coach', $id_coach)->count();
@@ -368,18 +375,21 @@ class DatesController extends Controller {
     $startTime = null;
     $aux = explode('-', $start);
     if (is_array($aux) && count($aux) == 3)
-      $startTime = strtotime($aux[2] . '-' . $aux[1] . '-' . $aux[0]);
+      $startTime = ($aux[2] . '-' . $aux[1] . '-' . $aux[0]);
 
     $endTime = null;
     $aux = explode('-', $end);
     if (is_array($aux) && count($aux) == 3)
-      $endTime = strtotime($aux[2] . '-' . $aux[1] . '-' . $aux[0]);
-
-    $oneDay = 24 * 60 * 60;
-    if ($startTime && $endTime) {
-      while ($startTime <= $endTime) {
-        if (date('w', $startTime) > 0) {
-          foreach ($hours as $h) {
+      $endTime = ($aux[2] . '-' . $aux[1] . '-' . $aux[0]);
+    
+    $aDays = arrayDays($startTime,$endTime,'Y-m-d','w');
+    foreach ($aDays as $d=>$wd){
+      if ($wd > 0) {
+        foreach ($hours as $h) {
+          $dateHour = $d." $h:00:00";
+          $exist = Dates::where('id_coach',$id_coach)
+                  ->where('date',$dateHour)->first();
+          if (!$exist){
             $oObj = new Dates();
             $oObj->id_coach = $id_coach;
             $oObj->id_rate = 0;
@@ -387,12 +397,10 @@ class DatesController extends Controller {
             $oObj->blocked = 1;
             $oObj->id_user_rates = -1;
             $oObj->date_type = $type;
-            $oObj->date = date('Y-m-d', $startTime) . " $h:00:00";
+            $oObj->date = $dateHour;
             $oObj->save();
           }
         }
-
-        $startTime += $oneDay;
       }
     }
     return redirect()->back()->with(['success' => 'Horarios bloqueados']);
@@ -492,7 +500,7 @@ class DatesController extends Controller {
     $ID   = $req->input('id');
     $uID  = $req->input('uID');
     $cID  = $req->input('cID'); //id_coach
-    
+        
     
     $aux = explode('-',$date);
     if (is_array($aux) && count($aux)==3){
@@ -503,11 +511,19 @@ class DatesController extends Controller {
     
     $sqlCoach = Dates::where('date', $dateCompl)->where('id_coach', $cID);
     $sqlUser  = Dates::where('date', $dateCompl)->where('id_user', $uID);
+    $sqlBloq  = Dates::where('date', $dateCompl)->where('id_coach', $cID);
                     
     if ($ID && $ID != 'undefined'){
       $sqlCoach->where('id', '!=', $ID);
+      $sqlBloq->where('id', '!=', $ID);
       $sqlUser->where('id', '!=', $ID);
     }
+    
+    if ($sqlBloq->where('blocked', 1)->first()){
+      return 'bloqueo';
+    }
+    
+    
     $useCoach = $sqlCoach->count();
     $useUser = $sqlUser->count();
     

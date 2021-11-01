@@ -61,6 +61,12 @@ jQuery(function () {
             _token: '{{csrf_token()}}',
           };
           $.post('/admin/citas/checkDisp',data, function(resp) {
+                        
+            if (resp == 'bloqueo'){
+              window.show_notif('error', 'Horario bloqueado para el Nutricionista');
+              return;
+            }
+            
             if (resp>1){
               window.show_notif('error', 'Horario no disponible');
             } else {
