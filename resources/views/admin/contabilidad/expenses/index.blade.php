@@ -147,7 +147,7 @@
   @section('scripts')
   
   
-<link rel="stylesheet" href="{{ asset('css/contabilidad.css') }}">
+<link rel="stylesheet" href="{{ assetV('css/contabilidad.css') }}">
   <script type="text/javascript" src="/admin-css/assets/js/import-excel.js"></script>
   <script type="text/javascript" src="/admin-css/assets/js/plugins/chartJs/Chart.min.js"></script>
   <script type="text/javascript" src="/admin-css/assets/js/charts.js"></script>

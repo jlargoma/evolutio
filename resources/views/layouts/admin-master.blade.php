@@ -173,7 +173,7 @@
             </footer>
         </div>
 
-        <link rel="stylesheet" id="css-main" href="{{ asset('/css/custom.css') }}">
+        <link rel="stylesheet" id="css-main" href="{{ assetV('/css/custom.css') }}">
         <script src="{{ asset('/admin-css/assets/js/core/jquery.min.js') }}" ></script>
         <script src="{{ asset('/admin-css/assets/js/core/bootstrap.min.js') }}" ></script>
         <script src="{{ asset('/admin-css/assets/js/core/jquery.slimscroll.min.js') }}" ></script>
@@ -182,9 +182,9 @@
         <script src="{{ asset('/admin-css/assets/js/core/js.cookie.min.js') }}" ></script>
         <script src="{{ asset('/js/vendor/notify.min.js') }}" ></script>
         <script src="{{ asset('/admin-css/assets/js/app.js') }}" ></script>
-        <script src="{{ asset('/admin-css/assets/js/custom.js') }}" ></script>
-        <link rel="stylesheet" type="text/css" href="{{ asset('/admin-css/assets/css/styles.css')}}">
-        <link rel="stylesheet" type="text/css" href="{{ asset('/admin-css/assets/css/mobile.css')}}">
+        <script src="{{ assetV('/admin-css/assets/js/custom.js') }}" ></script>
+        <link rel="stylesheet" type="text/css" href="{{ assetV('/admin-css/assets/css/styles.css')}}">
+        <link rel="stylesheet" type="text/css" href="{{ assetV('/admin-css/assets/css/mobile.css')}}">
         @yield('scripts')
 
         <script>

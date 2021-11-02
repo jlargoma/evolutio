@@ -176,6 +176,6 @@
         <script src="{{ asset('/admin-css/assets/js/core/jquery.placeholder.min.js') }}"></script>
         <script src="{{ asset('/admin-css/assets/js/core/js.cookie.min.js') }}"></script>
         <script src="{{ asset('/admin-css/assets/js/app.js') }}"></script>
-        <script src="{{ asset('/admin-css/assets/js/custom.js') }}"></script>
+        <script src="{{ assetV('/admin-css/assets/js/custom.js') }}"></script>
 	</body>
 </html>

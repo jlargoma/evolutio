@@ -28,8 +28,8 @@ function printEvents($lst,$h){
 
 @extends('layouts.popup')
 @section('content')
-<link rel="stylesheet" href="{{ asset('css/custom.css') }}">
-<link rel="stylesheet" href="{{ asset('css/calendars.css') }}">
+<link rel="stylesheet" href="{{ assetV('css/custom.css') }}">
+<link rel="stylesheet" href="{{ assetV('css/calendars.css') }}">
 <div class="col-xs-12">
   <h2 class="text-center">Duplicar Cita</h2>
     <form action="" method="post" id="formClone">

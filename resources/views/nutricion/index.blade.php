@@ -73,7 +73,7 @@
 @endsection
 
 @section('scripts')
-<link rel="stylesheet" href="{{ asset('css/calendars.css?v1') }}">
+<link rel="stylesheet" href="{{ assetV('css/calendars.css') }}">
 
 <style>
 
@@ -190,5 +190,5 @@ $('#modal_newUser').on('submit', '#form-new', function (event) {
         
   });
 </script>
-<script src="{{asset('/admin-css/assets/js/toltip.js')}}"></script>
+<script src="{{assetV('/admin-css/assets/js/toltip.js')}}"></script>
 @endsection
