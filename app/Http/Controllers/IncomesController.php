@@ -15,10 +15,11 @@ class IncomesController extends Controller {
     $monts = lstMonthsSpanish();
     unset($monts[0]);
     $mm = [];
-    $crLst = [];
     foreach ($monts as $k=>$v) $mm[$k] = 0;
     
-    
+    $sIncomes = new \App\Services\IncomesService($year,$mm);
+    $sIncomes->getUserRatesLst();
+    $lst = $sIncomes->getTypeRatesLst();
     
     //----------------------------------//
     $family = \App\Models\TypesRate::subfamily();
@@ -27,90 +28,25 @@ class IncomesController extends Controller {
     $familyTotal['gral'] = $mm;
     $family['gral'] = 'Generales';
     //----------------------------------//
-    $uRates = \App\Models\UserRates::where('id_charges', '>', 0)
-              ->where('rate_year',$year)->get();
-    foreach ($uRates as $item){
-      $c = $item->charges;
-      if (!$c)        continue;
-      $rate = $c->id_rate;
-      if (!isset($crLst[$rate])) $crLst[$rate] = $mm;
-      $m = $item->rate_month;
-      $crLst[$rate][$m] += $c->import;
-    }
-    
-    //----------------------------------//
-    $oRateTypes = \App\Models\TypesRate::orderBy('name')->get();
-    $lst = [];
-    foreach ($oRateTypes as $t){
-      $lst[$t->id] = $mm;
-      $lst[$t->id]['name'] = $t->name;
-      $lst[$t->id]['slst']  = [];
-      $lst[$t->id]['lst']  = [];
-     
-    }
-    $oRates = \App\Models\Rates::orderBy('subfamily')->orderBy('name')->get();
-    foreach ($oRates as $r){
-      if (!isset($lst[$r->type])) continue;
-      /*******************************/
-      if (isset($crLst[$r->id])){
-        $rData =  $crLst[$r->id];
-        foreach ($rData as $k=>$v){
-          $lst[$r->type][$k] += $v;
-        }
-      } else $rData = $mm;
-      $rData['name']='';
-      /*******************************/
-      
-      if ($r->subfamily){
-        if (!isset($lst[$r->type]['slst'][$r->subfamily])) {
-          $lst[$r->type]['slst'][$r->subfamily] = [];
-          //check subfamily
-          if (!isset($family[$r->subfamily])) $family[$r->subfamily] = $r->subfamily;
-        }
-        
-        $lst[$r->type]['slst'][$r->subfamily][$r->id] = $rData;
-        $lst[$r->type]['slst'][$r->subfamily][$r->id]['name'] = $r->name;
-//        $lst[$r->type]['slst'][$r->subfamily][] = $r->name;
-        
-        foreach ($rData as $k=>$v){
-          if ($k != 'name')
-          $familyTotal[$r->subfamily][$k] += $v;
-        }
-        
-      } else {
-        $lst[$r->type]['lst'][$r->id] = $rData;
-        $lst[$r->type]['lst'][$r->id]['name'] = $r->name;
-      }
+    foreach ($lst as $k=>$item){
+      $lst[$k] = $sIncomes->processURates($k,$item);
     }
     //----------------------------------//
     //BONOS
     $aBonos = \App\Models\Bonos::orderBy('name')->get();
-    $aux_lst  = [];
-    foreach ($aBonos as $b){
-      $aux_lst[$b->id] = $mm;
-      $aux_lst[$b->id]['name'] = $b->name;
-      $aux_lst[$b->id]['lst']  = [];
-    }
-    //-------------------------------------------
-    $oBonos = Charges::whereYear('date_payment', '=', $year)
-              ->where('bono_id','>',0)->get();
-    
-    foreach ($oBonos as $item){
-      $m = intval(substr($item->date_payment,5,7));
-      if (!isset($aux_lst[$item->bono_id][$m])) $aux_lst[$item->bono_id][$m] = 0;
-      $aux_lst[$item->bono_id][$m] += $item->import;
-    }
-    //-------------------------------------------
+    $lstBonos = $sIncomes->prepareBonos($aBonos);
     
     $auxB = $mm;
     $auxB['name'] = 'BONOS';
     $auxB['lst']  = [];
     $auxB['slst']  = [];
     $lst['bonos'] = $auxB;
+    //-------------------------------------------
    
     //rate_type or rate_subf
     foreach ($aBonos as $k=>$v){
-      $rateType = $rate_subf = 'gral';
+      $rateType = 'gral';
+      $rate_subf = null;
       if (isset($lst[$v->rate_type])){
         $rateType = $v->rate_type;
       } else {
@@ -120,34 +56,54 @@ class IncomesController extends Controller {
                   $rateType = 8;
           if(str_contains($v->rate_subf,'v'))
                   $rateType = 11;
-          
-        } else {
-          //Es del item Bonos cuando no se le puede asignar a otro
-          $lst['bonos']['lst'][$v->id] = $aux_lst[$v->id];
-          $lst['bonos']['lst'][$v->id]['name'] = $v->name;
         }
-        
       }
-          
       if ($rateType && isset($lst[$rateType])){
-        $lst[$rateType]['slst'][$rate_subf][$v->id] = $aux_lst[$v->id];
-        $lst[$rateType]['slst'][$rate_subf][$v->id]['name'] = '*'.$v->name;
-        //Actualizo el valor header del tipo de servicio
-        foreach ($aux_lst[$v->id] as $b_mont => $b_val){
-          if (is_numeric($b_mont)){
-            $lst[$rateType][$b_mont] += $b_val;
-            if (isset($familyTotal[$rate_subf]))
-              $familyTotal[$rate_subf][$b_mont] += $b_val;
+        if ($rate_subf && isset($lst[$rateType]['slst'][$rate_subf])){
+          $lst[$rateType]['slst'][$rate_subf]['bonos'][$v->id] = $lstBonos[$v->id];
+          $lst[$rateType]['slst'][$rate_subf]['bonos'][$v->id]['name'] = ' -- '.$v->name;
+        } else {
+          $lst[$rateType]['lst'][$v->id] = $lstBonos[$v->id];
+          $lst[$rateType]['lst'][$v->id]['name'] = '*'.$v->name;
+        }
+      } else {
+          //Es del item Bonos cuando no se le puede asignar a otro
+        $lst['bonos']['lst'][$v->id] = $lstBonos[$v->id];
+        $lst['bonos']['lst'][$v->id]['name'] = $v->name;
+      }
+    }
+    
+    
+    $bonosTotal = [];
+    foreach ($lst as $k=>$v){
+      foreach ($v['lst'] as $k1=>$v1){
+        for($i=1;$i<13; $i++){
+          $v[$i] += $v1[$i];
+        }
+      }
+      foreach ($v['slst'] as $k1=>$v1){
+        $bKey = $k.$k1;
+        $bonosTotal[$bKey] = $mm;
+        foreach ($v1 as $k2=>$v2){
+          if ($k2 == 'bonos'){
+            foreach ($v2 as $k3=>$v3){
+              for($i=1;$i<13; $i++){
+                if ($v3[$i]>0){
+                  $v[$i] += $v3[$i];
+                  $bonosTotal[$bKey][$i]+= $v3[$i];
+                  $familyTotal[$k1][$i] += $v3[$i];
+                }
+              }
+            }
+          } else {
+            for($i=1;$i<13; $i++){
+              $v[$i] += $v2[$i];
+              $familyTotal[$k1][$i] += $v2[$i];
+            }
           }
         }
       }
-    }
-    foreach ($lst['bonos']['lst'] as $id => $bono){
-      foreach ($bono as $b_mont => $b_val){
-        if (is_numeric($b_mont)){
-          $lst['bonos'][$b_mont] += $b_val;
-        }
-      }
+      $lst[$k] = $v;
     }
     //----------------------------------//
     //INGRESOS TOTAL ANUAL
@@ -179,6 +135,7 @@ class IncomesController extends Controller {
         'lst'=>$lst,
         'family'=>$family,
         'familyTotal'=>$familyTotal,
+        'bTotal'=>$bonosTotal,
         'totals'=>$totals,
         'byYears'=>$byYears,
         'tByYears'=>$tByYears,

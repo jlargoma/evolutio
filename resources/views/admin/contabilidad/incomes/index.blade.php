@@ -59,11 +59,50 @@ function sumMonthValue($m){
     $(document).ready(function () {
       $('.d1').on('click',function(){
         var k = $(this).data('k');
+        
+        $('.d1_'+k).each(function(){
+          if ($(this).css('display') != 'none'){
+            var k = $(this).data('k');
+            
+            $('.d2_'+k).each(function(){
+              if ($(this).css('display') != 'none'){
+                var k = $(this).data('k');
+                $('.d3_'+k).each(function(){
+                  if ($(this).css('display') != 'none'){
+                    var k = $(this).data('k');
+                    $('.d4_'+k).hide();
+                  }
+                });
+                $('.d3_'+k).hide();
+              }
+            });
+            $('.d2_'+k).hide();
+          }
+        });
+        
         $('.d1_'+k).toggle();
       });
       $('.d2').on('click',function(){
         var k = $(this).data('k');
+        
+        $('.d2_'+k).each(function(){
+          if ($(this).css('display') != 'none'){
+            var k = $(this).data('k');
+            $('.d3_'+k).each(function(){
+              if ($(this).css('display') != 'none'){
+                var k = $(this).data('k');
+                $('.d4_'+k).hide();
+              }
+            });
+            $('.d3_'+k).hide();
+          }
+        });
+        
         $('.d2_'+k).toggle();
+      });
+      $('.d3').on('click',function(){
+        var k = $(this).data('k');
+        $('.d3_'+k).toggle();
       });
       
       

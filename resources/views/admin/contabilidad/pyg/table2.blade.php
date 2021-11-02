@@ -23,7 +23,7 @@ foreach ($monts as $k=>$v){
           <tr>
             <td class="static"><?php echo $pmName[$k1]; ?></td>
             <td class="first-col"></td>
-            <td><b>{{ moneda($v1[0])}}</b></td>
+            <td><b>{{ moneda(array_sum($v1))}}</b></td>
             @foreach($monts as $k=>$v)
             <td>{{moneda($v1[$k])}}</td>
             @endforeach

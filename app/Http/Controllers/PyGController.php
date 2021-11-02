@@ -52,19 +52,14 @@ class PyGController extends Controller {
       $c = $item->charges;
       if (!$c)        continue;
       $m = $item->rate_month;
-      $aux[0] += $c->import;
-      $aux[$m] += $c->import;
       switch ($c->type_payment){
         case 'cash':
-          $pay_method['c'][0] += $c->import;
           $pay_method['c'][$m] += $c->import;
           break;
         case 'card':
-          $pay_method['v'][0] += $c->import;
           $pay_method['v'][$m] += $c->import;
           break;
         case 'banco':
-          $pay_method['b'][0] += $c->import;
           $pay_method['b'][$m] += $c->import;
           break;
       }
@@ -72,34 +67,55 @@ class PyGController extends Controller {
       $crLst[$rateGr][$m] += $c->import;
     }
     //--------------------------------------------------------------------//
+    $aBonos = \App\Models\Bonos::orderBy('name')->get();
+    $lstBonos = [];
+    foreach ($aBonos as $k=>$v){
+      $rateType = null;
+      if ($v->rate_subf){
+        if(str_contains($v->rate_subf,'f')) $rateType = 8;
+        else {
+          if(str_contains($v->rate_subf,'v')) $rateType = 11;
+        }
+      } else {
+        $rateType = $v->rate_type;
+      }
+      $lstBonos[$v->id] = $rateType;
+    }
+    //--------------------------------------------------------------------//
     $oBonos = Charges::whereYear('date_payment', '=', $year)
               ->where('bono_id','>',0)->get();
-    $oRateTypes['bono'] = 'BONOS';
+    $oRateTypes['bono'] = 'BONOS SUELTOS';
     $crLst['bono'] = $months_empty;
     foreach ($oBonos as $c){
       $m = intval(substr($c->date_payment,5,7));
-      $aux[0] += $c->import;
-      $aux[$m] += $c->import;
-      $crLst['bono'][$m] += $c->import;
+      $rateType = isset($lstBonos[$c->bono_id]) ? $lstBonos[$c->bono_id] : null;
+      
+      if (isset($crLst[$rateType])){
+        $crLst[$rateType][$m] += $c->import;
+      } else {
+        $crLst['bono'][$m] += $c->import;
+      }
       
       switch ($c->type_payment){
         case 'cash':
-          $pay_method['c'][0] += $c->import;
           $pay_method['c'][$m] += $c->import;
           break;
         case 'card':
-          $pay_method['v'][0] += $c->import;
           $pay_method['v'][$m] += $c->import;
           break;
         case 'banco':
-          $pay_method['b'][0] += $c->import;
           $pay_method['b'][$m] += $c->import;
           break;
       }
     }
     //--------------------------------------------------------------------//
-    
-    
+    $aux = $months_empty;
+    foreach ($crLst as $k=>$v){
+      for ($i = 0; $i < 13; $i++){
+        $aux[$i] += $v[$i];
+      }
+    }
+    $aux[0] = array_sum($aux);
     $currentY['Ingresos'] = $aux;
     
     $tIncomes = 0;

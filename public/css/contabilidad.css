@@ -14,11 +14,18 @@ tr.d1 td {
   color: #FFF;
 }
 tr.d2,
-tr.d3{
+tr.d3,
+tr.d4{
   display: none;
 }
 tr.d2 td {
   background-color: #dedede;
+}
+tr.d3.bonos td {
+    cursor: pointer;
+}
+tr.d4.bonos td{
+  background-color: #dfeeff !important;
 }
 
 .btnImportExcel{background-color: #10cfbd;float: left;padding: 7px;color: #FFF;}
