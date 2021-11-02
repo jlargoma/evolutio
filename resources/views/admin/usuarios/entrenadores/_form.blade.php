@@ -90,6 +90,13 @@
                 </div>
                 <div class="col-lg-2 col-sm-4 push-20">
                     <div class="form-material">
+                        <input class="form-control" type="text" id="ppcg" name="ppcg" maxlength="18" value="{{$ppcg}}">
+                        <label for="ppc">P.P.Grup</label>
+                        <small>Precio por Citas Grupales</small>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-sm-4 push-20">
+                    <div class="form-material">
                         <input class="form-control" type="text" id="comm" name="comm" maxlength="18" value="{{$comm}}">
                         <label for="ppc">% Comisión</label>
                     </div>

@@ -93,10 +93,11 @@ class CoachLiqService {
 
     $taxCoach = CoachRates::where('id_user', $id)->first();
 
-    $ppc = $salary = $comm = $pppt = 0;
+    $ppc = $salary = $comm = $pppt = $ppcg = 0;
     if ($taxCoach) {
       $ppc = $taxCoach->ppc;
       $pppt = $taxCoach->pppt;
+      $ppcg = $taxCoach->ppcg;
       $comm = $taxCoach->comm / 100;
       $salary = $taxCoach->salary;
     }
@@ -154,6 +155,44 @@ class CoachLiqService {
         $pagosClase[$key][] = $className;
       }
     }
+    
+    
+    /**
+     * Citas grupales
+     */
+    
+    $oTurnos = Dates::where('id_coach', $id)
+            ->where('is_group', 1)
+            ->whereMonth('date', '=', $month)
+            ->whereYear('date', '=', $year)
+            ->with('service')
+            ->orderBy('date')
+            ->get();
+    if ($oTurnos) {
+      foreach ($oTurnos as $item) {
+        $key = $item->service->id;
+        if (!isset($classLst[$key])) {
+          $classLst[$key] = $item->service->name;
+          $pagosClase[$key] = [];
+          $totalClase[$key] = 0;
+        }
+        
+        $totalClase[$key] += $ppcg;
+        $time = strtotime($item->date);
+        $className = date('d', $time) . ' de ' . $lstMonts[date('n', $time)];
+        $className .= ' a las ' . date('h a', $time);
+        $className .= ' (Cita Grupal)';
+        $pagosClase[$key][] = $className;
+      }
+    }
+        
+    /**
+     * END: Citas grupales
+     */
+    
+    
+    
+    
     return compact('pagosClase', 'totalClase', 'classLst', 'ppc', 'salary');
   }
 

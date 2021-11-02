@@ -56,11 +56,12 @@ trait EntrenadoresTraits {
     }
     //---------------------------------------------------------------//
     $coachRates = \App\Models\CoachRates::where('id_user', $oUser->id)->first();
-    $salario_base = $ppc = $comm = $pppt = 0;
+    $salario_base = $ppc = $comm = $pppt = $ppcg = 0;
     if ($coachRates) {
       $salario_base = $coachRates->salary;
       $ppc = $coachRates->ppc;
       $pppt = $coachRates->pppt;
+      $ppcg = $coachRates->ppcg;
       $comm = $coachRates->comm;
     }
 
@@ -74,6 +75,7 @@ trait EntrenadoresTraits {
         'salario_base' => $salario_base,
         'ppc' => $ppc,
         'pppt' => $pppt,
+        'ppcg' => $ppcg,
         'comm' => $comm,
     ]);
   }
