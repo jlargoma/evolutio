@@ -20,6 +20,10 @@ $date_type = 'pt'
 @else
   @include('citasPT.editDate')
 @endif
+
+@if($id<1) 
+  @include('calendars.blockDate')
+@endif
 @endsection
 @section('scripts')
 <script src="{{asset('/admin-css/assets/js/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
