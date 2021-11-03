@@ -48,9 +48,8 @@ class Salary extends Command {
       $this->sLog = new LogsService('schedule','Salary');
       $year = date('Y');
       $month = date('m');
-      $lastDay = date('t');
       
-      if ($lastDay != date('d')) return null;
+      if (date('d') == 1) return null;
       
       $sCoachLiqService = new CoachLiqService();
       $e_noSalary = $i_loaders = $i_already = [];
@@ -66,7 +65,7 @@ class Salary extends Command {
               ->first();
             if (!$oLiq){
               $oLiq = new CoachLiquidation();
-              $oLiq->date_liquidation = "$year-$month-$lastDay";
+              $oLiq->date_liquidation = "$year-$month-01";
               $oLiq->id_coach = $uID;
               $oLiq->salary = $taxCoach->salary;
               $commision = $sCoachLiqService->liqMensualBasic($uID, $year, $month);
