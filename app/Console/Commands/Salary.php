@@ -8,6 +8,7 @@ use App\Services\LogsService;
 use App\Models\User;
 use App\Models\CoachRates;
 use App\Models\CoachLiquidation;
+use App\Services\CoachLiqService;
 
 class Salary extends Command {
 
@@ -47,42 +48,50 @@ class Salary extends Command {
       $this->sLog = new LogsService('schedule','Salary');
       $year = date('Y');
       $month = date('m');
+      $lastDay = date('t');
       
+      if ($lastDay != date('d')) return null;
       
+      $sCoachLiqService = new CoachLiqService();
       $e_noSalary = $i_loaders = $i_already = [];
       $users = User::whereCoachs()->select('id')
               ->where('status', 1)->pluck('id');
+      
       foreach ($users as $uID) {
         $taxCoach = CoachRates::where('id_user', $uID)->first();
         if ($taxCoach) {
-          if ($taxCoach->salary>0){
-                
             $oLiq = CoachLiquidation::where('id_coach', $uID)
               ->whereYear('date_liquidation', '=', $year)
               ->whereMonth('date_liquidation', '=', $month)
               ->first();
-            
             if (!$oLiq){
               $oLiq = new CoachLiquidation();
-              $oLiq->date_liquidation = "$year-$month-01";
+              $oLiq->date_liquidation = "$year-$month-$lastDay";
               $oLiq->id_coach = $uID;
               $oLiq->salary = $taxCoach->salary;
+              $commision = $sCoachLiqService->liqMensualBasic($uID, $year, $month);
+              $oLiq->commision = array_sum($commision['totalClase']);
               $oLiq->save();
               $i_loaders[] = $uID.'=>'.$taxCoach->salary;
             } else {
+              $save = false;
+              if (!$oLiq->commision){
+                $commision = $sCoachLiqService->liqMensualBasic($uID, $year, $month);
+                $oLiq->commision = array_sum($commision['totalClase']);
+                $save = true;
+              }
               if ($oLiq->salary<1){
                 $oLiq->salary = $taxCoach->salary;
-                $oLiq->save();
+                $save = true;
                 $i_loaders[] = $uID.'=>'.$taxCoach->salary;
               } else {
                 $i_already[] = $uID.'=>'.$oLiq->salary;
               }
+              if ($save)  $oLiq->save();
             }
           } else {
             $e_noSalary[] = $uID;
           }
-          
-        } else $e_noSalary[] = $uID;
     
       }
       
@@ -90,6 +99,7 @@ class Salary extends Command {
       if (count($i_already)>0)  $this->sLog->info('Salario ya cargados ',$i_already);
       if (count($e_noSalary)>0)  $this->sLog->info('Salario no cargado ',$e_noSalary);
     } catch (\Exception $e) {
+      dd($e->getMessage());
       $this->sLog->error('Exception: '.$e->getMessage());
     }
   }
