@@ -43,18 +43,25 @@
             </tr>
               <td class="text-center static" style="height: 56px;">
                     <b>Comisiones</b>
+                    <small>Calculado</small>
                 </td>
                 <td class="first-col"></td>
                 @foreach($aMonths as $k=>$v)
                 <?php 
-                  $aux = (isset($CommLst[$k])) ? $CommLst[$k] : 0;
-                  $result[$k] += $aux;
+                  $aux = "";
+                  if (isset($CommLst[$k])){
+                    $aux = $CommLst[$k];
+                    $result[$k] += $aux;
+                  }
+                  
+                  
                 ?>
                 <td class="text-center">
                     <input type="number" 
                            data-k="{{$k}}" 
                            class="form-control commision" 
                            value="{{$aux}}">
+                    <small>{{moneda($CommLstCalc[$k])}}</small>
                 </td>
                 @endforeach
                 <td class="text-center">{{moneda($CommLst[0])}}</td>
@@ -123,5 +130,15 @@ td.td-gren {
     max-width: 0px !important;
     min-width: 0px !important;
 }
+.table-liq small {
+    font-size: 10px;
+    background-color: #ececec;
+    width: 100%;
+    display: block;
+    padding: 3px;
+    font-weight: bolder;
+    border: 1px solid #FFF;
+}
+
 </style>
   

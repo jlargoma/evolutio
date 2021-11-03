@@ -9,7 +9,7 @@ use App\Models\Dates;
 
 class CoachLiqService {
 
-  static function liqByMonths($year, $type = null) {
+  function liqByMonths($year, $type = null) {
 
     $aLiq = $CommLst = $liqLst = $aLiqTotal = [];
     $months = lstMonthsSpanish();
@@ -27,49 +27,26 @@ class CoachLiqService {
       $aux[$i] = 0;
 
     foreach ($users as $u) {
-      $aLiqTotal[$u->id] = 0;
-      $liqLst[$u->id] = $aux;
-      $CommLst[$u->id] = $aux;
       $aLiq[$u->id] = $aux;
     }
     //---------------------------------------------------------------//
     // Get Saved liquidations
     $oLiquidations = CoachLiquidation::whereYear('date_liquidation', '=', $year)->get();
     if ($oLiquidations) {
-
-
       foreach ($oLiquidations as $liq) {
+        if (!isset($aLiq[$liq->id_coach])) {
+          $aLiq[$liq->id_coach] = $aux;
+          echo ($liq->id_coach).' -- ';
+        }
         $aux2 = intval(substr($liq->date_liquidation, 5, 2));
-        if ($liq->salary)
-          $liqLst[$liq->id_coach][$aux2] = $liq->salary;
-        $CommLst[$liq->id_coach][$aux2] = $liq->commision;
+        $aLiq[$liq->id_coach][$aux2] += ($liq->commision + $liq->salary);
       }
     }
 
-    //---------------------------------------------------------------//
-    // calculate commision
-    $now = date('m');
-    $sCoachLiq = new CoachLiqService();
-    foreach ($users as $u) {
-      $uID = $u->id;
-      foreach ($months as $k => $v) {
-        if (!($CommLst[$uID][$k] > 0)) {
-          if ($k > $now)
-            continue;
-          $aux2 = $sCoachLiq->liqMensualBasic($uID, $year, $k);
-          $CommLst[$uID][$k] = array_sum($aux2['totalClase']);
-        }
-      }
-    }
     //---------------------------------------------------------------//
     // Calculate total
     foreach ($users as $u) {
-      $uID = $u->id;
-      foreach ($months as $k => $v) {
-        $val = $liqLst[$uID][$k] + $CommLst[$uID][$k];
-        $aLiq[$uID][$k] = $val;
-        $aLiqTotal[$uID] += $val;
-      }
+      $aLiqTotal[$u->id] = array_sum($aLiq[$u->id]);
     }
 
     return [
@@ -80,7 +57,7 @@ class CoachLiqService {
         'aLiqTotal' => $aLiqTotal,
     ];
   }
-
+  
   function liqMensualBasic($id, $year, $month) {
     $lstMonts = lstMonthsSpanish();
     $typePT = 2;
@@ -218,4 +195,40 @@ class CoachLiqService {
     return $data;
   }
 
+    
+//---------------------------------------------------------------//
+  function liqByCoachMonths($year) {
+
+    $aux = ['username'=>'Usuario no encontrado','role'=>''];
+    for ($i = 1; $i < 13; $i++)  $aux[$i] = 0;
+    $aLiq = [];
+    //---------------------------------------------------------------//
+    // Get Saved liquidations
+    $oLiquidations = CoachLiquidation::whereYear('date_liquidation', '=', $year)->get();
+    if ($oLiquidations) {
+      foreach ($oLiquidations as $liq) {
+        if (!isset($aLiq[$liq->id_coach])) {
+          $aLiq[$liq->id_coach] = $aux;
+        }
+        $aux2 = intval(substr($liq->date_liquidation, 5, 2));
+        $aLiq[$liq->id_coach][$aux2] += ($liq->commision + $liq->salary);
+      }
+    }
+    foreach ($aLiq as $k=>$v){
+      $aLiq[$k][0] = array_sum($v);
+    }
+    
+    //get users liq
+    $lstUsers = User::whereIn('id',array_keys($aLiq))->get();
+    foreach ($lstUsers as $u){
+      if (isset($aLiq[$u->id])){
+        $aLiq[$u->id]['username'] = $u->name;
+        $aLiq[$u->id]['role'] = $u->role;
+      }
+    }
+    $months = lstMonthsSpanish();
+    unset($months[0]);
+    
+    return ['liq'=>$aLiq,'months'=>$months];
+  }
 }

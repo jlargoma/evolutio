@@ -14,7 +14,8 @@ trait EntrenadoresTraits {
   public function entrenadores($type = null) {
 
     $year = getYearActive();
-    $data = \App\Services\CoachLiqService::liqByMonths($year, $type);
+    $CoachLiqService = new \App\Services\CoachLiqService();
+    $data = $CoachLiqService->liqByMonths($year, $type);
     $data['type'] = $type;
     $data['date'] = Carbon::now();
     

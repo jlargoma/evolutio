@@ -7,7 +7,7 @@
     <th>Tipo</th>
     <th>Total</th>
     <?php
-    foreach ($d['months'] as $k => $v):
+    foreach ($data['months'] as $k => $v):
       echo '<th>' . $v . '</th>';
     endforeach;
     ?>
@@ -15,12 +15,12 @@
   <tbody>
     <?php $totalMonthCoach = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; ?>
 <?php $totalYear = 0; ?>
-<?php foreach ($d['users'] as $key => $user): ?>
+<?php foreach ($data['liq'] as $d): ?>
       <tr>
-        <td class="t-left"><b><?php echo ($user->name) ? $user->name : '--'; ?></b></td>
+        <td class="t-left"><b><?php echo $d['username']; ?></b></td>
         <td > 
           <?php
-          switch ($user->role) {
+          switch ($d['role']) {
             case 'admin';
             case 'administrativo';
               echo 'Admin';
@@ -40,34 +40,25 @@
             case 'teach_fisio';
               echo 'P.T. / Fisio';
               break;
+            case 'empl';
+              echo 'Empleado';
+              break;
           }
           ?>
         </td>
         <td >
-          <?php
-          $totalLiquidationByCoach = 0;
-          if (isset($d['aLiqTotal'][$user->id])):
-            $totalLiquidationByCoach = $d['aLiqTotal'][$user->id];
-            $totalYear += $totalLiquidationByCoach;
-          endif;
-          ?>
-        <?php echo moneda($totalLiquidationByCoach); ?>
+        <?php
+          $totalYear += $d[0];
+        ?>
+        <?php echo moneda($d[0]); ?>
         </td>
-        <?php if (isset($d['aLiq'][$user->id])): ?>
           <?php
-          foreach ($d['months'] as $k => $v):
-            $liq = 0;
-            if ($d['aLiq'][$user->id][$k])
-              $liq = $d['aLiq'][$user->id][$k];
+          foreach ($data['months'] as $k => $v):
+            $liq = isset($d[$k]) ? $d[$k] : 0;
             ?>
             <td><?php echo moneda($liq); ?></td>
             <?php $totalMonthCoach[$k] += $liq; ?>
           <?php endforeach; ?>
-        <?php else: ?>
-        <?php foreach ($d['months'] as $k => $v): ?>
-            <td >--</td>
-    <?php endforeach; ?>
-  <?php endif; ?>
       </tr>
 <?php endforeach ?>
     <tr>

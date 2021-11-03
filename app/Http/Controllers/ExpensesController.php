@@ -106,9 +106,10 @@ class ExpensesController extends Controller {
     //---------------------------------------------------------//
     $listGastos_g['pt'] = $months_empty;
     $gTypeGroup['names']['pt'] = 'SUELDOS Y SALARIOS';
+    $sCoachLiq = new \App\Services\CoachLiqService();
     for($i=0;$i<3;$i++){
       $auxYear = $year-$i;
-      $sCoachLiq = CoachLiqService::liqByMonths($auxYear);
+      $sCoachLiq = $sCoachLiq->liqByMonths($auxYear);
       
       foreach ($sCoachLiq['aLiq'] as $liq){
         foreach ($liq as $month=>$t){
@@ -325,7 +326,8 @@ class ExpensesController extends Controller {
 //      dd($gTypeGroup);
       include_once app_path().'/Blocks/PyG_Expenses.php';
     } else {
-      $d = \App\Services\CoachLiqService::liqByMonths($year);
+      $sCoachLiq = new \App\Services\CoachLiqService();
+      $data = $sCoachLiq->liqByCoachMonths($year);
       include_once app_path().'/Blocks/PyG_Coachs.php';
     }
   }

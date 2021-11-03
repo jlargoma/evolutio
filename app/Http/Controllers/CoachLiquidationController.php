@@ -97,27 +97,32 @@ class CoachLiquidationController extends Controller
         /**********************************************************/
         $lstMonts = lstMonthsSpanish();
         $aMonths  = [];
+        $emptyMonth = [];
         foreach ($lstMonts as $k=>$v){
-            if ($k>0)    $aMonths[$year.'-'.str_pad($k, 2, "0", STR_PAD_LEFT)] = $v;
+            if ($k>0){
+              $key = $year.'-'.str_pad($k, 2, "0", STR_PAD_LEFT);
+              $aMonths[$key] = $v;
+              $emptyMonth[$key] = 0;
+            }
         }
         
         /**********************************************************/
         
-        $liqLst = [0=>0];
-        $CommLst = [0=>0];
+        $liqLst =  [];
+        $CommLst = [];
+        $CommLstCalc = $emptyMonth;
         $oLiq = CoachLiquidation::where('id_coach',$id)
                     ->whereYear('date_liquidation' ,'=', $year)
                     ->get();
-        $anual = 0;
         if ($oLiq){
             foreach ($oLiq as $item){
               $aux = substr($item->date_liquidation,0,7);
               $liqLst[$aux]=$item->salary;
-              $liqLst[0] += $item->salary;
               $CommLst[$aux]=$item->commision;
-              $CommLst[0]+= $item->commision;
             }
         }
+         $liqLst[0] = array_sum($liqLst);
+         $CommLst[0] = array_sum($CommLst);
         /**********************************************************/
         $payMonth = [0=>0];
         $oExpenses = \App\Models\Expenses::where('to_user',$id)
@@ -140,16 +145,13 @@ class CoachLiquidationController extends Controller
         $sCoachLiq = new \App\Services\CoachLiqService();
         $now = date('m');
         foreach ($aMonths as $k=>$v){
-          if (!isset($CommLst[$k]) || $CommLst[$k] == null){
             $am = substr($k, 5,2);
             if ($am>$now){
               $liqByM[$k] = 0;
             } else {
               $aux = $sCoachLiq->liquMensual($id,$year,$am);
-              $CommLst[$k] = array_sum($aux['totalClase']);
-              $CommLst[0] += array_sum($aux['totalClase']);
+              $CommLstCalc[$k] = array_sum($aux['totalClase']);
             }
-          }
         }
         //---- END liquidación mensual    ---------------------//
         //-----------------------------------------------------//
@@ -161,6 +163,7 @@ class CoachLiquidationController extends Controller
                                                 'aMonths'=>$aMonths,
                                                 'liqLst' => $liqLst,
                                                 'CommLst' => $CommLst,
+                                                'CommLstCalc' => $CommLstCalc,
             'year'=>$year
                                                 ]);
 
