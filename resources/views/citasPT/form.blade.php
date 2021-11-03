@@ -58,6 +58,7 @@ jQuery(function () {
             time: oForm.find('#hour').val(),
             uID: oForm.find('#id_user').val(),
             cID: oForm.find('#id_coach').val(),
+            type: 'pt',
             _token: '{{csrf_token()}}',
           };
           $.post('/admin/citas/checkDisp',data, function(resp) {

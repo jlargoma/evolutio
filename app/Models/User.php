@@ -93,19 +93,35 @@ class User extends Authenticatable
     return [$total,$lst];
   }
 
-  static function getCoachs($type=null) {
-    $sql = User::where('status', 1);
+  static function whereCoachs($type=null,$includeAdmin=false) {
     
-    if($type){
-      if (is_array($type)) $sql->whereIn('role', $type);
-      else $sql->where('role', $type);
+    switch ($type){
+      case 'fisio':
+        $roles = ['fisio','teach_fisio'];
+        break;
+      case 'nutri':
+        $roles = ['teach_nutri','nutri'];
+        break;
+      case 'teach':
+        $roles = ['teach','teach_nutri','teach_fisio'];
+        break;
+      case 'empl':
+        $roles = ['empl'];
+        break;
+      default:
+        $roles = ['teach','fisio','nutri','empl','teach_nutri','teach_fisio'];
+        break;
     }
-    else $sql->whereIn('role', ['admin','teach','fisio','nutri','empl']);
+    if ($includeAdmin) $roles[] = 'admin';
     
-    return $sql->orderBy('status', 'DESC')->get();
+    return self::whereIn('role',$roles);
+   
   }
-
-
+  static function getCoachs($type=null,$includeAdmin=false) {
+    return User::whereCoachs($type,$includeAdmin)
+            ->where('status', 1)->orderBy('status', 'DESC')->get();
+    
+  }
   /**********************************************************************/
   /////////  user_meta //////////////
   public function setMetaContent($key,$content) {

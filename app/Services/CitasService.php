@@ -259,10 +259,8 @@ class CitasService {
   }
   
   static function getCoachs($type) {
-    if ($type == 'pt') 
-      return User::where('role', 'teach')->where('status', 1)->get();
-    
-    return User::where('role', $type)->where('status', 1)->get();
+    if ($type == 'pt') $type = 'teach';
+    return User::whereCoachs($type)->where('status', 1)->get();
   }
   
   static function timeAvails($daysCoatch,$coachs,$lstDays,$coachID=null){

@@ -90,8 +90,7 @@ trait ClientesTraits {
     } else {
       $detail = null;
     }
-    
-    $aCoachs = User::where('role', 'teach')->orderBy('name')->pluck('name', 'id')->toArray();
+    $aCoachs = User::whereCoachs('teach')->orderBy('name')->pluck('name', 'id')->toArray();
     return view('/admin/usuarios/clientes/index', [
         'users' => $users,
         'month' => $month,
@@ -284,7 +283,7 @@ trait ClientesTraits {
 
     $subscrLst = $user->suscriptions;
     //----------------------//
-    $aCoachs = User::where('role', 'teach')->orderBy('name')->pluck('name', 'id')->toArray();
+    $aCoachs = User::whereCoachs('teach')->orderBy('name')->pluck('name', 'id')->toArray();
     $allCoachs = User::getCoachs()->pluck('name', 'id');
     //----------------------//
     // CONSENTIMIENTOS

@@ -50,15 +50,8 @@ class Salary extends Command {
       
       
       $e_noSalary = $i_loaders = $i_already = [];
-      $users = User::select('id')
-              ->whereIn('role', [
-                'teach',
-                'teacher',
-                'fisio',
-                'nutri',
-                'empl'
-              ])->where('status', 1)->pluck('id');
-//dd($users);
+      $users = User::whereCoachs()->select('id')
+              ->where('status', 1)->pluck('id');
       foreach ($users as $uID) {
         $taxCoach = CoachRates::where('id_user', $uID)->first();
         if ($taxCoach) {

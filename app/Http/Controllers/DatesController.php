@@ -103,6 +103,20 @@ class DatesController extends Controller {
         'id_coach.required' => 'Coach requerido',
     ]);
     /* -------------------------------------------------------------------- */
+    $alreadyExit = Dates::where('date', $date_compl)
+                    ->where('id', '!=', $ID)
+                    ->where('date_type', $type)
+                    ->where('blocked', 1)
+                    ->where('id_coach', $id_coach)->first();
+    if ($alreadyExit) {
+      return redirect()->back()->withErrors(['Horario bloqueado']);
+    }
+    $alreadyExit = Dates::where('date', $date_compl)
+                    ->where('id', '!=', $ID)
+                    ->where('id_coach', $id_coach)->count();
+    if ($alreadyExit>1) {
+      return redirect()->back()->withErrors(['Personal ocupado']);
+    }
     /* -------------------------------------------------------------------- */
     if (!$isGroup){
       if (!$id_user) {
@@ -132,22 +146,7 @@ class DatesController extends Controller {
           $oUser->save();
         }
       }
-    }
-    /* -------------------------------------------------------------------- */
-    $alreadyExit = Dates::where('date', $date_compl)
-                    ->where('id', '!=', $ID)
-                    ->where('blocked', 1)
-                    ->where('id_coach', $id_coach)->first();
-    if ($alreadyExit) {
-      return redirect()->back()->withErrors(['Horario bloqueado']);
-    }
-    $alreadyExit = Dates::where('date', $date_compl)
-                    ->where('id', '!=', $ID)
-                    ->where('id_coach', $id_coach)->count();
-    if ($alreadyExit>1) {
-      return redirect()->back()->withErrors(['Personal ocupado']);
-    }
-    if (!$isGroup){
+
       $alreadyExit = Dates::where('date', $date_compl)
                       ->where('id', '!=', $ID)
                       ->where('id_user', $id_user)->count();
@@ -410,6 +409,7 @@ class DatesController extends Controller {
         foreach ($hours as $h) {
           $dateHour = $d." $h:00:00";
           $exist = Dates::where('id_coach',$id_coach)
+                  ->where('date_type',$type)
                   ->where('date',$dateHour)->first();
           if (!$exist){
             $oObj = new Dates();
@@ -521,6 +521,7 @@ class DatesController extends Controller {
     $time = $req->input('time');
     $ID   = $req->input('id');
     $uID  = $req->input('uID');
+    $type = $req->input('type');
     $cID  = $req->input('cID'); //id_coach
         
     
@@ -541,7 +542,7 @@ class DatesController extends Controller {
       $sqlUser->where('id', '!=', $ID);
     }
     
-    if ($sqlBloq->where('blocked', 1)->first()){
+    if ($sqlBloq->where('date_type',$type)->where('blocked', 1)->first()){
       return 'bloqueo';
     }
     

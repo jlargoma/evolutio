@@ -142,7 +142,7 @@ class PTController extends Controller {
         $lstMonts = lstMonthsSpanish();
 
         /**************************************************** */
-        $coachs = User::where('role', 'teach')->where('status', 1)->get();
+        $coachs = User::whereCoachs('teach')->where('status', 1)->get();
         $tColors = [];
         if ($coachs) {
             $auxColors = colors();

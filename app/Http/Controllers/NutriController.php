@@ -121,7 +121,7 @@ class NutriController extends Controller {
         $lstMonts = lstMonthsSpanish();
 
         /**************************************************** */
-        $coachs = User::where('role', 'nutri')->where('status', 1)->get();
+        $coachs = User::whereCoachs('nutri')->where('status', 1)->get();
         $tColors = [];
         if ($coachs) {
             $auxColors = colors();
@@ -157,7 +157,7 @@ class NutriController extends Controller {
         $year = getYearActive();
         $user = User::find($uID);
         $servic = TypesRate::where('type', 'nutri')->pluck('name', 'id');
-        $coachs = User::where('role', 'nutri')->pluck('name', 'id');
+        $coachs = User::whereCoachs('nutri')->pluck('name', 'id');
         $lstMonts = lstMonthsSpanish();
         /**************************************************** */
         $aLst = [];

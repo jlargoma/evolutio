@@ -81,7 +81,7 @@ class UsersController extends Controller {
     $aCoachs = [];
     $uCoach = null;
     if ($role == 'user') {
-      $aCoachs = User::where('role', 'teach')->orderBy('name')->pluck('name', 'id')->toArray();
+      $aCoachs = User::whereCoachs('teach')->orderBy('name')->pluck('name', 'id')->toArray();
     }
     return view('/admin/usuarios/nueva', [
         'rates' => \App\Models\Rates::orderBy('status', 'desc')->orderBy('name', 'asc')->get(),
@@ -138,6 +138,8 @@ class UsersController extends Controller {
           case 'teach';
           case 'nutri';
           case 'fisio';
+          case 'teach_nutri';
+          case 'teach_fisio';
             return redirect('/admin/entrenadores');
             break;
           default :
@@ -255,7 +257,7 @@ class UsersController extends Controller {
       /*       * ************************************ */
     }
 
-    if ($userToUpdate->role == 'teach' || $userToUpdate->role == 'fisio' || $userToUpdate->role == 'nutri') {
+    if (in_array($userToUpdate->role,['teach','fisio','nutri','empl','teach_nutri','teach_fisio'])) {
       $userToUpdate->iban = $request->input('iban');
       $userToUpdate->ss = $request->input('ss');
       $CoachRates = \App\Models\CoachRates::where('id_user', $userToUpdate->id)->first();
@@ -264,7 +266,7 @@ class UsersController extends Controller {
         $CoachRates = new \App\Models\CoachRates();
         $CoachRates->id_user = $userToUpdate->id;
       }
-      $CoachRates->salary = $request->input('salario_base');
+      $CoachRates->salary = intval($request->input('salario_base'));
       $CoachRates->ppc = $request->input('ppc');
       $CoachRates->pppt = $request->input('pppt');
       $CoachRates->ppcg = $request->input('ppcg');
@@ -276,13 +278,10 @@ class UsersController extends Controller {
       if ($userToUpdate->role == 'admin') {
 
         return redirect('/admin/usuarios');
-      } elseif ($userToUpdate->role == 'teach' || $userToUpdate->role == 'fisio' || $userToUpdate->role == 'nutri') {
+      } 
 
-        return back();
-      } else {
-
-        return redirect()->back()->with('success', 'Cliente actualizado');
-      }
+      return redirect()->back()->with('success', 'Registro actualizado');
+      
     }
   }
 

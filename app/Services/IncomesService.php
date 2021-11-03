@@ -59,7 +59,7 @@ class IncomesService {
       if ($r->subfamily) {
 
         if (!isset($item['slst'][$r->subfamily]))
-          $item['slst'][$r->subfamily] = ['bonos' => []];
+          $item['slst'][$r->subfamily] = [];
         if (str_contains(strtolower($r->name), 'bono')) {
           $item['slst'][$r->subfamily]['bonos'][$r->id] = $rData;
           $item['slst'][$r->subfamily]['bonos'][$r->id]['name'] = ' -- '.$r->name;

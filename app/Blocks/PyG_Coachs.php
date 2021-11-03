@@ -34,6 +34,12 @@
             case 'fisio';
               echo 'Fisio';
               break;
+            case 'teach_nutri';
+              echo 'P.T. / Nutri';
+              break;
+            case 'teach_fisio';
+              echo 'P.T. / Fisio';
+              break;
           }
           ?>
         </td>

@@ -140,7 +140,7 @@ class FisioController extends Controller {
         $lstMonts = lstMonthsSpanish();
 
         /**************************************************** */
-        $coachs = User::where('role', 'fisio')->where('status', 1)->get();
+        $coachs = User::whereCoachs('fisio')->where('status', 1)->get();
         $tColors = [];
         if ($coachs) {
             $auxColors = colors();
@@ -176,7 +176,7 @@ class FisioController extends Controller {
         $year = getYearActive();
         $user = User::find($uID);
         $servic = TypesRate::where('type', 'fisio')->pluck('name', 'id');
-        $coachs = User::where('role', 'fisio')->pluck('name', 'id');
+        $coachs = User::whereCoachs('fisio')->pluck('name', 'id');
         $lstMonts = lstMonthsSpanish();
         /**************************************************** */
         $aLst = [];
