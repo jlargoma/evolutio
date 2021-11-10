@@ -121,7 +121,7 @@ if (empty($days)) continue ?>
     var details = {!!$detail!!};
   @endif
 </script>
-<script src="{{asset('/admin-css/assets/js/toltip.js')}}"></script>
+<script src="{{assetv('/admin-css/assets/js/toltip.js')}}"></script>
 <style>
   .selDays{
     padding: 10px;

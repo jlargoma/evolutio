@@ -199,5 +199,5 @@ $('#modal_newUser').on('submit', '#form-new', function (event) {
         
   });
 </script>
-<script src="{{asset('/admin-css/assets/js/toltip.js')}}"></script>
+<script src="{{assetv('/admin-css/assets/js/toltip.js')}}"></script>
 @endsection
