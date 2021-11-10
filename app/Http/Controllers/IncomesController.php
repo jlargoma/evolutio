@@ -73,7 +73,7 @@ class IncomesController extends Controller {
       }
     }
     
-    
+    //calcular totals
     $bonosTotal = [];
     foreach ($lst as $k=>$v){
       foreach ($v['lst'] as $k1=>$v1){

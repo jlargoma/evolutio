@@ -121,6 +121,9 @@ trait ClientesTraits {
     $uLstRates = [];
     if ($uRates) {
       /******************************** */
+      $aDates = Dates::whereIn('id_user_rates',$uRates->pluck('id'))
+              ->pluck('date','id_user_rates')->toArray();
+
       foreach ($uRates as $k => $v) {
         $idRate = $v->id_rate;
         $idUser = $v->id_user;
@@ -130,12 +133,23 @@ trait ClientesTraits {
         if (!isset($uLstRates[$idUser][$idRate])) {
           $uLstRates[$idUser][$idRate] = [];
         }
+        
+        
+        
+        $dateCita = '';
+        if(isset($aDates[$v->id])){
+          $auxDate  = explode(' ', $aDates[$v->id]);
+          $dateCita = dateMin($auxDate[0]);
+        }
+        
+        
         $detail[$v->id] = [
             'n' => '',
             'p'=>moneda($rPrices[$idRate]),
             's'=>$rNames[$idRate],
             'mc'=>'', //Metodo pago
             'dc'=>'', // fecha pago
+            'date'=>$dateCita
         ];
         // si esta pagado
         $auxCharges = $v->charges;

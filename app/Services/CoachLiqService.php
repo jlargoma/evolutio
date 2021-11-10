@@ -88,10 +88,10 @@ class CoachLiqService {
             ->whereMonth('date', '=', $month)
             ->whereYear('date', '=', $year)
             ->join('users_rates', 'users_rates.id', '=', 'id_user_rates')
-            ->whereNotNull('users_rates.id_charges')
             ->with('user')->with('service')->with('uRates')
             ->orderBy('date')
             ->get();
+//            ->whereNotNull('users_rates.id_charges')
 
     $totalClase = array();
     $pagosClase = array();
@@ -109,6 +109,9 @@ class CoachLiqService {
         $import = 0;
         if ($item->uRates && $item->uRates->charges)
           $import = $item->uRates->charges->import;
+        else{
+          if ($item->uRates) $import = $item->uRates->price;
+        }
 
         $totalClase[$key] += $import * $comm;
 

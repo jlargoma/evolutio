@@ -21,21 +21,21 @@ class IncomesService {
 
   function getUserRatesLst() {
     $crLst = [];
-    $uRates = \App\Models\UserRates::where('id_charges', '>', 0)
-                    ->where('rate_year', $this->year)->get();
+    $uRates = \App\Models\UserRates::where('rate_year', $this->year)->get();
     foreach ($uRates as $item) {
       $c = $item->charges;
-      if (!$c)
-        continue;
-      $rate = $c->id_rate;
-      if (!isset($crLst[$rate]))
-        $crLst[$rate] = $this->mm;
+      $rID = $item->id_rate;
+      if (!isset($crLst[$rID]))
+          $crLst[$rID] = $this->mm;
       $m = $item->rate_month;
-      $crLst[$rate][$m] += $c->import;
+      if ($c){
+        $crLst[$rID][$m] += $c->import;
+      } else {
+        $crLst[$rID][$m] += $item->price;
+      }
     }
     $this->crLst = $crLst;
   }
-
   function getTypeRatesLst() {
     $oRateTypes = \App\Models\TypesRate::orderBy('name')->get();
     $lst = [];

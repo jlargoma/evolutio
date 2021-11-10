@@ -8,6 +8,8 @@ $(document).ready(function () {
     html += '<h4>' + data.s + '</h4>';
     if (data.dc)
       html += '<p>' + data.dc + ' / ' + data.mc + '</p>';
+    if (data.date)
+      html += '<p>Cita: ' + data.date + '</p>';
 
     obj.html(html);
     if (screen.width < 768) {

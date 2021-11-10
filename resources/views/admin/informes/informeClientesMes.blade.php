@@ -24,6 +24,7 @@ use \Carbon\Carbon; ?>
 @section('content')
 <div class="content content-boxed bg-gray-lighter">
   <h2 class="text-center">INFORME DE CUOTAS PAGADAS AL MES</h2>
+  <div class="text-center">Listado de cobros realizados por fecha</div>
   <input type="text" id="searchInform" class="form-control" placeholder="Buscar"/>
   <input type="hidden" id="_token" name="_token" value="<?php echo csrf_token(); ?>">
   <div class="row mt-1">
