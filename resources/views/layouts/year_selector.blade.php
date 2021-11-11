@@ -1,7 +1,8 @@
 <?php 
 $yearActive = getYearActive();
-$years = []; 
-for($i=date('Y'); $i>(date('Y')-5); $i--){
+$y = date('Y');
+$years = [$y+1]; 
+for($i=$y; $i>($y-5); $i--){
   $years[] = $i;
 }
 ?>

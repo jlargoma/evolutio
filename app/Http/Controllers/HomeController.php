@@ -177,7 +177,7 @@ class HomeController extends Controller
     {
       $year = $request->input('year');
       if (is_numeric($year)){
-        $current = date('Y');
+        $current = date('Y')+3;
         if ($year<=$current && $year>($current-6)){
            setcookie('ActiveYear', $year, time() + (86400 * 30), "/"); // 86400 = 1 day
            return 'cambiado';

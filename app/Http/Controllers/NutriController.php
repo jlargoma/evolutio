@@ -20,7 +20,10 @@ class NutriController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function index($month = null, $coach = 0, $serv = 0) {
-        if (!$month) $month = date('Y-m');
+        if (!$month){
+          $yearActive = getYearActive();
+          $month = $yearActive.date('-m');
+        }
         $date = $month . '-01';
 
         $oCalendar = new \App\Services\CalendarService($date);

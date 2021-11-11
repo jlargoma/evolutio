@@ -236,7 +236,7 @@
 </script>
 @include('invoices.script')
 @include('invoices.script_mail')
-<script src="{{asset('/admin-css/assets/js/toltip.js')}}"></script>
+<script src="{{assetv('/admin-css/assets/js/toltip.js')}}"></script>
 <style>
     .openEditCobro,
     .openCobro{ cursor: pointer;}
