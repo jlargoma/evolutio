@@ -157,7 +157,7 @@ class PyGController extends Controller {
     }
     //---------------------------------------------------------//
     $ggMonth['pt'] = $months_empty;
-    $gTypeGroup['names']['pt'] = 'SUELDOS Y SALARIOS';
+    $gTypeGroup['names']['pt'] = 'SUELDOS PERSONAL';
     $CoachLiqService = new \App\Services\CoachLiqService();
     for($i=0;$i<3;$i++){
       $auxYear = $year-$i;

@@ -104,19 +104,16 @@ class ExpensesController extends Controller {
 
 
     //---------------------------------------------------------//
-    $listGastos_g['pt'] = $months_empty;
-    $gTypeGroup['names']['pt'] = 'SUELDOS Y SALARIOS';
     $sCoachLiq = new \App\Services\CoachLiqService();
     for($i=0;$i<3;$i++){
       $auxYear = $year-$i;
-      $sCoachLiq = $sCoachLiq->liqByMonths($auxYear);
-      
-      foreach ($sCoachLiq['aLiq'] as $liq){
+      $aCoachLiq = $sCoachLiq->liqByMonths($auxYear);
+      foreach ($aCoachLiq['aLiq'] as $liq){
         foreach ($liq as $month=>$t){
           $yearMonths[$auxYear][$month] += $t;
           if ($i == 0){
-            $listGastos_g['pt'][$month] += $t;
-            $listGastos_g['pt'][0] += $t;
+            $listGastos_g['sueldos_y_salarios'][$month] += $t;
+            $listGastos_g['sueldos_y_salarios'][0] += $t;
           }
         }
       }
@@ -136,7 +133,6 @@ class ExpensesController extends Controller {
     if (!$current) {
       $current = date('m');
     }
-
 
     return view('admin.contabilidad.expenses.index', [
         'year' => $year,
