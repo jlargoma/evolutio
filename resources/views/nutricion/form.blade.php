@@ -60,7 +60,7 @@ jQuery(function () {
         $('.sendForm').on('click', function(){
           var oForm = $('#'+$(this).data('id'));
           var data = {
-            id: oForm.find('#idDate').val(),
+            id: {{$id}},
             date: oForm.find('#date').val(),
             time: oForm.find('#hour').val(),
             uID: oForm.find('#id_user').val(),

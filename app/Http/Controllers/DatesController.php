@@ -546,10 +546,10 @@ class DatesController extends Controller {
       return 'bloqueo';
     }
     
-    
     $useCoach = $sqlCoach->count();
     $useUser = $sqlUser->count();
     
+//    dd($useCoach,$useUser,$req->all());
     return ($useCoach>$useUser) ? $useCoach : $useUser;
    
   }

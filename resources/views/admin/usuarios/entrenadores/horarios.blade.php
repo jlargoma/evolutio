@@ -22,8 +22,8 @@
         <tr>
           <th class="static">Día</th>
           <th class="first-col"></th>
-          <th colspan="2" class="th2">H. Corrido / Mañana</th>
-          <th colspan="2" class="th2">Tarde</th>
+          <th colspan="2" class="th2">1er Rango Horario</th>
+          <th colspan="2" class="th2">2do Rango Horario</th>
         </tr>
         <?php
         if ($days):

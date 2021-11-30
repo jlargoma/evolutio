@@ -76,19 +76,20 @@
 <link rel="stylesheet" href="{{ assetV('css/calendars.css?v2') }}">
 
 <style>
-
-  @foreach($tColors as $k=>$v)
-  ul.coachsFilter li.select_{{$k}} {
-    background-color: {{$v}};
-    color: #FFF;
-  }
-  .eventType_{{$k}} {background-color: {{$v}};}
-  .coach_{{$k}} {background-color: {{$v}};}
-  @endforeach
-  .time.not{
-    background-color: #ddd;
-    border-color: #c1c1c1 !important;
-  }
+    @foreach($tColors as $k=>$v)
+    ul.coachsFilter li.select_{{$k}} {
+            background-color: {{$v}};
+            color: #FFF;
+        }
+    .eventType_{{$k}} cust {color: {{$v}};}
+    .eventType_{{$k}}.blocked span {background-color: {{$v}};}
+    .coach_{{$k}} {background-color: {{$v}};}
+    
+    @endforeach
+    .time.not{
+        background-color: #ddd;
+        border-color: #c1c1c1 !important;
+    }
 </style>
 
 <script src="{{asset('/admin-css/assets/js/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>

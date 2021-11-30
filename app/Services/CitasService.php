@@ -143,9 +143,12 @@ class CitasService {
             $date = date('Y-m-d', $time);
             $time = strtotime($date);
 
-            $dTime = $item->getHour();
+            $dTime = $hTime = $item->getHour();
             $dTime .= ' '.$days[date('w',$time)];
             $dTime .= ' '.date('d',$time).' '.$months[date('n',$time)];
+            
+            $hTime = substr($hTime, 3,2);
+            
             
             if (!isset($aLst[$time])){
                 $aLst[$time] = [];
@@ -162,6 +165,7 @@ class CitasService {
                 'charged' => ($item->is_group) ? 3 : 2,
                 'type' => $item->id_rate,
                 'coach' => $item->id_coach,
+                'h'=>$hTime,
                 'name' => ($item->is_group) ? 'grupo' : 'bloqueo'
               ];
               $detail[$item->id] = [
@@ -199,7 +203,8 @@ class CitasService {
                 'type' => $item->id_rate,
                 'coach' => $item->id_coach,
                 'name' => $u_name,
-                'halfTime'=>$halfTime
+                'halfTime'=>$halfTime,
+                'h'=>$hTime,
             ];
             $detail[$item->id] = [
                 'n' => $u_name,

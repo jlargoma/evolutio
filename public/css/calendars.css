@@ -26,24 +26,34 @@
 }
 
 .table-calendar tbody td.editDate .lst_events div {
-  max-width: 100px;
+/*  max-width: 100px;
   display: inline-block;
-  border-radius: 4px;
+  border-radius: 4px;*/
   font-size: 12px;
-  color: #FFF;
+/*  color: #FFF;
   padding: 3px;
   font-weight: 800;
   margin-right: 4px;
-  white-space: nowrap;
+  white-space: nowrap;*/
   cursor: pointer;
+      text-align: left;
+    margin: 0 3px 2px;
+}
+.table-calendar tbody td.editDate .lst_events div cust{
+  margin-left: 5px;
+}
+.table-calendar tbody td.editDate div nopay{
+  color: red;
 }
 .table-calendar tbody td.editDate div span.no-pay{
-  background-color: red;
-  height: 8px;
+  color: red;
+  /*font-weight: bold;*/
+      margin-right: 5px;
+/*  height: 8px;
   width: 8px;
   display: inline-block;
   border-radius: 50%;
-  margin-right: 3px;
+  margin-right: 3px;*/
 }
 .table-calendar tbody td.editDate div span.detail{
   position: fixed;
@@ -99,25 +109,25 @@ ul.selectType li.active {
   font-weight: bold;
 }
 .events.blocked {
-  min-width: 30px;
+/*  min-width: 30px;
   height: 1em;
-  opacity: 0.7;
+  opacity: 0.7;*/
 }
 .events.group {
-  padding: 1px 4px !important;
-  border: 2px solid #5c90d2;
-  opacity: 0.75;
+  background-color: #ededed;
+  font-weight: 600;
 }
-.events.blocked:hover,
-.events.group:hover{
+.events.blocked:hover{
   opacity: 1.0;
 }
 .events.blocked span{
-  width: 27px;
-  height: 4px;
-  background-color: #fffdfd;
-  display: block;
-  transform: rotate(45deg);
+    width: 30px;
+    height: 2px;
+    background-color: #9f9f9f;
+    display: inline-block;
+    /* transform: rotate(
+13deg); */
+    margin: 1px 8px 4px 15px;
 }
 button.btn.btn-success.btnAvails {
     float: left;

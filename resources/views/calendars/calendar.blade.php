@@ -1,13 +1,23 @@
 <?php 
 function printEvents($lst){
+  $aux = $aux2 = [];
   foreach ($lst as $item){
+    $aux[] = $item['h'];
+    if (!isset($aux2[$item['h']])) $aux2[$item['h']] = [];
+    $aux2[$item['h']][] = $item;
+  }
+  $aux = array_unique($aux);
+  asort($aux);
+  foreach ($aux as $h){
+    foreach ($aux2[$h] as $item){
+//    dd($item);
     switch ($item['charged']){
       case 2:
         echo '<div '
           . 'data-id="'.$item['id'].'" '
           . 'data-name="--" '
           . 'class="eventType_'.$item['coach'].' events blocked">'
-              .'<span></span><toltip/>'
+          .$item['h'].'<span></span><toltip/>'
           . '</div>';
         break;
       case 3:
@@ -15,20 +25,22 @@ function printEvents($lst){
           . 'data-id="'.$item['id'].'" '
           . 'data-name="--" '
           . 'class="eventType_'.$item['coach'].' events group">'
-              .'<span>GRUPO</span><toltip/>'
+          .$item['h'].'<cust>  GRUPO</cust><toltip/>'
           . '</div>';
         break;
       default :
         $payment = ($item['charged'] != 1) ? '<span class="no-pay"></span>' : '';
         $halfTime = ($item['halfTime']) ? '½ ' : '';
+        $hour = ($item['charged'] != 1) ? '<nopay>'.$item['h'].'</nopay>' : $item['h'];
         echo '<div '
         . 'data-id="'.$item['id'].'" '
         . 'data-name="'. strtolower($item['name']).'" '
         . 'class="eventType_'.$item['coach'].' events">'
-            .$payment.$halfTime.str_limit($item['name'],10)
+          .$hour.'<cust>'.str_limit($item['name'],10).'</cust>'
             .'<toltip/>'
         . '</div>';
        break;
+    }
     }
   }
 }
