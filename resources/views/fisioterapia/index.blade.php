@@ -82,7 +82,7 @@
             background-color: {{$v}};
             color: #FFF;
         }
-    .eventType_{{$k}} cust {color: {{$v}};}
+    .eventType_{{$k}} cust {background-color: {{$v}};}
     .eventType_{{$k}}.blocked span {background-color: {{$v}};}
     .coach_{{$k}} {background-color: {{$v}};}
     

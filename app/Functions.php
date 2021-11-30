@@ -114,7 +114,7 @@ function rates_codes() {
 
 function assetV($uri) {
     $uri_asset = asset($uri);
-    $v = env('VERSION', 'v1.0.1');
+    $v = env('VERSION', 'v1.0.5');
     return $uri_asset . '?' . $v;
 }
 
@@ -128,7 +128,7 @@ function getYearActive() {
 }
 
 function colors() {
-    return ['#9b59ff', '#295d9b', '#10cfbd', '#ffa116', '#871282', '#066572', '#a7dae7', '#1fa7c0', '#b2d33d', '#3aaa49'];
+    return ['#9b59ff', '#295d9b', '#10cfbd', '#ffa116', '#871282', '#066572', '#06931d', '#1fa7c0', '#b2d33d', '#3aaa49'];
 }
 function printColor($id){
   $lst = colors();
