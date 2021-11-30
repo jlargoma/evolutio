@@ -39,7 +39,7 @@
                 </div>
                 <div class="col-md-8 col-xs-12">
                   <div class="mbl-tabs">
-                  <button class="btn btn-success btnAvails" type="button">DISPONIBLES</button>
+                 <!--<button class="btn btn-success btnAvails" type="button">DISPONIBLES</button>-->
                 <ul class="selectDate">
                 @foreach($aMonths as $k=>$v)
                 <li data-val="{{$k}}" class="<?php echo ($month == $k) ? 'active' : ''?>">

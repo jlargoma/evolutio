@@ -246,8 +246,9 @@ class CitasService {
     } else {
       $detail = null;
     }
+    if ($type == 'pt') $avails = [];
+    else $avails = self::timeAvails($daysCoatch,$coachs,$lstDays,$coach);
     
-    $avails = self::timeAvails($daysCoatch,$coachs,$lstDays,$coach);
     return  [
         'servLst' => $servLst,
         'serv' => $serv,

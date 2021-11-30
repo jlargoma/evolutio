@@ -63,7 +63,7 @@ function printEvents($lst){
                 @foreach($days as $k=>$d)
                 <?php 
                 $dk= $k+1; //corrige -> no hay domingos 
-                $avail = '----';
+                $avail = '';
                 if (isset($avails[$d['time']]) && isset($avails[$d['time']][$i]) && count($avails[$d['time']][$i])){
                   $avail = '';
                   foreach ($avails[$d['time']][$i] as $cID)
@@ -75,25 +75,25 @@ function printEvents($lst){
                     <td class="time not">{{$i}}</td>
                     <td class="not editDate">
                       <div class="lst_events">
+                        <div class="availDate" style="padding-left: 15px;"><?= $avail?></div>
                       <?php
                       if (isset($aLst[$d['time']]) && isset($aLst[$d['time']][$i])){
                         printEvents($aLst[$d['time']][$i]);
                       }
                       ?>
                       </div>
-                      <div style="display:none" class="availDate"><?= $avail?></div>
                     </td>
                     @else
                     <td class="time addDate" data-date="{{$d['time']}}" data-time="{{$i}}">{{$i}}</td>
                     <td class="editDate">
                       <div class="lst_events">
+                      <div class="availDate"  style="padding-left: 15px;"><?= $avail?></div>
                       <?php
                       if (isset($aLst[$d['time']]) && isset($aLst[$d['time']][$i])){
                         printEvents($aLst[$d['time']][$i]);
                       }
                       ?>
                       </div>
-                      <div style="display:none" class="availDate"><?= $avail?></div>
                     </td>
                 @endif
                 @endforeach
