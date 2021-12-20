@@ -58,6 +58,9 @@ $uRole = Auth::user()->role;
       </li>
     </ul>
   </li>
+  <li class="{{ $path == 'control-contabilidad' ? 'active' : '' }}">
+    <a href="{{url('/control-contabilidad')}}" class="font-w600"><i class="fa fa-line-chart"></i> <span class="sidebar-mini-hide font-w600">Control Contabilidad</span></a>
+  </li>
 
   @endif
   <li style="margin-left: 17px;">

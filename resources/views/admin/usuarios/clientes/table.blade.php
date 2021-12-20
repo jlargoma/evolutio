@@ -1,3 +1,4 @@
+<?php $auxPay = $auxToPay = [0,0,0]; ?>
 <table class="table table-striped js-dataTable-full-clients table-header-bg">
     <thead>
         <tr>
@@ -77,10 +78,12 @@
                       foreach ($uRates[$i][$user->id] as $rate):
                         foreach ($rate as $r):
                           if($r['paid']):
+                            $auxPay[$i] += $r['price'];
                             $textAux.= '<div class="label events label-success openEditCobro" data-cobro="'.$r['cid'].'"  data-id="'.$r['id'].'">';
                           else:
                             $pending = true;
                             $auxPend += $r['price'];
+                            $auxToPay[$i] += $r['price'];
                             $textAux.= '<div class="label events label-danger openCobro" data-rate="'.$r['id'].'" data-id="'.$r['id'].'">';
                           endif;
                           $textAux.= moneda($r['price']).'</div>';
@@ -107,4 +110,16 @@
             </tr>
         <?php endforeach ?>
     </tbody>
+    <tfoot style="display: none;">
+      <tr>
+        <td colspan="4"></td>
+        <?php 
+          for ($i = 0; $i < 3; $i++): 
+        ?>
+        <td>{{$auxPay[$i]}} / {{$auxToPay[$i]}}</td>
+        <?php
+          endfor;
+        ?>
+      </tr>
+    </tfoot>
 </table>

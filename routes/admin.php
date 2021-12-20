@@ -208,3 +208,8 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
 Route::group(['middleware' => 'auth'], function () {
   Route::get('/importarRegistro', 'FunctionalControler@importarRegistro');
 });
+  
+Route::group(['middleware' => 'superAdmin'], function () {
+  Route::get('/control-contabilidad', 'ControlsControler@contabilidad');
+  
+});
