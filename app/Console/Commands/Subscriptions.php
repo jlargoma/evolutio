@@ -57,7 +57,7 @@ class Subscriptions extends Command {
         $cID = $s->id_coach;
         $uRate = UserRates::where('id_user',$uID)
                 ->where('rate_year',$year)->where('rate_month',$month)
-                ->where('id_rate', $rID)->first();
+                ->where('id_rate', $rID)->withTrashed()->first();
         if (!$uRate){
           $uRate = new UserRates();
           $uRate->id_user = $uID;

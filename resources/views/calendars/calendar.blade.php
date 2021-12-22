@@ -44,11 +44,14 @@ function printEvents($lst){
     }
   }
 }
-                        
+              
+$thisWeek = date('W');
 ?>
 @foreach($calendar as $days)
-<?php if (empty($days)) continue ?>
-<div class="table-responsive">
+<?php if (empty($days)) continue;
+$cWeek = (date('W',$days[0]['time']) == $thisWeek) ? 'id="cweek"' : '';
+?>
+<div class="table-responsive" <?php echo $cWeek; ?>>
     <table class="table table-calendar">
         <thead>
             <tr>

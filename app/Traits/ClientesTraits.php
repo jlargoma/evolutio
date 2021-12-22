@@ -164,7 +164,8 @@ trait ClientesTraits {
           $detail[$v->id]['mc'] = payMethod($auxCharges->type_payment);
           $detail[$v->id]['dc'] = dateMin($auxCharges->date_payment);
         } else {
-          $importe = ($v->price == null) ? $rPrices[$idRate]:$v->price;
+          $importe = $v->price;
+//          $importe = ($v->price === null) ? $rPrices[$idRate]:$v->price;
           $noPay += $importe;
           
           $uLstRates[$idUser][$idRate][] = [
