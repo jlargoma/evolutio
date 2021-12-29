@@ -7,6 +7,7 @@ use App\Models\UsersSuscriptions;
 use App\Models\UserRates;
 use Log;
 use App\Services\LogsService;
+use Illuminate\Support\Facades\DB;
 
 class Subscriptions extends Command {
 
@@ -44,12 +45,17 @@ class Subscriptions extends Command {
   public function handle() {
     try {
       $this->sLog = new LogsService('schedule','Suscripciones');
-      $lst = UsersSuscriptions::all();
+      $lst = UsersSuscriptions::select('users_suscriptions.*')
+              ->join('users', function($join)
+                {
+                  $join->on('users.id', '=', 'id_user');
+                  $join->on('users.status', '=', DB::raw("1"));
+                })->get();
       $year = date('Y');
       $month = date('m');
       if (count($lst)==0)
         $this->sLog->info('No hay registros para '.$month.'/'.$year);
-      
+     
       $creadas = $existentes = [];
       foreach ($lst as $s){
         $uID = $s->id_user;
