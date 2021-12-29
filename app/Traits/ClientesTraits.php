@@ -64,8 +64,9 @@ trait ClientesTraits {
     $toPay = $uRates = $uCobros = [];
     $total_pending = 0;
     $monthAux = date('m', strtotime($date));
+    $yearAux = date('Y', strtotime($date));
     for ($i = 0; $i < 3; $i++) {
-      $resp = $this->getRatesByMonth($monthAux, $year, $userIDs, $rPrices,$rNames);
+      $resp = $this->getRatesByMonth($monthAux, $yearAux, $userIDs, $rPrices,$rNames);
       $uRates[$i] = $resp[0];
       $toPay[$i] = $resp[2];
       $noPay += $resp[2];
@@ -73,6 +74,7 @@ trait ClientesTraits {
       $next = strtotime($date . ' +1 month');
       $date = date('Y-m-d', $next);
       $monthAux = date('m', $next);
+      $yearAux = date('Y', $next);
     }
 
     if (count($detail)>0){
