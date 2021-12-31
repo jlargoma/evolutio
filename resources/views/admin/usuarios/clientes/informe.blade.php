@@ -238,61 +238,75 @@
 @include('invoices.script_mail')
 <script src="{{assetv('/admin-css/assets/js/toltip.js')}}"></script>
 <style>
-    .openEditCobro,
-    .openCobro{ cursor: pointer;}
-    .tab-pane{
-        padding: 24px 16px;
-        background-color: white;
-    }
-    .sing-box {
+  .openEditCobro,
+  .openCobro{
+    cursor: pointer;
+  }
+  .tab-pane{
+    padding: 24px 16px;
+    background-color: white;
+  }
+  .sing-box {
     border: 1px solid;
     width: 325px;
     padding: 5px;
     margin: 1em auto;
-}
-#id_rateCoach:disabled{
-  background-color: #d0d0d0;
-}
-.subscr_price {
+  }
+  #id_rateCoach:disabled{
+    background-color: #d0d0d0;
+  }
+  .subscr_price {
     background-color: #f7f7f7;
     border: none;
     text-align: right;
     width: 81px;
     padding: 3px 0px;
     cursor: pointer;
-}
-td.btnCel {
+  }
+  td.btnCel {
     width: 50px;
-}
-div#tableInvoices_filter {
+  }
+  div#tableInvoices_filter {
     float: right;
-}
-.lstBono{
+  }
+  .lstBono{
     padding: 10px 0 10px 12px;
     margin: 11px 1%;
     width: 95%;
     box-shadow: 1px 1px 4px 2px #a5a5a5;
     cursor: pointer;
-}
-.lstBono:hover,
-.lstBono.selected{
+  }
+  .lstBono:hover,
+  .lstBono.selected{
     background-color: #d1eadc;
-}
-.lstBono label{
+  }
+  .lstBono label{
     font-size: 17px;
-}
-.lstBono span {
+  }
+  .lstBono span {
     float: right;
     font-size: 34px;
     margin-top: -8px;
     margin-right: 7px;
-}
-#bonoLog{
-  max-width: 780px;
-  margin: 1em auto;
-}
-#bonoLog thead th{
-  background-color: #d1eadc;
-}
+  }
+  #bonoLog{
+    max-width: 780px;
+    margin: 1em auto;
+  }
+  #bonoLog thead th{
+    background-color: #d1eadc;
+  }
+
+  .fFIDELITY .form-control{
+    width: calc( 100% - 40px);
+    float: left;
+    padding: 2px;
+  }
+  .fFIDELITY i{
+    padding: 6px 5px;
+    float: left;
+    font-size: 21px;
+    margin-left: 7px;
+  }
 </style>
 @endsection

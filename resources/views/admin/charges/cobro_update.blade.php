@@ -54,11 +54,24 @@ $disableType = ($charge->type_payment == "card" || $charge->type_payment == "bon
 <h3 class="text-center font-w300 mt-1">
   Cuota a actualizar <span class="font-w600"><?php echo $rate->typeRate->name.': '.$rate->name; ?></span>
 </h3>
+<?php 
+  $price = $rate->price;
+  $disc = '';
+  $icoFidelity = '';
+  if ($uFidelity == 1 && $rate->tarifa == 'fidelity'){
+    $icoFidelity = '<i class="fa fa-heart text-success"></i>';
+    $disc = discFidelity();
+    $price = priceFidelity($price);
+  }
+?>
 <form class="fomr-horizontal content-md" method="post" action="{{ url('/admin/cobros/cobrar/' . $charge->id) }}" id="forms">
   <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
-  <input type="hidden" id="importeOrig" value="<?php echo $rate->price; ?>">
+  <input type="hidden" id="importeOrig" value="<?php echo $price; ?>">
   <input type="hidden" id="deleted" name="deleted" value="0">
-  <p class="text-danger text-center font-w600 font-s32" ><?php echo $rate->price; ?>€</p>
+  <p class="text-center font-w600 font-s32" >
+    <span class="text-danger"><?php echo $price; ?>€</span>
+    <?php echo $icoFidelity; ?>
+  </p>
   <input type="hidden" id="id_tax" name="id_tax" class="form-control" value="<?php echo $rate->id; ?>" />	 
   <div class="row">
     <div class="col-md-4">

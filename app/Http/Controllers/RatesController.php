@@ -61,6 +61,13 @@ class RatesController extends Controller {
     ]);
   }
 
+  public function upd_fidelity(Request $request) {
+    $id = $request->input('id');
+    $oRates = Rates::find($id);
+    $oRates->tarifa = $request->input('val');
+    if ($oRates->save()) return 'OK';
+    return 'ERROR';
+  }
   public function update(Request $request) {
 
     $id = $request->input('id');

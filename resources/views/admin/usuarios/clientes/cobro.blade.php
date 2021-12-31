@@ -2,6 +2,16 @@
 $oBonoLst = $user->bonosServ($rate->id);
 $tBonos = $oBonoLst[0];
 $oBonoLst = $oBonoLst[1];
+
+  $price = $rate->price;
+  $disc = '';
+  $icoFidelity = '';
+  if ($uFidelity == 1 && $rate->tarifa == 'fidelity'){
+    $icoFidelity = '<i class="fa fa-heart text-success"></i>';
+    $disc = discFidelity();
+    $price = priceFidelity($price);
+  }
+
 ?>
 @extends('layouts.popup')
 @section('content')
@@ -15,10 +25,12 @@ $oBonoLst = $oBonoLst[1];
   <form class="form-toPayment" method="post" action="{{ url('/admin/cobros/cobrar') }}">
     <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
     <input type="hidden" name="id_uRate" value="<?php echo $uRate; ?>">
-    <input type="hidden" id="importeCobrar" value="<?php echo $rate->price; ?>">
+    <input type="hidden" id="importeCobrar" value="<?php echo $price; ?>">
     <div class="col-md-12 push-20">
       <h2 class="text-center font-w300">
-        Cuota a cobrar <span class="font-w600 mbl-br"><?php echo $rate->typeRate->name . ': ' . $rate->name; ?></span>{{moneda($rate->price)}}</h2>
+        Cuota a cobrar <span class="font-w600 mbl-br"><?php echo $rate->typeRate->name . ': ' . $rate->name; ?></span>
+        <br/>{{moneda($price)}} <?php echo $icoFidelity; ?>
+      </h2>
     </div>
     <div class="row">
       <div class="col-md-4 col-xs-12">
@@ -41,7 +53,7 @@ $oBonoLst = $oBonoLst[1];
       </div>
       <div class="col-md-2 col-xs-6 mb-1em">
         <label for="discount">DTO %:</label>
-        <input type="number" id="discount" name="discount" class="form-control"/>
+        <input type="number" id="discount" name="discount" class="form-control" value="{{$disc}}"/>
       </div>
       <div class="col-md-3 col-xs-6">
         <label for="importeFinal">Total:</label>

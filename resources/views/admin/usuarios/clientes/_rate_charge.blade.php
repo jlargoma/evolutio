@@ -51,10 +51,18 @@
               echo '<optgroup label="'.$v['n'].'">';
               foreach ($v['l'] as $rate):
                 $sel = ($rate->id == $old) ? 'selected' : '';
+                         
+                $price = $rate->price;
+                $disc = '';
+                if ($uFidelity == 1 && $rate->tarifa == 'fidelity'){
+                  $disc = discFidelity();
+                  $price = priceFidelity($price);
+                }
                 ?>
                 
                 <option value="<?php echo $rate->id ?>" 
-                    data-price="<?php echo $rate->price ?>"
+                    data-price="<?php echo $price ?>"
+                    data-disc="<?php echo $disc ?>"
                     {{$sel}}>
                 <?php echo $rate->name ?>
                 </option>
@@ -146,8 +154,10 @@ jQuery(function () {
 $(document).ready(function () {
   var origPrice = 0;
   $('#id_rate').change(function (event) {
-    var price = $("#id_rate option:selected").attr('data-price');
+    var that = $("#id_rate option:selected");
+    var price = that.data('price');
     $('#importeFinal').val(price);
+    $('#discount').val(that.data('disc'));
     origPrice = price;
 
   });

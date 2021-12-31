@@ -36,17 +36,24 @@ class ChargesController extends Controller {
             $oBono = 'not_found';
           }
         }
+        
+        $oUser = $charge->user;
+        $fidelity = 0;
+        if ($oUser){
+          $fidelity = $oUser->getMetaContent('FIDELITY');
+        }
 
         return view('admin.charges.cobro_update', [
             'taxes' => Rates::all(),
             'rate' => Rates::find($charge->id_rate),
             'date' => $date,
-            'user' => $charge->user,
+            'user' => $oUser,
             'importe' => $charge->import,
             'charge' => $charge,
             'coach_id' => $coach_id,
             'oBono' => $oBono,
             'coachs' => User::getCoachs(),
+            'uFidelity'=>$fidelity
         ]);
     }
 

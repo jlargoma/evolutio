@@ -205,6 +205,9 @@ trait ClientesTraits {
 
     /** END: STRIPE              ***** */
     /*     * *************************** */
+
+    $fidelity = $oUser->getMetaContent('FIDELITY');
+        
     return view('/admin/usuarios/clientes/cobro', [
         'rate' => $oRates,
         'user' => $oUser,
@@ -217,6 +220,7 @@ trait ClientesTraits {
         'uRate' => $uRates->id,
         'coach_id' => $uRates->coach_id,
         'coachs' => User::getCoachs(),
+        'uFidelity'=>$fidelity
     ]);
   }
 
@@ -320,6 +324,10 @@ trait ClientesTraits {
     }
     
     //----------------------//
+    // TARIFAS FIDELITY
+    $fidelity = $user->getMetaContent('FIDELITY');
+    
+    //----------------------//
     //Invoices
     $invoices = \App\Models\Invoices::whereYear('date', '=', $year)
             ->where('user_id',$userID)
@@ -373,6 +381,7 @@ trait ClientesTraits {
         'totalInvoice' => $totalInvoice,
         'invoiceModal' => $invoiceModal,
         'valora' => $valoracion,
+        'fidelity' => $fidelity,
         'u_current'=>Auth::user()->id
     ]);
   }
@@ -483,13 +492,16 @@ trait ClientesTraits {
     }
     
     $rateFamily = \App\Models\Rates::getTypeRatesGroups(false);
+    $fidelity = $oUser->getMetaContent('FIDELITY');
+    
     return view('admin.usuarios.clientes._rate_charge', [
         'user' => $oUser,
         'coachs' => User::getCoachs(),
         'rates' => Rates::orderBy('status', 'desc')->orderBy('name', 'asc')->get(),
         'rateFamily' => $rateFamily,
         'stripe' => $stripe,
-        'card' => $card
+        'card' => $card,
+        'uFidelity'=>$fidelity
     ]);
   }
 

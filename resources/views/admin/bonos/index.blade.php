@@ -23,6 +23,7 @@
                 <th class="text-center hidden-xs hidden-sm" style="background-color: #46c37b; width: 60px;">id</th>
                 <th class="text-center" style="background-color: #46c37b; min-width: 280px;">Bono</th>
                 <th class="text-center" style="background-color: #46c37b;">Servicios</th>
+                <th class="text-center" style="background-color: #46c37b;">Tipo Plan</th>
                 <th class="text-center" style="background-color: #46c37b;">Precio</th>
                 <th class="text-center" style="background-color: #46c37b">Cantidad</th>
                 <th class="text-center" style="background-color: #46c37b;min-width: 10%;">Acciones</th>
@@ -50,6 +51,12 @@
                         endforeach; 
                         ?>
                     </select>
+                  </td>
+                  <td class="text-center">
+                    <span style="font-size: 23px;" class="rate_fidelity" data-k="<?php echo $obj->id ?>" data-v="<?php echo $obj->tarifa ?>">
+                      <i class="fa fa-heart text-success fidelity" <?php echo ($obj->tarifa != 'fidelity') ? 'style="display:none;"' : ''; ?>></i>
+                      <i class="fa fa-heart-o no_fidelity" <?php echo ($obj->tarifa == 'fidelity') ? 'style="display:none;"' : ''; ?>></i>
+                    </span>
                   </td>
                   <td class="text-center">
                     <input type="text"  class="form-control editables price-bono-<?php echo $obj->id ?>" data-id="<?php echo $obj->id; ?>" value="<?php echo $obj->price; ?>" />
@@ -154,6 +161,34 @@
         }
       });
     });
+    
+    $('.rate_fidelity').on('click',function(){
+        var that = $(this);
+        var val = that.data('v');
+        if (val == '') val = 'no_fidelity';
+        var newVal = 'fidelity';
+        if (val == 'fidelity') newVal = 'no_fidelity';
+
+        var data= {
+              id: that.data('k'),
+              val: newVal,
+              _token: '{{csrf_token()}}'
+          };
+
+        $.post('/admin/bonos/upd_fidelity', data).done(
+          function (resp) {
+            if (resp == 'OK'){
+               window.show_notif('success', 'tipo de plan actualizado');
+               that.find('.'+newVal).show();
+               that.find('.'+val).hide();
+               that.data('v',newVal);
+            } else {
+               window.show_notif('error', 'tipo de plan NO actualizado');
+            }
+          });
+
+      });
+   
   });
 </script>
 @endsection

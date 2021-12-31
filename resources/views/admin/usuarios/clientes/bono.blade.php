@@ -28,7 +28,7 @@
               @foreach($oBonos as $b)
               <tr > 
                 <td class="static"><input type="radio" name="id_bono" value="{{$b->id}}" class="form-control"/></td>
-                <td class="t-left static-2"><label>{{$b->name}}</label></td>
+                <td class="t-left static-2"><label>{{$b->name}}</label><?php echo ($uFidelity && $b->tarifa == 'fidelity') ? '<i class="fa fa-heart text-success"></i>' : ''; ?></td>
                 <td class="first-col"></td>
                 <td>
                   <?php 
@@ -39,7 +39,11 @@
                   ?>
                 </td>
                 <td>{{$b->qty}}</td>
-                <td><input type="text" name="price_{{$b->id}}" value="{{$b->price}}" class="form-control only-numbers"></td>
+                <?php 
+                  $price = $b->price;
+                  if ($uFidelity == 1 && $b->tarifa == 'fidelity') $price = priceFidelity($price);
+                  ?>
+                <td><input type="text" name="price_{{$b->id}}" value="{{$price}}" class="form-control only-numbers"></td>
               </tr>
               @endforeach
             @endif

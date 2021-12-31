@@ -39,13 +39,20 @@
       <label for="password">Contraseña</label>
     </div>
   </div>
-  <div class="col-md-3 mt-1">
+  <div class="col-md-2 mt-1 fFIDELITY">
+    <select name="fidelity" class="form-control">
+      <option value="0" >PLAN BASICO</option>
+      <option value="1" <?php if($fidelity == 1) echo "selected"; ?>>FIDELITY</option>
+    </select>
+    <?php if($fidelity == 1) echo '<i class="fa fa-heart text-success"></i>'; ?>
+  </div>
+  <div class="col-md-2 mt-1">
     <select name="status" class="form-control">
       <option value="1" <?php if($user->status == 1) echo "selected"; ?>>Activo</option>
       <option value="0" <?php if($user->status != 1) echo "selected"; ?>>No Activo</option>
     </select>
   </div>
-  <div class="col-md-3 mt-1">
+  <div class="col-md-2 mt-1">
     <button class="btn btn-success" type="submit">
       <i class="fa fa-floppy-o" aria-hidden="true"></i> Actualizar
     </button>

@@ -210,6 +210,10 @@ class UsersController extends Controller {
 
     $userToUpdate->telefono = $request->input('telefono');
     $userToUpdate->save();
+    
+    if ($request->has('fidelity')){
+      $userToUpdate->setMetaContent('FIDELITY',$request->input('fidelity'));
+    }
     return redirect()->back()->with('success', 'Cliente actualizado');
   }
   public function update(Request $request) {

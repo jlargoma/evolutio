@@ -103,6 +103,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::post('/tarifas/create', 'RatesController@create');
   Route::get('/tarifas/actualizar/{id}', 'RatesController@actualizar');
   Route::get('/tarifas/update', 'RatesController@update');
+  Route::post('/tarifas/upd_fidelity', 'RatesController@upd_fidelity');
   Route::get('/tarifas/delete/{id}', 'RatesController@delete');
   Route::get('/tarifas/stripe/{id}', 'RatesController@createStripe');
   Route::get('/rates/unassigned/{idUserRate}', 'RatesController@unassignedRate');
@@ -111,6 +112,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::get('/bonos/listado', 'BonosController@index');
   Route::post('/bonos/create', 'BonosController@create');
   Route::get('/bonos/update', 'BonosController@update');
+  Route::post('/bonos/upd_fidelity', 'BonosController@upd_fidelity');
   Route::get('/bonos/delete/{id}', 'BonosController@delete');
   Route::get('/bonos/sharedBono/{id}/{serv_id}', 'BonosController@sharedBono');
   Route::get('/bonos/sharedBono-get/{id}/{serv_id}', 'BonosController@sharedBono_getlst');

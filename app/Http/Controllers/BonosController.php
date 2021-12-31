@@ -73,6 +73,14 @@ class BonosController extends Controller {
     die('error');
   }
 
+  public function upd_fidelity(Request $request) {
+    $id = $request->input('id');
+    $oObj = Bonos::find($id);
+    $oObj->tarifa = $request->input('val');
+    if ($oObj->save()) return 'OK';
+    return 'ERROR';
+  }
+  
   public function delete($id) {
     $oObj = Bonos::find($id);
     $oObj->status = 0;
@@ -166,7 +174,7 @@ class BonosController extends Controller {
     
     $oUser = \App\Models\User::find($uId);
     if ($oUser && $oUser->id == $uId){
-      
+      $fidelity = $oUser->getMetaContent('FIDELITY');
       //--------------------------------//
       //--  BEGIN: STRIPE    ----------//
       $pStripe = null;
@@ -189,7 +197,8 @@ class BonosController extends Controller {
         'type'=>$t,
         'id_back'=>$id,
         'typesRate'=> \App\Models\TypesRate::pluck('name','id')->toArray(),
-        'rate_subf'=> \App\Models\TypesRate::subfamily()
+        'rate_subf'=> \App\Models\TypesRate::subfamily(),
+        'uFidelity'=>$fidelity
     ]);
       
     }
