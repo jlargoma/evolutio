@@ -179,6 +179,14 @@ class User extends Authenticatable
     
   }
   
+  public function getMetaUserID_byKey($keys) {
+    
+    return DB::table('user_meta')
+            ->where('meta_key',$keys)
+            ->pluck('user_id')->toArray();
+    
+  }
+  
   function getPayCard(){
       
     $paymentMethod = null;

@@ -15,7 +15,9 @@
     $coach = isset($aCoachs[$r->id_coach]) ? $aCoachs[$r->id_coach] : '--';
     ?>
     <tr>
-      <td>{{$aux->name}}</td>
+      <td>{{$aux->name}}
+      <?php if($r->tarifa == 'fidelity') echo '<i class="fa fa-heart text-success"></i>'; ?>
+      </td>
       <td>{{$coach}}</td>
       <td><input type="number" step="0.01" data-r="{{$r->id}}" value="{{$r->price}}" class="subscr_price">€</td>
       <td>
@@ -40,8 +42,16 @@
       <div class="form-material">
         <select class="form-control" id="id_rateSubscr" name="id_rate" style="width: 100%; cursor: pointer" data-placeholder="Seleccione tarifas.." >
           <option></option>
-          <?php foreach ($subscrRates as $rate): ?>
-            <option value="{{$rate->id}}" data-t="{{$rate->type}}" data-p="{{$rate->price}}">
+          <?php foreach ($subscrRates as $rate): 
+              $price = $rate->price;
+              $tarifa = '';
+              if ($uFidelity == 1 && $rate->tarifa == 'fidelity'){
+                $tarifa = 'fidelity';
+                $price = priceFidelity($price);
+              }
+  
+            ?>
+            <option value="{{$rate->id}}" data-t="{{$rate->type}}" data-p="{{$price}}" data-tarifa="{{$tarifa}}">
               <?php echo $rate->name ?>
             </option>
           <?php endforeach ?>
@@ -62,11 +72,14 @@
         <label for="id_rate">Entrenador</label>
       </div>
     </div>
-    <div class="col-md-3  push-20">
+    <div class="col-md-2  push-20">
       <div class="form-material">
         <input class="form-control" type="number" id="r_price" name="r_price" step="0.01" required value="">
         <label for="price">Precio</label>
       </div>
+    </div>
+    <div class="col-md-1 push-20 fFIDELITY">
+      <i class="fa fa-heart text-success" id="servFidelity" style="display:none"></i>
     </div>
     <div class="col-md-2  push-20">
       <button class="btn btn-success">Agregar</button>

@@ -72,6 +72,7 @@ class SubscPaymentNextMonth extends Command {
           $uRate->id_rate = $rID;
           $uRate->coach_id = $cID;
           $uRate->price   = $s->price;
+          $uRate->tarifa  = $s->tarifa;
           $uRate->rate_year = $year;
           $uRate->rate_month = $month;
           $uRate->save();

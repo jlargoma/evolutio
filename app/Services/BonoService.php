@@ -228,4 +228,34 @@ class BonoService {
       }
     }
   }
+  
+  function fidelityADD($userID,$rTypeID) {
+    
+    $oUsrBono = UserBonos::where('user_id',$userID)
+              ->where('rate_type',$rTypeID)->first();
+    if (!$oUsrBono){
+        //reintegro la cantidad utilizada
+      $oUsrBono = new UserBonos();
+      $oUsrBono->user_id = $userID;
+      $oUsrBono->rate_type = $rTypeID;
+      $oUsrBono->qty = 0;
+    }
+    
+    //agrego la cantidad utilizada
+    $total = ($oUsrBono->qty) + 1;
+    $oUsrBono->qty  = $total;
+    $oUsrBono->save();
+    
+    //Agrego el nuevo log
+    $newObj = new UserBonosLogs();
+    $newObj->user_bonos_id = $oUsrBono->id;
+    $newObj->charge_id = -1;
+    $newObj->bono_id = null;
+    $newObj->price = 0;
+    $newObj->incr = 1;
+    $newObj->total = $total;
+    $newObj->text = 'Tarifa FIDELITY';
+    $newObj->save();
+      
+  }
 }

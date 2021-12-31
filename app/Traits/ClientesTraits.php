@@ -29,6 +29,7 @@ trait ClientesTraits {
     $months = lstMonthsSpanish(false);
     unset($months[0]);
 
+    $oUser = new User();
     $detail = [];
     $payments = $noPay = 0;
     $status = isset($request->status) ? $request->status : 1;
@@ -92,7 +93,9 @@ trait ClientesTraits {
     } else {
       $detail = null;
     }
-    $aCoachs = User::whereCoachs('teach')->orderBy('name')->pluck('name', 'id')->toArray();
+    $aCoachs = $oUser->whereCoachs('teach')->orderBy('name')->pluck('name', 'id')->toArray();
+    
+    $uFidelities = $oUser->getMetaUserID_byKey('FIDELITY');
     return view('/admin/usuarios/clientes/index', [
         'users' => $users,
         'month' => $month,
@@ -104,6 +107,7 @@ trait ClientesTraits {
         'detail' => $detail,
         'months' => $months,
         'aCoachs' => $aCoachs,
+        'uFidelities' => $uFidelities,
         'total_pending' => array_sum($arrayPaymentMonthByUser),
     ]);
   }
@@ -381,7 +385,7 @@ trait ClientesTraits {
         'totalInvoice' => $totalInvoice,
         'invoiceModal' => $invoiceModal,
         'valora' => $valoracion,
-        'fidelity' => $fidelity,
+        'uFidelity' => $fidelity,
         'u_current'=>Auth::user()->id
     ]);
   }
@@ -398,19 +402,26 @@ trait ClientesTraits {
     if (!$oRate) {
       return redirect('/admin/usuarios/informe/' . $uID . '/servic')->withErrors(['Servicio no encontrada']);
     }
+    
+    $uFidelity = $oUser->getMetaContent('FIDELITY');
+    $tarifa = ($uFidelity == 1 && $oRate->tarifa == 'fidelity') ? 'fidelity' : '';
+              
 
     $oObj = new UserRates();
     $oObj->id_user = $uID;
     $oObj->id_rate = $rID;
     $oObj->rate_year = date('Y');
     $oObj->rate_month = date('m');
+    $oObj->tarifa = $tarifa;
     $oObj->price = $price;
+    $oObj->coach_id = $request->input('id_rateCoach');
     $oObj->save();
 
     $oObj = new \App\Models\UsersSuscriptions();
     $oObj->id_user = $uID;
     $oObj->id_rate = $rID;
     $oObj->price = $price;
+    $oObj->tarifa = $tarifa;
     $oObj->id_coach = $request->input('id_rateCoach');
     $oObj->save();
 

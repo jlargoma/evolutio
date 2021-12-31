@@ -212,7 +212,17 @@ class UsersController extends Controller {
     $userToUpdate->save();
     
     if ($request->has('fidelity')){
+      $oldFidelity = $userToUpdate->getMetaContent('FIDELITY');
       $userToUpdate->setMetaContent('FIDELITY',$request->input('fidelity'));
+      
+      // agrega un bono de Fisio y otro de Nutry
+      if (!$oldFidelity && $request->input('fidelity') == 1){
+        $sBono = new \App\Services\BonoService();
+        $rateBonos = \App\Models\TypesRate::whereIn('type',['fisio','nutri'])->pluck('id');
+        foreach ($rateBonos as $rTypeID){
+          $sBono->fidelityADD($userToUpdate->id, $rTypeID);
+        }
+      }
     }
     return redirect()->back()->with('success', 'Cliente actualizado');
   }

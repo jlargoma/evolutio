@@ -144,6 +144,10 @@
         $('#id_rateSubscr').on('change',function (e) {
           var obj  = $(this).find(':selected');
           var data = obj.data('t');
+          
+          if (obj.data('tarifa') == 'fidelity') $('#servFidelity').show();
+            else $('#servFidelity').hide();
+            
           $('#r_price').val(obj.data('p'));
           if (data == 'pt'){
             $('#rateCoach').removeClass('disabled');
