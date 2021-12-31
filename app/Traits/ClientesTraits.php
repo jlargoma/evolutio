@@ -330,7 +330,16 @@ trait ClientesTraits {
     //----------------------//
     // TARIFAS FIDELITY
     $fidelity = $user->getMetaContent('FIDELITY');
-    
+    // Already Signed  -------------------------------------------
+     $sing_contrato = false;
+    if ($fidelity !== null){
+      $fileName = $user->getMetaContent('contrato_FIDELITY_'.$fidelity);
+      $path = storage_path('app/'.$fileName);
+      if ($fileName && File::exists($path)){
+        $sing_contrato = true;
+      }
+    }
+    //END: Already Signed  -------------------------------------------
     //----------------------//
     //Invoices
     $invoices = \App\Models\Invoices::whereYear('date', '=', $year)
@@ -386,6 +395,7 @@ trait ClientesTraits {
         'invoiceModal' => $invoiceModal,
         'valora' => $valoracion,
         'uFidelity' => $fidelity,
+        'sing_contrato' => $sing_contrato,
         'u_current'=>Auth::user()->id
     ]);
   }

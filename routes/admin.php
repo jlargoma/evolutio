@@ -37,6 +37,8 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::get('/usuarios/activate/{id}', 'UsersController@activate');
   Route::get('/usuarios/nuevo', 'UsersController@newCustomer');
   Route::post('/usuarios/nuevo', 'UsersController@saveCustomer');
+  Route::get('/see-contrato/{id}/{type}', 'CustomerController@seeContracts');
+  Route::post('/usuarios/remove-contrato', 'CustomerController@rmContracts');
 
   /* Citas */
   Route::post('/citas/checkDisp', 'DatesController@checkDateDisp');

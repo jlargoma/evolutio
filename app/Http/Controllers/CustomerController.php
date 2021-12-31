@@ -320,5 +320,204 @@ class CustomerController extends Controller {
     return $response;
   }
   
+  
+  
+  /*
+ * -----------------------------------------------------------
+ *  CONTRATOS
+ * -----------------------------------------------------------
+ */
+
+  
+  function seeContracts($uID){
+    $oUser = User::find($uID);
+    if (!$oUser){
+      return redirect('404')->withErrors(['Cliente no encontrado']);
+    }
+    
+    $fidelity = $oUser->getMetaContent('FIDELITY');
+    // Already Signed  -------------------------------------------
+    $sing_contrato = false;
+    if ($fidelity !== null){
+      $fileName = $oUser->getMetaContent('contrato_FIDELITY_'.$fidelity);
+      $path = storage_path('app/'.$fileName);
+      if ($fileName && File::exists($path)){
+        return response()->file($path, [
+        'Content-Disposition' => str_replace('%name', 'Contrato ', "inline; filename=\"%name\"; filename*=utf-8''%name"),
+        'Content-Type'        => 'application/pdf'
+        ]);
+      }
+    }
+    
+   
+
+    return redirect('404')->withErrors(['Contrato no encontrado']);
+  }
+  
+  
+  
+
+  function downlContract($code,$control) {
+    $data = $this->getContracts($code,$control);
+    if ($data['sign']){
+      return response()->download($data['path'], 'contrato-EVOLUTIO.pdf', [], 'inline');
+    } 
+    
+    return back()->withErrors(['contrato no encontrado']);
+        
+  }
+  
+
+  
+  function signContrato($code,$control) {
+    return view('customers.contrato', $this->getContracts($code,$control));
+  }
+  
+  
+  public function rmContracts(Request $request) {
+    $uID = $request->input('id_user');
+    
+    $oUser = User::find($uID);
+    if (!$oUser){
+      return response()->json(['error','cliente no encontrado']);
+    }
+    
+    $fidelity = $oUser->getMetaContent('FIDELITY');
+    // Already Signed  -------------------------------------------
+    if ($fidelity !== null){
+      $fileName = $oUser->setMetaContent('contrato_FIDELITY_'.$fidelity, null);
+      return response()->json(['OK','Contrato removido']);
+    }
+      
+    return response()->json(['error','Contrato no encontrad']);
+    
+  }
+  public function signContratoSave(Request $request,$code,$control) {
+    $data = $this->getContracts($code,$control);
+    
+    $dni = $request->input('dni');
+    $sign = $request->input('sign');
+    $encoded_image = explode(",", $sign)[1];
+    $decoded_image = base64_decode($encoded_image);
+    
+    $data = $this->getContracts($code,$control);
+    if (isset($data['error'])){
+      return redirect('404')->withErrors([$data['error']]);
+    }
+    $text = $data['text'];
+    $tit = $data['tit'];
+    $oUser = $data['user'];
+    
+    //Signs -------------------------------------------
+    $data['signFile'] = $encoded_image;
+    $data['dni'] = $dni;
+    
+    //PDF -------------------------------------------
+    $pdf = \App::make('dompdf.wrapper');
+    $pdf->getDomPDF()->set_option("enable_php", true);
+    $pdf->loadView('customers.contratosDownl',$data);
+//    return view('customers.contratosDownl',$data);
+    $output = $pdf->output();
+//        return $pdf->download('invoice.pdf');
+//    return $pdf->stream();
+        
+    //save document
+    $uFidelities = $oUser->getMetaContent('FIDELITY');
+    
+    $fileName = 'contracts/Contrato-'. $oUser->id .'-'.time().'.pdf';
+    $path = storage_path('/app/' . $fileName);
+        
+    $oUser->setMetaContent('contrato_FIDELITY_'.$uFidelities,$fileName);
+    $storage = \Illuminate\Support\Facades\Storage::disk('local');
+    $storage->put($fileName, $output);
+    
+    //---------------------------------------------------
+    // Send Mail
+    $subject = "Contrato $tit";
+    $mailContent = 'Hola '.$oUser->name.', <br/><br/>';
+    $mailContent .= '<p>Gracias por firmar su contrato del <b>'.$tit.'</b> con nuestro centro de entranamientos <b>EVOLUTIO.FIT</b>';
+    $mailContent .= '<p>Le adjuntamos el documento firmado</p>';
+    $mailContent .= '<br/><br/><br/><p>Muchas Gracias.!</p>';
+    $email = $oUser->email;
+    try{
+      
+      Mail::send('emails.base', [
+            'mailContent' => $mailContent,
+            'title'       => $subject,
+            'tit'       => $subject
+        ], function ($message) use ($subject,$email,$path,$fileName) {
+            $message->from(env('MAIL_FROM_ADDRESS'),env('MAIL_FROM_NAME'));
+            $message->subject($subject);
+            $message->to($email);
+            $message->attach( $path, array(
+                            'as' => $fileName.'.pdf', 
+                            'mime' => 'application/pdf'));
+        });
+        
+      return redirect('/resultado')->with(['success' => 'Firma Guardada']);
+    } catch (\Exception $e){
+      return $e->getMessage();
+    }
+    //---------------------------------------------------
+  }
+  
+  
+  
+    /*
+   * If the contract is signed, show the PDF
+   */
+  function getContracts($code,$control){
+    
+    $data = \App\Services\LinksService::getLinkData($code,$control);
+    if (!$data){
+      return ['error'=>'Contrato no encontrado'];
+    }
+    
+    $oUser = User::find($data[0]);
+    if (!$oUser || $data[0] != $oUser->id){
+      return ['error'=>'Contrato no encontrado'];
+    }
+    
+    $text = '';
+    $uFidelities = $oUser->getMetaContent('FIDELITY');
+    $oClientesContratos = new \App\Helps\ClientesContratos();
+    if ($uFidelities){
+        $tit = 'PLAN FIDELITY';
+        $text = $oClientesContratos->planFIDELITY();
+    } else {
+        $tit = 'PLAN BASICO';
+        $text = $oClientesContratos->planNormal();
+    }
+    
+    
+     // Already Signed  -------------------------------------------
+    if ($uFidelities !== null){
+      $fileName = $oUser->getMetaContent('contrato_FIDELITY_'.$uFidelities);
+      $path = storage_path('app/'.$fileName);
+      if ($fileName && File::exists($path)){
+        return [
+          'path' => $path,
+          'sign' => true,
+          'text' => null,
+          'error' => null,
+          'user' => null,
+          'tit' =>$tit, 
+          'url' =>"/descargrar-contrato/$code/$control", 
+        ];
+      }
+    }
+    //END: Already Signed  -------------------------------------------
+    
+
+    return[
+      'user'=>$oUser,  
+      'name'=>$oUser->name,  
+      'text'=>$text,  
+      'tit' =>$tit,  
+      'url' =>"/firmar-contrato/$code/$control", 
+      'error' => null,
+      'sign' => false
+    ];
+  }
 
 }

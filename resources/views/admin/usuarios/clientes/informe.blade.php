@@ -198,6 +198,25 @@
           
           
         });
+        $('.rmContrato').on('click', function () {
+          if (confirm('Cancelar y volver a solicitar el contrato?')){
+            var posting = $.post('/admin/usuarios/remove-contrato', {
+              _token: '{{csrf_token()}}',
+              id_user: {{$user->id}},
+            });
+            posting.done(function (data) {
+              if (data[0] == 'OK') {
+                window.show_notif('success', data[1]);
+              } else {
+                window.show_notif('error', data[1]);
+              }
+            });
+            posting.fail(function (data) {
+              window.show_notif('error', 'UPs, algo salió mal');
+            });
+          }
+          
+        });
         /**************************************************/
         $('.sendValora').on('click', function () {
           var posting = $.post('/admin/usuarios/send-valoracion', {

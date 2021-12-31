@@ -475,18 +475,36 @@ class UsersController extends Controller {
       return response()->json(['error',$email.' no es un mail válido']);
     }
     
-    $doc = $tit = '';
+    $doc = $tit = $subject = $link = '' ;
     $code = 0;
     switch ($type){
       case 'fisioIndiba':
         $tit = 'CONSENTIMIENTO FISIOTERAPIA CON INDIBA';
         $doc = 'CONSENTIMIENTO-FISIOTERAPIA-CON-INDIBA.pdf';
         $code = 1001;
+        $link = URL::to('/firmar-consentimiento/').'/';
+        $subject = 'Firma de consentimiento';
         break;
       case 'sueloPelvico':
         $tit = 'CONSENTIMIENTO SUELO PELVICO';
         $doc = 'CONSENTIMIENTO-SUELO-PELVICO.pdf';
         $code = 2002;
+        $link = URL::to('/firmar-consentimiento/').'/';
+        $subject = 'Firma de consentimiento';
+        break;
+      case 'contrato':
+        
+        $uFidelities = $oUser->getMetaContent('FIDELITY');
+        if ($uFidelities){
+            $tit = 'CONTRATO PLAN FIDELITY';
+            $subject = 'Firma de contrato: PLAN FIDELITY';
+        } else {
+            $tit = 'CONTRATO PLAN NORMAL';
+            $subject = 'Firma de contrato: PLAN NORMAL';
+        }
+        $code = 3003;
+        $link = URL::to('/firmar-contrato/').'/';
+        
         break;
       default:
         $tit = '';
@@ -494,12 +512,12 @@ class UsersController extends Controller {
         break;
     }
     
-    $link = URL::to('/firmar-consentimiento/').'/';
+   
     $link .= \App\Services\LinksService::getLink([$uID,$code,time()]);
     
     
-    $sended = Mail::send('emails._sign-consent', ['user' => $oUser,'tit'=>$tit,'link'=>$link], function ($message) use ($email) {
-          $message->subject('Firma de consentimiento');
+    $sended = Mail::send('emails._sign-consent', ['user' => $oUser,'tit'=>$tit,'link'=>$link], function ($message) use ($subject,$email) {
+          $message->subject($subject);
           $message->from(config('mail.from.address'), config('mail.from.name'));
           $message->to($email);
         });
