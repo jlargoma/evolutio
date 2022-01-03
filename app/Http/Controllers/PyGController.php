@@ -8,6 +8,7 @@ use DB;
 use App\Models\Expenses;
 use App\Models\Charges;
 use App\Services\CoachLiqService;
+use App\Models\User;
 
 class PyGController extends Controller {
 
@@ -178,8 +179,12 @@ class PyGController extends Controller {
     $currentY['Gastos'] = $aux;
     
     /***************************************/
+    $oUser = new User();
     $subscs = \App\Models\UsersSuscriptions::count();
-    $uActivs = \App\Models\User::where('status',1)->count();
+    $uActivs = User::where('status',1)->count();
+    $uFidelities = $oUser->getMetaUserID_byKey('FIDELITY',1);
+    $subscsFidelity = \App\Models\UsersSuscriptions::whereIn('id_user',$uFidelities)->count();
+    $uActivsFidelity = \App\Models\User::where('status',1)->whereIn('id',$uFidelities)->count();
     /***************************************/
         
     $aux_i = $aux_e = $months_empty; 
@@ -199,7 +204,9 @@ class PyGController extends Controller {
         'aux_i'=>$aux_i,
         'aux_e'=>$aux_e,
         'tIncomes'=>$tIncomes,
-        'pay_method'=>$pay_method
+        'pay_method'=>$pay_method,
+        'subscsFidelity'=>$subscsFidelity,
+        'uActivsFidelity'=>$uActivsFidelity
   ]);
   }
 

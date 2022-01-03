@@ -414,7 +414,16 @@ class CustomerController extends Controller {
     
     //PDF -------------------------------------------
     $pdf = \App::make('dompdf.wrapper');
-    $pdf->getDomPDF()->set_option("enable_php", true);
+    $pdf->getDomPDF()->set_option("enable_php", true)->setHttpContext(
+        stream_context_create([
+            'ssl' => [
+                'allow_self_signed'=> TRUE,
+                'verify_peer' => FALSE,
+                'verify_peer_name' => FALSE,
+            ]
+        ])
+    );
+    
     $pdf->loadView('customers.contratosDownl',$data);
 //    return view('customers.contratosDownl',$data);
     $output = $pdf->output();
@@ -446,7 +455,7 @@ class CustomerController extends Controller {
             'title'       => $subject,
             'tit'       => $subject
         ], function ($message) use ($subject,$email,$path,$fileName) {
-            $message->from(env('MAIL_FROM_ADDRESS'),env('MAIL_FROM_NAME'));
+            $message->from(config('mail.from.address'), config('mail.from.name'));
             $message->subject($subject);
             $message->to($email);
             $message->attach( $path, array(

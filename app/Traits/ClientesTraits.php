@@ -94,8 +94,17 @@ trait ClientesTraits {
       $detail = null;
     }
     $aCoachs = $oUser->whereCoachs('teach')->orderBy('name')->pluck('name', 'id')->toArray();
-    
-    $uFidelities = $oUser->getMetaUserID_byKey('FIDELITY');
+
+    /**/
+    $uFidelities = $oUser->getMetaUserID_byKey('FIDELITY',1);
+    $sql = DB::table('user_meta')
+            ->where('meta_key','FIDELITY')
+            ->where('meta_value',0)
+            ->where('created_at','>=',date('Y-m-d', strtotime('-12 months')));
+     
+    $uFidelitiesPenal =  $sql->pluck('user_id')->toArray();
+//    dd($uFidelitiesPenal);
+    /**/
     return view('/admin/usuarios/clientes/index', [
         'users' => $users,
         'month' => $month,
@@ -108,6 +117,7 @@ trait ClientesTraits {
         'months' => $months,
         'aCoachs' => $aCoachs,
         'uFidelities' => $uFidelities,
+        'uFidelitiesPenal' => $uFidelitiesPenal,
         'total_pending' => array_sum($arrayPaymentMonthByUser),
     ]);
   }

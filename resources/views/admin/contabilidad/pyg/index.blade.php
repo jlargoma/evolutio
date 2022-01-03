@@ -47,8 +47,42 @@ function sumMonthValue($m){
         </span></div>
     </div>
     <div class="col-lg-3 col-md-6 col-xs-12 col-smal">
-      <div class="box"><h2>Suscripciones activas</h2><span>{{$subscs}}</span></div>
-      <div class="box"><h2>Clientes activos</h2><span>{{$uActivs}}</span></div>
+      <div class="box">
+        <h2>Suscripciones activas</h2><span>{{$subscs}}</span>
+        <table class="table tFidelity">
+          <tr>
+            <th colspan="2">Fidelity</th>
+            <th colspan="2">Plan Básico</th>
+          </tr>
+          <?php 
+            $subscsFidelityPerc = ($subscs>0) ? round($subscsFidelity/$subscs*100):0;
+          ?>
+          <tr>
+          <td> {{$subscsFidelity}}</td>
+          <td class="text-danger">{{$subscsFidelityPerc}}%</td>
+          <td> {{$subscs-$subscsFidelity}}</td>
+          <td class="text-danger"> {{100-$subscsFidelityPerc}}%</td>
+          </tr>
+        </table>
+      </div>
+      <div class="box">
+        <h2>Clientes activos</h2><span>{{$uActivs}}</span>
+        <table class="table tFidelity">
+          <tr>
+            <th colspan="2">Fidelity</th>
+            <th colspan="2">Plan Básico</th>
+          </tr>
+          <?php 
+            $uActivsFidelityPerc = ($uActivs>0) ? round($uActivsFidelity/$uActivs*100):0;
+          ?>
+          <tr>
+          <td> {{$uActivsFidelity}}</td>
+          <td class="text-danger">{{$uActivsFidelityPerc}}%</td>
+          <td> {{$uActivs-$uActivsFidelity}}</td>
+          <td class="text-danger"> {{100-$uActivsFidelityPerc}}%</td>
+          </tr>
+        </table>
+      </div>
     </div>
     <div class="col-lg-3 col-sm-6 col-xs-12 chart_1">
       <canvas id="chart_1" width="50" height="50"></canvas>
@@ -137,6 +171,15 @@ tfoot tr td {
   display: inline-block;
   margin-right: 4px;
   margin-bottom: -2px;
+}
+.tFidelity {
+  font-size: 21px;
+  font-weight: 600;
+}
+.tFidelity th {
+    background-color: #cfe4f3;
+    color: #000;
+    text-align: center;
 }
 @media(min-width:430px) {
   .chart_1{

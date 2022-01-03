@@ -129,8 +129,7 @@ class User extends Authenticatable
     $updated =  DB::table('user_meta')->where('user_id',$this->id)
               ->where('meta_key',$key)
               ->update(['meta_value' => $content]);
-
-    if (!$updated) {
+    if ($updated == null) {
       DB::table('user_meta')->insert(
             ['user_id' => $this->id, 'meta_key' => $key,'meta_value' => $content]
         );
@@ -179,11 +178,14 @@ class User extends Authenticatable
     
   }
   
-  public function getMetaUserID_byKey($keys) {
+  public function getMetaUserID_byKey($keys,$val=null) {
     
-    return DB::table('user_meta')
-            ->where('meta_key',$keys)
-            ->pluck('user_id')->toArray();
+    $sql = DB::table('user_meta')
+            ->where('meta_key',$keys);
+    if ($val)
+      $sql->where('meta_value',$val);
+     
+    return $sql->pluck('user_id')->toArray();
     
   }
   
