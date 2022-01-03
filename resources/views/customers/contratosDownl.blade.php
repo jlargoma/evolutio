@@ -8,11 +8,12 @@
   .img-logo{
     width: 290px;
     margin-bottom: 50px;
+    margin-top: -50px;
   }
   .contratoBox{
     max-width: 860px;
     margin: 50px auto;
-    font-size: 16px;
+    font-size: 12px;
     padding: 30px 10px 45px 50px;
     background-color: #FFF;
   }
@@ -33,7 +34,7 @@
     max-width: 100%;
   }
 .contratoBox h1 {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: bold;
     text-align: center;
     margin-left: -1em;
@@ -46,7 +47,7 @@ margin-bottom: 14px;
 }
 .contratoBox .body,
 .contratoBox .body p{
-  font-size: 13px;
+  font-size: 11px;
   /*text-indent: 5px;*/
   text-align: justify;
 }
@@ -56,6 +57,10 @@ margin-bottom: 14px;
 .month {
     height: 20px;
     font-weight: bold;
+}
+div.saltopagina{
+   display:block;
+   page-break-before:always;
 }
 </style>
 @endsection

@@ -25,6 +25,7 @@ personal del centro se encargará de realizar la comprobación y archivarla para
 específicos. Además, las salas se ventilarán 5 minutos entre un paciente y otro.
  </li>
 </ul>
+<div class='saltopagina'></div>
 <h2>CONDICIONES GENERALES DEL CONTRATO – PLAN FIDELITY</h2>
 <p><strong>1. ACCESO A LAS INSTALACIONES:</strong> El titular del contrato podrá acceder al centro dentro del horario de apertura. Una vez dentro, es obligatorio
 cumplir las normas y medidas de seguridad para el COVID-19 y sus diferentes variantes (consultar la sección anterior).
@@ -91,10 +92,7 @@ personal del centro se encargará de realizar la comprobación y archivarla para
 específicos. Además, las salas se ventilarán 5 minutos entre un paciente y otro.
  </li>
 </ul>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+<div class='saltopagina'></div>
 <h2>CONDICIONES GENERALES DEL CONTRATO – PLAN NORMAL</h2>
 <p><strong>1. ACCESO A LAS INSTALACIONES:</strong> El titular del contrato podrá acceder al centro dentro del horario de apertura. Una vez dentro, es obligatorio
 cumplir las normas y medidas de seguridad para el COVID-19 y sus diferentes variantes (consultar la sección anterior).

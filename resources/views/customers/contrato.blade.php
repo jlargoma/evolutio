@@ -103,6 +103,9 @@ endif;
     font-size: 11px;
     padding: 3px;
   }
+  div.saltopagina{
+      display: none;
+   }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
 <script type="text/javascript">
