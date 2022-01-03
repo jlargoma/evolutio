@@ -32,7 +32,7 @@ class Expenses extends Model
         'suministros' => 'SUMINISTROS',
         'varios' => 'VARIOS',
     ];
-  }
+  }        
   static function getTypesGroup(){
     return [
             'names'=> [
@@ -40,6 +40,7 @@ class Expenses extends Model
               'impuestos' => 'IMPUESTOS',
               'renting' => 'RENTING',
               'sueldos_y_salarios' => 'SUELDOS Y SALARIOS',
+              'software' => 'SOFTWARE',
               'suministros' => 'SUMINISTROS',
               'gasto_material' => 'GASTO MATERIAL',
               'marketing_y_publicidad' => 'MARKETING Y PUBLICIDAD',
@@ -60,9 +61,9 @@ class Expenses extends Model
                 'otros' => 'otros',
                 'renting_fisioterapia' => 'renting',
                 'seguros' => 'otros',
-                'software' => 'sueldos_y_salarios',
-                'seguros_soc' => 'sueldos_y_salarios',
-                'servicios_prof' => 'sueldos_y_salarios',
+                'software' => 'software',
+                'seguros_soc' => 'software',
+                'servicios_prof' => 'software',
                 'suministros' => 'suministros',
                 'limpieza' => 'suministros',
                 'impuestos' => 'impuestos',

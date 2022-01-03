@@ -63,6 +63,7 @@ class ExpensesController extends Controller {
       foreach ($gTypeGroup_g as $k => $v) {
         $listGastos_g[$v] = $months_empty;
       }
+      $listGastos_g['sueldos_y_salarios'] = $months_empty;
       $listGastos_g['otros'] = $months_empty;
     }
     $totalYearAmount = 0;
