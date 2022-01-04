@@ -253,7 +253,7 @@ class DatesController extends Controller {
               $dateTime = $dateTime[0].' '.$oObj->customTime;
         }
         $dateZone = 'Europe/Madrid';
-        $dateZone = 'America/Argentina/Buenos_Aires';
+        //$dateZone = 'America/Argentina/Buenos_Aires';
         $dateStart = new \DateTime($dateTime,new \DateTimeZone($dateZone));
         $dateEnd = new \DateTime($dateTime,new \DateTimeZone($dateZone));
         $dateEnd->modify('+1 hours');
