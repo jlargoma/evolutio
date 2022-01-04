@@ -236,13 +236,49 @@ class DatesController extends Controller {
     }
     
     
-    
-    
+   
     if ($oObj->save()) {
         $timeCita = strtotime($oObj->date);
         $service = Rates::find($oObj->id_rate);
         $coach = User::find($oObj->id_coach);
         $oRate = Rates::find($oObj->id_rate);
+        
+
+        /**BEGIN: prepare iCAL **/
+        $uID = str_pad($oObj->id, 7, "0", STR_PAD_LEFT);
+        $invite = new \App\Services\InviteICal($uID);
+        $dateTime = $oObj->date;
+        if ($oObj->customTime){
+              $dateTime = explode(' ', $oObj->date);
+              $dateTime = $dateTime[0].' '.$oObj->customTime;
+        }
+        $dateZone = 'Europe/Madrid';
+        $dateZone = 'America/Argentina/Buenos_Aires';
+        $dateStart = new \DateTime($dateTime,new \DateTimeZone($dateZone));
+        $dateEnd = new \DateTime($dateTime,new \DateTimeZone($dateZone));
+        $dateEnd->modify('+1 hours');
+        $dateStart->setTimezone(new \DateTimeZone('UTC'));
+        $dateEnd->setTimezone(new \DateTimeZone('UTC'));
+        $icsDetail = 'Tienes una cita con tu ';
+        switch ($type){
+          case 'nutri':
+            $icsDetail.= 'Nutricionista ';
+            break;
+          case 'fisio':
+            $icsDetail.= 'Fisioterapeuta ';
+            break;
+          case 'pt':
+            $icsDetail.= 'Entrenador ';
+            break;
+        }
+        $icsDetail.= $coach->name;  
+        $invite->setSubject($oRate->name)
+          ->setDescription($icsDetail)
+          ->setStart($dateStart)
+          ->setEnd($dateEnd)
+          ->setCreated(new \DateTime());
+        $calFile = $invite->save();
+        /** END:  prepare iCAL **/
       /* -------------------------------------------------------------------- */
         if ($type == 'pt') {
 
@@ -250,7 +286,7 @@ class DatesController extends Controller {
           $subjet = 'Nueva cita en Evolutio';
           if ($ID)  $subjet = 'Actualización de su cita';
 
-          MailController::sendEmailCita($oObj, $oUser, $oRate, $coach, $importe, $subjet);
+          MailController::sendEmailCita($oObj, $oUser, $oRate, $coach, $importe, $subjet,$calFile);
           return redirect('/admin/citas-pt/edit/' . $oObj->id);
         }
         /* -------------------------------------------------------------------- */
@@ -268,7 +304,7 @@ class DatesController extends Controller {
         $subjet = 'Nueva cita en Evolutio';
         if ($ID)
           $subjet = 'Actualización de su cita';
-        MailController::sendEmailPayDateByStripe($oObj, $oUser, $oRate, $coach, $pStripe, $importe, $subjet);
+        MailController::sendEmailPayDateByStripe($oObj, $oUser, $oRate, $coach, $pStripe, $importe, $subjet,$calFile);
         /* -------------------------------------------------------------------- */
         
       if ($type == 'nutri')

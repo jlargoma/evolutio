@@ -93,6 +93,9 @@ class RememberAppointment extends Command {
                       $message->subject($subj);
                       $message->from(config('mail.from.address'), config('mail.from.name'));
                       $message->to($email);
+                      $message->attach(public_path('/img/protocolo.jpeg'), array(
+                            'as' => 'Protocolo Covid', 
+                            'mime' => 'image/jpeg'));
               });
             } catch (\Exception $ex) {
               return ($ex->getMessage());

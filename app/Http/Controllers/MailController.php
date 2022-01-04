@@ -102,7 +102,7 @@ class MailController extends Controller
 		return (!$sended) ? true : false;
 	}
         
-    public static function sendEmailPayDateByStripe($oDate, $oUser, $oRate,$oCoach,$pStripe,$importe,$subj=null)
+    public static function sendEmailPayDateByStripe($oDate, $oUser, $oRate,$oCoach,$pStripe,$importe,$subj=null,$calFile=null)
 	{
             $email    = $oUser->email;
             $dateTime = strtotime($oDate->date);
@@ -121,17 +121,24 @@ class MailController extends Controller
                       'pStripe' => $pStripe,
                       'hour'    => $hour,
                       'day'     => $day,
-              ], function ($message) use ($email,$subj) {
+              ], function ($message) use ($email,$subj,$calFile) {
                       $message->subject($subj);
                       $message->from(config('mail.from.address'), config('mail.from.name'));
                       $message->to($email);
+                      $message->attach(public_path('/img/protocolo.jpeg'), array(
+                            'as' => 'Protocolo Covid', 
+                            'mime' => 'image/jpeg'));
+                      if ($calFile){
+                        $message->attach($calFile, array(
+                            'as' => 'Evento Calendario '.time()));
+                      }
               });
             } catch (\Exception $ex) {
               return ($ex->getMessage());
             }
             return 'OK';
 	}
-    public static function sendEmailCita($oDate, $oUser, $oRate,$oCoach,$importe,$subj=null)
+    public static function sendEmailCita($oDate, $oUser, $oRate,$oCoach,$importe,$subj=null,$calFile=null)
 	{
             $email    = $oUser->email;
             $dateTime = strtotime($oDate->date);
@@ -151,10 +158,17 @@ class MailController extends Controller
                       'oCoach'  => $oCoach,
                       'hour'    => $hour,
                       'day'     => $day,
-              ], function ($message) use ($email,$subj) {
+              ], function ($message) use ($email,$subj,$calFile) {
                       $message->subject($subj);
                       $message->from(config('mail.from.address'), config('mail.from.name'));
                       $message->to($email);
+                      $message->attach(public_path('/img/protocolo.jpeg'), array(
+                            'as' => 'Protocolo Covid', 
+                            'mime' => 'image/jpeg'));
+                      if ($calFile){
+                        $message->attach($calFile, array(
+                            'as' => 'Evento Calendario '.time()));
+                      }
               });
             } catch (\Exception $ex) {
               return ($ex->getMessage());
