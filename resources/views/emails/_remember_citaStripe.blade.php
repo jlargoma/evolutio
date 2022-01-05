@@ -28,6 +28,6 @@ Hola! <?php echo $user->name ?><br><br>
     @endif
 </p>
 <h5 style="color: black ;margin-bottom: 5px;">
-    Muchas gracias por ponerte en forma!!  Si tú te comprometes, nosotros más!!
+  Muchas gracias por tu confianza en nosotros!! Tú compromiso es el nuestro
 </h5>
 @include('emails.footer')
