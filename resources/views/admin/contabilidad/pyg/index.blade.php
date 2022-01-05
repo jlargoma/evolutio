@@ -189,7 +189,7 @@ tfoot tr td {
 @media(max-width:480px) {
   .chart_1{width: 100%;}
   .col-smal{width: 100%;}
-  .col-smal .box{width: 45%; float: left;margin: 2%;}
+  .col-smal .box{width: 94%; float: left;margin: 2%;}
   .box {
     padding: 1em 0px;
     margin: 1em auto;

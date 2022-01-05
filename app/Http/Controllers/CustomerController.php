@@ -428,7 +428,7 @@ class CustomerController extends Controller {
 //    return view('customers.contratosDownl',$data);
     $output = $pdf->output();
 //        return $pdf->download('invoice.pdf');
-//    return $pdf->stream();
+    //return $pdf->stream();
         
     //save document
     $uFidelities = $oUser->getMetaContent('FIDELITY');
@@ -488,7 +488,20 @@ class CustomerController extends Controller {
     }
     
     $text = '';
-    $uFidelities = $oUser->getMetaContent('FIDELITY');
+    
+    $uFidelities = 0;
+    $uF_tCreated = time();
+    $oMeta = \DB::table('user_meta')
+            ->where('user_id',$oUser->id)->where('meta_key','FIDELITY')->first();
+    if ($oMeta){
+      $uFidelities = $oMeta->meta_value;
+      $uF_tCreated = strtotime($oMeta->created_at);
+    }
+    
+   $uF_start = date('d-m-Y',$uF_tCreated); 
+   $uF_end = date('d-m-Y', strtotime('+1 year', $uF_tCreated) ); 
+    
+      
     $oClientesContratos = new \App\Helps\ClientesContratos();
     if ($uFidelities){
         $tit = 'PLAN FIDELITY';
@@ -521,6 +534,8 @@ class CustomerController extends Controller {
     return[
       'user'=>$oUser,  
       'name'=>$oUser->name,  
+      'uF_start'=>$uF_start,  
+      'uF_end'=>$uF_end,  
       'text'=>$text,  
       'tit' =>$tit,  
       'url' =>"/firmar-contrato/$code/$control", 
