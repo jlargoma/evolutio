@@ -12,7 +12,7 @@ class SettingsController extends Controller {
   /**
    * Get messages page
    */
-  public function messages($key = 'new_request_rva') {
+  public function messages($key = 'pago_cuota_mes') {
     //get all emial's options
     $lstKeys = Settings::getKeysTxtMails();
 
