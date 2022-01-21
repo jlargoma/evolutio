@@ -2,36 +2,35 @@
 
 @section('content')
 <h1>ENCUESTA NUTRICIÓN</h1>
-
 @if (isset($already))
 <div class="alert alert-success">
   Su encuesta ya fue enviada
 </div>
 @else
 
-  @if (session('error'))
-  <div class="alert alert-danger">
-    {{ session('error') }}
+@if (session('error'))
+<div class="alert alert-danger">
+  {{ session('error') }}
+</div>
+@endif
+@if (session('success'))
+<div class="alert alert-success">
+  {{ session('success') }}
+</div>
+@else
+<form  action="/encuesta-nutricion" method="post" style="margin: 1em auto;"> 
+  <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+  <input type="hidden" name="_code" value="<?php echo $code; ?>">
+  <input type="hidden" name="_control" value="<?php echo $control; ?>">
+  <div class="text-left">
+    @include('customers.blocks.encNutri')
   </div>
-  @endif
-  @if (session('success'))
-  <div class="alert alert-success">
-    {{ session('success') }}
-  </div>
-  @else
-  <form  action="/encuesta-nutricion" method="post" style="margin: 1em auto;"> 
-    <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
-    <input type="hidden" name="_code" value="<?php echo $code; ?>">
-    <input type="hidden" name="_control" value="<?php echo $control; ?>">
-    <div class="text-left">
-      @include('customers.blocks.encNutri')
-    </div>
-    <button class="btn btn-success">
-      <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
-    </button>
-  </form>
+  <button class="btn btn-success">
+    <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
+  </button>
+</form>
 
-  @endif
+@endif
 @endif
 
 @endsection
@@ -78,5 +77,25 @@
     }
   }
 </style>
+<script>
 
+  function formateafecha(fecha)
+  {
+      var fecha = fecha.replaceAll('-', '');
+      fecha = fecha.replaceAll('D', '');
+      fecha = fecha.replaceAll('M', '');
+      fecha = fecha.replaceAll('Y', '');
+      var long = fecha.length;
+      var newDate = '';
+      if (long > 9)
+      long = 9;
+      for (var i = 0; i < long; i++) {
+          if (i == 2 || i == 4)
+        newDate += '-';
+          newDate += fecha[i];
+      }
+      return newDate;
+
+  }
+</script>
 @endsection

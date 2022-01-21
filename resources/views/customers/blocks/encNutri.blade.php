@@ -41,7 +41,8 @@ $count = 1;
         break;
       case 'nutri_q2':
         ?>
-    <input type="date" id="{{$i}}" name="{{$i}}" value="" class="form-control" required="">
+    
+    <input  size="10" maxlength="10" onKeyUp = "this.value = formateafecha(this.value);" placeholder="DD-MM-YYYY" id="{{$i}}" name="{{$i}}" class="form-control" required="">
         <?php
         break;
       default :
