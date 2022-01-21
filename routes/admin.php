@@ -197,6 +197,10 @@ Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function () {
   Route::get('/manual/bonos', 'ManualController@bonos');
   Route::get('/manual/citas', 'ManualController@citas');
   
+  /* Text emails */
+  Route::get('/settings_msgs/{key?}', 'SettingsController@messages')->name('settings.msgs');
+  Route::post('/settings_msgs/{key?}', 'SettingsController@messages_upd')->name('settings.msgs.upd');
+  
 });
 
 Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
