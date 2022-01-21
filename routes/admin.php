@@ -67,6 +67,9 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::post('/nutricion/nutri/upload', 'NutriController@uploadFile');
   Route::get('/citas-nutricion/edit/{id}', 'NutriController@edit');
   Route::get('/citas-nutricion/{month?}/{coach?}/{type?}', 'NutriController@index');
+  Route::get('/ver-encuesta/{token}/{control}', 'CustomerController@seeEncuestaNutri');
+  Route::post('/clearEncuesta', 'CustomerController@clearEncuestaNutri');
+  Route::post('/sendEncuesta', 'CustomerController@sendEncuestaNutri');
   /* Citas personalTrainer */
   Route::get('/citas-pt/listado/{coach?}/{type?}', 'PTController@listado');
   Route::get('/citas-pt/create/{date?}/{time?}', 'PTController@create');

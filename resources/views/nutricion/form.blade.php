@@ -131,6 +131,41 @@ jQuery(function () {
           $('#modalCliente').modal('show');
         });
         
+        $('.clearEncuesta').click(function (e) {
+          e.preventDefault();
+          var id = $(this).data('id');
+          if (confirm('Limpiar los datos actuales de la encuesta?')){
+            var data = {
+              uID: id,
+              _token: '{{csrf_token()}}'
+            };
+            var posting = $.post( '/admin/clearEncuesta', data ).done(function( data ) {
+                if (data == 'OK'){
+                  location.reload();
+                } else {
+                    alert(data);
+                }
+            });
+          }
+        });
+        $('.sendEncuesta').click(function (e) {
+          e.preventDefault();
+          var id = $(this).data('id');
+          if (confirm('Reenviar el mail para completar la encuesta?')){
+            var data = {
+              uID: id,
+              _token: '{{csrf_token()}}'
+            };
+            var posting = $.post( '/admin/sendEncuesta', data ).done(function( data ) {
+                if (data == 'OK'){
+                  location.reload();
+                } else {
+                    alert(data);
+                }
+            });
+          }
+        });
+        
         $('#modal_newUser').on('submit','#form-new',function(event){
             event.preventDefault();
            // Get some values from elements on the page:

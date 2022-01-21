@@ -119,7 +119,25 @@
       Duplicar
     </a>
     @endif
-  </div>
+    
+    </div>  
+    @if($id>0 && $date_type == 'nutri')
+    <div class="col-xs-12 text-center">
+      @if(isset($encNutr))
+      <a href="/admin/ver-encuesta/{{$btnEncuesta}}" class="btn btn-lg btn-info" target="_black">
+          Ver encuesta
+        </a>
+        <button class="btn btn-lg btn-success clearEncuesta" data-id="{{$id_user}}"  type="button" >
+          Vaciar encuesta
+        </button>
+      @else
+        <button class="btn btn-lg btn-success sendEncuesta" data-id="{{$id_user}}"  type="button" >
+          Reenviar encuesta
+        </button>
+      @endif
+      </div>
+    @endif
+  
 </div>
 
 @if(!$charge && $id>0)

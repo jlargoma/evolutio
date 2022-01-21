@@ -9,12 +9,13 @@ use Mail;
 use App\Models\User;
 use App\Models\UserRates;
 use \App\Traits\ValoracionTraits;
+use \App\Traits\EncuestaNutriTraits;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 class CustomerController extends Controller {
 
-  use ValoracionTraits;
+  use ValoracionTraits,EncuestaNutriTraits;
   
   public function index() {
     die();

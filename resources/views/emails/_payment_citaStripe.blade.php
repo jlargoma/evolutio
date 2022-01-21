@@ -29,6 +29,12 @@ Hola! <?php echo $user->name ?><br><br>
     <a href="{{$pStripe}}" title="link pago Stripe">{{$pStripe}}</a>
 </p>
 @endif
+@if($urlEntr)
+<p>
+    Por favor, complete la siguente encuesta antes de su cita<br/>
+    <a href="{{$urlEntr}}" title="Encuesta nutrición">{{$urlEntr}}</a>
+</p>
+@endif
 <h5 style="color: black ;margin-bottom: 5px;">
     Muchas gracias por tu confianza en nosotros!! Tú compromiso es el nuestro
 </h5>

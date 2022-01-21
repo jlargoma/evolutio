@@ -21,3 +21,6 @@ Route::get('/descargrar-contrato/{token}/{control}', 'CustomerController@downlCo
 Route::get('/resultado', 'CustomerController@showResult');
 Route::get('/cobro-completado', 'CustomerController@paymentSuccess')->name('customer.pay.success');
 Route::get('/cobro-cancelado', 'CustomerController@paymentCancel')->name('customer.pay.cancel');
+
+Route::get('/encuesta-nutricion/{token}/{control}', 'CustomerController@formEncuestaNutri');
+Route::post('/encuesta-nutricion', 'CustomerController@setEncNutri');
