@@ -56,7 +56,7 @@ th label.text-danger{display: block}
 @endsection
 
 <?php 
-$b_aux = ['btn-primary','btn-primary','all'=>'btn-primary'];
+$b_aux = ['btn-primary','btn-primary','btn-primary','all'=>'btn-primary'];
 if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
 ?>
 @section('content')
@@ -76,6 +76,11 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
       <a href="{{url('/admin/clientes/'.$month)}}?status=0" class="inline">
         <button class="btn btn-md {{$b_aux[0]}}">
           Inactivos
+        </button>
+      </a>
+      <a href="{{url('/admin/clientes/'.$month)}}?status=2" class="inline">
+        <button class="btn btn-md {{$b_aux[2]}}">
+          FIDELITY
         </button>
       </a>
       <a href="{{url('/admin/clientes-export')}}" class="inline">

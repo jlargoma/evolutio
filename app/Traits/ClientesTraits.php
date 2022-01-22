@@ -36,8 +36,20 @@ trait ClientesTraits {
     if ($status == 'all') {
       $sqlUsers = User::where('role', 'user');
     } else {
-      $sqlUsers = User::where('role', 'user')
+      if ($status == 2){
+        $uFIDELITY = DB::table('user_meta')
+                ->where('meta_key','FIDELITY')
+                ->where('meta_value',1)
+                ->pluck('user_id');
+        
+        $sqlUsers = User::select('users.*')->where('role', 'user')
+              ->where('status', 1)
+              ->whereIn('id',$uFIDELITY);
+                
+      } else {
+        $sqlUsers = User::where('role', 'user')
               ->where('status', $status);
+      }
     }
     $sqlUsers->with('userCoach');
     $users = $sqlUsers->orderBy('name', 'asc')->get();
