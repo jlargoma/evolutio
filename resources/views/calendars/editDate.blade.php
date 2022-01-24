@@ -137,6 +137,11 @@
       @endif
       </div>
     @endif
+    @if($id>0 && $date_type == 'fisio')
+    <div class="ecografo" data-id="{{$id_user}}">
+      <img src="/img/ecog-gris.png">
+    </div>
+    @endif
   
 </div>
 

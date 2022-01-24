@@ -62,7 +62,8 @@ class CitasService {
           'users' => User::where('role', 'user')->where('status', 1)->orderBy('name', 'ASC')->get(),
           'coachs' => self::getCoachs($oDate->date_type),
           'blocked' => $oDate->blocked,
-          'isGroup' => $oDate->is_group
+          'isGroup' => $oDate->is_group,
+          'urlBack' => self::get_urlBack($oDate->date_type,substr($date[0],0,7)),
       ];
     }
     return null;
@@ -89,7 +90,8 @@ class CitasService {
       'services' => Rates::getByTypeRate($type),
       'users' => User::where('role', 'user')->where('status', 1)->orderBy('name', 'ASC')->get(),
       'coachs' => self::getCoachs($type),
-      'blocked' => false
+      'blocked' => false,
+      'urlBack' => self::get_urlBack($type,date('Y-m', $date)),
      ];
   }
   
@@ -335,5 +337,24 @@ class CitasService {
       }
     }
     return $used;
+  }
+  
+  static function get_urlBack($type,$date){
+    $urlBack = '/admin';
+    switch ($type) {
+      case 'nutri':
+        $urlBack = '/admin/citas-nutricion/';
+        break;
+      case 'fisio':
+        $urlBack = '/admin/citas-fisioterapia/';
+        break;
+      case 'pt':
+        $urlBack = '/admin/citas-pt/';
+        break;
+    }
+     
+    if (date('Y-m') != $date)
+      $urlBack .= $date;
+    return $urlBack;
   }
 }

@@ -9,6 +9,16 @@ and open the template in the editor.
 */
 
 @media(max-width:991px) {
+  body {
+    padding-top: 10px;
+  }
+  .header-navbar-fixed #header-navbar{
+    position: relative;
+  }
+  .nav-header {
+    padding: 6px 0 0;
+  }
+
   table tr .static{
     width: 130px;
     overflow-x: scroll;

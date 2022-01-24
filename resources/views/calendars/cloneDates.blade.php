@@ -30,6 +30,7 @@ function printEvents($lst,$h){
 @section('content')
 <link rel="stylesheet" href="{{ assetV('css/custom.css') }}">
 <link rel="stylesheet" href="{{ assetV('css/calendars.css') }}">
+<a class="back" href="#">X</a>
 <div class="col-xs-12">
   <h2 class="text-center">Duplicar Cita</h2>
     <form action="" method="post" id="formClone">
@@ -99,6 +100,9 @@ if (empty($days)) continue ?>
       obj.addClass('active')
     }
   });
+  $('.back').click(function(event){
+    history.back();
+  });
   $('#cloneDates').on('click',function(event){
     event.preventDefault();
     var dates = '';
@@ -150,6 +154,17 @@ toltip {
 .table-calendar tbody td.time.not {
   background-color: #c1c1c1;
   cursor: not-allowed;
+}
+ a.back {
+    display: block;
+    font-weight: bold;
+    float: right;
+    width: 31px;
+    background-color: #6e6e6e;
+    color: #FFF;
+    text-align: center;
+    font-size: 22px;
+    border-radius: 6px;
 }
 </style>
 @endsection

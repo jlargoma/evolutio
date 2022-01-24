@@ -8,6 +8,7 @@
 $date_type_u = "Fisioterapeuta";
 $date_type = 'fisio'
 ?>
+<a class="back" href="<?php echo $urlBack; ?>">X</a>
 @if($blocked)<!-- es un bloqueo -->
   @if($isGroup)
     @include('calendars.editGroup')
@@ -177,5 +178,23 @@ jQuery(function () {
       margin-right: 6px;
       height: 13px;
     }
+    a.back{
+      display: none;
+    }
+    
+  @media (max-width: 780px) {  
+    a.back {
+    display: block;
+    font-weight: bold;
+    float: right;
+    width: 31px;
+    background-color: #6e6e6e;
+    color: #FFF;
+    text-align: center;
+    font-size: 22px;
+    border-radius: 6px;
+}
+  }
+    
  </style>
 @endsection

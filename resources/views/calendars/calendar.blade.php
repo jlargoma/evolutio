@@ -15,7 +15,6 @@ function printEvents($lst){
       case 2:
         echo '<div '
           . 'data-id="'.$item['id'].'" '
-          . 'data-name="--" '
           . 'class="eventType_'.$item['coach'].' events blocked">'
           .$item['h'].'<span></span><toltip/>'
           . '</div>';
@@ -23,18 +22,15 @@ function printEvents($lst){
       case 3:
         echo '<div '
           . 'data-id="'.$item['id'].'" '
-          . 'data-name="--" '
           . 'class="eventType_'.$item['coach'].' events group">'
           .$item['h'].'<cust>  GRUPO</cust><toltip/>'
           . '</div>';
         break;
       default :
         $payment = ($item['charged'] != 1) ? '<span class="no-pay"></span>' : '';
-        $halfTime = ($item['halfTime']) ? '½ ' : '';
         $hour = ($item['charged'] != 1) ? '<nopay>'.$item['h'].'</nopay>' : $item['h'];
         echo '<div '
         . 'data-id="'.$item['id'].'" '
-        . 'data-name="'. strtolower($item['name']).'" '
         . 'class="eventType_'.$item['coach'].' events">'
           .$hour.'<cust>'.str_limit($item['name'],10).'</cust>'
             .'<toltip/>'
@@ -78,7 +74,7 @@ $cWeek = (date('W',$days[0]['time']) == $thisWeek) ? 'id="cweek"' : '';
                     <td class="time not">{{$i}}</td>
                     <td class="not editDate">
                       <div class="lst_events">
-                        <div class="availDate" style="padding-left: 15px;"><?= $avail?></div>
+                        <div class="availDate"><?= $avail?></div>
                       <?php
                       if (isset($aLst[$d['time']]) && isset($aLst[$d['time']][$i])){
                         printEvents($aLst[$d['time']][$i]);
@@ -90,7 +86,7 @@ $cWeek = (date('W',$days[0]['time']) == $thisWeek) ? 'id="cweek"' : '';
                     <td class="time addDate" data-date="{{$d['time']}}" data-time="{{$i}}">{{$i}}</td>
                     <td class="editDate">
                       <div class="lst_events">
-                      <div class="availDate"  style="padding-left: 15px;"><?= $avail?></div>
+                      <div class="availDate"><?= $avail?></div>
                       <?php
                       if (isset($aLst[$d['time']]) && isset($aLst[$d['time']][$i])){
                         printEvents($aLst[$d['time']][$i]);
