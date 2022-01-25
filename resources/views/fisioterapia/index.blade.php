@@ -103,6 +103,6 @@
   @endif
  
 </script>
-<script src="{{asset('/js/calendar/fisio.js')}}"></script>
+<script src="{{assetv('/js/calendar/fisio.js')}}"></script>
 <script src="{{assetv('/admin-css/assets/js/toltip.js')}}"></script>
 @endsection

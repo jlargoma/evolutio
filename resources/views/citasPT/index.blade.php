@@ -101,6 +101,6 @@
     var details = {!!$detail!!};
   @endif
 </script>
-<script src="{{asset('/js/calendar/pt.js')}}"></script>
+<script src="{{assetv('/js/calendar/pt.js')}}"></script>
 <script src="{{assetv('/admin-css/assets/js/toltip.js')}}"></script>
 @endsection

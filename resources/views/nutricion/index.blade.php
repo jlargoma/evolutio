@@ -102,6 +102,6 @@
   @endif
 
 </script>
-<script src="{{asset('/js/calendar/nutri.js')}}"></script>
+<script src="{{assetv('/js/calendar/nutri.js')}}"></script>
 <script src="{{assetV('/admin-css/assets/js/toltip.js')}}"></script>
 @endsection
