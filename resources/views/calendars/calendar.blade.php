@@ -18,14 +18,14 @@ function printEvents($lst){
     switch ($item['charged']){
       case 2:
         echo '<div '
-          . 'data-id="'.$item['id'].'" '
+          . 'data-id="'.$item['id'].'"  data-name=""  '
           . 'class="eventType_'.$item['coach'].' events blocked">'
           .$item['h'].'<span></span><toltip/>'
           . '</div>';
         break;
       case 3:
         echo '<div '
-          . 'data-id="'.$item['id'].'" '
+          . 'data-id="'.$item['id'].'" data-name="" '
           . 'class="eventType_'.$item['coach'].' events group">'
           .$item['h'].'<cust>  GRUPO '.$ecogrf.'</cust><toltip/>'
           . '</div>';
@@ -35,6 +35,7 @@ function printEvents($lst){
         $hour = ($item['charged'] != 1) ? '<nopay>'.$item['h'].'</nopay>' : $item['h'];
         echo '<div '
         . 'data-id="'.$item['id'].'" '
+        . 'data-name="'. strtolower($item['name']).'" '
         . 'class="eventType_'.$item['coach'].' events">'
           .$hour.'<cust>'.str_limit($item['name'],10).$ecogrf.'</cust>'
             .'<toltip/>'
