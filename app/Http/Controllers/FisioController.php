@@ -245,5 +245,22 @@ class FisioController extends Controller {
             return redirect()->action('FisioController@index');
         }
     }
+    
+    public function toggleEcogr(Request $request) {
+
+      $id =  $request->input('id');
+
+      $oDate = Dates::find($id);
+      if (!$oDate) return 'Cita no encontrada';
+      
+      $ecogr = $oDate->getMetaContent('ecogr');
+      if ($ecogr && $ecogr == 1) $ecogr = 0;
+      else $ecogr = 1;
+      
+      $oDate->setMetaContent('ecogr',$ecogr);
+      
+      return 'OK';
+      
+    }
 
 }

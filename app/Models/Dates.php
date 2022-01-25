@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes; //línea necesaria
+use Illuminate\Support\Facades\DB;
 
 class Dates extends Model
 {
@@ -40,4 +41,35 @@ class Dates extends Model
     {
         return $this->hasOne('\App\Models\User', 'id', 'id_user');
     }
+    
+    
+     /**********************************************************************/
+  /////////  user_meta //////////////
+  public function setMetaContent($key,$content) {
+    
+    $oMeta = DB::table('appointment_meta')
+            ->where('appoin_id',$this->id)->where('meta_key',$key)->first();
+    if ($oMeta){
+      DB::table('appointment_meta')->where('appoin_id',$this->id)
+              ->where('meta_key',$key)
+              ->update(['meta_value' => $content]);
+    } else {
+       DB::table('appointment_meta')->insert(
+            ['appoin_id' => $this->id, 'meta_key' => $key,'meta_value' => $content]
+        );
+    }
+    
+    return null;
+  }
+  
+  public function getMetaContent($key) {
+    
+    $oMeta = DB::table('appointment_meta')
+            ->where('appoin_id',$this->id)->where('meta_key',$key)->first();
+    
+    if ($oMeta) {
+      return $oMeta->meta_value;
+    }
+    return null;
+  }
 }

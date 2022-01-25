@@ -142,6 +142,28 @@ jQuery(function () {
             });
         //    
         });
+        
+        $('.ecografo').click(function (e) {
+          e.preventDefault();
+          var that = $(this);
+          var id = that.data('id');
+          
+          var data = {
+              id: id,
+              _token: '{{csrf_token()}}'
+            };
+            var posting = $.post( '/admin/toggleEcogr', data ).done(function( data ) {
+                if (data == 'OK'){
+                  if (that.hasClass('active')) that.removeClass('active');
+                  else that.addClass('active');
+                } else {
+                    alert(data);
+                }
+            });
+          }
+        );
+        
+        
     });
 
 </script>
@@ -181,6 +203,22 @@ jQuery(function () {
     a.back{
       display: none;
     }
+    
+    .ecografo {
+      border: 1px solid;
+      padding: 8px;
+      margin: 12px auto 0;
+      width: 43px;
+      cursor: pointer;
+    }
+    .ecografo.active {
+        box-shadow: 1px 1px 5px 0px #768fea;
+    }
+
+    .ecografo .grey{display: block;}
+    .ecografo .blue{display: none;}
+    .ecografo.active .grey{display: none;}
+    .ecografo.active .blue{display: block;}
     
   @media (max-width: 780px) {  
     a.back {

@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="{{ asset('admin-css/assets/js/plugins/bootstrap-datepicker/bootstrap-datepicker3.min.css') }}">
 <link rel="stylesheet" href="{{ assetV('css/custom.css') }}">
 
-
+<a class="back" href="<?php echo $urlBack; ?>">X</a>
 <?php 
 
 $date_type_u = "Entrenador";
@@ -131,6 +131,22 @@ jQuery(function () {
   #tit_user span input{
       margin-right: 6px;
       height: 13px;
+    }
+      a.back{
+      display: none;
+    }
+    @media (max-width: 780px) {  
+        a.back {
+        display: block;
+        font-weight: bold;
+        float: right;
+        width: 31px;
+        background-color: #6e6e6e;
+        color: #FFF;
+        text-align: center;
+        font-size: 22px;
+        border-radius: 6px;
+      }
     }
 </style>
 @endsection

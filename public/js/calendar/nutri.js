@@ -10,14 +10,22 @@
         event.preventDefault();
         dateForm = $(this).data('date');
         timeForm = $(this).data('time');
-        $('#ifrModal').attr('src', '/admin/citas-nutricion/create/' + dateForm + '/' + timeForm);
-        $('#modalIfrm').modal();
+        if (isM){
+            window.location.href = '/admin/citas-nutricion/create/'+dateForm+'/'+timeForm;
+        } else {
+            $('#ifrModal').attr('src', '/admin/citas-nutricion/create/' + dateForm + '/' + timeForm);
+            $('#modalIfrm').modal();
+        }
       });
       $('.editDate').on('click', '.events', function (event) {
         event.preventDefault();
         var id = $(this).data('id');
-        $('#ifrModal').attr('src', '/admin/citas-nutricion/edit/' + id);
-        $('#modalIfrm').modal();
+         if (isM){
+            window.location.href = '/admin/citas-nutricion/edit/' + id;
+        } else {
+            $('#ifrModal').attr('src', '/admin/citas-nutricion/edit/' + id);
+            $('#modalIfrm').modal();
+        }
       });
       $('.selectDate').on('click', 'li', function (event) {
         event.preventDefault();

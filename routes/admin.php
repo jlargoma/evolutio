@@ -60,6 +60,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::get('/citas-fisioterapia/informe/{id}', 'FisioController@informe');
   Route::get('/citas-fisioterapia/edit/{id}', 'FisioController@edit');
   Route::get('/citas-fisioterapia/{month?}/{coach?}/{type?}', 'FisioController@index');
+  Route::post('/toggleEcogr', 'FisioController@toggleEcogr');
   /* Citas Nutrición */
   Route::get('/citas-nutricion/listado/{coach?}/{type?}', 'NutriController@listado');
   Route::get('/citas-nutricion/create/{date?}/{time?}', 'NutriController@create');

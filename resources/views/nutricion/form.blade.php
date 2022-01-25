@@ -9,6 +9,7 @@
 $date_type_u = "Nutricionista";
 $date_type = 'nutri'
 ?>
+<a class="back" href="<?php echo $urlBack; ?>">X</a>
 @if($blocked)<!-- es un bloqueo -->
   @if($isGroup)
     @include('calendars.editGroup')
@@ -214,6 +215,23 @@ jQuery(function () {
     #tit_user span input{
       margin-right: 6px;
       height: 13px;
+    }
+    
+    a.back{
+      display: none;
+    }
+    @media (max-width: 780px) {  
+        a.back {
+        display: block;
+        font-weight: bold;
+        float: right;
+        width: 31px;
+        background-color: #6e6e6e;
+        color: #FFF;
+        text-align: center;
+        font-size: 22px;
+        border-radius: 6px;
+      }
     }
  </style>
 @endsection

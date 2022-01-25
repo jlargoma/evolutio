@@ -10,7 +10,11 @@ function printEvents($lst){
   asort($aux);
   foreach ($aux as $h){
     foreach ($aux2[$h] as $item){
-//    dd($item);
+    $ecogrf = '';
+    if (isset($item['ecogr']) && $item['ecogr']){
+      $ecogrf = '<img src="/img/ecog.png" class="ecogrf">';
+    }
+    
     switch ($item['charged']){
       case 2:
         echo '<div '
@@ -23,7 +27,7 @@ function printEvents($lst){
         echo '<div '
           . 'data-id="'.$item['id'].'" '
           . 'class="eventType_'.$item['coach'].' events group">'
-          .$item['h'].'<cust>  GRUPO</cust><toltip/>'
+          .$item['h'].'<cust>  GRUPO '.$ecogrf.'</cust><toltip/>'
           . '</div>';
         break;
       default :
@@ -32,7 +36,7 @@ function printEvents($lst){
         echo '<div '
         . 'data-id="'.$item['id'].'" '
         . 'class="eventType_'.$item['coach'].' events">'
-          .$hour.'<cust>'.str_limit($item['name'],10).'</cust>'
+          .$hour.'<cust>'.str_limit($item['name'],10).$ecogrf.'</cust>'
             .'<toltip/>'
         . '</div>';
        break;

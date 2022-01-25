@@ -43,6 +43,7 @@ class CitasService {
         }
       }
       $oServicios = Rates::getByTypeRate($oDate->date_type);
+      $ecogr = $oDate->getMetaContent('ecogr');
       return [
           'date' => date('d-m-Y', strtotime($date[0])),
           'time' => intval($date[1]),
@@ -64,6 +65,7 @@ class CitasService {
           'blocked' => $oDate->blocked,
           'isGroup' => $oDate->is_group,
           'urlBack' => self::get_urlBack($oDate->date_type,substr($date[0],0,7)),
+          'ecogr' => $ecogr,
       ];
     }
     return null;
@@ -132,6 +134,11 @@ class CitasService {
       }
     }
 
+    /****************/
+    $ecogrs = \DB::table('appointment_meta')
+            ->where('meta_value',1)
+            ->where('meta_key','ecogr')->pluck('appoin_id')->toArray();
+    /****************/
     $oLst = $sql->get();
     $detail = [];
     $days = listDaysSpanish();
@@ -168,7 +175,8 @@ class CitasService {
                 'type' => $item->id_rate,
                 'coach' => $item->id_coach,
                 'h'=>$hTime,
-                'name' => ($item->is_group) ? 'grupo' : 'bloqueo'
+                'name' => ($item->is_group) ? 'grupo' : 'bloqueo',
+                'ecogr' => false
               ];
               $detail[$item->id] = [
                   'n' => ($item->is_group) ? 'Cita Grupal' : 'bloqueo',
@@ -207,6 +215,7 @@ class CitasService {
                 'name' => $u_name,
                 'halfTime'=>$halfTime,
                 'h'=>$hTime,
+                'ecogr' => (in_array($item->id,$ecogrs))
             ];
             $detail[$item->id] = [
                 'n' => $u_name,
