@@ -18,6 +18,8 @@ class Kernel extends ConsoleKernel
       Commands\RememberAppointment::class,
       Commands\Salary::class,
       Commands\SubscPaymentNextMonth::class,
+      Commands\RememberPayment::class,
+      Commands\RememberPaymentAgain::class,
     ];
 
     /**
@@ -35,6 +37,8 @@ class Kernel extends ConsoleKernel
       $schedule->command('Salary:createMonthly')->dailyAt('5:00'); // que lo genere el 25
 
       $schedule->command('SubscPayment:chargeNextMonth')->monthlyOn(23, '5:00');
+      $schedule->command('Remember:payment')->monthlyOn(1, '0:10');
+      $schedule->command('Remember:paymentAgain')->monthlyOn(5, '0:10');
   }
 
     /**

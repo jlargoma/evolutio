@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
+use App\Models\Settings;
 
 class MailsService {
 
@@ -71,5 +72,81 @@ class MailsService {
     }
     return $date;
   }
+  
+  /***********************************************************************/
+   /**
+     * Clear all not loaded vars
+     * @param type $text
+     * @return type
+     */
+    public function clearVars($text)
+    {
+
+        return preg_replace('/\{(\w+)\}/i', '', $text);
+
+    }
+
+   /**
+     *
+     * @param uRate $data
+     * @param String  $key
+     * @return String HTML
+     */
+    public function getMailData($data, $keyTemp)
+    {
+      
+        $mailClientContent = Settings::getContent($keyTemp);
+
+        $dataContent = array(
+            'customer_name'      => $data->user->name,
+            'customer_email'     => $data->user->email,
+            'customer_phone'     => $data->user->telefono,
+            'service_name'       => $data->rate->name,
+        );
+
+      
+        /** process the mail content */
+        foreach ($dataContent as $k => $v)
+        {
+            $mailClientContent = str_replace('{' . $k . '}', $v, $mailClientContent);
+        }
+        return $mailClientContent;
+
+    }
+
+   /**
+     *
+     * @param type $book
+     * @param type $subject
+     */
+    public function sendEmail_Payment($uRate, $subject, $template)
+    {
+      if (!$uRate->user->email || trim($uRate->user->email) == '') return;
+      
+        $mailClientContent = $this->getMailData($uRate,$template);
+        setlocale(LC_TIME, "ES");
+        setlocale(LC_TIME, "es_ES");
+        
+                
+        $data = [$uRate->rate_year,$uRate->rate_month,$uRate->id_user,$uRate->price*100,$uRate->id_rate,0];
+        $sStripe = new \App\Services\StripeService();
+        $pStripe = url($sStripe->getPaymentLink('rate',$data));
+        $mailClientContent = str_replace('{urlPayment}', $pStripe, $mailClientContent);
+        $mailClientContent = str_replace('{payment_amount}', number_format($uRate->price, 2, ',', '.'), $mailClientContent);
+
+        $mailClientContent = $this->clearVars($mailClientContent);
+
+        $to = $uRate->user->email;
+        $sended = Mail::send('emails.base', [
+            'mailContent' => $mailClientContent,
+            'tit'       => $subject
+        ], function ($message) use ($to, $subject) {
+            $message->from(config('mail.from.address'), config('mail.from.name'));
+            $message->to($to);
+            $message->subject($subject);
+            $message->replyTo(config('mail.from.address'));
+        });
+        return $sended;
+    }
 
 }
