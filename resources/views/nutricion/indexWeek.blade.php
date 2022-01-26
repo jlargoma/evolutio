@@ -5,15 +5,17 @@
 @section('headerButtoms')
 <button type="button" class="btn btn-success addDate" data-date="{{time()}}" data-time="8">
   <i class="fa fa-plus-circle"></i></button>
-<a href="/admin/citas-nutricion/listado/" class="btn btn-success" style="float: right; margin-left: 3px;">Listado</a>
-<a href="/admin/citas-nutricion-week/" class="btn btn-success" style="float: right; margin-left: 3px;">Semana</a>
+  <a href="/admin/citas-nutricion/" class="btn btn-success" style="float: right; margin-left: 3px;">Calendario</a>
+  <a href="/admin/citas-nutricion/listado/" class="btn btn-success" style="float: right; margin-left: 3px;">Listado</a>
 @endsection
 @section('content')
 <div class="content content-full bg-white">
   <div class="row">
     <div class="col-md-12">
       <input type="hidden" id="coachsFilter" value="{{$coach}}">
-      <input type="hidden" id="selectMonth" value="{{$month}}">
+      <input type="hidden" id="selectWeek" value="{{$week}}">
+      <input type="hidden" id="currentWeek" value="{{date('W')}}">
+      <input type="hidden" id="typeCalend" value="week">
       <div class="row">
         <div class="col-md-10">
           <div class="mbl-tabs">
@@ -40,14 +42,9 @@
         </div>
         <div class="col-md-8 col-xs-12">
           <div class="mbl-tabs">
-            <!--<button class="btn btn-success btnAvails" type="button">DISPONIBLES</button>-->
-            <ul class="selectDate">
-              @foreach($aMonths as $k=>$v)
-              <li data-val="{{$k}}" class="<?php echo ($month == $k) ? 'active' : '' ?>">
-                {{$v}}
-              </li>
-              @endforeach
-            </ul>
+            <span class="btn btn-success prevWeek"><< Semana Anterior</span>
+            <span class="btn btn-success currentWeek">Semana Actual</span>
+            <span class="btn btn-success nextWeek">Semana Siguiente >></span>
           </div>
         </div>
         <div class="col-md-2 col-xs-12 mx-1em">
@@ -101,7 +98,8 @@
   @if($detail)
     var details = {!!$detail!!};
   @endif
-  var typeCalend = 'month';
+  var typeCalend = 'week';
+
 </script>
 <script src="{{assetv('/js/calendar/nutri.js')}}"></script>
 <script src="{{assetV('/admin-css/assets/js/toltip.js')}}"></script>

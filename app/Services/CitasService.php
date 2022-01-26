@@ -64,7 +64,7 @@ class CitasService {
           'coachs' => self::getCoachs($oDate->date_type),
           'blocked' => $oDate->blocked,
           'isGroup' => $oDate->is_group,
-          'urlBack' => self::get_urlBack($oDate->date_type,substr($date[0],0,7)),
+          'urlBack' => self::get_urlBack($oDate->date_type,$date[0]),
           'ecogr' => $ecogr,
       ];
     }
@@ -93,7 +93,7 @@ class CitasService {
       'users' => User::where('role', 'user')->where('status', 1)->orderBy('name', 'ASC')->get(),
       'coachs' => self::getCoachs($type),
       'blocked' => false,
-      'urlBack' => self::get_urlBack($type,date('Y-m', $date)),
+      'urlBack' => self::get_urlBack($type,date('Y-m-d', $date)),
      ];
   }
   
@@ -350,6 +350,29 @@ class CitasService {
   
   static function get_urlBack($type,$date){
     $urlBack = '/admin';
+    if (isset($_GET['weekly'])){
+      switch ($type) {
+        case 'nutri':
+          $urlBack = '/admin/citas-nutricion-week/';
+          break;
+        case 'fisio':
+          $urlBack = '/admin/citas-fisioterapia-week/';
+          break;
+        case 'pt':
+          $urlBack = '/admin/citas-pt-week/';
+          break;
+    }
+    
+      $week = date('W', strtotime($date));
+      if (date('W') != $week){
+        $urlBack .= $week;
+      }
+      return $urlBack;
+    }
+    
+    
+    $date = substr($date,0,7);
+    
     switch ($type) {
       case 'nutri':
         $urlBack = '/admin/citas-nutricion/';

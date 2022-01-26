@@ -10,7 +10,9 @@
         dateForm = $(this).data('date');
         timeForm = $(this).data('time');
         if (isM){
-            window.location.href = '/admin/citas-fisioterapia/create/'+dateForm+'/'+timeForm;
+            var urlForm = '/admin/citas-fisioterapia/create/'+dateForm+'/'+timeForm;
+            if (typeCalend == 'week') urlForm += '?weekly';
+            window.location.href = urlForm;
         } else {
         $('#ifrModal').attr('src','/admin/citas-fisioterapia/create/'+dateForm+'/'+timeForm);
         $('#modalIfrm').modal();
@@ -20,7 +22,9 @@
         event.preventDefault();
         var id = $(this).data('id');
         if (isM){
-            window.location.href = '/admin/citas-fisioterapia/edit/'+id;
+            var urlForm = '/admin/citas-fisioterapia/edit/' + id;
+            if (typeCalend == 'week') urlForm += '?weekly';
+            window.location.href = urlForm;
         } else {
         $('#ifrModal').attr('src','/admin/citas-fisioterapia/edit/'+id);
         $('#modalIfrm').modal();
@@ -45,14 +49,25 @@
         var coach = $(this).data('val');
         var month = $('#selectMonth').val();
         var type = $('#servSelect').val();
-        location.assign("/admin/citas-fisioterapia/"+month+"/"+coach+"/"+type);
+        var week = $('#selectWeek').val();
+        if (typeCalend == 'week'){
+            location.assign("/admin/citas-fisioterapia-week/" + week + "/" + coach + "/" + type);
+        } else {
+            location.assign("/admin/citas-fisioterapia/" + month + "/" + coach + "/" + type);
+        }
+        
     });
     $('#servSelect').on('change',function(event){
         event.preventDefault();
         var type = $('#servSelect').val();
         var month = $('#selectMonth').val();
         var coach = $('#coachsFilter').val();
-        location.assign("/admin/citas-fisioterapia/"+month+"/"+coach+"/"+type);
+        var week = $('#selectWeek').val();
+        if (typeCalend == 'week'){
+            location.assign("/admin/citas-fisioterapia-week/" + week + "/" + coach + "/" + type);
+        } else {
+            location.assign("/admin/citas-fisioterapia/" + month + "/" + coach + "/" + type);
+        }
     });
 
 //    $('#modal_newUser').on('submit','#form-new',function(event){
@@ -111,10 +126,43 @@
       $('.editDate').find('.availDate').hide();
     }
   });
-
-    setTimeout(function(){
-      $([document.documentElement, document.body]).animate({
-        scrollTop: $("#cweek").offset().top-80
-      }, 500);
-    },250)
-  });
+  
+  
+    if (typeCalend != 'week'){
+        setTimeout(function(){
+          $([document.documentElement, document.body]).animate({
+            scrollTop: $("#cweek").offset().top-80
+          }, 500);
+        },250)
+    }
+  
+  
+  
+    $('.prevWeek').on('click', function (event) {
+        event.preventDefault();
+        var week = $('#selectWeek').val();
+        week--;
+        if (week>0) goToWeek(week)
+    });
+    
+    $('.nextWeek').on('click', function (event) {
+        event.preventDefault();
+        var week = $('#selectWeek').val();
+        week++;
+        if (week<53) goToWeek(week)
+    });
+    $('.currentWeek').on('click', function (event) {
+        event.preventDefault();
+        var week = $('#currentWeek').val();
+        goToWeek(week)
+    });
+    
+    function goToWeek(week) {
+        var type = $('#servSelect').val();
+        var month = $('#selectMonth').val();
+        var coach = $('#coachsFilter').val();
+        location.assign("/admin/citas-fisioterapia-week/" + week + "/" + coach + "/" + type);
+    }
+    
+    
+});

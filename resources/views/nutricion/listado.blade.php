@@ -6,6 +6,8 @@
 <button type="button" class="btn btn-success addDate" data-date="{{time()}}" data-time="8">
     <i class="fa fa-plus-circle"></i></button>
     <a href="/admin/citas-nutricion/" class="btn btn-success" style="float: right; margin-left: 3px;">Calendario</a>
+    <a href="/admin/citas-nutricion-week/" class="btn btn-success" style="float: right; margin-left: 3px;">Semana</a>
+
 @endsection
 @section('externalScripts')
 <link rel="stylesheet" href="{{ asset('admin-css/assets/js/plugins/datatables/jquery.dataTables.min.css') }}">

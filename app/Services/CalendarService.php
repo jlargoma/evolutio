@@ -88,5 +88,47 @@ class CalendarService {
             'days' => $days,
         ];
     }
+    
+    
+    function getCalendarOneWeek() {
+
+      /********************************************************************* */
+      // Crear calendario
+        $cDay = $this->firstDay;
+        $days = [[]];
+        $weekday = 1;
+        $week = 0;
+        $oneDay = 24 * 60 * 60;
+        $daySP = [
+            1 => 'Lun',
+            2 => 'Mar',
+            3 => 'Mié',
+            4 => 'Jue',
+            5 => 'Vie',
+            6 => 'Sáb',
+            0 => 'Dom',
+        ];
+        for($i=0;$i<7;$i++){
+            if ($weekday < 7)
+                $days[$week][] = [
+                    'time' => $cDay,
+                    'date' => date('d/m', $cDay),
+                    'day' => $daySP[$weekday]
+                ];
+            $cDay += $oneDay;
+            if ($weekday == 7) {
+                $weekday = 0;
+                $week++;
+            }
+            $weekday++;
+        }
+      
+        $this->lastDay = $cDay;
+        return [
+            'firstDay' => $this->firstDay,
+            'lastDay' => $this->lastDay,
+            'days' => $days,
+        ];
+    }
 
 }
