@@ -133,6 +133,9 @@ $disableType = ($charge->type_payment == "card" || $charge->type_payment == "bon
   </div>
 </div>
 </form>
+<div class="text-center mt-1em">
+<span>Creado {{$charge->created_at}}</span>
+</div>
 @endif
 @endsection
 @section('scripts')

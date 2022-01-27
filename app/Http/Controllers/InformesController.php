@@ -315,6 +315,72 @@ class InformesController extends Controller {
         return view('admin.informes.informeCuotaMes',$data);
     }
     
+    public function informeCobrosMes(Request $request, $month = null, $day = null) {
+
+        $year = getYearActive();
+        if (!$month)
+            $month = date('m');
+        
+        
+        $aRType = \App\Models\TypesRate::all()->pluck('name','id')->toArray();
+        //rate types
+        $aRrt = \App\Models\Rates::all()->pluck('type','id')->toArray();
+        $aRname = \App\Models\Rates::all()->pluck('name','id')->toArray();
+        
+        
+        $uResult = [];
+        $tCoachs = [];
+        $uRates = \App\Models\UserRates::select(
+                'users_rates.*','charges.type_payment',
+                'charges.import','charges.discount')
+                ->where('rate_year',$year)
+                ->where('rate_month',$month)
+                ->join('charges','id_charges','=','charges.id')->get();
+        
+        if ($uRates){
+          foreach ($uRates as $uR){
+            if (!isset($uResult[$uR->id_user])) $uResult[$uR->id_user] = [];
+
+            $uResult[$uR->id_user][] = [
+                $uR->id_rate,
+                $uR->coach_id,
+                $uR->type_payment,
+                $uR->import,
+                $uR->discount,
+                isset($aRrt[$uR->id_rate]) ? $aRrt[$uR->id_rate] : null
+            ];
+
+            if (!isset($tCoachs[$uR->coach_id])) $tCoachs[$uR->coach_id] = 0;
+            
+            $tCoachs[$uR->coach_id] += $uR->import;
+          }
+        }
+        
+        
+        
+
+        $aCustomers = User::whereIn('id',array_keys($uResult))
+                ->pluck('name','id')->toArray();
+        $aCoachs = User::whereIn('id', array_keys($tCoachs))
+                ->pluck('name','id')->toArray();
+       
+                
+        $lstMonthsSpanish = lstMonthsSpanish();
+        unset($lstMonthsSpanish[0]);
+        $data['months'] =  $lstMonthsSpanish;
+        
+        $data['year']    =  $year;
+        $data['month']   =  $month;
+        $data['aRname']  =  $aRname;
+        $data['aRType']  =  $aRType;
+        $data['uResult'] =  $uResult;
+        $data['aCust']   =  $aCustomers;
+        $data['aCoachs'] =  $aCoachs;
+        $data['tCoachs'] =  $tCoachs;
+        return view('admin.informes.informeCobrosMes',$data);
+    }
+    
+    
     public function searchClientInform(Request $request,  $month = null) {
         $year = getYearActive();
         if (!$month)  $month = date('m');

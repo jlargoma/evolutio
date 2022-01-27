@@ -61,7 +61,7 @@ class SubscEvolutioTv extends Command {
       $uRates = UserRates::where('rate_year',$year)
               ->where('rate_month',$month)
               ->whereIn('id_rate',$oRatesSubsc)
-              ->whereNotNull('id_charges')->limit(3)->get();
+              ->whereNotNull('id_charges')->get();
       if ($uRates){
         $MailsService = new MailsService();
         foreach ($uRates as $uR){
