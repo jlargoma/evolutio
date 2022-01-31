@@ -319,7 +319,7 @@ trait ClientesTraits {
             ->whereYear('date_payment','=',$year)
             ->get();
     foreach ($bonoCharges as $item){
-      $mounth = substr($item->date_payment, 5,2);
+      $mounth = intVal(substr($item->date_payment, 5,2));
       $uLstRates[$mounth]['bonos'][] =  ['price'=>$item->import,'paid'=>1,'cid'=>$item->id,'id'=>'bono'];
     }
     //*************************************************//
