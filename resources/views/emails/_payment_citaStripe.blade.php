@@ -30,7 +30,7 @@ Hola! <?php echo $user->name ?><br><br>
 </p>
 @endif
 @if($urlEntr)
-<p>
+<p style="text-align: center;background-color: #e0f5e9;padding: 9px;color: #000;font-size: 16px;font-weight: bold;margin: 32px 0;">
     Por favor, complete la siguente encuesta antes de su cita<br/>
     <a href="{{$urlEntr}}" title="Encuesta nutrición">{{$urlEntr}}</a>
 </p>
