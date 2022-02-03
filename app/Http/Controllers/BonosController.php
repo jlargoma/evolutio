@@ -174,7 +174,7 @@ class BonosController extends Controller {
     
     $oUser = \App\Models\User::find($uId);
     if ($oUser && $oUser->id == $uId){
-      $fidelity = $oUser->getMetaContent('FIDELITY');
+      $uPlan = $oUser->getPlan();
       //--------------------------------//
       //--  BEGIN: STRIPE    ----------//
       $pStripe = null;
@@ -198,7 +198,7 @@ class BonosController extends Controller {
         'id_back'=>$id,
         'typesRate'=> \App\Models\TypesRate::pluck('name','id')->toArray(),
         'rate_subf'=> \App\Models\TypesRate::subfamily(),
-        'uFidelity'=>$fidelity
+        'uPlan'=>$uPlan
     ]);
       
     }

@@ -198,4 +198,9 @@ class User extends Authenticatable
       return null;
     }
   }
+  
+  
+  public function getPlan() {
+    return $this->getMetaContent('plan');
+  }
 }

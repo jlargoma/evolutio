@@ -60,11 +60,11 @@ $disableType = ($charge->type_payment == "card" || $charge->type_payment == "bon
   $icoFidelity = '';
   
   if ($rate->tarifa == 'fidelity'){
-    if ($uFidelity === 0){
+    if ($uPlan == 'basic'){
       $price = priceNoFidelity($price);
       $icoFidelity = '<i class="fa fa-heart text-danger"></i> <small>Plan Básico</small>';
     }
-    if ($uFidelity == 1) $icoFidelity = '<i class="fa fa-heart text-success"></i> <small>Plan Fidelity</small>';
+    if ($uPlan == 1) $icoFidelity = '<i class="fa fa-heart text-success"></i> <small>Plan Fidelity</small>';
   }
 ?>
 <form class="fomr-horizontal content-md" method="post" action="{{ url('/admin/cobros/cobrar/' . $charge->id) }}" id="forms">

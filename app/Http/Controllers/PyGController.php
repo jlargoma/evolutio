@@ -182,9 +182,9 @@ class PyGController extends Controller {
     $oUser = new User();
     $subscs = \App\Models\UsersSuscriptions::count();
     $uActivs = User::where('status',1)->count();
-    $uFidelities = $oUser->getMetaUserID_byKey('FIDELITY',1);
+    $uPlan = $oUser->getMetaUserID_byKey('plan','fidelity');
     $subscsFidelity = \App\Models\UsersSuscriptions::where('tarifa','fidelity')->count();
-    $uActivsFidelity = \App\Models\User::where('status',1)->whereIn('id',$uFidelities)->count();
+    $uActivsFidelity = \App\Models\User::where('status',1)->whereIn('id',$uPlan)->count();
     /***************************************/
         
     $aux_i = $aux_e = $months_empty; 

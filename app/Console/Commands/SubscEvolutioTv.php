@@ -80,8 +80,8 @@ class SubscEvolutioTv extends Command {
           $uRdata[] = $uR->user->email;
           
           
-          $fidelity = $uR->user->getMetaContent('FIDELITY');
-          if ($fidelity == 1){
+          $uPlan = $uR->user->getPlan();
+          if ($uPlan == 'fidelity'){
               $params = [
                   'tkn'=>$token,
                   'name'=>$uR->user->name,

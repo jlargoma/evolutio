@@ -7,11 +7,11 @@ $oBonoLst = $oBonoLst[1];
   $disc = '';
   $icoFidelity = '';
   if ($rate->tarifa == 'fidelity'){
-    if ($uFidelity === 0){
+    if ($uPlan == 'basic'){
       $price = priceNoFidelity($price);
       $icoFidelity = '<i class="fa fa-heart text-danger"></i> <small>Plan Básico</small>';
     }
-    if ($uFidelity == 1) $icoFidelity = '<i class="fa fa-heart text-success"></i> <small>Plan Fidelity</small>';
+    if ($uPlan == 'fidelity') $icoFidelity = '<i class="fa fa-heart text-success"></i> <small>Plan Fidelity</small>';
   }
 
 ?>

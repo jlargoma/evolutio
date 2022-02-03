@@ -192,7 +192,11 @@ class UsersController extends Controller {
     User::find($id)->delete();
     return redirect('/admin/usuarios');
   }
-
+/**
+ * /clientes/update
+ * @param Request $request
+ * @return type
+ */
   public function updateCli(Request $request) {
     $rates = $request->input('id_rates');
 
@@ -210,13 +214,12 @@ class UsersController extends Controller {
 
     $userToUpdate->telefono = $request->input('telefono');
     $userToUpdate->save();
-    
     if ($request->has('fidelity')){
-      $oldFidelity = $userToUpdate->getMetaContent('FIDELITY');
-      $userToUpdate->setMetaContent('FIDELITY',$request->input('fidelity'));
+      $oldFidelity = $userToUpdate->getPlan();
+      $userToUpdate->setMetaContent('plan',$request->input('fidelity'));
       
       // agrega un bono de Fisio y otro de Nutry
-      if (!$oldFidelity && $request->input('fidelity') == 1){
+      if (!$oldFidelity && $request->input('fidelity') == 'fidelity'){
         $sBono = new \App\Services\BonoService();
         $rateBonos = \App\Models\TypesRate::whereIn('type',['fisio','nutri'])->pluck('id');
         foreach ($rateBonos as $rTypeID){
@@ -494,13 +497,13 @@ class UsersController extends Controller {
         break;
       case 'contrato':
         
-        $uFidelities = $oUser->getMetaContent('FIDELITY');
-        if ($uFidelities){
-          if ($uFidelities == 1){
+        $uPlan = $oUser->getPlan();
+        if ($uPlan){
+          if ($uPlan == 'fidelity'){
               $tit = 'CONTRATO PLAN FIDELITY';
               $subject = 'Firma de contrato: PLAN FIDELITY';
           }
-          if ($uFidelities == 0){
+          if ($uPlan == 'basic'){
               $tit = 'CONTRATO PLAN BÁSICO';
               $subject = 'Firma de contrato: PLAN NORMAL';
           }

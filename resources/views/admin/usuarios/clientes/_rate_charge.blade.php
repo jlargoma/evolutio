@@ -55,11 +55,11 @@
                 $price = $rate->price;
                 $tarifa = '';
                 if ($rate->tarifa == 'fidelity'){
-                  if ($uFidelity === 0){
+                  if ($uPlan == 'basic'){
                     $price = priceNoFidelity($price);
                     $tarifa = 'nofidelity';
                   }
-                  if ($uFidelity == 1) $tarifa = 'fidelity';
+                  if ($uPlan == 'fidelity') $tarifa = 'fidelity';
                 }
               
                 ?>

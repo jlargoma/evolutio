@@ -37,14 +37,14 @@ trait ClientesTraits {
       $sqlUsers = User::where('role', 'user');
     } else {
       if ($status == 2){
-        $uFIDELITY = DB::table('user_meta')
-                ->where('meta_key','FIDELITY')
-                ->where('meta_value',1)
+        $uPlan = DB::table('user_meta')
+                ->where('meta_key','plan')
+                ->where('meta_value','fidelity')
                 ->pluck('user_id');
         
         $sqlUsers = User::select('users.*')->where('role', 'user')
               ->where('status', 1)
-              ->whereIn('id',$uFIDELITY);
+              ->whereIn('id',$uPlan);
                 
       } else {
         $sqlUsers = User::where('role', 'user')
@@ -108,14 +108,14 @@ trait ClientesTraits {
     $aCoachs = $oUser->whereCoachs('teach')->orderBy('name')->pluck('name', 'id')->toArray();
 
     /**/
-    $uFidelities = $oUser->getMetaUserID_byKey('FIDELITY',1);
+    $uPlan = $oUser->getMetaUserID_byKey('plan','fidelity');
     $sql = DB::table('user_meta')
-            ->where('meta_key','FIDELITY')
-            ->where('meta_value',0)
+            ->where('meta_key','plan')
+            ->where('meta_value','basic')
             ->where('created_at','>=',date('Y-m-d', strtotime('-12 months')));
      
-    $uFidelitiesPenal =  $sql->pluck('user_id')->toArray();
-//    dd($uFidelitiesPenal);
+    $uPlanPenal =  $sql->pluck('user_id')->toArray();
+//    dd($uPlanPenal);
     /**/
     return view('/admin/usuarios/clientes/index', [
         'users' => $users,
@@ -128,8 +128,8 @@ trait ClientesTraits {
         'detail' => $detail,
         'months' => $months,
         'aCoachs' => $aCoachs,
-        'uFidelities' => $uFidelities,
-        'uFidelitiesPenal' => $uFidelitiesPenal,
+        'uPlan' => $uPlan,
+        'uPlanPenal' => $uPlanPenal,
         'total_pending' => array_sum($arrayPaymentMonthByUser),
     ]);
   }
@@ -232,7 +232,7 @@ trait ClientesTraits {
     /** END: STRIPE              ***** */
     /*     * *************************** */
 
-    $fidelity = $oUser->getMetaContent('FIDELITY');
+    $uPlan = $oUser->getPlan();
         
     return view('/admin/usuarios/clientes/cobro', [
         'rate' => $oRates,
@@ -246,7 +246,7 @@ trait ClientesTraits {
         'uRate' => $uRates->id,
         'coach_id' => $uRates->coach_id,
         'coachs' => User::getCoachs(),
-        'uFidelity'=>$fidelity
+        'uPlan'=>$uPlan
     ]);
   }
 
@@ -351,11 +351,11 @@ trait ClientesTraits {
     
     //----------------------//
     // TARIFAS FIDELITY
-    $fidelity = $user->getMetaContent('FIDELITY');
+    $uPlan = $user->getPlan();
     // Already Signed  -------------------------------------------
      $sing_contrato = false;
-    if ($fidelity !== null){
-      $fileName = $user->getMetaContent('contrato_FIDELITY_'.$fidelity);
+    if ($uPlan !== null){
+      $fileName = $user->getMetaContent('contrato_FIDELITY_'.$uPlan);
       $path = storage_path('app/'.$fileName);
       if ($fileName && File::exists($path)){
         $sing_contrato = true;
@@ -416,7 +416,7 @@ trait ClientesTraits {
         'totalInvoice' => $totalInvoice,
         'invoiceModal' => $invoiceModal,
         'valora' => $valoracion,
-        'uFidelity' => $fidelity,
+        'uPlan' => $uPlan,
         'sing_contrato' => $sing_contrato,
         'u_current'=>Auth::user()->id
     ]);
@@ -435,8 +435,8 @@ trait ClientesTraits {
       return redirect('/admin/usuarios/informe/' . $uID . '/servic')->withErrors(['Servicio no encontrada']);
     }
     
-    $uFidelity = $oUser->getMetaContent('FIDELITY');
-    $tarifa = ($uFidelity == 1 && $oRate->tarifa == 'fidelity') ? 'fidelity' : '';
+    $uPlan = $oUser->getPlan();
+    $tarifa = ($uPlan == 1 && $oRate->tarifa == 'fidelity') ? 'fidelity' : '';
               
 
     $oObj = new UserRates();
@@ -535,7 +535,7 @@ trait ClientesTraits {
     }
     
     $rateFamily = \App\Models\Rates::getTypeRatesGroups(false);
-    $fidelity = $oUser->getMetaContent('FIDELITY');
+    $uPlan = $oUser->getPlan();
     
     return view('admin.usuarios.clientes._rate_charge', [
         'user' => $oUser,
@@ -544,7 +544,7 @@ trait ClientesTraits {
         'rateFamily' => $rateFamily,
         'stripe' => $stripe,
         'card' => $card,
-        'uFidelity'=>$fidelity
+        'uPlan'=>$uPlan
     ]);
   }
 

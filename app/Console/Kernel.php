@@ -21,6 +21,7 @@ class Kernel extends ConsoleKernel
       Commands\RememberPayment::class,
       Commands\RememberPaymentAgain::class,
       Commands\SubscEvolutioTv::class,
+      Commands\Tasks::class,
     ];
 
     /**

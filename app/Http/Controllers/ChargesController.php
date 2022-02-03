@@ -38,9 +38,9 @@ class ChargesController extends Controller {
         }
         
         $oUser = $charge->user;
-        $fidelity = 0;
+        $uPlan = 'none';
         if ($oUser){
-          $fidelity = $oUser->getMetaContent('FIDELITY');
+          $uPlan = $oUser->getPlan();
         }
 
         return view('admin.charges.cobro_update', [
@@ -53,7 +53,7 @@ class ChargesController extends Controller {
             'coach_id' => $coach_id,
             'oBono' => $oBono,
             'coachs' => User::getCoachs(),
-            'uFidelity'=>$fidelity
+            'uPlan'=>$uPlan
         ]);
     }
 
@@ -508,7 +508,7 @@ class ChargesController extends Controller {
         
         
         if ($oBono->tarifa == 'fidelity'){
-          if ($oUser->getMetaContent('FIDELITY') == 0) $importe = priceNoFidelity($importe);
+          if ($oUser->getPlan() == 0) $importe = priceNoFidelity($importe);
         }
               
         

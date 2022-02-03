@@ -79,9 +79,9 @@ function btn_downlConsent($uID,$sign,$type){
     </td>
     <td class="btnCel" colspan="2"><?php echo btn_seeConsent($user->id,$sueloPelvico,'sueloPelvico'); ?></td>
   </tr>
-  @if($uFidelity === 0 || $uFidelity == 1)
+  @if($uPlan == 'basic' || $uPlan == 'fidelity')
   <tr data-id="contrato">
-    <th>CONTRATOS PLAN <?php echo ($uFidelity == 1) ? 'FIDELITY' : 'BÁSICO';?></th>
+    <th>CONTRATOS PLAN <?php echo ($uPlan == 'fidelity') ? 'FIDELITY' : 'BÁSICO';?></th>
     <td class="btnCel">
       @if($sing_contrato)
       <button type="button" title="Firmado" class="btn btn-success">

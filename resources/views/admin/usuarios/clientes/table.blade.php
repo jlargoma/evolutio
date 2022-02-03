@@ -42,8 +42,8 @@
                 </td>
                 <td class="text-left tc1"> 
                     <a  class="openUser" data-id="<?php echo $user->id; ?>"  data-type="user" data-original-title="Editar user" ><b><?php echo $user->name; ?></b></a>
-                    <?php echo in_array($user->id,$uFidelities) ? '<i class="fa fa-heart text-success fidelity"></i>' : '' ?>
-                    <?php echo in_array($user->id,$uFidelitiesPenal) ? '<i class="fa fa-heart text-danger fidelity" title="CLEINTE CON PENALIZACION DE 60€ POR BAJA ANTICIPADA"></i>' : '' ?>
+                    <?php echo in_array($user->id,$uPlan) ? '<i class="fa fa-heart text-success fidelity"></i>' : '' ?>
+                    <?php echo in_array($user->id,$uPlanPenal) ? '<i class="fa fa-heart text-danger fidelity" title="CLEINTE CON PENALIZACION DE 60€ POR BAJA ANTICIPADA"></i>' : '' ?>
                 </td>
                 <td class="text-center tc2">
                     <button class="btn btn-default openAdd" data-idUser="<?php echo $user->id; ?>">

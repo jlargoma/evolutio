@@ -44,8 +44,8 @@ class ChargesService {
       return ['error', 'Tarifa no encontrada'];
     
     
-    $uFidelities = $oUser->getMetaContent('FIDELITY');
-    $tarifa = ($uFidelities == 1 && $oRate->tarifa == 'fidelity') ? 'fidelity' : '';
+    $uPlan = $oUser->getPlan();
+    $tarifa = ($uPlan == 'fidelity' && $oRate->tarifa == 'fidelity') ? 'fidelity' : '';
     $dataMail = [
         'fecha_pago' => $month,
         'type_payment' => $tpay,

@@ -30,8 +30,8 @@
                 <td class="static"><input type="radio" name="id_bono" value="{{$b->id}}" class="form-control"/></td>
                 <td class="t-left static-2"><label>{{$b->name}}</label><?php 
                 if ($b->tarifa == 'fidelity'){
-                  if ($uFidelity === 0 ) echo ' <i class="fa fa-heart text-danger"></i>';
-                  if ($uFidelity == 1 ) echo ' <i class="fa fa-heart text-success"></i>';
+                  if ($uPlan == 'basic' ) echo ' <i class="fa fa-heart text-danger"></i>';
+                  if ($uPlan == 'fidelity' ) echo ' <i class="fa fa-heart text-success"></i>';
                 }
                 ?></td>
                 <td class="first-col"></td>
@@ -46,7 +46,7 @@
                 <td>{{$b->qty}}</td>
                 <?php 
                   $price = $b->price;
-                  if ($uFidelity === 0 && $b->tarifa == 'fidelity') $price = priceNoFidelity($price);
+                  if ($uPlan == 'basic' && $b->tarifa == 'fidelity') $price = priceNoFidelity($price);
                   ?>
                 <td><input type="text" name="price_{{$b->id}}" value="{{$price}}" class="form-control only-numbers"></td>
               </tr>

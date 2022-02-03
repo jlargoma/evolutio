@@ -336,11 +336,11 @@ class CustomerController extends Controller {
       return redirect('404')->withErrors(['Cliente no encontrado']);
     }
     
-    $fidelity = $oUser->getMetaContent('FIDELITY');
+    $uPlan = $oUser->getPlan();
     // Already Signed  -------------------------------------------
     $sing_contrato = false;
-    if ($fidelity !== null){
-      $fileName = $oUser->getMetaContent('contrato_FIDELITY_'.$fidelity);
+    if ($uPlan !== null){
+      $fileName = $oUser->getMetaContent('contrato_FIDELITY_'.$uPlan);
       $path = storage_path('app/'.$fileName);
       if ($fileName && File::exists($path)){
         return response()->file($path, [
@@ -383,10 +383,10 @@ class CustomerController extends Controller {
       return response()->json(['error','cliente no encontrado']);
     }
     
-    $fidelity = $oUser->getMetaContent('FIDELITY');
+    $uPlan =$oUser->getPlan();
     // Already Signed  -------------------------------------------
-    if ($fidelity !== null){
-      $fileName = $oUser->setMetaContent('contrato_FIDELITY_'.$fidelity, null);
+    if ($uPlan !== null){
+      $fileName = $oUser->setMetaContent('contrato_FIDELITY_'.$uPlan, null);
       return response()->json(['OK','Contrato removido']);
     }
       
@@ -432,12 +432,12 @@ class CustomerController extends Controller {
     //return $pdf->stream();
         
     //save document
-    $uFidelities = $oUser->getMetaContent('FIDELITY');
+    $uPlan = $oUser->getPlan();
     
     $fileName = 'contracts/Contrato-'. $oUser->id .'-'.time().'.pdf';
     $path = storage_path('/app/' . $fileName);
         
-    $oUser->setMetaContent('contrato_FIDELITY_'.$uFidelities,$fileName);
+    $oUser->setMetaContent('contrato_FIDELITY_'.$uPlan,$fileName);
     $storage = \Illuminate\Support\Facades\Storage::disk('local');
     $storage->put($fileName, $output);
     
@@ -490,12 +490,12 @@ class CustomerController extends Controller {
     
     $text = '';
     
-    $uFidelities = 0;
+    $uPlan = '';
     $uF_tCreated = time();
     $oMeta = \DB::table('user_meta')
-            ->where('user_id',$oUser->id)->where('meta_key','FIDELITY')->first();
+            ->where('user_id',$oUser->id)->where('meta_key','plan')->first();
     if ($oMeta){
-      $uFidelities = $oMeta->meta_value;
+      $uPlan = $oMeta->meta_value;
       $uF_tCreated = strtotime($oMeta->created_at);
     }
     
@@ -504,7 +504,7 @@ class CustomerController extends Controller {
     
       
     $oClientesContratos = new \App\Helps\ClientesContratos();
-    if ($uFidelities){
+    if ($uPlan == 'fidelity'){
         $tit = 'PLAN FIDELITY';
         $text = $oClientesContratos->planFIDELITY();
     } else {
@@ -514,8 +514,8 @@ class CustomerController extends Controller {
     
     
      // Already Signed  -------------------------------------------
-    if ($uFidelities !== null){
-      $fileName = $oUser->getMetaContent('contrato_FIDELITY_'.$uFidelities);
+    if ($uPlan !== null){
+      $fileName = $oUser->getMetaContent('contrato_FIDELITY_'.$uPlan);
       $path = storage_path('app/'.$fileName);
       if ($fileName && File::exists($path)){
         return [
