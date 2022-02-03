@@ -79,8 +79,9 @@ function btn_downlConsent($uID,$sign,$type){
     </td>
     <td class="btnCel" colspan="2"><?php echo btn_seeConsent($user->id,$sueloPelvico,'sueloPelvico'); ?></td>
   </tr>
+  @if($uFidelity === 0 || $uFidelity == 1)
   <tr data-id="contrato">
-    <th>CONTRATOS</th>
+    <th>CONTRATOS PLAN <?php echo ($uFidelity == 1) ? 'FIDELITY' : 'BÁSICO';?></th>
     <td class="btnCel">
       @if($sing_contrato)
       <button type="button" title="Firmado" class="btn btn-success">
@@ -102,5 +103,6 @@ function btn_downlConsent($uID,$sign,$type){
     <td class="btnCel"><?php echo btn_seeContrato($user->id,$sing_contrato,'contrato'); ?></td>
     <td class="btnCel">@if($sing_contrato)<button class="btn btn-danger rmContrato" title="Reiniciar contrato" ><i class="fa fa-close"></i></button>@endif</td>
   </tr>
+  @endif
 </table>
   </div>

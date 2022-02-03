@@ -46,7 +46,7 @@
               $price = $rate->price;
               $tarifa = '';
               if ($rate->tarifa == 'fidelity'){
-                if ($uFidelity == 0){
+                if ($uFidelity === 0){
                   $price = priceNoFidelity($price);
                   $tarifa = 'nofidelity';
                 }

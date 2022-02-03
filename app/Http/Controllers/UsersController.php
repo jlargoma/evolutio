@@ -496,11 +496,14 @@ class UsersController extends Controller {
         
         $uFidelities = $oUser->getMetaContent('FIDELITY');
         if ($uFidelities){
-            $tit = 'CONTRATO PLAN FIDELITY';
-            $subject = 'Firma de contrato: PLAN FIDELITY';
-        } else {
-            $tit = 'CONTRATO PLAN NORMAL';
-            $subject = 'Firma de contrato: PLAN NORMAL';
+          if ($uFidelities == 1){
+              $tit = 'CONTRATO PLAN FIDELITY';
+              $subject = 'Firma de contrato: PLAN FIDELITY';
+          }
+          if ($uFidelities == 0){
+              $tit = 'CONTRATO PLAN BÁSICO';
+              $subject = 'Firma de contrato: PLAN NORMAL';
+          }
         }
         $code = 3003;
         $link = URL::to('/firmar-contrato/').'/';

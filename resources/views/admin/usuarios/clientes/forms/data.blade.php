@@ -42,7 +42,7 @@
   <div class="col-md-2 mt-1 fFIDELITY">
     <select name="fidelity" class="form-control">
       <option value="2" <?php if($uFidelity == 2) echo "selected"; ?>>SIN PLAN</option>
-      <option value="0" <?php if($uFidelity == 0) echo "selected"; ?>>PLAN BASICO</option>
+      <option value="0" <?php if($uFidelity === 0) echo "selected"; ?>>PLAN BASICO</option>
       <option value="1" <?php if($uFidelity == 1) echo "selected"; ?>>FIDELITY</option>
     </select>
     <?php if($uFidelity == 1) echo '<i class="fa fa-heart text-success"></i>'; ?>

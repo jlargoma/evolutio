@@ -60,7 +60,7 @@ $disableType = ($charge->type_payment == "card" || $charge->type_payment == "bon
   $icoFidelity = '';
   
   if ($rate->tarifa == 'fidelity'){
-    if ($uFidelity == 0){
+    if ($uFidelity === 0){
       $price = priceNoFidelity($price);
       $icoFidelity = '<i class="fa fa-heart text-danger"></i> <small>Plan Básico</small>';
     }
