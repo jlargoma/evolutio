@@ -506,6 +506,12 @@ class ChargesController extends Controller {
             $oUser->save();
         }
         
+        
+        if ($oBono->tarifa == 'fidelity'){
+          if ($oUser->getMetaContent('FIDELITY') == 0) $importe = priceNoFidelity($importe);
+        }
+              
+        
         $data = [$oUser->id,$importe*100,$oBono->id,$disc];
         $sStripe = new \App\Services\StripeService();
         $pStripe = url($sStripe->getPaymentLink('bono',$data));

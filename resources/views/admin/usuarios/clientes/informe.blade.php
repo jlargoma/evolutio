@@ -144,9 +144,6 @@
         $('#id_rateSubscr').on('change',function (e) {
           var obj  = $(this).find(':selected');
           var data = obj.data('t');
-          
-          if (obj.data('tarifa') == 'fidelity') $('#servFidelity').show();
-            else $('#servFidelity').hide();
             
           $('#r_price').val(obj.data('p'));
           if (data == 'pt'){
@@ -157,6 +154,11 @@
             $('#rateCoach').addClass('disabled');
             $('#id_rateCoach').val('').attr('disabled',true);
           }
+              
+          var tarifa = obj.data('tarifa');
+          $('#showTartifa').html('');
+          if (tarifa == 'fidelity') $('#showTartifa').html('<i class="fa fa-heart text-success"></i> Plan Fidelity');
+          if (tarifa == 'nofidelity') $('#showTartifa').html('<i class="fa fa-heart text-danger"></i> Plan Básico');
         });
         
         /**************************************************/        

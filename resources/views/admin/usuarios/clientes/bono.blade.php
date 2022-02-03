@@ -28,7 +28,12 @@
               @foreach($oBonos as $b)
               <tr > 
                 <td class="static"><input type="radio" name="id_bono" value="{{$b->id}}" class="form-control"/></td>
-                <td class="t-left static-2"><label>{{$b->name}}</label><?php echo ($uFidelity && $b->tarifa == 'fidelity') ? '<i class="fa fa-heart text-success"></i>' : ''; ?></td>
+                <td class="t-left static-2"><label>{{$b->name}}</label><?php 
+                if ($b->tarifa == 'fidelity'){
+                  if ($uFidelity == 0 ) echo ' <i class="fa fa-heart text-danger"></i>';
+                  if ($uFidelity == 1 ) echo ' <i class="fa fa-heart text-success"></i>';
+                }
+                ?></td>
                 <td class="first-col"></td>
                 <td>
                   <?php 
@@ -41,7 +46,7 @@
                 <td>{{$b->qty}}</td>
                 <?php 
                   $price = $b->price;
-                  if ($uFidelity == 1 && $b->tarifa == 'fidelity') $price = priceFidelity($price);
+                  if ($uFidelity == 0 && $b->tarifa == 'fidelity') $price = priceNoFidelity($price);
                   ?>
                 <td><input type="text" name="price_{{$b->id}}" value="{{$price}}" class="form-control only-numbers"></td>
               </tr>
@@ -124,7 +129,7 @@ $(document).ready(function () {
     var posting = $.post('/admin/send/cobro-bono', {
       _token: '{{csrf_token()}}',
       u_ID: <?php echo $user->id; ?>,
-      u_bono:  $('input[name=id_bono]:checked', '#BonoPunch').val(),
+      u_bono:  $('#BonoPunch').find('input[name=id_bono]:checked').val(),
       u_email: $('#u_email').val(),
       u_phone: $('#u_phone').val(),
       importe: $('#importeFinal').val(),

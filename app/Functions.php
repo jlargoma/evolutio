@@ -349,9 +349,6 @@ function arrayDays($start,$end,$format,$val=0,$includeLast = true){
   return $allDay;
 }
 
-function discFidelity(){
-  return 10;
-}
-function priceFidelity($val){
-  return $val*0.9;
+function priceNoFidelity($val){
+  return $val*1.1;
 }

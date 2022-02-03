@@ -81,8 +81,7 @@ class SubscEvolutioTv extends Command {
           
           
           $fidelity = $uR->user->getMetaContent('FIDELITY');
-          if ($fidelity != 1) continue;
-          else {
+          if ($fidelity == 1){
               $params = [
                   'tkn'=>$token,
                   'name'=>$uR->user->name,

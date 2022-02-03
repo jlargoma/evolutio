@@ -45,9 +45,12 @@
           <?php foreach ($subscrRates as $rate): 
               $price = $rate->price;
               $tarifa = '';
-              if ($uFidelity == 1 && $rate->tarifa == 'fidelity'){
-                $tarifa = 'fidelity';
-                $price = priceFidelity($price);
+              if ($rate->tarifa == 'fidelity'){
+                if ($uFidelity == 0){
+                  $price = priceNoFidelity($price);
+                  $tarifa = 'nofidelity';
+                }
+                if ($uFidelity == 1) $tarifa = 'fidelity';
               }
   
             ?>
@@ -78,9 +81,7 @@
         <label for="price">Precio</label>
       </div>
     </div>
-    <div class="col-md-1 push-20 fFIDELITY">
-      <i class="fa fa-heart text-success" id="servFidelity" style="display:none"></i>
-    </div>
+    <div class="text-center col-md-1 push-20" id="showTartifa"></div>
     <div class="col-md-2  push-20">
       <button class="btn btn-success">Agregar</button>
     </div>

@@ -53,16 +53,21 @@
                 $sel = ($rate->id == $old) ? 'selected' : '';
                          
                 $price = $rate->price;
-                $disc = '';
-                if ($uFidelity == 1 && $rate->tarifa == 'fidelity'){
-                  $disc = discFidelity();
-                  $price = priceFidelity($price);
+                $tarifa = '';
+                if ($rate->tarifa == 'fidelity'){
+                  if ($uFidelity == 0){
+                    $price = priceNoFidelity($price);
+                    $tarifa = 'nofidelity';
+                  }
+                  if ($uFidelity == 1) $tarifa = 'fidelity';
                 }
+              
                 ?>
                 
                 <option value="<?php echo $rate->id ?>" 
                     data-price="<?php echo $price ?>"
-                    data-disc="<?php echo $disc ?>"
+                    orig="<?php echo $rate->price ?>"
+                    data-tarifa="{{$tarifa}}"
                     {{$sel}}>
                 <?php echo $rate->name ?>
                 </option>
@@ -109,6 +114,7 @@
         </div>
       </div>
     </div>
+    <div class="text-center" id="showTartifa"></div>
     
       <div class="row">
           <div class="col-md-6 col-xs-12 push-20">
@@ -157,9 +163,13 @@ $(document).ready(function () {
     var that = $("#id_rate option:selected");
     var price = that.data('price');
     $('#importeFinal').val(price);
-    $('#discount').val(that.data('disc'));
     origPrice = price;
-
+    
+    
+    var tarifa = that.data('tarifa');
+    $('#showTartifa').html('');
+    if (tarifa == 'fidelity') $('#showTartifa').html('<i class="fa fa-heart text-success"></i> Plan Fidelity');
+    if (tarifa == 'nofidelity') $('#showTartifa').html('<i class="fa fa-heart text-danger"></i> Plan Básico');
   });
 
   $('#discount').change(function (event) {
