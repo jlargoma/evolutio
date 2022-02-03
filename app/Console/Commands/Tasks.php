@@ -45,27 +45,27 @@ class Tasks extends Command {
    */
   public function handle() {
       
-      $oLst = DB::table('user_meta')->where('meta_key', 'FIDELITY')->get();
-  
-      
-      if ($oLst){
-        foreach ($oLst as $item){
-          $exists = DB::table('user_meta')
-                  ->where('meta_key', 'plan')
-                  ->where('user_id',$item->user_id)->first();
-          
-          $plan =  ($item->meta_value == 1) ? 'fidelity' : 'basic';
-          
-//              dd($exists,$plan);
-          if (!$exists){
-            DB::table('user_meta')->insert([
-                'meta_key' => 'plan',
-                'user_id'=>$item->user_id,
-                'meta_value'=>$plan
-            ]);
-          }
-        }
-      }
+//      $oLst = DB::table('user_meta')->where('meta_key', 'FIDELITY')->get();
+//  
+//      
+//      if ($oLst){
+//        foreach ($oLst as $item){
+//          $exists = DB::table('user_meta')
+//                  ->where('meta_key', 'plan')
+//                  ->where('user_id',$item->user_id)->first();
+//          
+//          $plan =  ($item->meta_value == 1) ? 'fidelity' : 'basic';
+//          
+////              dd($exists,$plan);
+//          if (!$exists){
+//            DB::table('user_meta')->insert([
+//                'meta_key' => 'plan',
+//                'user_id'=>$item->user_id,
+//                'meta_value'=>$plan
+//            ]);
+//          }
+//        }
+//      }
   }
   
 }

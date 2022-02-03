@@ -120,10 +120,16 @@
     </a>
     
     @if($id>0 && $date_type == 'fisio')
-      <div class="ecografo <?php echo (isset($ecogr) && $ecogr == 1) ? "active" : ''; ?>" data-id="{{$id}}" >
-        <img src="/img/ecog-gris.png" class="grey">
-        <img src="/img/ecog.png" class="blue">
+    <div class="block-icons">
+      <div class="ecografo <?php echo (isset($ecogr) && $ecogr == 1) ? "active" : ''; ?>" data-id="{{$id}}" title="ecógrafo" >
+        <img src="/img/ecog-gris.png" class="grey"  alt="Sin ecógrafo">
+        <img src="/img/ecog.png" class="blue"  alt="ecógrafo">
       </div>
+      <div class="indiba <?php echo (isset($indiba) && $indiba == 1) ? "active" : ''; ?>" data-id="{{$id}}"  title="indiba">
+        <img src="/img/indiba-gris.png" class="grey" alt="Sin indiba">
+        <img src="/img/indiba.png" class="blue"  alt="indiba">
+      </div>
+    </div>
     @endif
     @endif
     

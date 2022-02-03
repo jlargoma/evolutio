@@ -291,5 +291,21 @@ class FisioController extends Controller {
       return 'OK';
       
     }
+    public function toggleIndiba(Request $request) {
+
+      $id =  $request->input('id');
+
+      $oDate = Dates::find($id);
+      if (!$oDate) return 'Cita no encontrada';
+      
+      $indiba = $oDate->getMetaContent('indiba');
+      if ($indiba && $indiba == 1) $indiba = 0;
+      else $indiba = 1;
+      
+      $oDate->setMetaContent('indiba',$indiba);
+      
+      return 'OK';
+      
+    }
 
 }

@@ -11,8 +11,12 @@ function printEvents($lst){
   foreach ($aux as $h){
     foreach ($aux2[$h] as $item){
     $ecogrf = '';
+    $indiba = '';
     if (isset($item['ecogr']) && $item['ecogr']){
-      $ecogrf = '<img src="/img/ecog.png" class="ecogrf">';
+      $ecogrf = '<img src="/img/ecog.png" class="ecogrf"  title="ecógrafo" alt="ecógrafo">';
+    }
+    if (isset($item['indiba']) && $item['indiba']){
+      $indiba = '<img src="/img/indiba.png" class="ecogrf" title="indiba" alt="indiba">';
     }
     
     switch ($item['charged']){
@@ -27,7 +31,7 @@ function printEvents($lst){
         echo '<div '
           . 'data-id="'.$item['id'].'" data-name="" '
           . 'class="eventType_'.$item['coach'].' events group">'
-          .$item['h'].'<cust>  GRUPO '.$ecogrf.'</cust><toltip/>'
+          .$item['h'].'<cust>  GRUPO '.$ecogrf.$indiba.'</cust><toltip/>'
           . '</div>';
         break;
       default :
@@ -37,7 +41,7 @@ function printEvents($lst){
         . 'data-id="'.$item['id'].'" '
         . 'data-name="'. strtolower($item['name']).'" '
         . 'class="eventType_'.$item['coach'].' events">'
-          .$hour.'<cust>'.str_limit($item['name'],10).$ecogrf.'</cust>'
+          .$hour.'<cust>'.str_limit($item['name'],10).$ecogrf.$indiba.'</cust>'
             .'<toltip/>'
         . '</div>';
        break;

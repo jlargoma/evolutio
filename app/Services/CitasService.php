@@ -44,6 +44,7 @@ class CitasService {
       }
       $oServicios = Rates::getByTypeRate($oDate->date_type);
       $ecogr = $oDate->getMetaContent('ecogr');
+      $indiba = $oDate->getMetaContent('indiba');
       return [
           'date' => date('d-m-Y', strtotime($date[0])),
           'time' => intval($date[1]),
@@ -66,6 +67,7 @@ class CitasService {
           'isGroup' => $oDate->is_group,
           'urlBack' => self::get_urlBack($oDate->date_type,$date[0]),
           'ecogr' => $ecogr,
+          'indiba' => $indiba,
       ];
     }
     return null;
@@ -138,6 +140,9 @@ class CitasService {
     $ecogrs = \DB::table('appointment_meta')
             ->where('meta_value',1)
             ->where('meta_key','ecogr')->pluck('appoin_id')->toArray();
+    $indiba = \DB::table('appointment_meta')
+            ->where('meta_value',1)
+            ->where('meta_key','indiba')->pluck('appoin_id')->toArray();
     /****************/
     $oLst = $sql->get();
     $detail = [];
@@ -215,7 +220,8 @@ class CitasService {
                 'name' => $u_name,
                 'halfTime'=>$halfTime,
                 'h'=>$hTime,
-                'ecogr' => (in_array($item->id,$ecogrs))
+                'ecogr' => (in_array($item->id,$ecogrs)),
+                'indiba' => (in_array($item->id,$indiba)),
             ];
             $detail[$item->id] = [
                 'n' => $u_name,

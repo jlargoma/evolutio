@@ -62,6 +62,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::get('/citas-fisioterapia/{month?}/{coach?}/{type?}', 'FisioController@index');
   Route::get('/citas-fisioterapia-week/{week?}/{coach?}/{type?}', 'FisioController@indexWeek');
   Route::post('/toggleEcogr', 'FisioController@toggleEcogr');
+  Route::post('/toggleIndiba', 'FisioController@toggleIndiba');
   /* Citas Nutrición */
   Route::get('/citas-nutricion/listado/{coach?}/{type?}', 'NutriController@listado');
   Route::get('/citas-nutricion/create/{date?}/{time?}', 'NutriController@create');

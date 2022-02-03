@@ -162,6 +162,25 @@ jQuery(function () {
             });
           }
         );
+        $('.indiba').click(function (e) {
+          e.preventDefault();
+          var that = $(this);
+          var id = that.data('id');
+          
+          var data = {
+              id: id,
+              _token: '{{csrf_token()}}'
+            };
+            var posting = $.post( '/admin/toggleIndiba', data ).done(function( data ) {
+                if (data == 'OK'){
+                  if (that.hasClass('active')) that.removeClass('active');
+                  else that.addClass('active');
+                } else {
+                    alert(data);
+                }
+            });
+          }
+        );
         
         
     });
@@ -203,22 +222,26 @@ jQuery(function () {
     a.back{
       display: none;
     }
-    
-    .ecografo {
+    .block-icons{
+      width: 100px;
+      margin: 0 auto;
+    }
+    .ecografo,.indiba {
       border: 1px solid;
       padding: 8px;
-      margin: 12px auto 0;
+      margin: 12px 3px 0;
       width: 43px;
       cursor: pointer;
+      float: left;
     }
-    .ecografo.active {
+    .ecografo.active,.indiba.active {
         box-shadow: 1px 1px 5px 0px #768fea;
     }
 
-    .ecografo .grey{display: block;}
-    .ecografo .blue{display: none;}
-    .ecografo.active .grey{display: none;}
-    .ecografo.active .blue{display: block;}
+    .ecografo .grey,.indiba .grey{display: block;}
+    .ecografo .blue,.indiba .blue{display: none;}
+    .ecografo.active .grey,.indiba.active .grey{display: none;}
+    .ecografo.active .blue,.indiba.active .blue{display: block;}
     
   @media (max-width: 780px) {  
     a.back {
