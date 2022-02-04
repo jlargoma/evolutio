@@ -42,9 +42,9 @@
                 </div>
                 <div class="col-md-8 col-xs-12">
                   <div class="mbl-tabs">
-                    <span class="btn btn-success prevWeek"><< Semana Anterior</span>
+                    <span class="btn btn-success prevWeek"> << </span>
                     <span class="btn btn-success currentWeek">Semana Actual</span>
-                    <span class="btn btn-success nextWeek">Semana Siguiente >></span>
+                    <span class="btn btn-success nextWeek"> >> </span>
                     </div>
                 </div>
                 <div class="col-md-2 col-xs-12 mx-1em">

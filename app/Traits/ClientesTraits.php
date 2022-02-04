@@ -391,6 +391,13 @@ trait ClientesTraits {
       $detail = null;
     }
 
+    /********************************/
+    
+    $encNutr = $user->getMetaContent('nutri_q1');
+    $code = encriptID($user->id).'-'.encriptID(time()*rand());
+    $btnEncuesta = $code.'/'.getKeyControl($code);
+        
+    /********************************/
     return view('/admin/usuarios/clientes/informe', [
         'aRates' => $aRates,
         'atypeRates' => $typeRates,
@@ -418,7 +425,9 @@ trait ClientesTraits {
         'valora' => $valoracion,
         'uPlan' => $uPlan,
         'sing_contrato' => $sing_contrato,
-        'u_current'=>Auth::user()->id
+        'u_current'=>Auth::user()->id,
+        'encNutr'=>$encNutr,
+        'btnEncuesta'=>$btnEncuesta,
     ]);
   }
 
