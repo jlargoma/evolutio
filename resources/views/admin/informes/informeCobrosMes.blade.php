@@ -39,7 +39,51 @@ use \Carbon\Carbon; ?>
           </a>
           @endforeach
         </div>
-
+        
+        <div class="col-xs-12 mx-1em">
+            <div class="table-responsive">
+              <table class="table table-striped table-header-bg" id="tCountCoach">
+              <thead>
+                <tr>
+                  <th class="text-left bg-complete font-w800 static">Coach</th>
+                  <th class="text-center bg-complete font-w800">Nutri</th>
+                  <th class="text-center bg-complete font-w800">Fisio</th>
+                  <th class="text-center bg-complete font-w800">Suscrip</th>
+                  <th class="text-center bg-complete font-w800">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+              <?php $total = ['nutri'=>0,'fisio'=>0,'suscrip'=>0]; ?>
+              @foreach($countCoachs as $cID=>$data)
+              <?php 
+                $cname = isset($aCoachs[$cID]) ? $aCoachs[$cID] : '- '.$cID;
+                $total['nutri'] += $data['nutri'];
+                $total['fisio'] += $data['fisio'];
+                $total['suscrip'] += $data['suscrip'];
+              ?>
+              <tr>
+                <td class="text-left">{{$cname}}</td>
+                <td class="text-center">{{$data['nutri']}}</td>
+                <td class="text-center">{{$data['fisio']}}</td>
+                <td class="text-center">{{$data['suscrip']}}</td>
+                <td class="text-center">{{array_sum($data)}}</td>
+              </tr>
+              @endforeach
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th class="text-left bg-complete font-w800 static">Total</th>
+                  <th class="text-center bg-complete font-w800">{{$total['nutri']}}</th>
+                  <th class="text-center bg-complete font-w800">{{$total['fisio']}}</th>
+                  <th class="text-center bg-complete font-w800">{{$total['suscrip']}}</th>
+                  <th class="text-center bg-complete font-w800">{{array_sum($total)}}</th>
+                </tr>
+              </tfoot>
+            </table>
+           
+        </div>
+        
+          <hr>
         
         <div class="col-md-8 col-xs-12 push-20">
           <table class="table table-striped table-header-bg">
@@ -135,6 +179,17 @@ use \Carbon\Carbon; ?>
 </div>
 @endsection
 @section('scripts')
+
+<script type="text/javascript">
+  var dataTableClient = 1
+</script>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.20/datatables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/fixedcolumns/3.3.0/js/dataTables.fixedColumns.min.js"></script>
+<script src="{{ asset('admin-css/assets/js/pages/base_tables_datatables.js')}}"></script>
+
 <script type="text/javascript">
   $('#date, #month, #day').change(function (event) {
 
@@ -155,6 +210,13 @@ use \Carbon\Carbon; ?>
       });
     }, 50);
   });
+  $(document).ready(function() {
+    $('#tCountCoach').DataTable(
+      {
+         "info": false,
+       paginate:false
+      });
+} );
 
 </script>
 <style>

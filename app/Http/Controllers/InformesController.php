@@ -357,12 +357,11 @@ class InformesController extends Controller {
         }
         
         
-        
+        $aLstCoachs = array_keys($tCoachs);
 
         $aCustomers = User::whereIn('id',array_keys($uResult))
                 ->pluck('name','id')->toArray();
-        $aCoachs = User::whereIn('id', array_keys($tCoachs))
-                ->pluck('name','id')->toArray();
+        
        
                 
         $lstMonthsSpanish = lstMonthsSpanish();
@@ -375,8 +374,43 @@ class InformesController extends Controller {
         $data['aRType']  =  $aRType;
         $data['uResult'] =  $uResult;
         $data['aCust']   =  $aCustomers;
-        $data['aCoachs'] =  $aCoachs;
         $data['tCoachs'] =  $tCoachs;
+        
+        
+        /************************************/
+        
+        $auxCount = ['nutri'=>0,'fisio'=>0,'suscrip'=>0];
+        $countCoachs = [null=>$auxCount];
+        $lstDates = \App\Models\Dates::whereIn('date_type', ['nutri','fisio'])
+                ->whereYear('date','=',$year)
+                ->whereMonth('date','=',$month)
+                ->get();
+        if ($lstDates){
+          foreach ($lstDates as $item){
+            if (!isset($countCoachs[$item->id_coach])) $countCoachs[$item->id_coach] = $auxCount;
+            $countCoachs[$item->id_coach][$item->date_type]++;
+            $aLstCoachs[] = $item->id_coach;
+          }
+        }
+        
+        $lstUsrSuscript = \App\Models\UsersSuscriptions::all();
+        if ($lstUsrSuscript){
+          foreach ($lstUsrSuscript as $item){
+            if (!isset($countCoachs[$item->id_coach])) $countCoachs[$item->id_coach] = $auxCount;
+            $countCoachs[$item->id_coach]['suscrip']++;
+            $aLstCoachs[] = $item->id_coach;
+          }
+        }
+        $data['countCoachs'] =  $countCoachs;
+        
+        /******************************************************/
+        
+        $aCoachs = User::whereIn('id', array_unique($aLstCoachs))
+                ->pluck('name','id')->toArray();
+        $data['aCoachs'] =  $aCoachs;
+        
+        
+        /*******************************************************/
         return view('admin.informes.informeCobrosMes',$data);
     }
     
