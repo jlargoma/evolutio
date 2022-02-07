@@ -6,6 +6,7 @@
 <button type="button" class="btn btn-success addDate" data-date="{{time()}}" data-time="8">
   <i class="fa fa-plus-circle"></i></button>
 <a href="/admin/citas-pt/listado/" class="btn btn-success" style="float: right; margin-left: 3px;">Listado</a>
+<a href="/admin/citas-pt-week/" class="btn btn-success" style="float: right; margin-left: 3px;">Semana</a>
 @endsection
 @section('content')
 <div class="content content-full bg-white">
@@ -22,7 +23,7 @@
               </li>
               @foreach($coachs as $item)
               <li data-val="{{$item->id}}" class="select_<?php echo $item->id ?> <?php echo ($coach == $item->id) ? 'active' : '' ?>">
-                {{$item->name}}
+                {{$item->name}} <span class="counter">0</span>
               </li>
               @endforeach
             </ul>
@@ -100,6 +101,10 @@
   @if($detail)
     var details = {!!$detail!!};
   @endif
+    
+  var typeCalend = 'month';
+  var countByCoah = <?php echo json_encode($countByCoah) ?>;
+  
 </script>
 <script src="{{assetv('/js/calendar/pt.js')}}"></script>
 <script src="{{assetv('/admin-css/assets/js/toltip.js')}}"></script>

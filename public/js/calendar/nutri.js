@@ -153,5 +153,10 @@
         location.assign("/admin/citas-nutricion-week/" + week + "/" + coach + "/" + type);
     }
     
-    
+        
+    if (countByCoah){
+        for (var key in countByCoah){
+            $('.select_'+key).find('.counter').text(countByCoah[key])
+        }
+    }
   });

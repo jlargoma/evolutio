@@ -159,6 +159,18 @@ span.dateAvail{
     width: 14px;
 }
 
+.coachsFilter li{
+  position: relative;
+}
+.coachsFilter li .counter{
+    position: absolute;
+    top: -11px;
+    right: -6px;
+    background-color: red;
+    border-radius: 9px;
+    padding: 3px;
+    font-size: 12px;
+}
 @media only screen and (max-width:769px){
   .table-calendar tbody td.editDate .lst_events div cust{
     min-width: 80px !important;

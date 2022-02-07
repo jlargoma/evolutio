@@ -109,9 +109,47 @@ $(document).ready(function () {
         }
 
     });
-    setTimeout(function () {
-        $([document.documentElement, document.body]).animate({
-            scrollTop: $("#cweek").offset().top - 80
-        }, 400);
-    }, 250)
+    if (typeCalend != 'week'){
+        setTimeout(function(){
+          $([document.documentElement, document.body]).animate({
+            scrollTop: $("#cweek").offset().top-80
+          }, 200);
+        },250);
+    }
+    
+    
+    
+    $('.prevWeek').on('click', function (event) {
+        event.preventDefault();
+        var week = $('#selectWeek').val();
+        week--;
+        if (week>0) goToWeek(week)
+    });
+    
+    $('.nextWeek').on('click', function (event) {
+        event.preventDefault();
+        var week = $('#selectWeek').val();
+        week++;
+        if (week<53) goToWeek(week)
+    });
+    $('.currentWeek').on('click', function (event) {
+        event.preventDefault();
+        var week = $('#currentWeek').val();
+        goToWeek(week)
+    });
+    
+    function goToWeek(week) {
+        var type = $('#servSelect').val();
+        var month = $('#selectMonth').val();
+        var coach = $('#coachsFilter').val();
+        location.assign("/admin/citas-pt-week/" + week + "/" + coach + "/" + type);
+    }
+    
+        
+    if (countByCoah){
+        for (var key in countByCoah){
+            $('.select_'+key).find('.counter').text(countByCoah[key])
+        }
+        console.log(countByCoah)
+    }
 });

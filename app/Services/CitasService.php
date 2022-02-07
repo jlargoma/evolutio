@@ -150,6 +150,7 @@ class CitasService {
     $months = lstMonthsSpanish();
     $sValora = new ValoracionService();
     $daysCoatch = [];
+    $countByCoah = [];
     if ($oLst) {
         foreach ($oLst as $item) {
             $time = strtotime($item->date);
@@ -192,6 +193,13 @@ class CitasService {
                   'dc'=>'', // fecha pago
                   'd'=>$dTime, // fecha 
               ];
+              if (($item->is_group)){
+                if (!isset($countByCoah[$item->id_coach])){
+                  $countByCoah[$item->id_coach] = 1;
+                } else {
+                  $countByCoah[$item->id_coach]++;
+                }
+              }
               continue;
             }
 
@@ -237,6 +245,12 @@ class CitasService {
               $detail[$item->id]['mc'] = payMethod($charge->type_payment);
               $detail[$item->id]['dc'] = dateMin($charge->date_payment);
             }
+            
+            if (!isset($countByCoah[$item->id_coach])){
+              $countByCoah[$item->id_coach] = 1;
+            } else {
+              $countByCoah[$item->id_coach]++;
+            }
         }
     }
     /**************************************************** */
@@ -278,6 +292,7 @@ class CitasService {
         'times'  => $times,
         'detail' => $detail,
         'avails' => $avails,
+        'countByCoah' => $countByCoah,
     ];
   }
   

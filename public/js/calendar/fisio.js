@@ -165,4 +165,10 @@
     }
     
     
+    if (countByCoah){
+        for (var key in countByCoah){
+            $('.select_'+key).find('.counter').text(countByCoah[key])
+        }
+    }
+    
 });

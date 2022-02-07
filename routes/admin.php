@@ -79,6 +79,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::get('/citas-pt/create/{date?}/{time?}', 'PTController@create');
   Route::get('/citas-pt/edit/{id}', 'PTController@edit');
   Route::get('/citas-pt/{month?}/{coach?}/{type?}', 'PTController@index');
+  Route::get('/citas-pt-week/{week?}/{coach?}/{type?}', 'PTController@indexWeek');
 
   //Facturas
   Route::get('/facturas/ver/{id}', 'InvoicesController@view')->name('invoice.view');

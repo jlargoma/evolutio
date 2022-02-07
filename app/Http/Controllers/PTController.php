@@ -39,6 +39,34 @@ class PTController extends Controller {
         /*******************************************/
         return view('citasPT.index', $rslt);
     }
+    
+         /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function indexWeek($week = null, $coach = 0, $serv = 0) {
+          
+        $yearActive = getYearActive();
+        if (!$week) $week = date('W');
+        if ($week<10) $week = '0'.intVal($week);
+
+        $time = strtotime($yearActive.'W'.$week);
+        $date = date('Y-m-d',$time);
+
+        $oCalendar = new \App\Services\CalendarService($date);
+        $calendar = $oCalendar->getCalendarOneWeek();
+        
+        $start = $calendar['firstDay'];
+        $finish = $calendar['lastDay'];
+        $rslt = CitasService::get_calendars($start,$finish,$serv,$coach,'pt',$calendar['days']);
+        $rslt['calendar'] = $calendar['days'];
+        $rslt['week'] = $week;
+        $rslt['time'] = $time;
+        /*******************************************/
+        return view('citasPT.indexWeek', $rslt);
+    }
+
     /**
      * Show the form for creating a new resource.
      *

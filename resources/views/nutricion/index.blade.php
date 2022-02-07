@@ -23,7 +23,7 @@
               </li>
               @foreach($coachs as $item)
               <li data-val="{{$item->id}}" class="select_<?php echo $item->id ?> <?php echo ($coach == $item->id) ? 'active' : '' ?>">
-                {{$item->name}}
+                {{$item->name}} <span class="counter">0</span>
               </li>
               @endforeach
             </ul>
@@ -102,6 +102,9 @@
     var details = {!!$detail!!};
   @endif
   var typeCalend = 'month';
+  
+  var countByCoah = <?php echo json_encode($countByCoah) ?>;
+  
 </script>
 <script src="{{assetv('/js/calendar/nutri.js')}}"></script>
 <script src="{{assetV('/admin-css/assets/js/toltip.js')}}"></script>

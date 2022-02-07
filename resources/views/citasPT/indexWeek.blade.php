@@ -1,12 +1,12 @@
 @extends('layouts.admin-master')
 
-@section('title') Citas Nutrición Evolutio HTS @endsection
-@section('headerTitle') Citas Nutrición @endsection
+@section('title') Citas Entrenador Personal -  Evolutio HTS @endsection
+@section('headerTitle') Citas Entrenador Personal @endsection
 @section('headerButtoms')
 <button type="button" class="btn btn-success addDate" data-date="{{time()}}" data-time="8">
   <i class="fa fa-plus-circle"></i></button>
-  <a href="/admin/citas-nutricion/" class="btn btn-success" style="float: right; margin-left: 3px;">Calendario</a>
-  <a href="/admin/citas-nutricion/listado/" class="btn btn-success" style="float: right; margin-left: 3px;">Listado</a>
+   <a href="/admin/citas-pt/" class="btn btn-success" style="float: right; margin-left: 3px;">Calendario</a>
+<a href="/admin/citas-pt/listado/" class="btn btn-success" style="float: right; margin-left: 3px;">Listado</a>
 @endsection
 @section('content')
 <div class="content content-full bg-white">
@@ -67,7 +67,7 @@
     </div>
   </div>
 </div>
-@include('nutricion.modals')
+@include('citasPT.modals')
 @endsection
 
 @section('scripts')
@@ -102,8 +102,7 @@
   
   var countByCoah = <?php echo json_encode($countByCoah) ?>;
   
-
 </script>
-<script src="{{assetv('/js/calendar/nutri.js')}}"></script>
-<script src="{{assetV('/admin-css/assets/js/toltip.js')}}"></script>
+<script src="{{assetv('/js/calendar/pt.js')}}"></script>
+<script src="{{assetv('/admin-css/assets/js/toltip.js')}}"></script>
 @endsection
