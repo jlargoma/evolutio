@@ -75,17 +75,16 @@ $oBonoLst = $oBonoLst[1];
           <h4>PAGAR AHORA</h4>
           <div class="row">
             
-            <div class="col-xs-9">
-              <select class="likeBtn" name="type_payment" id="type_payment" multiple>
-                <option value="card" selected="">Tarjeta</option>
-                <option value="cash">Efectivo</option>
-                <option value="banco">Banco</option>
-                @if($tBonos>0)
-                <option value="bono" >Bonos ({{$tBonos}})</option>
-                @else
-                <option value="bono" disabled="">Bonos</option>
-                @endif
-              </select>
+            <div class="col-md-9 likeOption">
+              <input type="hidden" name="type_payment" id="type_payment" value="card">
+              <button  data-v="card" class="active" type="button">Tarjeta</button>
+              <button  data-v="cash"  type="button">Efectivo</button>
+              <button  data-v="banco"  type="button">Banco</button>
+              @if($tBonos>0)
+              <button  data-v="bono"  type="button">Bonos ({{$tBonos}})</button>
+               @else
+              <button  disabled="true"  type="button">Bonos</button>
+              @endif
             </div>
             <div class="col-xs-3">
               <button class="btn btn-lg btn-success" type="submit" id="submitFormPayment">
@@ -142,19 +141,24 @@ $(document).ready(function () {
 
   });
 
-  $('#type_payment').change(function (e) {
-    var value = $("#type_payment option:selected").val();
-    if (value == "card") {
-//            $('#stripeBox').show();
-      $('#stripeBox').find('.disabled').show();
-      $('.form-toPayment').attr('id', 'paymentForm');
-    } else {
-//            $('#stripeBox').hide();
-      $('#stripeBox').find('.disabled').hide();
-      $('.form-toPayment').removeAttr('id');
-    }
-
-  });
+    $('.likeOption').on('click','button',function (e) {
+      $('.likeOption').find('button').removeClass('active');
+        var value = $(this).data('v');
+        $(this).addClass('active');
+        $('#type_payment').val(value);
+        if (value == "bono") {
+            $('#bonosBox').show();
+            $('#stripeBox').hide();
+        } else {
+            $('#bonosBox').hide();
+            $('#stripeBox').show();
+        }
+        if (value == "card") {
+          $('#stripeBox').find('.disabled').hide();
+        } else {
+          $('#stripeBox').find('.disabled').show();
+        }
+    });
 <?php if ($card): ?>
     $('#card-element').hide();
     $('#changeCreditCard').on('click', function () {
@@ -209,19 +213,6 @@ $(document).ready(function () {
 
 
   });
-
-
-    $('#type_payment').change(function (e) {
-        var value = $("#type_payment option:selected").val();
-        if (value == "bono") {
-            $('#bonosBox').show();
-            $('#stripeBox').hide();
-        } else {
-            $('#bonosBox').hide();
-            $('#stripeBox').show();
-        }
-
-    });
 
 });
 </script>

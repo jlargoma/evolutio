@@ -60,13 +60,13 @@
         <div class="box-payment-card row">
           <h4>PAGAR AHORA</h4>
           <div class="col-xs-12">
-            <div class="col-xs-9">
-              <select class="likeBtn" name="type_payment" id="type_payment" multiple>
-                <option value="card" selected="">Tarjeta</option>
-                <option value="cash">Efectivo</option>
-                <option value="banco">Banco</option>
-              </select>
-            </div>
+            <div class="col-xs-9 likeOption">
+                <?php $old = old('type_payment', 'card'); ?>
+                <input type="hidden" name="type_payment" id="type_payment" value="<?php echo $old; ?>">
+                <button  data-v="card"  type="button" <?php if ($old == 'card') echo 'class="active"'; ?>>Tarjeta</button>
+                <button  data-v="cash"  type="button" <?php if ($old == 'cash') echo 'class="active"'; ?>>Efectivo</button>
+                <button  data-v="banco"  type="button" <?php if ($old == 'banco') echo 'class="active"'; ?>>Banco</button>
+              </div>
             <div class="col-xs-3">
               <button class="btn btn-lg btn-success" type="submit" id="submitFormPayment">
                 Cobrar
@@ -102,16 +102,16 @@ $(document).ready(function () {
 
 
 
-  $('#type_payment').change(function (e) {
-    var value = $("#type_payment option:selected").val();
-    if (value == "card") {
-      $('#stripeBox').find('.disabled').show();
-      $('.form-toPayment').attr('id', 'paymentForm');
-    } else {
-      $('#stripeBox').find('.disabled').hide();
-      $('.form-toPayment').removeAttr('id');
-    }
-
+  $('.likeOption').on('click','button',function (e) {
+      $('.likeOption').find('button').removeClass('active');
+      var value = $(this).data('v');
+      $(this).addClass('active');
+      $('#type_payment').val(value);
+        if (value == "card") {
+          $('#stripeBox').find('.disabled').hide();
+        } else {
+          $('#stripeBox').find('.disabled').show();
+        }
   });
 <?php if ($card): ?>
     $('#card-element').hide();

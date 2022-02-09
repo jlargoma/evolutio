@@ -121,13 +121,12 @@
             <div class="box-payment-card">
             <h4>PAGAR AHORA</h4>
             <div class="row">
-              <div class="col-xs-9">
-              <?php $old = old('type_payment', 'card'); ?>
-              <select class="likeBtn" name="type_payment" id="type_payment" multiple>
-                <option value="card" <?php if ($old == 'card') echo 'selected'; ?>>Tarjeta</option>
-                <option value="cash" <?php if ($old == 'cash') echo 'selected'; ?>>Efectivo</option>
-                <option value="banco" <?php if ($old == 'banco') echo 'selected'; ?>>Banco</option>
-              </select>
+              <div class="col-xs-9 likeOption">
+                <?php $old = old('type_payment', 'card'); ?>
+                <input type="hidden" name="type_payment" id="type_payment" value="<?php echo $old; ?>">
+                <button  data-v="card"  type="button" <?php if ($old == 'card') echo 'class="active"'; ?>>Tarjeta</button>
+                <button  data-v="cash"  type="button" <?php if ($old == 'cash') echo 'class="active"'; ?>>Efectivo</button>
+                <button  data-v="banco"  type="button" <?php if ($old == 'banco') echo 'class="active"'; ?>>Banco</button>
               </div>
               <div class="col-xs-3">
                 <button class="btn btn-lg btn-success" type="submit" id="submitFormPayment" style="margin-left: -1em;">
@@ -191,6 +190,18 @@ $(document).ready(function () {
     }
   });
 
+  $('.likeOption').on('click','button',function (e) {
+      $('.likeOption').find('button').removeClass('active');
+      var value = $(this).data('v');
+      $(this).addClass('active');
+      $('#type_payment').val(value);
+        if (value == "card") {
+          $('#stripeBox').find('.disabled').hide();
+        } else {
+          $('#stripeBox').find('.disabled').show();
+        }
+  });
+    
   $('.btnStripe').on('click', function () {
     var type = $(this).data('t');
     var posting = $.post('/admin/cobros/cobrar-usuario', {
