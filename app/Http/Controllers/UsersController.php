@@ -529,4 +529,42 @@ class UsersController extends Controller {
         });
     return response()->json(['OK','Email enviado']);
   }
+  
+  function getLinkContracts(Request $request){
+    $uID = $request->input('id_user',null);
+    $type = $request->input('type',null);
+    if (!$uID){
+      return response()->json(['error','usuario no encontrado']);
+    }
+    $oUser = User::find($uID);
+    if (!$oUser){
+      return response()->json(['error','usuario no encontrado']);
+    }
+    
+    $email = $oUser->email;
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
+      return response()->json(['error',$email.' no es un mail válido']);
+    }
+    
+    $link = '' ;
+    $code = 0;
+    switch ($type){
+      case 'fisioIndiba':
+        $code = 1001;
+        $link = URL::to('/firmar-consentimiento/').'/';
+        break;
+      case 'sueloPelvico':
+        $code = 2002;
+        $link = URL::to('/firmar-consentimiento/').'/';
+        break;
+      case 'contrato':
+        $code = 3003;
+        $link = URL::to('/firmar-contrato/').'/';
+        break;
+    }
+    
+   
+    $link .= \App\Services\LinksService::getLink([$uID,$code,time()]);
+    return response()->json(['OK',$link]);
+  }
 }

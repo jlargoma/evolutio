@@ -39,6 +39,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::post('/usuarios/nuevo', 'UsersController@saveCustomer');
   Route::get('/see-contrato/{id}/{type}', 'CustomerController@seeContracts');
   Route::post('/usuarios/remove-contrato', 'CustomerController@rmContracts');
+  Route::post('/usuarios/linkContratos', 'UsersController@getLinkContracts');
 
   /* Citas */
   Route::post('/citas/checkDisp', 'DatesController@checkDateDisp');

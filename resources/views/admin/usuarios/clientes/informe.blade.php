@@ -200,6 +200,26 @@
           
           
         });
+        $('.goContracts').on('click', function () {
+          var type = $(this).closest('tr').data('id');
+          var posting = $.post('/admin/usuarios/linkContratos', {
+            _token: '{{csrf_token()}}',
+            id_user: {{$user->id}},
+            type: type
+          });
+          posting.done(function (data) {
+            if (data[0] == 'OK') {
+              window.open(data[1], '_blank').focus();
+            } else {
+              window.show_notif('error', data[1]);
+            }
+          });
+          posting.fail(function (data) {
+            window.show_notif('error', 'UPs, algo salió mal');
+          });
+          
+          
+        });
         $('.rmContrato').on('click', function () {
           if (confirm('Cancelar y volver a solicitar el contrato?')){
             var posting = $.post('/admin/usuarios/remove-contrato', {

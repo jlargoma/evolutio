@@ -42,6 +42,11 @@ function btn_downlConsent($uID,$sign,$type){
   <tr data-id="fisioIndiba">
     <th>CONSENTIMIENTO FISIOTERAPIA CON INDIBA</th>
     <td class="btnCel">
+      <button type="button" title="Firmar" class="btn btn-default goContracts">
+        <i class="fa fa-pencil-square"></i> Firmar
+      </button>
+    </td>
+    <td class="btnCel">
       @if($fisioIndiba)
       <button type="button" title="Firmado" class="btn btn-success">
         <i class="fa fa-check"></i> Firmado
@@ -61,6 +66,11 @@ function btn_downlConsent($uID,$sign,$type){
   </tr>
   <tr data-id="sueloPelvico">
     <th>CONSENTIMIENTO SUELO PELVICO</th>
+    <td class="btnCel">
+      <button type="button" title="Firmar" class="btn btn-default goContracts">
+        <i class="fa fa-pencil-square"></i> Firmar
+      </button>
+    </td>
     <td class="btnCel">
       @if($sueloPelvico)
       <button type="button" title="Firmado" class="btn btn-success">
@@ -82,6 +92,11 @@ function btn_downlConsent($uID,$sign,$type){
   @if($uPlan == 'basic' || $uPlan == 'fidelity')
   <tr data-id="contrato">
     <th>CONTRATOS PLAN <?php echo ($uPlan == 'fidelity') ? 'FIDELITY' : 'BÁSICO';?></th>
+    <td class="btnCel">
+      <button type="button" title="Firmar" class="btn btn-default goContracts">
+        <i class="fa fa-pencil-square"></i> Firmar
+      </button>
+    </td>
     <td class="btnCel">
       @if($sing_contrato)
       <button type="button" title="Firmado" class="btn btn-success">
