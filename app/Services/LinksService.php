@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services;
+use URL;
 
 class LinksService {
 
@@ -27,4 +28,37 @@ class LinksService {
     foreach ($data as $k=>$v) $data[$k] = desencriptID($v);
     return $data;
   }
+  /**
+   * 
+   * @param type $uID
+   * @param type $type
+   * @return boolean
+   */
+  static function getLinkContracts($uID,$type){
+    $link = '' ;
+    $code = 0;
+    switch ($type){
+      case 'fisioIndiba':
+        $code = 1001;
+        $link = URL::to('/firmar-consentimiento/').'/';
+        break;
+      case 'sueloPelvico':
+        $code = 2002;
+        $link = URL::to('/firmar-consentimiento/').'/';
+        break;
+      case 'contrato':
+        $code = 3003;
+        $link = URL::to('/firmar-contrato/').'/';
+        break;
+      default :
+        return null;
+        
+    }
+    
+   
+    $link .= self::getLink([$uID,$code,time()]);
+    return $link;
+  }
+  
+  
 }

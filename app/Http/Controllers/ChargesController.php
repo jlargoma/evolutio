@@ -464,7 +464,7 @@ class ChargesController extends Controller {
         
         switch ($type){
             case 'mail':
-                $resp = MailController::sendEmailPayDateByStripe($oDate, $oUser, $oRate,$coach,$pStripe,$importe);
+                $resp = MailController::sendEmailPayDateByStripe($oDate, $oUser, $oRate,$coach,$pStripe,$importe,$subj="Link de pago de Evolutio",null,$oDate->date_type);
                 if ($resp == 'OK')  return response()->json(['OK', 'Se ha enviado un email con el link de pago']);
                   return response()->json(['error', $resp]);
                 break;

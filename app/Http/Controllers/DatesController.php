@@ -304,21 +304,8 @@ class DatesController extends Controller {
         $subjet = 'Nueva cita en Evolutio';
         if ($ID)
           $subjet = 'Actualización de su cita';
-        
-        //BEGIN: entrevista nutrición
-        $urlEntrevista = null;
-        if ($type == 'nutri'){
-          $already = $oUser->getMetaContent('nutri_q1');
-          if (!$already){
-            $code = encriptID($oUser->id).'-'.encriptID(time()*rand());
-            $keys = $code.'/'.getKeyControl($code);
-            $urlEntrevista = \URL::to('/encuesta-nutricion').'/'.$keys; 
-          }
-        }
-        //END: entrevista nutrición
-        
-        
-        MailController::sendEmailPayDateByStripe($oObj, $oUser, $oRate, $coach, $pStripe, $importe, $subjet,$calFile,$urlEntrevista);
+         
+        MailController::sendEmailPayDateByStripe($oObj, $oUser, $oRate, $coach, $pStripe, $importe, $subjet,$calFile,$type);
         /* -------------------------------------------------------------------- */
         
       if ($type == 'nutri')

@@ -479,20 +479,15 @@ class UsersController extends Controller {
     }
     
     $doc = $tit = $subject = $link = '' ;
-    $code = 0;
     switch ($type){
       case 'fisioIndiba':
         $tit = 'CONSENTIMIENTO FISIOTERAPIA CON INDIBA';
         $doc = 'CONSENTIMIENTO-FISIOTERAPIA-CON-INDIBA.pdf';
-        $code = 1001;
-        $link = URL::to('/firmar-consentimiento/').'/';
         $subject = 'Firma de consentimiento';
         break;
       case 'sueloPelvico':
         $tit = 'CONSENTIMIENTO SUELO PELVICO';
         $doc = 'CONSENTIMIENTO-SUELO-PELVICO.pdf';
-        $code = 2002;
-        $link = URL::to('/firmar-consentimiento/').'/';
         $subject = 'Firma de consentimiento';
         break;
       case 'contrato':
@@ -508,9 +503,6 @@ class UsersController extends Controller {
               $subject = 'Firma de contrato: PLAN NORMAL';
           }
         }
-        $code = 3003;
-        $link = URL::to('/firmar-contrato/').'/';
-        
         break;
       default:
         $tit = '';
@@ -519,7 +511,7 @@ class UsersController extends Controller {
     }
     
    
-    $link .= \App\Services\LinksService::getLink([$uID,$code,time()]);
+    $link = \App\Services\LinksService::getLinkContracts($uID,$type);
     
     
     $sended = Mail::send('emails._sign-consent', ['user' => $oUser,'tit'=>$tit,'link'=>$link], function ($message) use ($subject,$email) {
@@ -545,26 +537,12 @@ class UsersController extends Controller {
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
       return response()->json(['error',$email.' no es un mail válido']);
     }
-    
-    $link = '' ;
-    $code = 0;
-    switch ($type){
-      case 'fisioIndiba':
-        $code = 1001;
-        $link = URL::to('/firmar-consentimiento/').'/';
-        break;
-      case 'sueloPelvico':
-        $code = 2002;
-        $link = URL::to('/firmar-consentimiento/').'/';
-        break;
-      case 'contrato':
-        $code = 3003;
-        $link = URL::to('/firmar-contrato/').'/';
-        break;
-    }
-    
    
-    $link .= \App\Services\LinksService::getLink([$uID,$code,time()]);
-    return response()->json(['OK',$link]);
+    $link = \App\Services\LinksService::getLinkContracts($uID,$type);
+    if ($link){
+      return response()->json(['OK',$link]);
+    } else {
+      return response()->json(['error','link no válido']);
+    }
   }
 }

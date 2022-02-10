@@ -57,7 +57,7 @@ class RememberAppointment extends Command {
           $uRate = $item->uRates;
           if ($uRate){
             $price = ($item->date_type == 'pt') ? null : $uRate->price;
-            $sent = $this->sendEmail($item, $uRate->user, $uRate->rate,$item->coach,$price,$day);
+            $sent = $this->sendEmail($item, $uRate->user, $uRate->rate,$item->coach,$price,$day,$item->date_type);
             if ($sent == 'OK')
               $this->sLog->info('Enviado ',$item->id);
             else
@@ -73,7 +73,7 @@ class RememberAppointment extends Command {
     }
   }
   
-  function sendEmail($oDate, $oUser, $oRate,$oCoach,$importe,$day){
+  function sendEmail($oDate, $oUser, $oRate,$oCoach,$importe,$day,$type=null){
     
             $email= $oUser->email;
             $hour = $oDate->getHour();
@@ -81,7 +81,10 @@ class RememberAppointment extends Command {
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return $email.' no es un mail válido';
             try{
               $subj = 'Recordatorio de su Cita de Evolutio';
-              $sended = Mail::send('emails._remember_citaStripe', [
+              
+              
+              
+              $mailData = [
                       'user'    => $oUser,
                       'obj'     => $oDate,
                       'rate'    => $oRate,
@@ -89,7 +92,25 @@ class RememberAppointment extends Command {
                       'oCoach'  => $oCoach,
                       'hour'    => $hour,
                       'day'     => $day,
-              ], function ($message) use ($email,$subj) {
+                      'urlEntr' => null,
+                      'urlIndiba' => null,
+                      'urlSuelPelv' => null,
+              ];
+              
+              /***********************************************************/
+              $helpCitaCont = new \App\Helps\CitasMailsContent();
+              //BEGIN: entrevista nutrición
+              if ($type == 'nutri'){
+                $mailData['urlEntr'] = $helpCitaCont->get_urlEntrevista($oUser);
+              }
+              //BEGIN: entrevista Fisioterapia
+              if ($type == 'fisio'){
+                $mailData['urlIndiba']   = $helpCitaCont->get_urlIndiba($oUser,$oRate);
+                $mailData['urlSuelPelv'] = $helpCitaCont->get_urlSuelPelv($oUser,$oRate);
+              }
+              /***********************************************************/
+              $sended = Mail::send('emails._remember_citaStripe', $mailData,
+                  function ($message) use ($email,$subj) {
                       $message->subject($subj);
                       $message->from(config('mail.from.address'), config('mail.from.name'));
                       $message->to($email);

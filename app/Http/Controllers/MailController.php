@@ -102,17 +102,14 @@ class MailController extends Controller
 		return (!$sended) ? true : false;
 	}
         
-    public static function sendEmailPayDateByStripe($oDate, $oUser, $oRate,$oCoach,$pStripe,$importe,$subj=null,$calFile=null,$urlEntrevista=null)
+    public static function sendEmailPayDateByStripe($oDate, $oUser, $oRate,$oCoach,$pStripe,$importe,$subj=null,$calFile=null,$type=null)
 	{
             $email    = $oUser->email;
             $dateTime = strtotime($oDate->date);
             $day = date('d',$dateTime).' de '.getMonthSpanish(date('n',$dateTime),false);
             $hour = $oDate->getHour();
             
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return $email.' no es un mail válido';
-            try{
-              if (!$subj) $subj = 'Solicitud de pago evolutio';
-              $sended = Mail::send('emails._payment_citaStripe', [
+            $mailData = [
                       'user'    => $oUser,
                       'obj'     => $oDate,
                       'rate'    => $oRate,
@@ -121,8 +118,31 @@ class MailController extends Controller
                       'pStripe' => $pStripe,
                       'hour'    => $hour,
                       'day'     => $day,
-                      'urlEntr' => $urlEntrevista,
-              ], function ($message) use ($email,$subj,$calFile) {
+                      'urlEntr' => null,
+                      'urlIndiba' => null,
+                      'urlSuelPelv' => null,
+              ];
+            /***********************************************************/
+            $helpCitaCont = new \App\Helps\CitasMailsContent();
+            //BEGIN: entrevista nutrición
+            if ($type == 'nutri'){
+              $mailData['urlEntr'] = $helpCitaCont->get_urlEntrevista($oUser);
+            }
+            //BEGIN: entrevista Fisioterapia
+            if ($type == 'fisio'){
+              $mailData['urlIndiba']   = $helpCitaCont->get_urlIndiba($oUser,$oRate);
+              $mailData['urlSuelPelv'] = $helpCitaCont->get_urlSuelPelv($oUser,$oRate);
+            }
+            /***********************************************************/
+        
+        
+        
+            
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return $email.' no es un mail válido';
+            try{
+              if (!$subj) $subj = 'Solicitud de pago evolutio';
+              $sended = Mail::send('emails._payment_citaStripe', $mailData,
+                  function ($message) use ($email,$subj,$calFile) {
                       $message->subject($subj);
                       $message->from(config('mail.from.address'), config('mail.from.name'));
                       $message->to($email);
@@ -133,7 +153,7 @@ class MailController extends Controller
                         $message->attach($calFile, array(
                             'as' => 'Evento Calendario '.time()));
                       }
-              });
+                });
             } catch (\Exception $ex) {
               return ($ex->getMessage());
             }
