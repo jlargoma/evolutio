@@ -36,7 +36,7 @@ Hola! <?php echo $user->name ?><br><br>
 @endif
 @if($urlSuelPelv)
 <p style="text-align: center;background-color: #e0f5e9;padding: 9px;color: #000;font-size: 16px;font-weight: bold;margin: 32px 0;">
-    Antes de si cita debe aceptar y firmar el documento de <b>CONSENTIMIENTO SUELO PELVICO</b><br/>
+    Antes de su cita debe aceptar y firmar el documento de <b>CONSENTIMIENTO SUELO PELVICO</b><br/>
     <a href="{{$urlSuelPelv}}" title="CONSENTIMIENTO SUELO PELVICO">{{$urlSuelPelv}}</a>
     @if($urlIndiba)
       <br/><br/>También debe aceptar y firmar el documento de <b>CONSENTIMIENTO FISIOTERAPIA CON INDIBA</b> <br/>
@@ -47,7 +47,7 @@ Hola! <?php echo $user->name ?><br><br>
 @else
   @if($urlIndiba)
   <p style="text-align: center;background-color: #e0f5e9;padding: 9px;color: #000;font-size: 16px;font-weight: bold;margin: 32px 0;">
-    Antes de si cita debe aceptar y firmar el documento de <b>CONSENTIMIENTO FISIOTERAPIA CON INDIBA</b> <br/>
+    Antes de su cita debe aceptar y firmar el documento de <b>CONSENTIMIENTO FISIOTERAPIA CON INDIBA</b> <br/>
     <a href="{{$urlIndiba}}" title="CONSENTIMIENTO FISIOTERAPIA CON INDIBA">{{$urlIndiba}}</a>
   </p>
   @endif
