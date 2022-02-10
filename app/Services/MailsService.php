@@ -149,4 +149,31 @@ class MailsService {
         return $sended;
     }
 
+    
+    public static function sendMailNutriFile($oUser, $file, $fileMine,$fileExtens)
+	{
+            $email    = $oUser->email;
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return $email.' no es un mail válido';
+            try{
+              
+              $subj = 'Nuevo archivo de nutrición de Evolutio';
+              
+              $sended = Mail::send('emails._nutri_file', [
+                      'userName'    => $oUser->name,
+                  'tit'=>$subj
+              ], function ($message) use ($email,$subj,$file,$fileMine,$fileExtens) {
+                      $message->subject($subj);
+                      $message->from(config('mail.from.address'), config('mail.from.name'));
+                      $message->to($email);
+                      $message->attach($file, array(
+                            'as' => 'Archivo de nutrición.'.$fileExtens, 
+                            'mime' =>$fileMine));
+              });
+            } catch (\Exception $ex) {
+              return ($ex->getMessage());
+            }
+            return 'OK';
+              
+	}
+
 }

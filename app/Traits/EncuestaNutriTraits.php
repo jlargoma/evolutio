@@ -85,6 +85,7 @@ trait EncuestaNutriTraits {
   public function get_encNutri($user) {
   
     $fields = $this->get_encNutriFields();
+    $fields[] = 'nutri_file';
     $data = $user->getMetaContentGroups($fields);
     foreach ($fields as $f)
       if (!isset($data[$f])) $data[$f] = null;
@@ -93,9 +94,16 @@ trait EncuestaNutriTraits {
     $code = encriptID($user->id).'-'.encriptID(time()*rand());
     $keys = $code.'/'.getKeyControl($code);
     $data['url'] = '/encNutri/'.$keys;
-    $data['url_dwnl'] = '/descargar-encNutri/'.$keys;
-      
-      
+    $data['url_dwnl'] = '/admin/ver-encuesta/'.$keys;
+    
+    if (isset($data['nutri_file'])){
+      $fileName = 'nutri/'.$data['nutri_file'];
+      $path = storage_path('/app/' . $fileName);
+      if (File::exists($path)){
+        $data['nutri_file'] = \App\Services\LinksService::getLinkNutriFile($user->id);
+      }
+      else $data['nutri_file'] = null;
+    }
       
     return array_merge($data,$this->get_nutriQuestions());
   }
@@ -123,7 +131,25 @@ trait EncuestaNutriTraits {
       abort(404);
       exit();
     }
-    
+    $this->updEncNutri($request,$oUser);
+    return redirect()->back()->with('success','Encuesta enviada.');
+
+  }
+  
+  public function setEncNutri_Admin(Request $request) {
+   
+    $uid = $request->input('uid','');
+    $oUser = User::find($uid);
+    if (!$oUser){
+      abort(404);
+      exit();
+    }
+    $this->updEncNutri($request,$oUser);
+    return redirect()->back()->with('success','Encuesta guardada.');
+
+  }
+  public function updEncNutri(Request $request,$oUser) {
+    $fields = $this->get_encNutriFields();
     $data = $oUser->getMetaContentGroups($fields);
     $req = $request->all();
     $metaDataADD = $metaDataUPD = [];
@@ -136,9 +162,6 @@ trait EncuestaNutriTraits {
     }
   
     $oUser->setMetaContentGroups($metaDataUPD,$metaDataADD);
-    
-    return redirect()->back()->with('success','Encuesta enviada.');
-
   }
 
  
@@ -207,9 +230,7 @@ trait EncuestaNutriTraits {
     }
     
     $tit  = 'VALORACIÓN DE SALUD Y PREPARACIÓN AL ENTRENAMIENTO';
-    $code = encriptID($oUser->id).'-'.encriptID(time()*rand());
-    $keys = $code.'/'.getKeyControl($code);
-    $link = \Illuminate\Support\Facades\URL::to('/encNutri/').'/'.$keys;
+    $link = LinksService::getLinkEncuesta($oUser->id);
     
     
     $sended = \Illuminate\Support\Facades\Mail::send('emails._sign-consent', ['user' => $oUser,'tit'=>$tit,'link'=>$link], function ($message) use ($email) {
@@ -267,7 +288,84 @@ trait EncuestaNutriTraits {
 
   }
   
+  public function autosaveNutri(Request $req) {
+    $uID    = $req->input('id');
+    $field = $req->input('field');
+    $val   = $req->input('val');
+    $oUser = User::find($uID);
+    if ($oUser){
+      $oUser->setMetaContent($field,$val);
+      die('OK');
+    }
+    die('error');
+  }
   
   
+  public function saveFilesNutri(Request $req) {
+    $uID   = $req->input('uid');
+    $oUser = User::find($uID);
+    if ($oUser){
+     
+      if ($req->hasfile('file')){
+        $validated = $req->validate(
+                ['file' => 'required|file|mimes:doc,docx,pdf,png,jpg|max:204800'],
+                [ 'file.mimes'=>'El archivo debe ser doc,docx,pdf,png o jpg',
+                  'file.required'=>'El archivo debe ser doc,docx,pdf,png o jpg',
+                ]);
+        
+        $file = $req->file('file');
+        $filename = 'archivo_nutricion_'.$uID.'.'.$file->extension();
+        
+        $oUser->setMetaContent('nutri_file',$filename);
+        \Storage::disk('local')->put('nutri/'.$filename,  \File::get($file));
+        $path = storage_path('app/nutri/' . $filename);
+        $resp = \App\Services\MailsService::sendMailNutriFile($oUser, $path, $file->getClientMimeType(), $file->extension());
+        
+        return back()->with(['success'=>'archivo guardado']);
+      }
+      
+      
+      if ($req->has('delFile')){
+        $filename = $oUser->getMetaContent('nutri_file');
+        Storage::delete('nutri/'.$filename);
+        $oUser->setMetaContent('nutri_file',null);
+        return back()->with(['success'=>'archivo eliminado']);
+      }
+    } else {
+      return back()->withErrors(['Usuario no encontrado']);
+    }
+    
+    
+    
+    return back()->withErrors(['No se ha llevado ninguna operación']);
+  }
 
+  
+  function getFileNutri($code,$control) {
+    
+    
+    $aCode = explode('-', $code);
+    if (count($aCode)!=2) return 'error1';
+    if ($control!=getKeyControl($code)) return 'error2';
+    
+    $uID = desencriptID($aCode[0]);
+    $oUser = User::find($uID);
+    if ($oUser){
+      $filename = $oUser->getMetaContent('nutri_file');
+      $path = storage_path('/app/nutri/' . $filename);
+      if (!File::exists($path)) {
+        abort(404);
+      }
+
+      $file = File::get($path);
+      $type = File::mimeType($path);
+
+      $response = \Response::make($file, 200);
+      $response->header("Content-Type", $type);
+
+      return $response;
+    } else {
+      return back()->withErrors(['Usuario no encontrado']);
+    }
+  }
 }

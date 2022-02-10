@@ -5,12 +5,6 @@
   <button class="btn btn-default add_bono" data-idUser="<?php echo $user->id; ?>">
     <i class="fa fa-plus-circle" aria-hidden="true"></i> Asignar Bono
   </button>
-  
-  @if(isset($encNutr))
-  <a href="/admin/ver-encuesta/{{$btnEncuesta}}" class="btn btn-default" target="_black">
-    <i class="fa fa-eye" aria-hidden="true"></i> Ver encuesta Nutrición
-  </a>
-  @endif
 </h3>
 <form class="row" action="{{ url('/admin/clientes/update') }}" method="post">
   <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">

@@ -24,3 +24,4 @@ Route::get('/cobro-cancelado', 'CustomerController@paymentCancel')->name('custom
 
 Route::get('/encuesta-nutricion/{token}/{control}', 'CustomerController@formEncuestaNutri');
 Route::post('/encuesta-nutricion', 'CustomerController@setEncNutri');
+Route::get('/archivo-nutricion/{token}/{control}', 'CustomerController@getFileNutri');

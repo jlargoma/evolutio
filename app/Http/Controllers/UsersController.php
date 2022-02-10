@@ -16,11 +16,12 @@ use App\Models\UserRates;
 use \App\Traits\EntrenadoresTraits;
 use \App\Traits\ClientesTraits;
 use \App\Traits\ValoracionTraits;
+use \App\Traits\EncuestaNutriTraits;
 
 class UsersController extends Controller {
 
   use EntrenadoresTraits,ValoracionTraits,
-      ClientesTraits;
+      ClientesTraits,EncuestaNutriTraits;
 
   public function index() {
 

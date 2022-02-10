@@ -11,6 +11,7 @@
   <li <?php if ($tab == 'invoice') echo 'class="active"'; ?>><a data-toggle="tab" href="#invoice">Factura</a></li>
   <li <?php if ($tab == 'bono') echo 'class="active"'; ?>><a data-toggle="tab" href="#bono">Bonos</a></li>
   <li <?php if ($tab == 'valoracion') echo 'class="active"'; ?>><a data-toggle="tab" href="#valoracion">Valoración</a></li>
+  <li <?php if ($tab == 'nutricion') echo 'class="active"'; ?>><a data-toggle="tab" href="#nutricion">Nutrición</a></li>
 </ul>
 </div>
 <div class="tab-content box">
@@ -37,6 +38,9 @@
   </div>
   <div id="valoracion" class="tab-pane fade <?php if ($tab == 'valoracion') echo 'in active'; ?>">
         @include('admin.usuarios.clientes.forms.valoracion')
+  </div>
+  <div id="nutricion" class="tab-pane fade <?php if ($tab == 'nutricion') echo 'in active'; ?>">
+        @include('admin.usuarios.clientes.forms.nutricion')
   </div>
 </div>
 <div class="row">
@@ -260,6 +264,35 @@
         });
         $('.autosaveValora').on('change', function () {
           var posting = $.post('/admin/clientes/autosaveValora', {
+            id: {{$user->id}},
+            field: $(this).attr('name'),
+            val: $(this).val(),
+          }).done(function (data) {
+            console.log(data);
+          });
+        });
+         /**************************************************/
+        $('.sendEncuesta').on('click', function () {
+         
+          if (confirm('Reenviar el mail para completar la encuesta?')){
+            var data = {
+              uID: {{$user->id}},
+              _token: '{{csrf_token()}}'
+            };
+            var posting = $.post( '/admin/sendEncuesta', data ).done(function( data ) {
+                if (data == 'OK'){
+                  window.show_notif('success','Encuesta enviada');
+                } else {
+                  window.show_notif('error', data);
+                }
+            });
+          }
+          
+          
+        });
+       
+        $('.autosaveNutri').on('change', function () {
+          var posting = $.post('/admin/clientes/autosaveNutri', {
             id: {{$user->id}},
             field: $(this).attr('name'),
             val: $(this).val(),
