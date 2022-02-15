@@ -17,6 +17,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::post('/clientes/setValora', 'UsersController@setValora');
   Route::post('/clientes/setNutri', 'UsersController@setEncNutri_Admin');
   Route::post('/clientes/saveFilesNutri', 'UsersController@saveFilesNutri');
+  Route::post('/clientes/delFilesNutri', 'UsersController@delFilesNutri');
   Route::post('/clientes/autosaveValora', 'UsersController@autosaveValora');
   Route::post('/clientes/autosaveNutri', 'UsersController@autosaveNutri');
   Route::get('/get-mail/{id?}', 'UsersController@getMail');
@@ -76,6 +77,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::get('/citas-nutricion/{month?}/{coach?}/{type?}', 'NutriController@index');
   Route::get('/citas-nutricion-week/{week?}/{coach?}/{type?}', 'NutriController@indexWeek');
   Route::get('/ver-encuesta/{token}/{control}', 'CustomerController@seeEncuestaNutri');
+  Route::get('/editar-encuesta/{uID}', 'CustomerController@editEncuestaNutri');
   Route::post('/clearEncuesta', 'CustomerController@clearEncuestaNutri');
   Route::post('/sendEncuesta', 'CustomerController@sendEncuestaNutri');
   /* Citas personalTrainer */

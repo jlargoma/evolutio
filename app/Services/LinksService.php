@@ -63,7 +63,7 @@ class LinksService {
   static function getLinkEncuesta($uID){
     $code = encriptID($uID).'-'.encriptID(time()*rand());
     $keys = $code.'/'.getKeyControl($code);
-    $link = URL::to('/encNutri/').'/'.$keys;
+    $link = URL::to('/encuesta-nutricion/').'/'.$keys;
     return $link;
   }
   static function getLinkNutriFile($uID){
@@ -72,5 +72,6 @@ class LinksService {
     $link = URL::to('/archivo-nutricion/').'/'.$keys;
     return $link;
   }
+  
   
 }

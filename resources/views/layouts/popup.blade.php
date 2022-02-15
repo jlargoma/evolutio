@@ -9,6 +9,7 @@
             <script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
         <![endif]-->
 
+        <link rel="stylesheet" id="css-main" href="{{ assetV('/css/app.css') }}">
         <link rel="stylesheet" href="{{ asset('/admin-css/assets/css/bootstrap.min.css') }}">
         <link rel="stylesheet" id="css-main" href="{{ asset('/admin-css/assets/css/oneui.css') }}">
         <link rel="stylesheet" id="css-main" href="{{ assetV('/css/custom.css') }}">
@@ -21,6 +22,7 @@
         <script src="{{ asset('/js/vendor/notify.min.js') }}" ></script>
         <script src="{{ assetV('/admin-css/assets/js/app.js') }}" ></script>
         <script src="{{ assetV('/admin-css/assets/js/custom.js') }}" ></script>
+             @yield('externalScripts')
     </head>
     <body class="popup-body">
         <div class="content">

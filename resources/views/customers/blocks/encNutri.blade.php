@@ -10,6 +10,7 @@ $count = 1;
     switch ($i) {
       case 'nutri_q22':
         ?>
+    <div class="table-responsive">
         <table class="table">
           <tr>
             <td></td>
@@ -37,6 +38,7 @@ $count = 1;
             <td><input type="text" id="nutri_q22_2_4" name="nutri_q22_2_4" class="form-control" required=""></td>
           </tr>
         </table>
+    </div>
         <?php
         break;
       case 'nutri_q2':

@@ -127,20 +127,22 @@
         
         $('.editNote').on('click',function (e) {
             e.preventDefault();
-            $('#noteID').val($(this).data('id'));
-            $('#note').val($(this).data('note'));
-            $('#coach_note').val($(this).data('coach'));
-            $('#delNote').show();
-            $('#newNote').show();
+            var parent = $(this).closest('.blockNote');
+            parent.find('[name="id"]').val($(this).data('id'));
+            parent.find('[name="note"]').val($(this).data('note'));
+            parent.find('[name="coach"]').val($(this).data('coach'));
+            parent.find('.delNote').show();
+            parent.find('.newNote').show();
         });
-        $('#newNote').on('click',function (e) {
+        $('.newNote').on('click',function (e) {
             e.preventDefault();
-            $('#noteID').val('');
-            $('#note').val('');
-            $('#delNote').hide();
-            $('#newNote').hide();
+            var parent = $(this).closest('.blockNote');
+             parent.find('[name="id"]').val('');
+            parent.find('[name="note"]').val('');
+            parent.find('.delNote').hide();
+            parent.find('.newNote').hide();
         });
-        $('#delNote').on('click',function (e) {
+        $('.delNote').on('click',function (e) {
            if (confirm('Eliminar la nota?'))
             $(this).closest('form').attr('action','/admin/usuarios/del-note').submit();
         });
@@ -272,34 +274,7 @@
           });
         });
          /**************************************************/
-        $('.sendEncuesta').on('click', function () {
-         
-          if (confirm('Reenviar el mail para completar la encuesta?')){
-            var data = {
-              uID: {{$user->id}},
-              _token: '{{csrf_token()}}'
-            };
-            var posting = $.post( '/admin/sendEncuesta', data ).done(function( data ) {
-                if (data == 'OK'){
-                  window.show_notif('success','Encuesta enviada');
-                } else {
-                  window.show_notif('error', data);
-                }
-            });
-          }
-          
-          
-        });
        
-        $('.autosaveNutri').on('change', function () {
-          var posting = $.post('/admin/clientes/autosaveNutri', {
-            id: {{$user->id}},
-            field: $(this).attr('name'),
-            val: $(this).val(),
-          }).done(function (data) {
-            console.log(data);
-          });
-        });
         /**************************************************/
        $('.nav-tabs').on('click','a',function(){
          var newURL = '/admin/usuarios/informe/{{$user->id}}/';

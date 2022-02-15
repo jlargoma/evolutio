@@ -554,6 +554,7 @@ trait ClientesTraits {
     $uID = $request->input('uid');
     $id = $request->input('id');
     $note = $request->input('note');
+    $type = $request->input('type','gral');
     $idCoach = $request->input('coach',Auth::user()->id);
     $oCoach = User::find($idCoach);
     $oNote = null;
@@ -565,11 +566,13 @@ trait ClientesTraits {
     }
 
     $oNote->id_coach = $idCoach;
-    $oNote->type = ($oCoach) ? $oCoach->role : '';
+    $oNote->profile = ($oCoach) ? $oCoach->role : '';
+    $oNote->type = $type;
     $oNote->note = $note;
     $oNote->save();
 
-    return redirect('/admin/usuarios/informe/' . $uID . '/notes')->with(['success' => 'Nota Guardada']);
+    $urlBack = ($type == 'nutri') ? '/nutricion' : '/notes';
+    return redirect('/admin/usuarios/informe/' . $uID . $urlBack)->with(['success' => 'Nota Guardada']);
   }
 
   public function delNotes(Request $request) {
@@ -577,12 +580,13 @@ trait ClientesTraits {
     $id = $request->input('id');
     $oNote = UsersNotes::find($id);
     if ($oNote) {
+      $urlBack = ($oNote->type == 'nutri') ? '/nutricion' : '/notes';
       if ($oNote->delete()) {
-        return redirect('/admin/usuarios/informe/' . $uID . '/notes')->with(['success' => 'Nota eliminada']);
+        return redirect('/admin/usuarios/informe/' . $uID . $urlBack)->with(['success' => 'Nota eliminada']);
       }
     }
 
-    return redirect('/admin/usuarios/informe/' . $uID . '/notes')->withErrors(['Nota no eliminada']);
+    return back()->withErrors(['Nota no eliminada']);
   }
 
 

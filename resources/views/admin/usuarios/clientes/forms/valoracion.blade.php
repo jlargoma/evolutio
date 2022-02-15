@@ -8,25 +8,25 @@ $count = 1;
   <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
   <input type="hidden" name="id" value="{{ $user->id }}">
   <div class="col-md-6 ">
-    <div class="form-material mt-3">
+    <div class="form-material mt-5">
       <input class="form-control autosaveValora" type="text" id="name" name="name" required value="<?php echo $user->name ?>">
       <label for="name">NOMBRE</label>
     </div>
-    <div class="form-material mt-3">
+    <div class="form-material mt-5">
       <input class="form-control autosaveValora" type="number" id="valora_years" name="valora_years"  maxlength="9" value="{{$valora['valora_years']}}">
       <label for="telefono">EDAD</label>
     </div>
-    <div class="form-material mt-3">
+    <div class="form-material mt-5">
       <input class="form-control autosaveValora" type="date" id="valora_date" name="valora_date" value="{{$valora['valora_date']}}">
       <label for="telefono">FECHA DE VALORACIÓN</label>
     </div>
   </div>
   <div class="col-md-6 ">
-    <div class="form-material mt-3">
+    <div class="form-material mt-5">
       <input type="text" id="lastname" class="form-control autosaveValora" name="valora_lastname" value="{{$valora['valora_lastname']}}">
       <label>APELLIDOS</label>
     </div>
-    <div class="form-material mt-3">
+    <div class="form-material mt-5">
       <input class="form-control autosaveValora" type="text" id="valora_tutor" name="valora_tutor" value="{{$valora['valora_tutor']}}">
       <label for="name">*FIRMA DEL TUTOR (en menores de edad)</label>
     </div>
@@ -36,7 +36,7 @@ $count = 1;
     <h4 class="mt-1">ANTECEDENTES MÉDICOS Y DE ACTIVIDAD </h4>
     <u>Por favor, conteste a estas preguntas con sinceridad y de forma detallada cuando proceda:</u>
     @foreach($valora['qstion1'] as $i=>$q)
-    <div class="form-material mt-3">
+    <div class="form-material mt-5">
       <input type="text" id="{{$i}}" class="form-control autosaveValora" name="{{$i}}" value="{{$valora[$i]}}">
       <label>{{$count.'. '.$q}}</label>
       <?php $count++; ?>
@@ -46,7 +46,7 @@ $count = 1;
   <div class="col-md-12 mt-1">
     <h4 class="mt-1">ECÓGRAFO: VALORACIÓN ABDOMINAL Y ACTIVACIÓN DEL TRANSVERSO</h4>
     @foreach($valora['qstion2'] as $i=>$q)
-    <div class="form-material mt-3">
+    <div class="form-material mt-5">
       <textarea id="{{$i}}" class="form-control autosaveValora" name="{{$i}}">{{$valora[$i]}}</textarea>
       <label>{{$q}}</label>
     </div>
@@ -94,7 +94,7 @@ $count = 1;
   <div class="col-md-12 mt-1 movilidad">
     <h4 class="mt-1">MOVILIDAD</h4>
     @foreach($valora['qstion6'] as $i=>$q)
-    <div class="form-material mt-3">
+    <div class="form-material mt-5">
       <h5>{{$q}}</h5>
       <p>{{$valora['qstion6_stext'][$i]}}</p>
       <textarea id="{{$i}}" class="form-control autosaveValora" name="{{$i}}">{{$valora[$i]}}</textarea>

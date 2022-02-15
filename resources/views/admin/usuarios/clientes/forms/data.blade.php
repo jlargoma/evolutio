@@ -10,25 +10,25 @@
   <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
   <input type="hidden" name="id" value="{{ $user->id }}">
   <div class="col-md-6 ">
-    <div class="form-material mt-2">
-      <input class="form-control" type="text" id="name" name="name" required value="<?php echo $user->name ?>">
+    <div class="form-material mt-5">
+      <input class="form-control" type="text"  name="name" required value="<?php echo $user->name ?>">
       <label for="name">Nombre</label>
     </div>
-    <div class="form-material mt-2">
+    <div class="form-material mt-5">
       <input type="text" id="email" class="form-control" name="email" required value="<?php echo $user->email ?>">
       <label for="email">E-mail</label>
     </div>
-    <div class="form-material mt-2">
+    <div class="form-material mt-5">
       <input class="form-control" type="number" id="telefono" name="telefono" required maxlength="9" value="<?php echo $user->telefono ?>">
       <label for="telefono">Teléfono</label>
     </div>
   </div>
   <div class="col-md-6 ">
-    <div class="form-material mt-2">
+    <div class="form-material mt-5">
       <input class="form-control" type="text" id="dni" name="dni" value="<?php echo $user->dni ?>">
       <label for="name">DNI</label>
     </div>
-    <div class="form-material mt-2">
+    <div class="form-material mt-5">
       <input type="text" id="address" class="form-control" name="address" value="<?php echo $user->address ?>">
       <label for="email">Dirección</label>
     </div>

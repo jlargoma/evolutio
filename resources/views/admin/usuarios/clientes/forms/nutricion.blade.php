@@ -1,142 +1,202 @@
 <?php
-$count = 1;
+$csrf_token = csrf_token();
 ?>
-<div class="boxFile">
-  <h3 class="text-left">ARCHIVO DE NUTRICIÓN</h3>
-  <form enctype="multipart/form-data" action="{{ url('/admin/clientes/saveFilesNutri') }}" method="post">
-    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-    <input type="hidden" name="uid" value="{{ $user->id }}">
-    <div class="form-group">
-      <div class="row">
-        @if(isset($encNutr['nutri_file']) && $encNutr['nutri_file'] )
-        <div class="col-md-5">
-          <a href="<?= $encNutr['nutri_file']; ?>" target="_black">Ver Archivo adjunto</a>
+
+<div class="row">
+  <div class="col-md-8">
+    <div class="boxFile">
+      <h3 class="text-left">ARCHIVOS DE NUTRICIÓN</h3>
+      <form enctype="multipart/form-data" action="{{ url('/admin/clientes/saveFilesNutri') }}" method="post">
+        <input type="hidden" name="_token" value="{{ $csrf_token }}">
+        <input type="hidden" name="uid" value="{{ $user->id }}">
+        <div class="form-group">
+          <div class="row">
+            <div class="col-md-6">
+              <input type="text" name="fileName" class="form-control" placeholder="Nombre dell archivo" required="">
+            </div>
+            <div class="col-md-3">
+              <label class="custom-file-upload">
+                <input type="file" name="file"/>
+                <i class="fa fa-cloud-upload"></i> Subir Archivo
+              </label>
+            </div>
+            <div class="col-md-3">
+              <button type="submit" class="btn btn-primary">Enviar</button>
+            </div>
+          </div>
         </div>
-        <div class="col-md-3">
-          <input type="checkbox" name="delFile"> Borrar Archivo
-        </div>
-        @else
-        <div class="col-md-8">
-          <input type="file" class="form-control" name="file" >
-        </div>
-        @endif
-        <div class="col-md-4">
-          <button type="submit" class="btn btn-primary">Enviar</button>
-        </div>
+      </form>
+
+
+      @if(isset($encNutr['lstFiles']) && count($encNutr['lstFiles']) )
+      <form action="{{ url('/admin/clientes/delFilesNutri') }}" method="post" id="delFilesNutri">
+        <input type="hidden" name="_token" value="{{ $csrf_token }}">
+        <input type="hidden" name="uid" value="{{ $user->id }}">
+        <input type="hidden" name="fid" id="fileID">
+      </form>
+      <table class="table">
+        @foreach($encNutr['lstFiles'] as $k=>$v)
+        <tr>
+          <th style="width: 80%;">{{$v['name']}}</th>
+          <td>
+            <button class="btn btn-danger delFileNutri" title="Borrar Archivo" data-k="{{$k}}"><i class="fa fa-trash"></i></button>
+          </td>
+          <td>
+            <a class="btn btn-info" href="<?= $v['url']; ?>" target="_black" title="Ver Archivo"><i class="fa fa-eye"></i></a>
+          </td>
+        </tr>
+        @endforeach
+      </table>
+      @endif
+    </div>
+  </div>
+  <div class="col-md-4  ">
+    <div class="boxFile">
+      <h3 class="text-center">ENCUESTA DE NUTRICIÓN</h3>
+
+      <div class="text-center mb-3">
+      @if(trim($encNutr['nutri_q1']) != "")
+        <a href="{{$encNutr['url_dwnl']}}" class="btn btn-success" target="_black">
+          <i class="fa fa-eye"></i> Ver
+        </a>
+      @endif
+        <a href="/admin/editar-encuesta/{{$user->id}}" class="btn btn-info" target="_black">
+          <i class="fa fa-pencil"></i> Editar
+        </a>
+      </div>
+       <div class="text-center">
+        <a href="#" class="btn  btn-success clearEncuesta" data-id="{{$user->id}}"  type="button" >
+          <i class="fa fa-trash"></i> Vaciar
+        </a>
+        <a href="#"  class="btn btn-success sendEncuesta" data-id="{{$user->id}}"  type="button" >
+          <i class="fa fa-envelope"></i> Reenviar
+        </a>
       </div>
     </div>
-  </form>
+  </div>
 </div>
-<h3 class="text-left">ENCUESTA DE NUTRICIÓN</h3>
-<form class="row formNutri" action="{{ url('/admin/clientes/setNutri') }}" method="post">
-  <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
-  <input type="hidden" name="uid" value="{{ $user->id }}">
-  <div class="fromEncNutri">
-    <?php $nro = 1; ?>
-    @foreach($encNutr['qstion1'] as $i=>$q)
-    <div class="field">
-      <label>{{$nro.'. '.$q}}</label>
-      <?php
-      switch ($i) {
-        case 'nutri_q22':
-          ?>
-          <table class="table">
-            <tr>
-              <td></td>
-              <th class="text-center">Entre semana</th>
-              <th class="text-center">Fines de semana</th>
-            </tr>
-            <tr>
-              <th>Desayuno</th>
-              <td><input type="text" id="nutri_q22_1_1" name="nutri_q22_1_1" class="form-control autosaveNutri" required="" value="{{show_isset('nutri_q22_1_1',$encNutr)}}"></td>
-              <td><input type="text" id="nutri_q22_2_1" name="nutri_q22_2_1" class="form-control autosaveNutri" required="" value="{{show_isset('nutri_q22_2_1',$encNutr)}}"></td>
-            </tr>
-            <tr>
-              <th>Comida</th>
-              <td><input type="text" id="nutri_q22_1_2" name="nutri_q22_1_2" class="form-control autosaveNutri" required="" value="{{show_isset('nutri_q22_1_2',$encNutr)}}"></td>
-              <td><input type="text" id="nutri_q22_2_2" name="nutri_q22_2_2" class="form-control autosaveNutri" required="" value="{{show_isset('nutri_q22_2_2',$encNutr)}}"></td>
-            </tr>
-            <tr>
-              <th>Cena</th>
-              <td><input type="text" id="nutri_q22_1_3" name="nutri_q22_1_3" class="form-control autosaveNutri" required="" value="{{show_isset('nutri_q22_1_3',$encNutr)}}"></td>
-              <td><input type="text" id="nutri_q22_2_3" name="nutri_q22_2_3" class="form-control autosaveNutri" required="" value="{{show_isset('nutri_q22_2_3',$encNutr)}}"></td>
-            </tr>
-            <tr>
-              <th>Snacks / Entrehoras</th>
-              <td><input type="text" id="nutri_q22_1_4" name="nutri_q22_1_4" class="form-control autosaveNutri" required="" value="{{show_isset('nutri_q22_1_4',$encNutr)}}"></td>
-              <td><input type="text" id="nutri_q22_2_4" name="nutri_q22_2_4" class="form-control autosaveNutri" required="" value="{{show_isset('nutri_q22_2_4',$encNutr)}}"></td>
-            </tr>
-          </table>
-          <?php
-          break;
-        case 'nutri_q2':
-          ?>
 
-          <input  size="10" maxlength="10" onKeyUp = "this.value = formateafecha(this.value);" placeholder="DD-MM-YYYY" id="{{$i}}" name="{{$i}}" class="form-control autosaveNutri" required=""  value="{{show_isset($i,$encNutr)}}"></td>
-          <?php
-          break;
-        default :
+
+
+
+
+
+
+<hr class="line">
+
+
+
+
+
+<h3 class="text-left">ANOTACIONES</h3>
+<div class="row blockNote">
+  <div class="col-md-8 col-xs-12 ">
+    <?php
+    if ($oNotes):
+      foreach ($oNotes as $v):
+        if ($v->type == 'nutri') {
+          $dateTime = strtotime($v->created_at);
+          $type = '';
+          switch ($v->profile) {
+            case 'teach_nutri':
+            case 'nutri':
+              $type = 'Nutrición';
+              break;
+            case 'fisio': $type = 'Fisioterapeuta';
+              break;
+            case 'pt':
+            case 'teach':
+              $type = 'Entr. Pers.';
+              break;
+            default: $type = 'Otros';
+              break;
+          }
+          $personal = isset($allCoachs[$v->id_coach]) ? $allCoachs[$v->id_coach] : '-';
           ?>
-          @if(isset($encNutr['options'][$i]))
-          <?php $optValue = isset($encNutr[$i]) ? $encNutr[$i] : ''; ?>
-          <select name="{{$i}}"  id="{{$i}}" required="" class="form-control autosaveNutri">
-            @foreach($encNutr['options'][$i] as $i2=>$q2)
-            <option value='{{$q2}}' <?php if ($optValue == $q2) echo 'selected' ?>>{{$q2}}</option>
-            @endforeach
-          </select>
-          @else
-          <input type="text" id="{{$i}}" name="{{$i}}"  class="form-control autosaveNutri" required=""  value="{{show_isset($i,$encNutr)}}"></td>
-          @endif
+          <div>
+            <div class="row">
+              <div class="col-md-8"><b>{{$personal}}</b> ({{$type}})</div>
+              <div class="col-md-4">
+                {{convertDateToShow_text(date('Y-m-d',$dateTime),true)}}
+                <button class="btn editNote" data-id="{{$v->id}}" data-note="{{$v->note}}" data-coach="{{$v->id_coach}}">Editar</button>
+              </div>
+            </div>
+            <p>{{$v->note}}</p>
+          </div>
+          <hr>
           <?php
-          break;
+        }
+      endforeach;
+    endif;
+    ?>
+  </div>
+  <div class="col-md-4 col-xs-12">
+    <form  action="{{ url('/admin/usuarios/notes') }}" method="post">
+      <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+      <input type="hidden" name="uid" value="{{ $user->id }}">
+      <input type="hidden" name="id"  value="">
+      <input type="hidden" name="type" value="nutri">
+      <div class="form-simple">
+        <label for="name">Usuario</label>
+        <select class="form-control" name="coach" >
+          @foreach($allCoachs as $id=>$c)
+          <option value="{{$id}}" @if($id == $u_current) selected @endif>{{$c}}</option>
+          @endforeach
+        </select>
+      </div>
+      <div class="form-simple">
+        <label for="name">Nota</label>
+        <textarea name="note" class="form-control" style="min-height: 50vh; border: 1px solid #cecece;padding: 9px;"></textarea>
+      </div>
+      <button class="btn btn-success" type="submit">
+        <i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar
+      </button>
+      <button class="btn btn-danger delNote" type="button" style="display: none;">Borrar</button>
+      <button class="btn newNote"  type="button"  style="display: none;">Nueva</button>
+    </form>
+
+  </div>
+</div>
+
+
+<script>
+  $('.delFileNutri').on('click', function (e) {
+      if (confirm('Eliminar el archivo?')) {
+          $('#fileID').val($(this).data('k'));
+          $('#delFilesNutri').submit();
       }
-      $nro++;
-      ?>
-
-    </div>
-    @endforeach
-
-
-  </div>
-
-
-
-  <div class="col-md-12  mt-1">
-    <button class="btn btn-success" type="submit">
-      <i class="fa fa-floppy-o" aria-hidden="true"></i> Actualizar
-    </button>
-    <button type="button" title="Enviar / Re-enviar mail de encuesta" class="btn btn-info  sendEncuesta" data-id="1897" >
-      <i class="fa fa-envelope"></i> Enviar
-    </button>
-    <a class="btn btn-success" href="{{$encNutr['url_dwnl']}}" target="_blank" >
-      <i class="fa fa-file" aria-hidden="true"></i> Imprimir / Descargar
-    </a>
-  </div>
-</form>
+  });
+  $('.clearEncuesta').click(function (e) {
+      e.preventDefault();
+      var id = $(this).data('id');
+      if (confirm('Limpiar los datos actuales de la encuesta?')) {
+          var data = {
+              uID: id,
+              _token: '{{csrf_token()}}'
+          };
+          var posting = $.post('/admin/clearEncuesta', data).done(function (data) {
+              if (data == 'OK') {
+                  location.reload();
+              } else {
+                  alert(data);
+              }
+          });
+      }
+  });
+</script>
 <style>
-
-  .formNutri th {
-    font-size: 1.32em !important;
-    background-color: #46c37b;
-    border-color: #34a263;
-    padding: 6px !important;
-    text-align: center;
-    margin-bottom: 1em;
-    color: #FFF;
-  }
-
-
-  .formNutri .field {
-    display: block;
-    clear: both;
-    overflow: hidden;
-    width: 96%;
-    margin: 8px auto;
-  }
-
   .boxFile {
-    box-shadow: 1px 1px 5px 2px #000;
+    box-shadow: 1px 1px 5px 2px #cdcdcd;
     padding: 7px 16px;
-    margin: 25px;
-}
+    border-radius: 8px;
+  }
+  input[type="file"] {
+    display: none;
+  }
+  .custom-file-upload {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+  }
 </style>
