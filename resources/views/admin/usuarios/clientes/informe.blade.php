@@ -186,6 +186,25 @@
         
         
         /**************************************************/
+                
+        $('.sendEncuesta').click(function (e) {
+          e.preventDefault();
+          var id = $(this).data('id');
+          if (confirm('Reenviar el mail para completar la encuesta?')){
+            var data = {
+              uID: id,
+              _token: '{{csrf_token()}}'
+            };
+            var posting = $.post( '/admin/sendEncuesta', data ).done(function( data ) {
+                if (data == 'OK'){
+                  window.show_notif('success', 'Encuesta Reenviada');
+                } else {
+                   window.show_notif('error',data);
+                }
+            });
+          }
+        });
+        /**************************************************/
         $('.sendConsent').on('click', function () {
           var type = $(this).closest('tr').data('id');
           var posting = $.post('/admin/usuarios/send-consent', {

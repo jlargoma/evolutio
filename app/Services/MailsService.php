@@ -150,7 +150,7 @@ class MailsService {
     }
 
     
-    public static function sendMailNutriFile($oUser, $file, $fileMine,$fileExtens)
+    public static function sendMailNutriFile($oUser,$fName, $file, $fileMine,$fileExtens)
 	{
             $email    = $oUser->email;
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return $email.' no es un mail válido';
@@ -159,7 +159,8 @@ class MailsService {
               $subj = 'Nuevo archivo de nutrición de Evolutio';
               
               $sended = Mail::send('emails._nutri_file', [
-                      'userName'    => $oUser->name,
+                  'userName'    => $oUser->name,
+                  'fName'    => $fName,
                   'tit'=>$subj
               ], function ($message) use ($email,$subj,$file,$fileMine,$fileExtens) {
                       $message->subject($subj);

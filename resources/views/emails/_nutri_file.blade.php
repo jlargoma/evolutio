@@ -2,5 +2,5 @@
 
 Hola! <?php echo $userName ?><br><br><br>
 
-<p>Te adjuntamos el archivo correspondiente a tu cita de nutrición en  <b>Evolutio</b><p>
+<p>Te adjuntamos el archivo <b><?php echo $fName; ?></b> correspondiente a tu cita de nutrición en  <b>Evolutio</b><p>
 @include('emails.footer')

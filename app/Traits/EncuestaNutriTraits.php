@@ -319,7 +319,7 @@ trait EncuestaNutriTraits {
         $uFile->type = 'nutri';
         $uFile->save();
 
-        $resp = \App\Services\MailsService::sendMailNutriFile($oUser, $path, $file->getClientMimeType(), $file->extension());
+        $resp = \App\Services\MailsService::sendMailNutriFile($oUser,$fName, $path, $file->getClientMimeType(), $file->extension());
 
         return back()->with(['success' => 'archivo guardado']);
       }
