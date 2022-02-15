@@ -48,7 +48,8 @@
       <input type="hidden" name="type" value="gral">
       <div class="form-simple">
         <label for="name">Usuario</label>
-        <select class="form-control" name="coach">
+        <select class="form-control" name="coach" required>
+          <option value="">-Personal</option>
           @foreach($allCoachs as $id=>$c)
           <option value="{{$id}}" @if($id == $u_current) selected @endif>{{$c}}</option>
           @endforeach

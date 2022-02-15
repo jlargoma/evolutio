@@ -57,6 +57,15 @@
           </div>
       </div>
       <div class="col-sm-6 col-xs-12 mt-1em">
+        <div class="form-simple">
+        <label for="name">Personal</label>
+        <select class="form-control" name="coach" required>
+          <option value="">-Personal</option>
+          @foreach($allCoachs as $id=>$c)
+          <option value="{{$id}}" @if($id == $u_current) selected @endif>{{$c}}</option>
+          @endforeach
+        </select>
+      </div>
         <div class="box-payment-card row">
           <h4>PAGAR AHORA</h4>
           <div class="col-xs-12">

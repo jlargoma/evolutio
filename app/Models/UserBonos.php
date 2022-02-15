@@ -39,7 +39,7 @@ class UserBonos extends Model
       return 'OK';
     }
     
-    function saveLogIncr($oBono,$cID){
+    function saveLogIncr($oBono,$cID,$coach_id){
       $total = UserBonosLogs::getTotal($this->id);
       //-----------------------------------//
       $obj = new UserBonosLogs();
@@ -50,6 +50,7 @@ class UserBonos extends Model
       $obj->incr = $oBono->qty;
       $obj->total = $total+$oBono->qty;
       $obj->text = 'Compra: '.$oBono->name;
+      $obj->coach_id = $coach_id;
       $obj->save();
       
     }

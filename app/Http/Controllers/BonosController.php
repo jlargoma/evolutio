@@ -94,6 +94,7 @@ class BonosController extends Controller {
   public function purcharse(Request $req) {
     $uID = $req->input('id_user', 0);
     $bID = $req->input('id_bono', 0);
+    $cID = $req->input('coach', 0);
     $price = $req->input("price_$bID", 0);
    
     $oUser = \App\Models\User::find($uID);
@@ -141,7 +142,7 @@ class BonosController extends Controller {
     }
     
     $oServ = new \App\Services\BonoService();
-    $resp = $oServ->asignBono($oUser,$oBono,$tpay,$idStripe,$cStripe,$price);
+    $resp = $oServ->asignBono($oUser,$oBono,$tpay,$idStripe,$cStripe,$price,$cID);
 
     if ($resp[0] == 'error') {
         return redirect()->back()->withErrors([$resp[1]]);
@@ -198,6 +199,8 @@ class BonosController extends Controller {
         'id_back'=>$id,
         'typesRate'=> \App\Models\TypesRate::pluck('name','id')->toArray(),
         'rate_subf'=> \App\Models\TypesRate::subfamily(),
+        'allCoachs'=> \App\Models\User::getCoachs()->pluck('name', 'id'),
+        'u_current'=> \Illuminate\Support\Facades\Auth::user()->id,
         'uPlan'=>$uPlan
     ]);
       

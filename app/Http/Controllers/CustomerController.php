@@ -159,6 +159,7 @@ class CustomerController extends Controller {
       $amount = round($data[1]);
       $oUser = User::find($data[0]);
       $disc  = isset($data[5]) ? $data[5] : 0;
+      $coachID  = isset($data[6]) ? $data[6] : 0;
     }
     //--------------------------------------------------------------//
     //--------------------------------------------------------------//
@@ -175,7 +176,7 @@ class CustomerController extends Controller {
       $price = round($amount / 100, 2);
       \App\Models\Stripe3DS::addNew($oUser->id,$iStripe,$cStripe,'asignBono',
               [
-                  'bono'=>$oBono->id,'value'=>$price,'disc'=>$disc,'tpay'=>'card'
+                  'bono'=>$oBono->id,'value'=>$price,'disc'=>$disc,'tpay'=>'card','coachID'=>$coachID
               ]);
     }
     //--------------------------------------------------------------//

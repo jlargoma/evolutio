@@ -25,7 +25,7 @@ class BonoService {
     if (!$alreadyCharge){
       $oUser = User::find($user_id);
       $oBono = Bonos::find($aData->bono);
-      $this->asignBono($oUser, $oBono, $aData->tpay, $pID, $cID);
+      $this->asignBono($oUser, $oBono, $aData->tpay, $pID, $cID,null,$aData->coachID);
     }
   }
   
@@ -38,7 +38,7 @@ class BonoService {
    * @param type $cStripe
    * @return type
    */
-  function asignBono($oUser, $oBono, $tpay, $idStripe = null, $cStripe = null,$price=null) {
+  function asignBono($oUser, $oBono, $tpay, $idStripe = null, $cStripe = null,$price=null,$coachID=null) {
     if (!$price) $price = $oBono->price;
     $date = date('Y-m-d');
     //BEGIN PAYMENTS
@@ -70,7 +70,7 @@ class BonoService {
     }
 
     $oUsrBono->save();
-    $oUsrBono->saveLogIncr($oBono, $oCobro->id);
+    $oUsrBono->saveLogIncr($oBono, $oCobro->id,$coachID);
     $statusPayment = 'Pago realizado correctamente, por ' . payMethod($tpay);
     /*     * ********************************************************** */
     $sent = MailsService::sendEmailPayBono($oUser, $oBono, $tpay);

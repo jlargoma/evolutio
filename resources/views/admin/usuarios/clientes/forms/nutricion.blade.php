@@ -137,8 +137,9 @@ $csrf_token = csrf_token();
       <input type="hidden" name="id"  value="">
       <input type="hidden" name="type" value="nutri">
       <div class="form-simple">
-        <label for="name">Usuario</label>
-        <select class="form-control" name="coach" >
+        <label for="name">Personal</label>
+        <select class="form-control" name="coach" required>
+          <option value="">-Personal</option>
           @foreach($allCoachs as $id=>$c)
           <option value="{{$id}}" @if($id == $u_current) selected @endif>{{$c}}</option>
           @endforeach
