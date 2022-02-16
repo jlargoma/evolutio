@@ -8,6 +8,12 @@ and open the template in the editor.
     Author     : gerardo_cremo
 */
 
+@media (min-width:480px){
+  .show_mobile{
+  display: none;
+}
+}
+
 @media(max-width:991px) {
   body {
     padding-top: 10px;

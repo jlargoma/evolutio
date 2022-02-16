@@ -36,7 +36,8 @@
     <link rel="apple-touch-icon" sizes="144x144" href="{{ asset('/admin-css/assets/img/favicons/apple-touch-icon-144x144.png') }}">
     <link rel="apple-touch-icon" sizes="152x152" href="{{ asset('/admin-css/assets/img/favicons/apple-touch-icon-152x152.png') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('/admin-css/assets/img/favicons/apple-touch-icon-180x180.png') }}">
-     @yield('externalScripts')
+    <link rel="stylesheet" href="{{ asset('/admin-css/assets/css/bootstrap.min.css') }}">
+    @yield('externalScripts')
 
   </head>
   <body>
@@ -50,10 +51,17 @@
     </div>
     <style>
       .fondo{
-        width: 100%; height: 100%; position: fixed; left: 0; top: 0; background: url('{{ asset('assets/login.jpg') }}') center center no-repeat; background-size: cover; 
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        left: 0;
+        top: 0;
+        background: url('{{ asset('assets/login.jpg') }}') center center no-repeat;
+        background-size: cover;
       }
       .panel.divcenter{
-        margin: 6em auto; background-color: rgba(255,255,255,0.93);
+        margin: 6em auto;
+        background-color: rgba(255,255,255,0.93);
       }
       .container{
         text-align: center;
@@ -77,7 +85,7 @@
         width: 100%;
         position: relative;
         max-width: 320px;
-        margin-bottom: 4em;
+        margin-bottom: 20px;
       }
       li {
         list-style: none;
@@ -87,6 +95,26 @@
       .card-header {
         text-align: left;
       }
+      .card {
+        max-width: 320px;
+        margin: 2px auto;
+        box-shadow: 1px 1px 5px 1px #4f5d2f;
+        border-radius: 9px;
+        text-align: center;
+      }
+      .card-header {
+        text-align: center;
+        font-weight: bold;
+        color: white;
+        background-color: #3b9a3e;
+        padding: 8px 7px;
+        border-radius: 9px 9px 0 0;
+      }
+      .card-body {
+        text-align: center;
+        padding: 10px 7px;
+      }
+      
     </style>
     @yield('scripts')
   </body>

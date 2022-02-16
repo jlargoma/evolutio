@@ -39,6 +39,25 @@ var BaseTableDatatables = function() {
         }
         jQuery('.js-dataTable-full-clients').dataTable(opt);
     };
+    var initDataTableMobile = function() {
+        var opt = {
+            initComplete: function() {
+                            $('div.loading').remove();
+                            $('#containerTableResult').show();
+                        },
+            pageLength: 40,
+            paging:  true,
+            pagingType: "full_numbers",
+            fixedColumns:null,
+        };
+        if (isMobile){
+          opt.pageLength = 20;
+          opt.scrollX = true;
+          opt.scrollCollapse = true;
+          opt.fixedColumns = {leftColumns: 1};
+        }
+        jQuery('.dataTable-mobile').dataTable(opt);
+    };
 
     var initDataTableFullBank = function() {
 
@@ -234,6 +253,7 @@ var BaseTableDatatables = function() {
 //            initDataTableSimple();
 //            initDataTableFull();
 //            initDataTableCitas();
+        if(typeof dataTableMobile !='undefined') initDataTableMobile();
         if(typeof dataTableClient !='undefined') initDataTableFullClient();
 //            initDataTableFullBank();
         }

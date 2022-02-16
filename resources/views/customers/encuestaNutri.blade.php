@@ -46,7 +46,6 @@
     font-size: 24px;
     background-color: #f7f7f7;
     padding: 15px 0;
-    margin: -39px 0 10px 0px;
   }
   h2 {
     font-weight: bold;
@@ -68,6 +67,9 @@
     margin: auto;
   }
 
+  .radio {
+    margin-left: 2em;
+}
   @media screen {
     .paging h1{
       padding-top: 2em;

@@ -59,7 +59,7 @@
       <div class="col-sm-6 col-xs-12 mt-1em">
         <div class="form-simple">
         <label for="name">Personal</label>
-        <select class="form-control" name="coach" required>
+        <select class="form-control" name="coach" id="coach" required>
           <option value="">-Personal</option>
           @foreach($allCoachs as $id=>$c)
           <option value="{{$id}}" @if($id == $u_current) selected @endif>{{$c}}</option>
@@ -142,6 +142,7 @@ $(document).ready(function () {
       u_email: $('#u_email').val(),
       u_phone: $('#u_phone').val(),
       importe: $('#importeFinal').val(),
+      coach: $('#coach').val(),
       type: type
     });
     posting.done(function (data) {

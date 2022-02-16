@@ -21,7 +21,6 @@ class StripeService {
     function getPaymentLink($type,$data){
         foreach ($data as $k=>$v) $data[$k] = encriptID ($v);
         $code = implode('-', $data);
-        
         if ($type == 'bono')
           return '/copra-de-bonos/'.$code.'/'.getKeyControl($code);
         

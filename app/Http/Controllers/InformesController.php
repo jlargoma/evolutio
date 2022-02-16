@@ -328,8 +328,9 @@ class InformesController extends Controller {
         $aRname = \App\Models\Rates::all()->pluck('name','id')->toArray();
         
         
-        $uResult = [];
+        $rByCoach = [];
         $tCoachs = [];
+        $uIDs = [];
         $uRates = \App\Models\UserRates::select(
                 'users_rates.*','charges.type_payment',
                 'charges.import','charges.discount')
@@ -339,11 +340,11 @@ class InformesController extends Controller {
         
         if ($uRates){
           foreach ($uRates as $uR){
-            if (!isset($uResult[$uR->id_user])) $uResult[$uR->id_user] = [];
+            if (!isset($rByCoach[$uR->coach_id])) $rByCoach[$uR->coach_id] = [];
 
-            $uResult[$uR->id_user][] = [
+            $rByCoach[$uR->coach_id][] = [
+                $uR->id_user,
                 $uR->id_rate,
-                $uR->coach_id,
                 $uR->type_payment,
                 $uR->import,
                 $uR->discount,
@@ -353,13 +354,14 @@ class InformesController extends Controller {
             if (!isset($tCoachs[$uR->coach_id])) $tCoachs[$uR->coach_id] = 0;
             
             $tCoachs[$uR->coach_id] += $uR->import;
+            $uIDs[] = $uR->id_user;
           }
         }
         
         
         $aLstCoachs = array_keys($tCoachs);
 
-        $aCustomers = User::whereIn('id',array_keys($uResult))
+        $aCustomers = User::whereIn('id',$uIDs)
                 ->pluck('name','id')->toArray();
         
        
@@ -372,7 +374,7 @@ class InformesController extends Controller {
         $data['month']   =  $month;
         $data['aRname']  =  $aRname;
         $data['aRType']  =  $aRType;
-        $data['uResult'] =  $uResult;
+        $data['rByCoach']=  $rByCoach;
         $data['aCust']   =  $aCustomers;
         $data['tCoachs'] =  $tCoachs;
         

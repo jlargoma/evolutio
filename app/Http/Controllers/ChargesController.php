@@ -493,6 +493,7 @@ class ChargesController extends Controller {
         $u_phone = ($request->input('u_phone'));
         $u_ID    = ($request->input('u_ID'));
         $type    = ($request->input('type'));
+        $coach    = ($request->input('coach'));
         $oUser = User::find($u_ID);
         if (!$oUser)
             return ['error', 'Usuario no encontrado'];
@@ -512,7 +513,8 @@ class ChargesController extends Controller {
         }
               
         
-        $data = [$oUser->id,$importe*100,$oBono->id,$disc];
+        $data = [$oUser->id,$importe*100,$oBono->id,$disc,$coach];
+        
         $sStripe = new \App\Services\StripeService();
         $pStripe = url($sStripe->getPaymentLink('bono',$data));
         

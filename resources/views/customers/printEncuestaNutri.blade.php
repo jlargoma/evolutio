@@ -57,12 +57,15 @@
 @endsection
 @section('scripts')
 
-<style>
+<style type="text/css">
+
+  .img-logo{
+    width: 220px !important;
+  }
     h1 {
     font-size: 24px;
     background-color: #f7f7f7;
     padding: 15px 0;
-    margin: -39px 0 10px 0px;
   }
   .fromEncNutri img{
     max-width: 100%;
@@ -97,6 +100,9 @@
     width: 25%;
     padding: 18px 5px !important;
     font-size: 13px !important;
+  }
+  .table td{
+    text-align: center;
   }
 
    @media print {

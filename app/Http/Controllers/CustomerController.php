@@ -143,7 +143,6 @@ class CustomerController extends Controller {
     $items = null;
     $sStripe = new \App\Services\StripeService();
     $data = $sStripe->getPaymentLinkData(5, $token, $control);
-//    dd($data);
     if (!$data) die('error');
       
     $payment = false;
@@ -151,15 +150,16 @@ class CustomerController extends Controller {
     if (count($data) == 2) {
 
       $typeKey = $data[0];
-      $data = $data[1];
+      $dataVal = $data[1];
+      //[$oUser->id,$importe*100,$oBono->id,$disc,$coach];
       //$oUser->id,$importe*100,$oBono->id,$disc
-      $oBono = \App\Models\Bonos::find($data[2]);
+      $oBono = \App\Models\Bonos::find($dataVal[2]);
       $name = 'Compra de bono de '
               . $oBono->name;
-      $amount = round($data[1]);
-      $oUser = User::find($data[0]);
-      $disc  = isset($data[5]) ? $data[5] : 0;
-      $coachID  = isset($data[6]) ? $data[6] : 0;
+      $amount = round($dataVal[1]);
+      $oUser = User::find($dataVal[0]);
+      $disc  = isset($dataVal[3]) ? $dataVal[3] : 0;
+      $coachID  = isset($dataVal[4]) ? $dataVal[4] : 0;
     }
     //--------------------------------------------------------------//
     //--------------------------------------------------------------//
