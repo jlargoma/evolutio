@@ -361,7 +361,7 @@ class InformesController extends Controller {
             $uIDs[] = $uR->id_user;
           }
         }
-        
+     
         
         $aLstCoachs = array_keys($tCoachs);
 
@@ -454,7 +454,7 @@ class InformesController extends Controller {
         $data['aRType'] = $aRType;
         $data['rByCoach'] = $rByCoach;
         $data['countByCoach'] = $countByCoach;
-       
+
 
         $data['tCoachs'] = $tCoachs;
         /*******************************************************/

@@ -232,20 +232,8 @@ use \Carbon\Carbon; ?>
                   var cID = $(this).data('c');
                   var sID = $(this).data('s');
                   var show = true;
-                  if(!!f_coach && f_coach != cID) show = false;
+                  if(f_coach != cID) show = false;
                   if(f_servic != '' && f_servic != sID) show = false;
-                  
-                  
-                  
-                  
-                  console.log(f_servic, sID, show);
-                  
-                  
-                  
-                  
-                  
-                  
-                  
                   if (show){
                     $(this).show();
                     var amount = $(this).data('v');
@@ -265,6 +253,8 @@ use \Carbon\Carbon; ?>
         
         $('.showCoach').on('click', function () {
             $('.titCoach').hide();
+            f_servic = '';
+            $('#f_servic').val('');
             f_coach = $(this).data('k');
             $('.coach' + f_coach).show()
             filterCobros();
