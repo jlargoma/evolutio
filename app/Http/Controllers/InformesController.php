@@ -329,6 +329,7 @@ class InformesController extends Controller {
         
         
         $rByCoach = [];
+        $countByCoach = [];
         $tCoachs = [];
         $uIDs = [];
         $uRates = \App\Models\UserRates::select(
@@ -348,12 +349,15 @@ class InformesController extends Controller {
                 $uR->type_payment,
                 $uR->import,
                 $uR->discount,
-                isset($aRrt[$uR->id_rate]) ? $aRrt[$uR->id_rate] : null
+                isset($aRrt[$uR->id_rate]) ? $aRrt[$uR->id_rate] : null,
+                isset($aRname[$uR->id_rate]) ? $aRname[$uR->id_rate] : null,
             ];
 
             if (!isset($tCoachs[$uR->coach_id])) $tCoachs[$uR->coach_id] = 0;
+            if (!isset($countByCoach[$uR->coach_id])) $countByCoach[$uR->coach_id] = 0;
             
             $tCoachs[$uR->coach_id] += $uR->import;
+            $countByCoach[$uR->coach_id]++;
             $uIDs[] = $uR->id_user;
           }
         }
@@ -371,11 +375,12 @@ class InformesController extends Controller {
         
         /************************************/
         
-        $auxCount = ['nutri'=>0,'fisio'=>0,'suscrip'=>0,'bonos'=>0];
+        $auxCount = ['nutri'=>0,'fisio'=>0,'suscrip'=>0,'bonos'=>0,'otros'=>0];
         $countCoachs = [null=>$auxCount];
         $lstDates = \App\Models\Dates::whereIn('date_type', ['nutri','fisio'])
                 ->whereYear('date','=',$year)
                 ->whereMonth('date','=',$month)
+                ->where('id_user_rates','>',1)
                 ->get();
         if ($lstDates){
           foreach ($lstDates as $item){
@@ -411,12 +416,16 @@ class InformesController extends Controller {
                   null,
                   $item->price,
                   $item->discount,
-                  'bono'
+                  'bono',
+                  ''
               ];
               
               if (!isset($tCoachs[$item->coach_id])) $tCoachs[$item->coach_id] = 0;
               $tCoachs[$item->coach_id] += $item->price;
               $uIDs[] = $item->ubonos->user_id;
+              
+              if (!isset($countByCoach[$item->coach_id])) $countByCoach[$item->coach_id] = 0;
+              $countByCoach[$item->coach_id]++;
             
             }
              
@@ -444,6 +453,8 @@ class InformesController extends Controller {
         $data['aRname'] = $aRname;
         $data['aRType'] = $aRType;
         $data['rByCoach'] = $rByCoach;
+        $data['countByCoach'] = $countByCoach;
+       
 
         $data['tCoachs'] = $tCoachs;
         /*******************************************************/

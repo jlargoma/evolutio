@@ -53,6 +53,7 @@ use \Carbon\Carbon; ?>
                   <th class="text-center bg-complete font-w800">Suscrip</th>
                   <th class="text-center bg-complete font-w800">Bonos</th>
                   <th class="text-center bg-complete font-w800">Total</th>
+                  <th class="text-center bg-complete font-w800">Todos los servicios</th>
                 </tr>
               </thead>
               <tbody>
@@ -75,6 +76,7 @@ use \Carbon\Carbon; ?>
                   <td class="text-center">{{$data['suscrip']}}</td>
                   <td class="text-center">{{$data['bonos']}}</td>
                   <td class="text-center">{{array_sum($data)}}</td>
+                  <td class="text-center"><?php echo isset($countByCoach[$cID]) ? $countByCoach[$cID] : 0 ?></td>
                 </tr>
                 @endforeach
               </tbody>
@@ -88,6 +90,7 @@ use \Carbon\Carbon; ?>
                   <th class="text-center bg-complete font-w800">{{$total['suscrip']}}</th>
                   <th class="text-center bg-complete font-w800">{{$total['bonos']}}</th>
                   <th class="text-center bg-complete font-w800">{{array_sum($total)}}</th>
+                  <th class="text-center bg-complete font-w800">{{array_sum($countByCoach)}}</th>
                 </tr>
               </tfoot>
             </table>
@@ -110,12 +113,22 @@ use \Carbon\Carbon; ?>
             </ul>
           </div>
           <div class="row block-content">
-            <h2>
+            <div class="row">
+              <h2 class="col-md-8">
               @foreach($aCoachs as $coachID=>$name)
-              <span class="itemByCoach coach{{$coachID}}">{{$name}}</span>
+              <span class="titCoach coach{{$coachID}}">{{$name}}</span>
               @endforeach
             </h2>
-
+            <div class="col-md-4">
+              <select id="f_servic" class="form-control">
+                <option value="">Todos los servicios</option>
+                <option value="bono">Compra de Bonos</option>
+                @foreach($aRType as $k=>$v)
+                <option value="{{$k}}">{{$v}}</option>
+                @endforeach
+              </select>
+            </div>
+</div>
             <div class="table-responsive">
               <table class="table table-striped table-header-bg">
                 <thead>
@@ -141,10 +154,11 @@ use \Carbon\Carbon; ?>
                   }
                   
                   
+                  
                   ?>
-                  <tr class="itemByCoach coach{{$coachID}}" data-v="{{$import}}">
+                  <tr class="itemByCoach" data-c="{{$coachID}}" data-v="{{$import}}" data-s="{{$rType}}">
                     <td class="text-left">{{$cname}}</td>
-                    <td class="text-center">{{$service}}</td>
+                    <td class="text-center">{{$service}} @if($item[6] != '') ({{$item[6]}}) @endif</td>
                     <td class="text-center">
                       <?php
                       if ($item[2] == 'bono') {
@@ -207,21 +221,57 @@ use \Carbon\Carbon; ?>
             }, 50);
         });
 
-        $('.showCoach').on('click', function () {
-            $('.itemByCoach').hide()
-            $('.coach' + $(this).data('k')).show()
-
-            var trTotal = 0;
-            $('.coach' + $(this).data('k')).each(
+        var f_coach = null;
+        var f_servic = '';
+        function filterCobros(){
+            $('.itemByCoach').hide();
+             var trTotal = 0;
+            $('.itemByCoach').each(
               function (index) {
-                  var amount = $(this).data('v');
-                  if (!isNaN(amount)) {
-                      trTotal += parseInt($(this).data('v'));
+                  
+                  var cID = $(this).data('c');
+                  var sID = $(this).data('s');
+                  var show = true;
+                  if(!!f_coach && f_coach != cID) show = false;
+                  if(f_servic != '' && f_servic != sID) show = false;
+                  
+                  
+                  
+                  
+                  console.log(f_servic, sID, show);
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  if (show){
+                    $(this).show();
+                    var amount = $(this).data('v');
+                    if (!isNaN(amount)) {
+                        trTotal += parseInt($(this).data('v'));
+                    }
                   }
               });
             $('.trTotal').text(window.formatterEuro.format(trTotal));
+            
+        }
+        
+        $('#f_servic').on('change', function () {
+          f_servic = $(this).val();
+          filterCobros();
+        });
+        
+        $('.showCoach').on('click', function () {
+            $('.titCoach').hide();
+            f_coach = $(this).data('k');
+            $('.coach' + f_coach).show()
+            filterCobros();
             $('#modalCobros').modal();
         });
+        
+        
 
     });
 
