@@ -51,17 +51,19 @@ use \Carbon\Carbon; ?>
                   <th class="text-center bg-complete font-w800">Nutri</th>
                   <th class="text-center bg-complete font-w800">Fisio</th>
                   <th class="text-center bg-complete font-w800">Suscrip</th>
+                  <th class="text-center bg-complete font-w800">Bonos</th>
                   <th class="text-center bg-complete font-w800">Total</th>
                 </tr>
               </thead>
               <tbody>
-                <?php $total = ['nutri' => 0, 'fisio' => 0, 'suscrip' => 0]; ?>
+                <?php $total = ['nutri' => 0, 'fisio' => 0, 'suscrip' => 0, 'bonos' => 0]; ?>
                 @foreach($countCoachs as $cID=>$data)
                 <?php
                 $cname = isset($aCoachs[$cID]) ? $aCoachs[$cID] : '- ' . $cID;
                 $total['nutri'] += $data['nutri'];
                 $total['fisio'] += $data['fisio'];
                 $total['suscrip'] += $data['suscrip'];
+                $total['bonos'] += $data['bonos'];
                 $amount = isset($tCoachs[$cID]) ? $tCoachs[$cID] : '0';
                 ?>
                 <tr>
@@ -71,6 +73,7 @@ use \Carbon\Carbon; ?>
                   <td class="text-center">{{$data['nutri']}}</td>
                   <td class="text-center">{{$data['fisio']}}</td>
                   <td class="text-center">{{$data['suscrip']}}</td>
+                  <td class="text-center">{{$data['bonos']}}</td>
                   <td class="text-center">{{array_sum($data)}}</td>
                 </tr>
                 @endforeach
@@ -83,6 +86,7 @@ use \Carbon\Carbon; ?>
                   <th class="text-center bg-complete font-w800">{{$total['nutri']}}</th>
                   <th class="text-center bg-complete font-w800">{{$total['fisio']}}</th>
                   <th class="text-center bg-complete font-w800">{{$total['suscrip']}}</th>
+                  <th class="text-center bg-complete font-w800">{{$total['bonos']}}</th>
                   <th class="text-center bg-complete font-w800">{{array_sum($total)}}</th>
                 </tr>
               </tfoot>
@@ -129,13 +133,18 @@ use \Carbon\Carbon; ?>
                   $cID = $item[0];
                   $cname = isset($aCust[$item[0]]) ? $aCust[$item[0]] : '-';
                   $import = $item[3];
+                  $service = '';
                   $rType = $item[5];
+                  if ($rType == 'bono') $service = $item[1];
+                  else{
+                    if (isset($aRType[$rType])) $service = $aRType[$rType];
+                  }
+                  
+                  
                   ?>
                   <tr class="itemByCoach coach{{$coachID}}" data-v="{{$import}}">
                     <td class="text-left">{{$cname}}</td>
-                    <td class="text-center">
-                      <?php echo isset($aRType[$rType]) ? $aRType[$rType] : '-'; ?>
-                    </td>
+                    <td class="text-center">{{$service}}</td>
                     <td class="text-center">
                       <?php
                       if ($item[2] == 'bono') {

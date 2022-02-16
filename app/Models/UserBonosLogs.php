@@ -21,4 +21,7 @@ class UserBonosLogs extends Model {
     return UserBonosLogs::where('user_bonos_id', $uBonoID)->get();
   }
 
+  public function ubonos() {
+    return $this->hasOne('\App\Models\UserBonos', 'id', 'bono_id');
+  }
 }

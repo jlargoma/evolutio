@@ -361,27 +361,17 @@ class InformesController extends Controller {
         
         $aLstCoachs = array_keys($tCoachs);
 
-        $aCustomers = User::whereIn('id',$uIDs)
-                ->pluck('name','id')->toArray();
         
        
                 
         $lstMonthsSpanish = lstMonthsSpanish();
         unset($lstMonthsSpanish[0]);
-        $data['months'] =  $lstMonthsSpanish;
-        
-        $data['year']    =  $year;
-        $data['month']   =  $month;
-        $data['aRname']  =  $aRname;
-        $data['aRType']  =  $aRType;
-        $data['rByCoach']=  $rByCoach;
-        $data['aCust']   =  $aCustomers;
-        $data['tCoachs'] =  $tCoachs;
+
         
         
         /************************************/
         
-        $auxCount = ['nutri'=>0,'fisio'=>0,'suscrip'=>0];
+        $auxCount = ['nutri'=>0,'fisio'=>0,'suscrip'=>0,'bonos'=>0];
         $countCoachs = [null=>$auxCount];
         $lstDates = \App\Models\Dates::whereIn('date_type', ['nutri','fisio'])
                 ->whereYear('date','=',$year)
@@ -403,15 +393,59 @@ class InformesController extends Controller {
             $aLstCoachs[] = $item->id_coach;
           }
         }
+        
+        $lstBonos = \App\Models\UserBonosLogs::whereNotNull('bono_id')
+                ->whereYear('created_at','=',$year)
+                ->whereMonth('created_at','=',$month)
+                ->with('ubonos')
+                ->get();
+        if ($lstBonos){
+          foreach ($lstBonos as $item){
+            if (!isset($countCoachs[$item->coach_id])) $countCoachs[$item->coach_id] = $auxCount;
+            $countCoachs[$item->coach_id]['bonos']++;
+            $aLstCoachs[] = $item->coach_id;
+            if ($item->ubonos){
+              $rByCoach[$item->coach_id][] = [
+                  $item->ubonos->user_id,
+                  $item->text,
+                  null,
+                  $item->price,
+                  $item->discount,
+                  'bono'
+              ];
+              
+              if (!isset($tCoachs[$item->coach_id])) $tCoachs[$item->coach_id] = 0;
+              $tCoachs[$item->coach_id] += $item->price;
+              $uIDs[] = $item->ubonos->user_id;
+            
+            }
+             
+          }
+        }
+        
         $data['countCoachs'] =  $countCoachs;
         
         /******************************************************/
         
         $aCoachs = User::whereIn('id', array_unique($aLstCoachs))
                 ->pluck('name','id')->toArray();
-        $data['aCoachs'] =  $aCoachs;
+       
         
         
+        $aCustomers = User::whereIn('id',$uIDs)
+                ->pluck('name','id')->toArray();
+        
+        $data['aCoachs'] = $aCoachs;
+        $data['aCust'] = $aCustomers;
+        $data['months'] = $lstMonthsSpanish;
+
+        $data['year'] = $year;
+        $data['month'] = $month;
+        $data['aRname'] = $aRname;
+        $data['aRType'] = $aRType;
+        $data['rByCoach'] = $rByCoach;
+
+        $data['tCoachs'] = $tCoachs;
         /*******************************************************/
         return view('admin.informes.informeCobrosMes',$data);
     }

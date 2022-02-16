@@ -40,6 +40,7 @@ class BonoService {
    */
   function asignBono($oUser, $oBono, $tpay, $idStripe = null, $cStripe = null,$price=null,$coachID=null) {
     if (!$price) $price = $oBono->price;
+    $oBono->price = $price;
     $date = date('Y-m-d');
     //BEGIN PAYMENTS
     $oCobro = new Charges();
