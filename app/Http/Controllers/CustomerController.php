@@ -51,6 +51,9 @@ class CustomerController extends Controller {
         case 'nutri': //$dID,$oUser->id,$importe*100,$oRate->id;
         case 'fisio': //$dID,$oUser->id,$importe*100,$oRate->id;
           $oDate = \App\Models\Dates::find($data[0]);
+          if (!$oDate){
+            die('Cita eliminada');
+          }
           $uRates = $oDate->uRates;
           if ($uRates->id_charges) $payment = true;
           if (!$uRates){

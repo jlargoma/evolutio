@@ -19,8 +19,29 @@ class StripeController extends Controller {
   public function processEvent(Request $req) {
     try {
       $this->eventID = $req->input('id');
+      //-------------------------------------------------------------//
+      //------  SISTEMA NUEVO STRIPE  ------------------------------//
+      if ($req->has('object')){
+        $data = $req->input('object');
+        if (isset($data['charges'])){
+          $this->pID = $data['id'];
+          $obj = $data['charges'];
+          if (isset($obj['data'])){
+            foreach ($obj['data'] as $d){
+              $paid = $d['paid'];
+              $this->cID = $d['customer'];
+              if ($paid) {
+                $this->continuePayment();
+                return 'Cargo exitoso!';
+              }
+            }
+          }
+        }
+        return 'Cargo no efectuado';
+      }
+      //-------------------------------------------------------------//
+      //----  SISTEMA VIEJO       ----------------------------------//
       $data = $req->input('data');
-      
       if ($data && isset($data['object'])) {
         $paid = $data['object']['paid'];
         $this->pID = $data['object']['payment_intent'];
@@ -39,7 +60,6 @@ class StripeController extends Controller {
   public function continuePayment() {
     $obj = Stripe3DS::where('idStripe', $this->pID)
                     ->where('cStripe', $this->cID)->first();
-        
     if ($obj) {
       $alreadyCharge = Charges::where('id_stripe',$this->pID)
             ->where('customer_stripe',$this->cID)->first();

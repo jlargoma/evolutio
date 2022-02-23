@@ -25,7 +25,8 @@ class BonoService {
     if (!$alreadyCharge){
       $oUser = User::find($user_id);
       $oBono = Bonos::find($aData->bono);
-      $this->asignBono($oUser, $oBono, $aData->tpay, $pID, $cID,null,$aData->coachID);
+      $coachID = isset($aData->coachID) ? $aData->coachID : 0;
+      $this->asignBono($oUser, $oBono, $aData->tpay, $pID, $cID,null,$coachID);
     }
   }
   
