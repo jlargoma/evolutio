@@ -25,36 +25,45 @@ class StripeController extends Controller {
         $data = $req->input('object');
         if (isset($data['charges'])){
           $this->pID = $data['id'];
-          $obj = $data['charges'];
-          if (isset($obj['data'])){
-            foreach ($obj['data'] as $d){
-              $paid = $d['paid'];
-              $this->cID = $d['customer'];
-              if ($paid) {
-                $this->continuePayment();
-                return 'Cargo exitoso!';
-              }
-            }
-          }
+          return $this->proccessCharge($data['charges']);
         }
-        return 'Cargo no efectuado';
+        
       }
       //-------------------------------------------------------------//
       //----  SISTEMA VIEJO       ----------------------------------//
       $data = $req->input('data');
       if ($data && isset($data['object'])) {
-        $paid = $data['object']['paid'];
-        $this->pID = $data['object']['payment_intent'];
-        $this->cID = $data['object']['customer'];
-        if ($paid) {
-          $this->continuePayment();
-          return 'Cargo exitoso!';
+        $data = $data['object'];
+        if (isset($data['charges'])){
+          $this->pID = $data['id'];
+          return $this->proccessCharge($data['charges']);
         }
+//        $paid = $data['object']['paid'];
+//        $this->pID = $data['object']['payment_intent'];
+//        $this->cID = $data['object']['customer'];
+//        if ($paid) {
+//          $this->continuePayment();
+//          return 'Cargo exitoso!';
+//        }
       }
       return 'Cargo no encontrado';
     } catch (\Exception $ex) {
       return $ex->getMessage();
     }
+  }
+  
+  function proccessCharge($obj){
+    if (isset($obj['data'])){
+      foreach ($obj['data'] as $d){
+        $paid = $d['paid'];
+        $this->cID = $d['customer'];
+        if ($paid) {
+          $this->continuePayment();
+          return 'Cargo exitoso!';
+        }
+      }
+    }
+    return 'Cargo no efectuado';
   }
 
   public function continuePayment() {
