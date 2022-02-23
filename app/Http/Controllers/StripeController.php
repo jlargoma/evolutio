@@ -19,56 +19,27 @@ class StripeController extends Controller {
   public function processEvent(Request $req) {
     try {
       $this->eventID = $req->input('id');
-      //-------------------------------------------------------------//
-      //------  SISTEMA NUEVO STRIPE  ------------------------------//
-      if ($req->has('object')){
-        $data = $req->input('object');
-        if (isset($data['charges'])){
-          $this->pID = $data['id'];
-          return $this->proccessCharge($data['charges']);
-        }
-        
-      }
-      //-------------------------------------------------------------//
-      //----  SISTEMA VIEJO       ----------------------------------//
       $data = $req->input('data');
+      
       if ($data && isset($data['object'])) {
-        $data = $data['object'];
-        if (isset($data['charges'])){
-          $this->pID = $data['id'];
-          return $this->proccessCharge($data['charges']);
+        $paid = $data['object']['paid'];
+        $this->pID = $data['object']['payment_intent'];
+        $this->cID = $data['object']['customer'];
+        if ($paid) {
+          $this->continuePayment();
+          return 'Cargo exitoso!';
         }
-//        $paid = $data['object']['paid'];
-//        $this->pID = $data['object']['payment_intent'];
-//        $this->cID = $data['object']['customer'];
-//        if ($paid) {
-//          $this->continuePayment();
-//          return 'Cargo exitoso!';
-//        }
       }
       return 'Cargo no encontrado';
     } catch (\Exception $ex) {
       return $ex->getMessage();
     }
   }
-  
-  function proccessCharge($obj){
-    if (isset($obj['data'])){
-      foreach ($obj['data'] as $d){
-        $paid = $d['paid'];
-        $this->cID = $d['customer'];
-        if ($paid) {
-          $this->continuePayment();
-          return 'Cargo exitoso!';
-        }
-      }
-    }
-    return 'Cargo no efectuado';
-  }
 
   public function continuePayment() {
     $obj = Stripe3DS::where('idStripe', $this->pID)
                     ->where('cStripe', $this->cID)->first();
+        
     if ($obj) {
       $alreadyCharge = Charges::where('id_stripe',$this->pID)
             ->where('customer_stripe',$this->cID)->first();
