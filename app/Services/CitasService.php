@@ -150,6 +150,7 @@ class CitasService {
     $months = lstMonthsSpanish();
     $sValora = new ValoracionService();
     $daysCoatch = [];
+    global $countByCoah;
     $countByCoah = [];
     if ($oLst) {
         foreach ($oLst as $item) {
@@ -157,6 +158,7 @@ class CitasService {
             $hour = date('G', $time);
             $date = date('Y-m-d', $time);
             $time = strtotime($date);
+            $month = date('Y-m',$time);
 
             $dTime = $hTime = $item->getHour();
             $dTime .= ' '.$days[date('w',$time)];
@@ -194,11 +196,7 @@ class CitasService {
                   'd'=>$dTime, // fecha 
               ];
               if (($item->is_group)){
-                if (!isset($countByCoah[$item->id_coach])){
-                  $countByCoah[$item->id_coach] = 1;
-                } else {
-                  $countByCoah[$item->id_coach]++;
-                }
+                self::countByCoah($item->id_coach,$month);
               }
               continue;
             }
@@ -246,11 +244,7 @@ class CitasService {
               $detail[$item->id]['dc'] = dateMin($charge->date_payment);
             }
             
-            if (!isset($countByCoah[$item->id_coach])){
-              $countByCoah[$item->id_coach] = 1;
-            } else {
-              $countByCoah[$item->id_coach]++;
-            }
+            self::countByCoah($item->id_coach,$month);
         }
     }
     /**************************************************** */
@@ -295,6 +289,19 @@ class CitasService {
         'countByCoah' => $countByCoah,
     ];
   }
+  
+  static function countByCoah($cID,$month){
+    global $countByCoah;
+    
+    if (!isset($countByCoah[$month])) $countByCoah[$month] = [];
+    if (!isset($countByCoah[$month][$cID])) $countByCoah[$month][$cID] = 0;
+    $countByCoah[$month][$cID]++;
+    
+    if (!isset($countByCoah['w'])) $countByCoah['w'] = [];
+    if (!isset($countByCoah['w'][$cID])) $countByCoah['w'][$cID] = 0;
+    $countByCoah['w'][$cID]++;
+  }
+  
   
   static function getCoachs($type) {
     if ($type == 'pt') $type = 'teach';

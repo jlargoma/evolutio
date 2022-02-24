@@ -22,12 +22,27 @@ class StripeController extends Controller {
       $data = $req->input('data');
       
       if ($data && isset($data['object'])) {
-        $paid = $data['object']['paid'];
-        $this->pID = $data['object']['payment_intent'];
-        $this->cID = $data['object']['customer'];
-        if ($paid) {
-          $this->continuePayment();
-          return 'Cargo exitoso!';
+      
+        if (isset($data['object']['charges'])){ //3D secure
+          //-----------------------------------------------//
+          $this->pID = $data['object']['id'];
+          foreach ($data['object']['charges']['data'] as $d){
+            $paid = $d['paid'];
+            $this->cID = $d['customer'];
+            if ($paid) {
+              $this->continuePayment();
+              return 'Cargo exitoso!';
+            }
+          }
+          //-----------------------------------------------//
+        } else {  //Normal
+          $paid = $data['object']['paid'];
+          $this->pID = $data['object']['payment_intent'];
+          $this->cID = $data['object']['customer'];
+          if ($paid) {
+            $this->continuePayment();
+            return 'Cargo exitoso!';
+          }
         }
       }
       return 'Cargo no encontrado';

@@ -103,7 +103,13 @@
   @endif
     
   var typeCalend = 'month';
-  var countByCoah = <?php echo json_encode($countByCoah) ?>;
+
+  <?php 
+    if (isset($countByCoah[$month]))
+      echo 'var countByCoah = '.json_encode($countByCoah[$month]);
+    else 
+      echo 'var countByCoah = []';
+  ?>; 
   
 </script>
 <script src="{{assetv('/js/calendar/pt.js')}}"></script>

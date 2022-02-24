@@ -99,9 +99,12 @@
     var details = {!!$detail!!};
   @endif
   var typeCalend = 'week';
-  
-  var countByCoah = <?php echo json_encode($countByCoah) ?>;
-  
+ <?php 
+    if (isset($countByCoah['w']))
+      echo 'var countByCoah = '.json_encode($countByCoah['w']);
+    else 
+      echo 'var countByCoah = []';
+  ?>; 
 </script>
 <script src="{{assetv('/js/calendar/pt.js')}}"></script>
 <script src="{{assetv('/admin-css/assets/js/toltip.js')}}"></script>
