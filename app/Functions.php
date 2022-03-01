@@ -329,6 +329,7 @@ function arrayDays($start,$end,$format,$val=0,$includeLast = true){
   $allDay = [];
   $inicio = new DateTime($start);
   $intervalo = new DateInterval('P1D');
+  if (!$end) $end = $start;
   $fin = new DateTime($end);
   $periodo = new DatePeriod($inicio, $intervalo, $fin);
   

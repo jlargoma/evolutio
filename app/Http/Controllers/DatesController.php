@@ -72,8 +72,6 @@ class DatesController extends Controller {
     /* -------------------------------------------------------------------- */
     $oCarbon = Carbon::createFromFormat('d-m-Y H:00:00', "$date $hour:00:00");
     $date_compl = $oCarbon->format('Y-m-d H:i:00');
-    
-    
 
     /* -------------------------------------------------------------------- */
     if ($blocked && !$isGroup) {
@@ -114,11 +112,11 @@ class DatesController extends Controller {
     $alreadyExit = Dates::where('date', $date_compl)
                     ->where('id', '!=', $ID)
                     ->where('id_coach', $id_coach)->count();
-    if ($alreadyExit>1) {
+    if ($alreadyExit > 1) {
       return redirect()->back()->withErrors(['Personal ocupado']);
     }
     /* -------------------------------------------------------------------- */
-    if (!$isGroup){
+    if (!$isGroup) {
       if (!$id_user) {
         $issetUser = User::where('email', $uEmail)->first();
         if ($issetUser) {
@@ -150,7 +148,7 @@ class DatesController extends Controller {
       $alreadyExit = Dates::where('date', $date_compl)
                       ->where('id', '!=', $ID)
                       ->where('id_user', $id_user)->count();
-      if ($alreadyExit>1) {
+      if ($alreadyExit > 1) {
         return redirect()->back()->withErrors(['Usuario ocupado']);
       }
     }
@@ -174,7 +172,7 @@ class DatesController extends Controller {
     /* -------------------------------------------------------------------- */
     //nueva cita => crear userRate
     $id_user_rates = null;
-    if (!$isGroup){
+    if (!$isGroup) {
       if ($type == 'pt') {
         $uRate = UserRates::where('id_user', $oUser->id)
                 ->where('id_rate', $id_rate)
@@ -182,7 +180,7 @@ class DatesController extends Controller {
                 ->where('rate_year', date('Y', $timeCita))
                 ->first();
         if (!$uRate)
-          $uRate = \App\Services\ValoracionService::getURate($oUser->id,$id_rate,$timeCita,$id_coach);
+          $uRate = \App\Services\ValoracionService::getURate($oUser->id, $id_rate, $timeCita, $id_coach);
       } else {
         $uRate = UserRates::find($oObj->id_user_rates);
         if ($uRate) {
@@ -218,15 +216,14 @@ class DatesController extends Controller {
     $oObj->date = $date_compl;
     $oObj->customTime = $cHour;
     $oObj->updated_at = $date;
-    
-       
-    if ($isGroup){
-      $oObj->price  = $importe;
-      $oObj->id_user  = 0;
-      $oObj->blocked  = 1;
+
+    if ($isGroup) {
+      $oObj->price = $importe;
+      $oObj->id_user = 0;
+      $oObj->blocked = 1;
       $oObj->is_group = 1;
       $oObj->save();
-      
+
       if ($type == 'pt')
         return redirect('/admin/citas-pt/edit/' . $oObj->id);
       if ($type == 'nutri')
@@ -234,80 +231,80 @@ class DatesController extends Controller {
       if ($type == 'fisio')
         return redirect('/admin/citas-fisioterapia/edit/' . $oObj->id);
     }
-    
-    
-   
+
+
+
     if ($oObj->save()) {
-        $timeCita = strtotime($oObj->date);
-        $service = Rates::find($oObj->id_rate);
-        $coach = User::find($oObj->id_coach);
-        $oRate = Rates::find($oObj->id_rate);
-        
+      $timeCita = strtotime($oObj->date);
+      $service = Rates::find($oObj->id_rate);
+      $coach = User::find($oObj->id_coach);
+      $oRate = Rates::find($oObj->id_rate);
 
-        /**BEGIN: prepare iCAL **/
-        $uID = str_pad($oObj->id, 7, "0", STR_PAD_LEFT);
-        $invite = new \App\Services\InviteICal($uID);
-        $dateTime = $oObj->date;
-        if ($oObj->customTime){
-              $dateTime = explode(' ', $oObj->date);
-              $dateTime = $dateTime[0].' '.$oObj->customTime;
-        }
-        $dateZone = 'Europe/Madrid';
-        //$dateZone = 'America/Argentina/Buenos_Aires';
-        $dateStart = new \DateTime($dateTime,new \DateTimeZone($dateZone));
-        $dateEnd = new \DateTime($dateTime,new \DateTimeZone($dateZone));
-        $dateEnd->modify('+1 hours');
-        $dateStart->setTimezone(new \DateTimeZone('UTC'));
-        $dateEnd->setTimezone(new \DateTimeZone('UTC'));
-        $icsDetail = 'Tienes una cita con tu ';
-        switch ($type){
-          case 'nutri':
-            $icsDetail.= 'Nutricionista ';
-            break;
-          case 'fisio':
-            $icsDetail.= 'Fisioterapeuta ';
-            break;
-          case 'pt':
-            $icsDetail.= 'Entrenador ';
-            break;
-        }
-        $icsDetail.= $coach->name;  
-        $invite->setSubject($oRate->name)
-          ->setDescription($icsDetail)
-          ->setStart($dateStart)
-          ->setEnd($dateEnd)
-          ->setCreated(new \DateTime());
-        $calFile = $invite->save();
-        /** END:  prepare iCAL **/
+      /* ------- BEGIN: prepare iCAL ------------- */
+      $uID = str_pad($oObj->id, 7, "0", STR_PAD_LEFT);
+      $invite = new \App\Services\InviteICal($uID);
+      $dateTime = $oObj->date;
+      if ($oObj->customTime) {
+        $dateTime = explode(' ', $oObj->date);
+        $dateTime = $dateTime[0] . ' ' . $oObj->customTime;
+      }
+      $dateZone = 'Europe/Madrid';
+      //$dateZone = 'America/Argentina/Buenos_Aires';
+      $dateStart = new \DateTime($dateTime, new \DateTimeZone($dateZone));
+      $dateEnd = new \DateTime($dateTime, new \DateTimeZone($dateZone));
+      $dateEnd->modify('+1 hours');
+      $dateStart->setTimezone(new \DateTimeZone('UTC'));
+      $dateEnd->setTimezone(new \DateTimeZone('UTC'));
+      $icsDetail = 'Tienes una cita con tu ';
+      switch ($type) {
+        case 'nutri':
+          $icsDetail .= 'Nutricionista ';
+          break;
+        case 'fisio':
+          $icsDetail .= 'Fisioterapeuta ';
+          break;
+        case 'pt':
+          $icsDetail .= 'Entrenador ';
+          break;
+      }
+      $icsDetail .= $coach->name;
+      $invite->setSubject($oRate->name)
+              ->setDescription($icsDetail)
+              ->setStart($dateStart)
+              ->setEnd($dateEnd)
+              ->setCreated(new \DateTime());
+      $calFile = $invite->save();
+      /** END:  prepare iCAL * */
       /* -------------------------------------------------------------------- */
-        if ($type == 'pt') {
+      if ($type == 'pt') {
 
 
-          $subjet = 'Nueva cita en Evolutio';
-          if ($ID)  $subjet = 'Actualización de su cita';
-
-          MailController::sendEmailCita($oObj, $oUser, $oRate, $coach, $importe, $subjet,$calFile);
-          return redirect('/admin/citas-pt/edit/' . $oObj->id);
-        }
-        /* -------------------------------------------------------------------- */
-        //crear el pago
-        $pStripe = null;
-        if (!$ID) {
-          $data = [$oObj->id, $oUser->id, $importe * 100, $oRate->id];
-          $sStripe = new \App\Services\StripeService();
-          $rType = \App\Models\TypesRate::find($oRate->type);
-          $pStripe = url($sStripe->getPaymentLink($rType->type, $data));
-        }
-
-        /* -------------------------------------------------------------------- */
-        /* -------------------------------------------------------------------- */
         $subjet = 'Nueva cita en Evolutio';
         if ($ID)
           $subjet = 'Actualización de su cita';
-         
-        MailController::sendEmailPayDateByStripe($oObj, $oUser, $oRate, $coach, $pStripe, $importe, $subjet,$calFile,$type);
-        /* -------------------------------------------------------------------- */
-        
+
+        MailController::sendEmailCita($oObj, $oUser, $oRate, $coach, $importe, $subjet, $calFile);
+        return redirect('/admin/citas-pt/edit/' . $oObj->id);
+      }
+      /* -------------------------------------------------------------------- */
+      //crear el pago
+      $pStripe = null;
+      if (!$ID) {
+        $data = [$oObj->id, $oUser->id, $importe * 100, $oRate->id];
+        $sStripe = new \App\Services\StripeService();
+        $rType = \App\Models\TypesRate::find($oRate->type);
+        $pStripe = url($sStripe->getPaymentLink($rType->type, $data));
+      }
+
+      /* -------------------------------------------------------------------- */
+      /* -------------------------------------------------------------------- */
+      $subjet = 'Nueva cita en Evolutio';
+      if ($ID)
+        $subjet = 'Actualización de su cita';
+
+      MailController::sendEmailPayDateByStripe($oObj, $oUser, $oRate, $coach, $pStripe, $importe, $subjet, $calFile, $type);
+      /* -------------------------------------------------------------------- */
+
       if ($type == 'nutri')
         return redirect('/admin/citas-nutricion/edit/' . $oObj->id);
       if ($type == 'fisio')
@@ -323,14 +320,14 @@ class DatesController extends Controller {
     $uRate = $oDates->uRates;
     if (!$uRate)
       return redirect()->back()->with(['error' => 'Cita no encontada']);
-    
+
     $oUser = $uRate->user;
     $service = $oDates->service;
     $oRate = $uRate->rate;
     $payType = $req->input('type_payment');
     if (!$oRate)
       return redirect()->back()->with(['error' => 'Tarifa no encontada']);
-    
+
 
     $value = $uRate->price;
     $idStripe = null;
@@ -349,7 +346,7 @@ class DatesController extends Controller {
       $resp = $sStripe->automaticCharge($oUser, round($value * 100));
       if ($resp[0] !== 'OK') {
         if ($resp[0] == '3DS') {
-          \App\Models\Stripe3DS::addNew($oUser->id,$resp[1],$resp[2],'cita',['dID'=>$oDates->id]);
+          \App\Models\Stripe3DS::addNew($oUser->id, $resp[1], $resp[2], 'cita', ['dID' => $oDates->id]);
           return redirect()->route(
                           'cashier.payment',
                           [$resp[1], 'redirect' => 'resultado']
@@ -384,7 +381,6 @@ class DatesController extends Controller {
     $ChargesDate->generatePayment($oDates, $payType, $value, $idStripe, $cStripe, $UserBonos);
     return redirect()->back()->with(['success' => 'Cobro guadado']);
   }
-  
 
   function openChargeDate($id) {
     $obj = Dates::find($id);
@@ -417,18 +413,26 @@ class DatesController extends Controller {
     }
 
     return view('calendars.blockDates', [
+        'type' => $type,
         'coachs' => $cNames,
-        'type' => $type
+        'aWeeks' => listDaysSpanish()
     ]);
   }
 
   function blockDatesSave(Request $req) {
 
     $type = $req->input('date_type');
-    $id_coach = $req->input('id_coach');
+    $type_action = $req->input('type_action');
     $start = $req->input('start');
     $end = $req->input('end');
     $hours = $req->input('hours');
+    $uIDs = $req->input('user_ids');
+    $wDays = $req->input('wDay');
+
+    if (!$uIDs)
+      return back()->withErrors(['Debe seleccionar al menos un Coach']);
+    if (!$start)
+      return back()->withErrors(['Debe seleccionar al menos la fecha de inicio']);
 
     $startTime = null;
     $aux = explode('-', $start);
@@ -439,25 +443,43 @@ class DatesController extends Controller {
     $aux = explode('-', $end);
     if (is_array($aux) && count($aux) == 3)
       $endTime = ($aux[2] . '-' . $aux[1] . '-' . $aux[0]);
-    
-    $aDays = arrayDays($startTime,$endTime,'Y-m-d','w');
-    foreach ($aDays as $d=>$wd){
+
+    $aDays = arrayDays($startTime, $endTime, 'Y-m-d', 'w');
+    if (!$hours) {
+      $hours = [];
+      for ($i = 8; $i <= 22; $i++)
+        $hours[] = $i;
+    }
+
+    foreach ($aDays as $d => $wd) {
       if ($wd > 0) {
+        if ($wDays && !in_array($wd, $wDays))
+          continue;
         foreach ($hours as $h) {
-          $dateHour = $d." $h:00:00";
-          $exist = Dates::where('id_coach',$id_coach)
-                  ->where('date_type',$type)
-                  ->where('date',$dateHour)->first();
-          if (!$exist){
-            $oObj = new Dates();
-            $oObj->id_coach = $id_coach;
-            $oObj->id_rate = 0;
-            $oObj->id_user = 0;
-            $oObj->blocked = 1;
-            $oObj->id_user_rates = -1;
-            $oObj->date_type = $type;
-            $oObj->date = $dateHour;
-            $oObj->save();
+          $dateHour = $d . " $h:00:00";
+          foreach ($uIDs as $uID) {
+            $exist = Dates::where('id_coach', $uID)
+                            ->where('date_type', $type)
+                            ->where('date', $dateHour)->first();
+
+            //bloqueo de fechas
+            if ($type_action == 'block' && !$exist) {
+              $oObj = new Dates();
+              $oObj->id_coach = $uID;
+              $oObj->id_rate = 0;
+              $oObj->id_user = 0;
+              $oObj->blocked = 1;
+              $oObj->id_user_rates = -1;
+              $oObj->date_type = $type;
+              $oObj->date = $dateHour;
+              $oObj->save();
+            }
+
+            //desbloqueo de fechas
+            if ($type_action == 'unblock' && $exist) {
+              if ($exist->blocked == 1)
+                $exist->delete();
+            }
           }
         }
       }
@@ -509,11 +531,11 @@ class DatesController extends Controller {
 
     foreach ($aDates as $d) {
       if ($oDate->date_type == 'pt') {
-        $has = UserRates::where('id_user',$oDate->id_user)
-                ->where('id_rate',$oDate->id_rate)
-                ->where('active',1)->first();
-        if (!$has){
-          return redirect()->back()->with(['error' => 'Servicio no habilitado']); 
+        $has = UserRates::where('id_user', $oDate->id_user)
+                        ->where('id_rate', $oDate->id_rate)
+                        ->where('active', 1)->first();
+        if (!$has) {
+          return redirect()->back()->with(['error' => 'Servicio no habilitado']);
         }
         $id_user_rates = $oDate->id_user_rates;
       } else {
@@ -553,41 +575,41 @@ class DatesController extends Controller {
   }
 
   public function checkDateDisp(Request $req) {
-        
+
     $date = $req->input('date');
     $time = $req->input('time');
-    $ID   = $req->input('id');
-    $uID  = $req->input('uID');
+    $ID = $req->input('id');
+    $uID = $req->input('uID');
     $type = $req->input('type');
-    $cID  = $req->input('cID'); //id_coach
-        
-    
-    $aux = explode('-',$date);
-    if (is_array($aux) && count($aux)==3){
-      $date = $aux[2].'-'.$aux[1].'-'.$aux[0];
+    $cID = $req->input('cID'); //id_coach
+
+
+    $aux = explode('-', $date);
+    if (is_array($aux) && count($aux) == 3) {
+      $date = $aux[2] . '-' . $aux[1] . '-' . $aux[0];
     }
-    
-    $dateCompl = $date." $time:00:00";
-    
+
+    $dateCompl = $date . " $time:00:00";
+
     $sqlCoach = Dates::where('date', $dateCompl)->where('id_coach', $cID);
-    $sqlUser  = Dates::where('date', $dateCompl)->where('id_user', $uID);
-    $sqlBloq  = Dates::where('date', $dateCompl)->where('id_coach', $cID);
-                    
-    if ($ID && $ID != 'undefined'){
+    $sqlUser = Dates::where('date', $dateCompl)->where('id_user', $uID);
+    $sqlBloq = Dates::where('date', $dateCompl)->where('id_coach', $cID);
+
+    if ($ID && $ID != 'undefined') {
       $sqlCoach->where('id', '!=', $ID);
       $sqlBloq->where('id', '!=', $ID);
       $sqlUser->where('id', '!=', $ID);
     }
-    
-    if ($sqlBloq->where('date_type',$type)->where('blocked', 1)->first()){
+
+    if ($sqlBloq->where('date_type', $type)->where('blocked', 1)->first()) {
       return 'bloqueo';
     }
-    
+
     $useCoach = $sqlCoach->count();
     $useUser = $sqlUser->count();
-    
+
 //    dd($useCoach,$useUser,$req->all());
-    return ($useCoach>$useUser) ? $useCoach : $useUser;
-   
+    return ($useCoach > $useUser) ? $useCoach : $useUser;
   }
+
 }
