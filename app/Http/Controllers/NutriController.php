@@ -86,9 +86,11 @@ class NutriController extends Controller {
       if ($data){
         /**************************************************** */
         //encuesta
-        $data['encNutr'] = $data['oUser']->getMetaContent('nutri_q1');
-        $code = encriptID($data['oUser']->id).'-'.encriptID(time()*rand());
-        $data['btnEncuesta'] = $code.'/'.getKeyControl($code);
+        if ($data['oUser']){
+          $data['encNutr'] = $data['oUser']->getMetaContent('nutri_q1');
+          $code = encriptID($data['oUser']->id).'-'.encriptID(time()*rand());
+          $data['btnEncuesta'] = $code.'/'.getKeyControl($code);
+        }
         /**************************************************** */
         return view('nutricion.form',$data);
       } else {
