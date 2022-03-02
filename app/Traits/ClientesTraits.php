@@ -390,7 +390,8 @@ trait ClientesTraits {
     } else {
       $detail = null;
     }
-
+    /*-------------------------------------*/
+    $sEncNutri = new \App\Services\EncuestaNutriService();
     /********************************/
     return view('/admin/usuarios/clientes/informe', [
         'aRates' => $aRates,
@@ -420,7 +421,8 @@ trait ClientesTraits {
         'uPlan' => $uPlan,
         'sing_contrato' => $sing_contrato,
         'u_current'=>Auth::user()->id,
-        'encNutr'=>$this->get_encNutri($user),
+        'encNutr'=>$sEncNutri->get_enc($user),
+        'filesNutri'=>$this->getFileLst($user->id, 'nutri'),
         'filesFisio'=>$this->getFileLst($user->id, 'fisio'),
     ]);
   }

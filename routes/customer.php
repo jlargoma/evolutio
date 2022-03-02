@@ -22,6 +22,8 @@ Route::get('/resultado', 'CustomerController@showResult');
 Route::get('/cobro-completado', 'CustomerController@paymentSuccess')->name('customer.pay.success');
 Route::get('/cobro-cancelado', 'CustomerController@paymentCancel')->name('customer.pay.cancel');
 
-Route::get('/encuesta-nutricion/{token}/{control}', 'CustomerController@formEncuestaNutri');
-Route::post('/encuesta-nutricion', 'CustomerController@setEncNutri');
+
 Route::get('/archivo-nutricion/{token}/{control}', 'CustomerController@getFile');
+
+Route::get('/encuesta-nutricion/{token}/{control}', 'PollController@formEncuestaNutri');
+Route::post('/encuesta-nutricion', 'PollController@setEncNutri');

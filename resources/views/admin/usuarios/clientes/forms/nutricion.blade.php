@@ -29,14 +29,14 @@ $csrf_token = csrf_token();
       </form>
 
 
-      @if(isset($encNutr['lstFiles']) && count($encNutr['lstFiles']) )
+      @if(isset($filesNutri) && count($filesNutri) )
       <form action="{{ url('/admin/clientes/delFiles') }}" method="post" id="delFiles">
         <input type="hidden" name="_token" value="{{ $csrf_token }}">
         <input type="hidden" name="uid" value="{{ $user->id }}">
         <input type="hidden" name="fid" id="fileID">
       </form>
       <table class="table">
-        @foreach($encNutr['lstFiles'] as $k=>$v)
+        @foreach($filesNutri as $k=>$v)
         <tr>
           <th style="width: 80%;">{{$v['name']}}</th>
           <td>

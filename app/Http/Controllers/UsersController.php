@@ -17,12 +17,11 @@ use \App\Traits\EntrenadoresTraits;
 use \App\Traits\ClientesTraits;
 use \App\Traits\ValoracionTraits;
 use \App\Traits\ClientesFilesTraits;
-use \App\Traits\EncuestaNutriTraits;
 
 class UsersController extends Controller {
 
   use EntrenadoresTraits,ValoracionTraits,
-      ClientesTraits,EncuestaNutriTraits,ClientesFilesTraits;
+      ClientesTraits,ClientesFilesTraits;
 
   public function index() {
 

@@ -15,11 +15,9 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::get('/clientes/{month?}', 'UsersController@clientes');
   Route::post('/clientes/update', 'UsersController@updateCli');
   Route::post('/clientes/setValora', 'UsersController@setValora');
-  Route::post('/clientes/setNutri', 'UsersController@setEncNutri_Admin');
   Route::post('/clientes/saveFiles', 'UsersController@saveFiles');
   Route::post('/clientes/delFiles', 'UsersController@delFiles');
   Route::post('/clientes/autosaveValora', 'UsersController@autosaveValora');
-  Route::post('/clientes/autosaveNutri', 'UsersController@autosaveNutri');
   Route::get('/get-mail/{id?}', 'UsersController@getMail');
   Route::get('/get-rates/{id?}', 'UsersController@getRates');
   Route::get('/clientes-export', 'UsersController@exportClients');
@@ -45,6 +43,18 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::post('/usuarios/remove-contrato', 'CustomerController@rmContracts');
   Route::post('/usuarios/linkContratos', 'UsersController@getLinkContracts');
 
+  /* Encuestas */
+  Route::post('/clientes/setNutri', 'PollController@setEncNutri_Admin');
+  Route::post('/clientes/autosaveNutri', 'PollController@autosaveNutri');
+  Route::get('/ver-encuesta/{token}/{control}', 'PollController@seeEncuestaNutri');
+  Route::get('/editar-encuesta/{uID}', 'PollController@editEncuestaNutri');
+  Route::post('/clearEncuesta', 'PollController@clearEncuestaNutri');
+  Route::post('/sendEncuesta', 'PollController@sendEncuestaNutri');
+  
+  
+  
+  
+  
   /* Citas */
   Route::post('/citas/checkDisp', 'DatesController@checkDateDisp');
   Route::get('/citas/duplicar/{id}', 'DatesController@cloneDates');
@@ -76,10 +86,6 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::get('/citas-nutricion/edit/{id}', 'NutriController@edit');
   Route::get('/citas-nutricion/{month?}/{coach?}/{type?}', 'NutriController@index');
   Route::get('/citas-nutricion-week/{week?}/{coach?}/{type?}', 'NutriController@indexWeek');
-  Route::get('/ver-encuesta/{token}/{control}', 'CustomerController@seeEncuestaNutri');
-  Route::get('/editar-encuesta/{uID}', 'CustomerController@editEncuestaNutri');
-  Route::post('/clearEncuesta', 'CustomerController@clearEncuestaNutri');
-  Route::post('/sendEncuesta', 'CustomerController@sendEncuestaNutri');
   /* Citas personalTrainer */
   Route::get('/citas-pt/listado/{coach?}/{type?}', 'PTController@listado');
   Route::get('/citas-pt/create/{date?}/{time?}', 'PTController@create');

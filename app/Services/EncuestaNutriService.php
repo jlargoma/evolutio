@@ -1,17 +1,15 @@
 <?php
 
-namespace App\Traits;
-
-use Carbon\Carbon;
+namespace App\Services;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 
-trait EncuestaNutriTraits {
+class EncuestaNutriService {
 
-  public function get_encNutriFields() {
+  public function get_encFields() {
 
     $f = [];
     for ($i = 1; $i < 23; $i++)
@@ -84,9 +82,9 @@ trait EncuestaNutriTraits {
     ];
   }
 
-  public function get_encNutri($user) {
+  public function get_enc($user) {
 
-    $fields = $this->get_encNutriFields();
+    $fields = $this->get_encFields();
     $data = $user->getMetaContentGroups($fields);
     foreach ($fields as $f)
       if (!isset($data[$f]))
@@ -98,39 +96,14 @@ trait EncuestaNutriTraits {
     $data['url'] = \App\Services\LinksService::getLinkEncuesta($user->id);;
     $data['url_dwnl'] = '/admin/ver-encuesta/' . $keys;
     $data['url_get'] = '/admin/ver-encuesta/' . $keys;
-
-    
-    
-    $lstFiles = [];
-    $oFiles = \App\Models\UsersFiles::where('id_user',$user->id)
-            ->where('type','nutri')->get();
-    if ($oFiles){
-      foreach ($oFiles as $item){
-        $lstFiles[$item->id] = [
-            'name'=>$item->file_name,
-            'url'=>\App\Services\LinksService::getLinkNutriFile($item->id)
-        ];
-      }
-    }
-    $data['lstFiles'] = $lstFiles;
     
     return array_merge($data, $this->get_nutriQuestions());
   }
 
-  public function show_encNutri($user) {
 
-    $fields = $this->get_encNutriFields();
-    $data = $user->getMetaContentGroups($fields);
-    foreach ($fields as $f)
-      if (!isset($data[$f]))
-        $data[$f] = null;
+  public function setEnc(Request $request) {
 
-    return array_merge($data, $this->get_nutriQuestions());
-  }
-
-  public function setEncNutri(Request $request) {
-
-    $fields = $this->get_encNutriFields();
+    $fields = $this->get_encFields();
     $code = $request->input('_code', '');
     $aCode = explode('-', $code);
     if (count($aCode) != 2)
@@ -144,28 +117,25 @@ trait EncuestaNutriTraits {
       abort(404);
       exit();
     }
-    $this->updEncNutri($request, $oUser);
-    return redirect()->back()->with('success', 'Encuesta enviada.');
+    $this->updEnc($request, $oUser);
+    return 'OK';
   }
 
-  public function setEncNutri_Admin(Request $request) {
-
+  public function setEnc_Admin(Request $request) {
     $uid = $request->input('uid', '');
     $oUser = User::find($uid);
     if (!$oUser) {
       abort(404);
       exit();
     }
-    $this->updEncNutri($request, $oUser);
-    return redirect()->back()->with('success', 'Encuesta guardada.');
+    $this->updEnc($request, $oUser);
   }
 
-  public function updEncNutri(Request $request, $oUser) {
-    $fields = $this->get_encNutriFields();
+  public function updEnc(Request $request, $oUser) {
+    $fields = $this->get_encFields();
     $data = $oUser->getMetaContentGroups($fields);
     $req = $request->all();
     $metaDataADD = $metaDataUPD = [];
-//    dd($fields);
     foreach ($fields as $f) {
       if (isset($req[$f])) {
         if (isset($data[$f]))
@@ -178,7 +148,7 @@ trait EncuestaNutriTraits {
     $oUser->setMetaContentGroups($metaDataUPD, $metaDataADD);
   }
 
-  function seeEncuestaNutri($code, $control) {
+  function seeEncuesta($code, $control) {
     $aCode = explode('-', $code);
     if (count($aCode) != 2)
       return 'error1';
@@ -192,14 +162,11 @@ trait EncuestaNutriTraits {
       exit();
     }
 
-    $encNutri = $this->get_encNutri($oUser);
-    //dd($encNutri);
-    return view('customers.printEncuestaNutri', [
-        'data' => $encNutri
-    ]);
+    $enc = $this->get_enc($oUser);
+    return $enc;
   }
 
-  function formEncuestaNutri($code, $control) {
+  function formEncuesta($code, $control) {
 
 
     $aCode = explode('-', $code);
@@ -218,20 +185,20 @@ trait EncuestaNutriTraits {
 
     $nutri_q1 = $oUser->getMetaContent('nutri_q1');
     if ($nutri_q1) {
-      return view('customers.encuestaNutri', ['already' => true]);
+      return ['already' => true];
     }
 
-    $encNutri = $this->get_encNutri($oUser);
-    return view('customers.encuestaNutri', [
-        'data' => $encNutri,
+    $enc = $this->get_enc($oUser);
+    return [
+        'data' => $enc,
         'user' => $oUser,
         'code' => $code,
         'control' => $control,
-        'url_dwnl' => '/descargar-encNutri/' . $code . '/' . $control,
-    ]);
+        'url_dwnl' => '/descargar-enc/' . $code . '/' . $control,
+    ];
   }
 
-  public function clearEncuestaNutri(Request $request) {
+  public function clearEncuesta(Request $request) {
     $uID = $request->input('uID', null);
 
     $lstKeys = $this->get_nutriQuestions();
@@ -244,7 +211,7 @@ trait EncuestaNutriTraits {
     return 'OK';
   }
 
-  public function sendEncuestaNutri(Request $request) {
+  public function sendEncuesta(Request $request) {
     $uID = $request->input('uID', null);
     $oUser = User::find($uID);
     if (!$oUser)
@@ -277,7 +244,7 @@ trait EncuestaNutriTraits {
     return 'OK';
   }
 
-  public function autosaveNutri(Request $req) {
+  public function autosave(Request $req) {
     $uID = $req->input('id');
     $field = $req->input('field');
     $val = $req->input('val');
@@ -289,12 +256,12 @@ trait EncuestaNutriTraits {
     die('error');
   }
 
-  function editEncuestaNutri($id){
+  function editEncuesta($id){
     $oUser = User::find($id);
-    return view('/admin/usuarios/clientes/encuestaNutri', [
+    return [
         'user'=>$oUser,
-        'encNutr'=>$this->get_encNutri($oUser)
-        ]);
+        'encNutr'=>$this->get_enc($oUser)
+        ];
   }
 
 }
