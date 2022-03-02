@@ -12,6 +12,7 @@
   <li <?php if ($tab == 'bono') echo 'class="active"'; ?>><a data-toggle="tab" href="#bono">Bonos</a></li>
   <li <?php if ($tab == 'valoracion') echo 'class="active"'; ?>><a data-toggle="tab" href="#valoracion">Valoración</a></li>
   <li <?php if ($tab == 'nutricion') echo 'class="active"'; ?>><a data-toggle="tab" href="#nutricion">Nutrición</a></li>
+  <li <?php if ($tab == 'fisio') echo 'class="active"'; ?>><a data-toggle="tab" href="#fisio">Fisio</a></li>
 </ul>
 </div>
 <div class="tab-content box">
@@ -41,6 +42,9 @@
   </div>
   <div id="nutricion" class="tab-pane fade <?php if ($tab == 'nutricion') echo 'in active'; ?>">
         @include('admin.usuarios.clientes.forms.nutricion')
+  </div>
+  <div id="fisio" class="tab-pane fade <?php if ($tab == 'fisio') echo 'in active'; ?>">
+        @include('admin.usuarios.clientes.forms.fisio')
   </div>
 </div>
 <div class="row">

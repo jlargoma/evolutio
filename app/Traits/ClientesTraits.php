@@ -420,7 +420,8 @@ trait ClientesTraits {
         'uPlan' => $uPlan,
         'sing_contrato' => $sing_contrato,
         'u_current'=>Auth::user()->id,
-        'encNutr'=>$this->get_encNutri($user)
+        'encNutr'=>$this->get_encNutri($user),
+        'filesFisio'=>$this->getFileLst($user->id, 'fisio'),
     ]);
   }
 
@@ -571,7 +572,18 @@ trait ClientesTraits {
     $oNote->note = $note;
     $oNote->save();
 
-    $urlBack = ($type == 'nutri') ? '/nutricion' : '/notes';
+    switch ($type){
+        case 'nutri':
+          $urlBack = '/nutricion';
+          break;
+        case 'fisio':
+          $urlBack = '/fisio';
+          break;
+        default :
+          $urlBack = '/notes';
+          break;
+    }
+      
     return redirect('/admin/usuarios/informe/' . $uID . $urlBack)->with(['success' => 'Nota Guardada']);
   }
 
@@ -580,7 +592,21 @@ trait ClientesTraits {
     $id = $request->input('id');
     $oNote = UsersNotes::find($id);
     if ($oNote) {
-      $urlBack = ($oNote->type == 'nutri') ? '/nutricion' : '/notes';
+//      $urlBack = ($oNote->type == 'nutri') ? '/nutricion' : '/notes';
+      switch ($oNote->type){
+        case 'nutri':
+          $urlBack = '/nutricion';
+          break;
+        case 'fisio':
+          $urlBack = '/fisio';
+          break;
+        default :
+          $urlBack = '/notes';
+          break;
+      }
+      
+      
+      
       if ($oNote->delete()) {
         return redirect('/admin/usuarios/informe/' . $uID . $urlBack)->with(['success' => 'Nota eliminada']);
       }

@@ -16,8 +16,8 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::post('/clientes/update', 'UsersController@updateCli');
   Route::post('/clientes/setValora', 'UsersController@setValora');
   Route::post('/clientes/setNutri', 'UsersController@setEncNutri_Admin');
-  Route::post('/clientes/saveFilesNutri', 'UsersController@saveFilesNutri');
-  Route::post('/clientes/delFilesNutri', 'UsersController@delFilesNutri');
+  Route::post('/clientes/saveFiles', 'UsersController@saveFiles');
+  Route::post('/clientes/delFiles', 'UsersController@delFiles');
   Route::post('/clientes/autosaveValora', 'UsersController@autosaveValora');
   Route::post('/clientes/autosaveNutri', 'UsersController@autosaveNutri');
   Route::get('/get-mail/{id?}', 'UsersController@getMail');

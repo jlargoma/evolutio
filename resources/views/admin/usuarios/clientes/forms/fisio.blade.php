@@ -5,11 +5,11 @@ $csrf_token = csrf_token();
 <div class="row">
   <div class="col-md-8">
     <div class="boxFile">
-      <h3 class="text-left">ARCHIVOS DE NUTRICIÓN</h3>
+      <h3 class="text-left">ARCHIVOS DE FISIOTERAPIA</h3>
       <form enctype="multipart/form-data" action="{{ url('/admin/clientes/saveFiles') }}" method="post">
         <input type="hidden" name="_token" value="{{ $csrf_token }}">
         <input type="hidden" name="uid" value="{{ $user->id }}">
-        <input type="hidden" name="type" value="nutri">
+        <input type="hidden" name="type" value="fisio">
         <div class="form-group">
           <div class="row">
             <div class="col-md-6">
@@ -29,14 +29,14 @@ $csrf_token = csrf_token();
       </form>
 
 
-      @if(isset($encNutr['lstFiles']) && count($encNutr['lstFiles']) )
+      @if(isset($filesFisio) && count($filesFisio) )
       <form action="{{ url('/admin/clientes/delFiles') }}" method="post" id="delFiles">
         <input type="hidden" name="_token" value="{{ $csrf_token }}">
         <input type="hidden" name="uid" value="{{ $user->id }}">
         <input type="hidden" name="fid" id="fileID">
       </form>
       <table class="table">
-        @foreach($encNutr['lstFiles'] as $k=>$v)
+        @foreach($filesFisio as $k=>$v)
         <tr>
           <th style="width: 80%;">{{$v['name']}}</th>
           <td>
@@ -52,28 +52,6 @@ $csrf_token = csrf_token();
     </div>
   </div>
   <div class="col-md-4  ">
-    <div class="boxFile">
-      <h3 class="text-center">ENCUESTA DE NUTRICIÓN</h3>
-
-      <div class="text-center mb-3">
-      @if(trim($encNutr['nutri_q1']) != "")
-        <a href="{{$encNutr['url_dwnl']}}" class="btn btn-success" target="_black">
-          <i class="fa fa-eye"></i> Ver
-        </a>
-      @endif
-        <a href="/admin/editar-encuesta/{{$user->id}}" class="btn btn-info" target="_black">
-          <i class="fa fa-pencil"></i> Editar
-        </a>
-      </div>
-       <div class="text-center">
-        <a href="#" class="btn  btn-success clearEncuesta" data-id="{{$user->id}}"  type="button" >
-          <i class="fa fa-trash"></i> Vaciar
-        </a>
-        <a href="#"  class="btn btn-success sendEncuesta" data-id="{{$user->id}}"  type="button" >
-          <i class="fa fa-envelope"></i> Reenviar
-        </a>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -95,7 +73,7 @@ $csrf_token = csrf_token();
     <?php
     if ($oNotes):
       foreach ($oNotes as $v):
-        if ($v->type == 'nutri') {
+        if ($v->type == 'fisio') {
           $dateTime = strtotime($v->created_at);
           $type = '';
           switch ($v->profile) {
@@ -136,7 +114,7 @@ $csrf_token = csrf_token();
       <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
       <input type="hidden" name="uid" value="{{ $user->id }}">
       <input type="hidden" name="id"  value="">
-      <input type="hidden" name="type" value="nutri">
+      <input type="hidden" name="type" value="fisio">
       <div class="form-simple">
         <label for="name">Personal</label>
         <select class="form-control" name="coach" required>
