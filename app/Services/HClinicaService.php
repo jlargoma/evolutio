@@ -13,7 +13,7 @@ class HClinicaService {
   public function get_encFields() {
 
     $f = [];
-    for ($i = 1; $i < 49; $i++)
+    for ($i = 1; $i < 51; $i++)
       $f[] = 'hclinic_q' . $i;
    
     $f[] = 'hclinic_img';
@@ -46,32 +46,42 @@ class HClinicaService {
         'hclinic_q21' => '¿Problemas cardiovasculares?',
         'hclinic_q22' => '¿Indique cual?',
         'hclinic_q23' => 'Hipertensión',
-        'hclinic_q24' => '¿Alergias?',
-        'hclinic_q25' => '¿Cual?',
-        'hclinic_q26' => '¿Sufre Diabetes?',
-        'hclinic_q27' => '¿Cual?',
-        'hclinic_q28' => '¿Toma medicación?',
-        'hclinic_q29' => '¿Cual?',
-        'hclinic_q30' => '¿Ha sido intervenido quirúrgicamente?',
-        'hclinic_q31' => '¿Dónde y cuándo?',
-        'hclinic_q32' => '¿Ha tenido algún antecedente traumático o lesión discal?',
-        'hclinic_q33' => '¿Dónde y cuándo?',
-        'hclinic_q34' => '¿Cuándo comenzó? (en meses o años)',
-        'hclinic_q35' => 'Comenzó de forma',
-        'hclinic_q36' => '¿Con qué frecuencia lo tiene?',
-        'hclinic_q37' => '¿Cómo describiría su dolor? (Señale los términos adecuados?',
-        'hclinic_q38' => '¿Qué mejora su dolor?',
-        'hclinic_q39' => '¿Qué empeora su dolor?',
-        'hclinic_q40' => '¿El dolor le desierta por la noche?',
-        'hclinic_q41' => '¿Piensa que se va a recuperar?',
-        'hclinic_q42' => '¿Por qué?',
-        'hclinic_q43' => '¿Tiene miedo a moverse? ',
-        'hclinic_q44' => '¿Por qué?',
-        'hclinic_q45' => '¿Piensa que su dolor tiene solución?',
-        'hclinic_q46' => '¿Por qué?',
-        'hclinic_q47' => '¿Qué espera del tratamiento?',
-        'hclinic_q48' => '¿Piensa que se va a recuperar?'
+        'hclinic_q24' => 'Medicación',
+        'hclinic_q25' => '¿Alergias?',
+        'hclinic_q26' => '¿Cual?',
+        'hclinic_q27' => '¿Sufre Diabetes?',
+        'hclinic_q28' => '¿Cual?',
+        'hclinic_q29' => '¿Toma medicación?',
+        'hclinic_q30' => '¿Cual?',
+        'hclinic_q31' => '¿Ha sido intervenido quirúrgicamente?',
+        'hclinic_q32' => '¿Dónde y cuándo?',
+        'hclinic_q33' => '¿Ha tenido algún antecedente traumático o lesión discal?',
+        'hclinic_q34' => '¿Dónde y cuándo?',
+        'hclinic_q35' => 'Describa brevemente el problema que le ha traído a consultarnos',
+        'hclinic_q36' => '¿Cuándo comenzó? (en meses o años)',
+        'hclinic_q37' => 'Comenzó de forma',
+        'hclinic_q38' => '¿Con qué frecuencia lo tiene?',
+        'hclinic_q39' => '¿Cómo describiría su dolor? (Señale los términos adecuados)',
+        'hclinic_q40' => 'Otros',
+        'hclinic_q41' => '¿Qué mejora su dolor?',
+        'hclinic_q42' => '¿Qué empeora su dolor?',
+        'hclinic_q43' => '¿El dolor le desierta por la noche?',
+        'hclinic_q44' => '¿Piensa que se va a recuperar?',
+        'hclinic_q45' => '¿Por qué?',
+        'hclinic_q46' => '¿Tiene miedo a moverse? ',
+        'hclinic_q47' => '¿Por qué?',
+        'hclinic_q48' => '¿Piensa que su dolor tiene solución?',
+        'hclinic_q49' => '¿Por qué?',
+        'hclinic_q50' => '¿Qué espera del tratamiento?',
+        'hclinic_q51' => '¿Piensa que se va a recuperar?'
     ];
+    
+    
+    
+    //hclinic_q38
+    
+    
+    
   }
 
   public function get_enc($user) {
@@ -192,6 +202,23 @@ class HClinicaService {
     }
 
     $enc = $this->get_enc($oUser);
+//    $sino = [
+//        'hclinic_q19',
+//        'hclinic_q21',
+//        'hclinic_q23',
+//        'hclinic_q24',
+//        'hclinic_q26',
+//        'hclinic_q28',
+//        'hclinic_q30',
+//        'hclinic_q32',
+//        'hclinic_q41',
+//        'hclinic_q42',
+//        'hclinic_q43',
+//        'hclinic_q44',
+//        'hclinic_q45',
+//        'hclinic_q46'
+//    ];
+    
     return [
         'data' => $enc,
         'user' => $oUser,

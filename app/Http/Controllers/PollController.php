@@ -58,4 +58,13 @@ class PollController extends Controller {
     return view('/admin/usuarios/clientes/encuestaNutri', $sPull->editEncuesta($id));
   }
 
+  /* --------------------------------------------------------- */
+  /* BEGIN Historia clinica                 ------------------ */
+  /* --------------------------------------------------------- */
+
+  function formCliHistory($code, $control) {
+    $sPull = new \App\Services\HClinicaService();
+    return view('customers.ClinicalHistory.form', $sPull->formEncuesta($code, $control));
+  }
+
 }
