@@ -397,6 +397,10 @@ trait ClientesTraits {
     if ($user->getMetaContent('hclinic_q1') != ''){
       $seeClinicalHistory = '/admin/ver-historia-clinica/'. \App\Services\LinksService::getLinkBasic($user->id);
     }
+    $seeClinicalHistorySP = null;
+    if ($user->getMetaContent('hclinicSP_q1') != ''){
+      $seeClinicalHistorySP = '/admin/ver-historia-clinica-suelo-pelvico/'. \App\Services\LinksService::getLinkBasic($user->id);
+    }
     
     
     /********************************/
@@ -432,6 +436,7 @@ trait ClientesTraits {
         'filesNutri'=>$this->getFileLst($user->id, 'nutri'),
         'filesFisio'=>$this->getFileLst($user->id, 'fisio'),
         'seeClinicalHistory'=>$seeClinicalHistory,
+        'seeClinicalHistorySP'=>$seeClinicalHistorySP,
     ]);
   }
 

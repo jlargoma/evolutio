@@ -57,6 +57,13 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::post('/autosaveClinicHist', 'PollController@autosaveClinicHist');
   Route::post('/setClinicHist', 'PollController@setCliHistory_Admin');
   
+  Route::post('/sendClinicHistSPelv', 'PollController@sendClinicHistSPelv');
+  Route::get('/ver-historia-clinica-suelo-pelvico/{token}/{control}', 'PollController@seeClinicHistSPelv');
+  Route::get('/editar-historia-clinica-suelo-pelvico/{uID}', 'PollController@editClinicHistSPelv');
+  Route::post('/clearClinicHistSPelv', 'PollController@clearClinicHistSPelv');
+  Route::post('/autosaveClinicHistSPelv', 'PollController@autosaveClinicHistSPelv');
+  Route::post('/setClinicHistSPelv', 'PollController@setCliHistorySPelv_Admin');
+  
   
   
   

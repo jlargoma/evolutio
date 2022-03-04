@@ -82,5 +82,8 @@ class LinksService {
   static function getLinkHClinica($uID) {
     return URL::to('/historia-clinica/') . '/' . self::getLinkBasic($uID);
   }
+  static function getLinkHClinicaSPelv($uID) {
+    return URL::to('/historia-clinica-suelo-pelvico/') . '/' . self::getLinkBasic($uID);
+  }
 
 }

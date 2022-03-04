@@ -69,8 +69,7 @@ $(document).ready(function () {
         if (long > 0)
             day = date[0];
         if (long > 1) {
-
-            if ((day > 0 && day < 3) || day > 3) {
+            if (day > 3 && day < 10) {
                 day = '0' + day;
                 month += date[1];
             } else {
@@ -81,7 +80,7 @@ $(document).ready(function () {
             month += date[2];
         }
         if (long > 3) {
-            if (month > 0 && month < 10) {
+            if (month > 1 && month < 10) {
                 month = '0' + month;
                 year += date[3];
             } else {

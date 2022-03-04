@@ -30,4 +30,13 @@ Route::post('/encuesta-nutricion', 'PollController@setEncNutri');
 
 Route::get('/historia-clinica/{token}/{control}', 'PollController@formCliHistory');
 Route::post('/historia-clinica', 'PollController@setCliHistory');
+
+Route::get('/historia-clinica-suelo-pelvico/{token}/{control}', 'PollController@formCliHistorySPelv');
+Route::post('/historia-clinica-suelo-pelvico', 'PollController@setCliHistorySPelv');
+
+
+
+
+
+
 Route::get('/seeImg/{path}/{file}', 'FunctionalControler@seeImg');

@@ -112,5 +112,59 @@ class PollController extends Controller {
     $sPull = new \App\Services\HClinicaService();
     $sPull->autosave($req);
   }
+  /* --------------------------------------------------------- */
+  /* BEGIN Historia clinica Suelo  Pelvico    ---------------- */
+  /* --------------------------------------------------------- */
+
+  function formCliHistorySPelv($code, $control) {
+    $sPull = new \App\Services\HClinicaSPelvicoService();
+    return view('customers.ClinicalHistorySPelv.form', $sPull->formEncuesta($code, $control));
+  }
+
+  public function sendClinicHistSPelv(Request $request) {
+    $sPull = new \App\Services\HClinicaSPelvicoService();
+    return $sPull->sendEncuesta($request);
+  }
+
+  public function setCliHistorySPelv(Request $request) {
+    $sPull = new \App\Services\HClinicaSPelvicoService();
+    $resp = $sPull->setEnc($request);
+    if ($resp == 'OK')
+      return redirect()->back()->with('success', 'Historia Clínica enviada');
+    return $resp;
+  }
+
+  public function setCliHistorySPelv_Admin(Request $request) {
+    $sPull = new \App\Services\HClinicaSPelvicoService();
+    $resp = $sPull->setEnc_Admin($request);
+    if ($resp == 'OK')
+      return redirect()->back()->with('success', 'Historia Clínica editada');
+    return $resp;
+  }
+
+  function seeClinicHistSPelv($code, $control) {
+    $sPull = new \App\Services\HClinicaSPelvicoService();
+    $obj = $sPull->seeEncuesta($code, $control);
+    return view('customers.ClinicalHistorySPelv.print', [
+        'resp' => $obj['resps'],
+        'data' => $obj['questions'],
+        'options' => $sPull->get_Options(),
+    ]);
+  }
+
+  function editClinicHistSPelv($id) {
+    $sPull = new \App\Services\HClinicaSPelvicoService();
+    return view('/admin/usuarios/clientes/clinicalHistorySPelv', $sPull->editEncuesta($id));
+  }
+
+  public function clearClinicHistSPelv(Request $request) {
+    $sPull = new \App\Services\HClinicaSPelvicoService();
+    return $sPull->clearEncuesta($request);
+  }
+
+  public function autosaveClinicHistSPelv(Request $req) {
+    $sPull = new \App\Services\HClinicaSPelvicoService();
+    $sPull->autosave($req);
+  }
 
 }

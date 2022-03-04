@@ -19,5 +19,6 @@ class VerifyCsrfToken extends Middleware
         'admin/clientes/autosaveNutri',
         'admin/clientes/autosaveValora',
         'admin/autosaveClinicHist',
+        'admin/autosaveClinicHistSPelv',
     ];
 }
