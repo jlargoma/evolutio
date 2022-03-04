@@ -208,6 +208,23 @@
             });
           }
         });
+        $('.sendClinicHist').click(function (e) {
+          e.preventDefault();
+          var id = $(this).data('id');
+          if (confirm('Reenviar el mail para completar la historia clínica?')){
+            var data = {
+              uID: id,
+              _token: '{{csrf_token()}}'
+            };
+            var posting = $.post( '/admin/sendClinicHist', data ).done(function( data ) {
+                if (data == 'OK'){
+                  window.show_notif('success', 'Reenviada');
+                } else {
+                   window.show_notif('error',data);
+                }
+            });
+          }
+        });
         /**************************************************/
         $('.sendConsent').on('click', function () {
           var type = $(this).closest('tr').data('id');

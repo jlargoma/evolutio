@@ -13,15 +13,19 @@ class HClinicaService {
   public function get_encFields() {
 
     $f = [];
-    for ($i = 1; $i < 51; $i++)
+    for ($i = 1; $i < 52; $i++)
       $f[] = 'hclinic_q' . $i;
    
-    $f[] = 'hclinic_img';
+    $f[] = 'hclinic_PainImg';
     return $f;
   }
 
+  public function get_Options() {
+    return [
+        'hclinic_q39' => ['Sordo', 'Profundo', 'Pulsátil', 'Eléctrico', 'Punzante', 'Agudo', 'Localizado', 'Quemante', 'Presión']
+    ];
+  }
   public function get_Questions() {
-
     return [
         'hclinic_q1' => 'Nombre',
         'hclinic_q2' => 'Apellidos',
@@ -75,13 +79,6 @@ class HClinicaService {
         'hclinic_q50' => '¿Qué espera del tratamiento?',
         'hclinic_q51' => '¿Piensa que se va a recuperar?'
     ];
-    
-    
-    
-    //hclinic_q38
-    
-    
-    
   }
 
   public function get_enc($user) {
@@ -92,13 +89,12 @@ class HClinicaService {
       if (!isset($data[$f]))
         $data[$f] = null;
 
-
     $code = encriptID($user->id) . '-' . encriptID(time() * rand());
     $keys = $code . '/' . getKeyControl($code);
     $data['url'] = \App\Services\LinksService::getLinkHClinica($user->id);
     $data['url_get'] = '/admin/ver-historia-clinica/' . $keys;
 
-    return array_merge($data, $this->get_Questions());
+    return['resps'=>$data, 'questions'=>$this->get_Questions()];
   }
 
   public function show_enc($user) {
@@ -129,6 +125,18 @@ class HClinicaService {
       exit();
     }
     $this->updEnc($request, $oUser);
+    
+    
+    $PainImg = $request->input('PainImg');
+    $encoded_image = explode(",", $PainImg)[1];
+    $decoded_image = base64_decode($encoded_image);
+    $fileName = '/PainImg/' .$oUser->id .'-'.time().'.png';
+    $path = storage_path('/app/' . $fileName);
+    
+    $oUser->setMetaContent('hclinic_PainImg',$fileName);
+
+    $storage = \Illuminate\Support\Facades\Storage::disk('local');
+    $storage->put($fileName, $decoded_image);
     return 'OK';
   }
 
@@ -149,9 +157,9 @@ class HClinicaService {
     $data = $oUser->getMetaContentGroups($fields);
     $req = $request->all();
     $metaDataADD = $metaDataUPD = [];
-//    dd($fields);
     foreach ($fields as $f) {
       if (isset($req[$f])) {
+        if(is_array($req[$f])) $req[$f] = json_encode($req[$f]);
         if (isset($data[$f]))
           $metaDataUPD[$f] = $req[$f];
         else
@@ -160,6 +168,21 @@ class HClinicaService {
     }
 
     $oUser->setMetaContentGroups($metaDataUPD, $metaDataADD);
+    
+    if ($request->has('updImg') && $request->input('updImg') == 'on'){
+    
+      $PainImg = $request->input('PainImg');
+      $encoded_image = explode(",", $PainImg)[1];
+      $decoded_image = base64_decode($encoded_image);
+      $fileName = '/PainImg/' .$oUser->id .'-'.time().'.png';
+      $path = storage_path('/app/' . $fileName);
+
+      $oUser->setMetaContent('hclinic_PainImg',$fileName);
+
+      $storage = \Illuminate\Support\Facades\Storage::disk('local');
+      $storage->put($fileName, $decoded_image);
+    }
+    
   }
 
   function seeEncuesta($code, $control) {
@@ -202,29 +225,14 @@ class HClinicaService {
     }
 
     $enc = $this->get_enc($oUser);
-//    $sino = [
-//        'hclinic_q19',
-//        'hclinic_q21',
-//        'hclinic_q23',
-//        'hclinic_q24',
-//        'hclinic_q26',
-//        'hclinic_q28',
-//        'hclinic_q30',
-//        'hclinic_q32',
-//        'hclinic_q41',
-//        'hclinic_q42',
-//        'hclinic_q43',
-//        'hclinic_q44',
-//        'hclinic_q45',
-//        'hclinic_q46'
-//    ];
-    
     return [
-        'data' => $enc,
+        'data' => $enc['questions'],
+        'resp' => $enc['resps'],
         'user' => $oUser,
         'code' => $code,
         'control' => $control,
         'url_dwnl' => '/descargar-enc/' . $code . '/' . $control,
+        'options' => $this->get_Options(),
     ];
   }
 
@@ -248,16 +256,28 @@ class HClinicaService {
     if ($already)
       return 'La historia clínica ya se encuentra completada';
 
-    $urlEncuesta = \App\Services\LinksService::getLinkEncuesta($oUser->id);
+    $url = \App\Services\LinksService::getLinkHClinica($oUser->id);
 
     $email = $oUser->email;
     if (!filter_var($email, FILTER_VALIDATE_EMAIL))
       return $email . ' no es un mail válido';
     try {
       $subj = 'Historia clínica - evolutio';
-      $sended = \Illuminate\Support\Facades\Mail::send('emails._encuesta', [
-                  'user' => $oUser,
-                  'urlEntr' => $urlEncuesta,
+      $content = 'Hola! '.$oUser->name.'<br><br>
+        <p style="color: black">
+          Necesitamos que nos completes tu historia clínica en <strong> Evolutio</strong>
+        </p>
+        <p>
+        Para ello puede hacer click en el siguiente enlace ó cópielo y péguelo en su navegador de confianza
+        <a href="'.$url.'" title="historia clínica">'.$url.'</a>
+        </p>
+        <h5 style="color: black ;margin-bottom: 5px;">
+            Muchas gracias por tu confianza en nosotros!! Tú compromiso es el nuestro
+        </h5>';
+      
+      $sended = \Illuminate\Support\Facades\Mail::send('emails.base', [
+                  'tit' => $subj,
+                  'mailContent' => $content,
                       ], function ($message) use ($email, $subj) {
                         $message->subject($subj);
                         $message->from(config('mail.from.address'), config('mail.from.name'));
@@ -276,6 +296,9 @@ class HClinicaService {
     $uID = $req->input('id');
     $field = $req->input('field');
     $val = $req->input('val');
+    if (str_contains($val,',,,')){
+      $val = json_encode(explode(',,,',$val));
+    }
     $oUser = User::find($uID);
     if ($oUser) {
       $oUser->setMetaContent($field, $val);
@@ -286,9 +309,12 @@ class HClinicaService {
 
   function editEncuesta($id){
     $oUser = User::find($id);
+    $obj = $this->get_enc($oUser);
     return [
         'user'=>$oUser,
-        'encNutr'=>$this->get_enc($oUser)
+        'resp' => $obj['resps'],
+        'data' => $obj['questions'],
+        'options' => $this->get_Options(),
         ];
   }
 

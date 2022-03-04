@@ -67,4 +67,50 @@ class PollController extends Controller {
     return view('customers.ClinicalHistory.form', $sPull->formEncuesta($code, $control));
   }
 
+  public function sendClinicHist(Request $request) {
+    $sPull = new \App\Services\HClinicaService();
+    return $sPull->sendEncuesta($request);
+  }
+
+  public function setCliHistory(Request $request) {
+    $sPull = new \App\Services\HClinicaService();
+    $resp = $sPull->setEnc($request);
+    if ($resp == 'OK')
+      return redirect()->back()->with('success', 'Historia Clínica enviada');
+    return $resp;
+  }
+
+  public function setCliHistory_Admin(Request $request) {
+    $sPull = new \App\Services\HClinicaService();
+    $resp = $sPull->setEnc_Admin($request);
+    if ($resp == 'OK')
+      return redirect()->back()->with('success', 'Historia Clínica editada');
+    return $resp;
+  }
+
+  function seeClinicHist($code, $control) {
+    $sPull = new \App\Services\HClinicaService();
+    $obj = $sPull->seeEncuesta($code, $control);
+    return view('customers.ClinicalHistory.print', [
+        'resp' => $obj['resps'],
+        'data' => $obj['questions'],
+        'options' => $sPull->get_Options(),
+    ]);
+  }
+
+  function editClinicHist($id) {
+    $sPull = new \App\Services\HClinicaService();
+    return view('/admin/usuarios/clientes/clinicalHistory', $sPull->editEncuesta($id));
+  }
+
+  public function clearClinicHist(Request $request) {
+    $sPull = new \App\Services\HClinicaService();
+    return $sPull->clearEncuesta($request);
+  }
+
+  public function autosaveClinicHist(Request $req) {
+    $sPull = new \App\Services\HClinicaService();
+    $sPull->autosave($req);
+  }
+
 }

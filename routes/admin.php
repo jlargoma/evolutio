@@ -50,6 +50,12 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::get('/editar-encuesta/{uID}', 'PollController@editEncuestaNutri');
   Route::post('/clearEncuesta', 'PollController@clearEncuestaNutri');
   Route::post('/sendEncuesta', 'PollController@sendEncuestaNutri');
+  Route::post('/sendClinicHist', 'PollController@sendClinicHist');
+  Route::get('/ver-historia-clinica/{token}/{control}', 'PollController@seeClinicHist');
+  Route::get('/editar-historia-clinica/{uID}', 'PollController@editClinicHist');
+  Route::post('/clearClinicHist', 'PollController@clearClinicHist');
+  Route::post('/autosaveClinicHist', 'PollController@autosaveClinicHist');
+  Route::post('/setClinicHist', 'PollController@setCliHistory_Admin');
   
   
   

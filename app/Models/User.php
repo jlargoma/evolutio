@@ -126,10 +126,13 @@ class User extends Authenticatable
   /////////  user_meta //////////////
   public function setMetaContent($key,$content) {
     
-    $updated =  DB::table('user_meta')->where('user_id',$this->id)
-              ->where('meta_key',$key)
-              ->update(['meta_value' => $content]);
-    if ($updated == null) {
+       
+    $oMeta = DB::table('user_meta')
+            ->where('user_id',$this->id)->where('meta_key',$key)->first();
+    
+    if ($oMeta) {
+      DB::table('user_meta')->where('id',$oMeta->id)->update(['meta_value' => $content]);
+    }else {
       DB::table('user_meta')->insert(
             ['user_id' => $this->id, 'meta_key' => $key,'meta_value' => $content]
         );

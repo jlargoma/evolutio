@@ -52,6 +52,28 @@ $csrf_token = csrf_token();
     </div>
   </div>
   <div class="col-md-4  ">
+       <div class="boxFile">
+      <h3 class="text-center">Historia Clínica</h3>
+
+      <div class="text-center mb-3">
+      @if($seeClinicalHistory)
+        <a href="{{$seeClinicalHistory}}" class="btn btn-success" target="_black">
+          <i class="fa fa-eye"></i> Ver
+        </a>
+      @endif
+        <a href="/admin/editar-historia-clinica/{{$user->id}}" class="btn btn-info" target="_black">
+          <i class="fa fa-pencil"></i> Editar
+        </a>
+      </div>
+       <div class="text-center">
+        <a href="#" class="btn  btn-success clearClinicHist" data-id="{{$user->id}}"  type="button" >
+          <i class="fa fa-trash"></i> Vaciar
+        </a>
+        <a href="#"  class="btn btn-success sendClinicHist" data-id="{{$user->id}}"  type="button" >
+          <i class="fa fa-envelope"></i> Reenviar
+        </a>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -146,15 +168,15 @@ $csrf_token = csrf_token();
           $('#delFiles').submit();
       }
   });
-  $('.clearEncuesta').click(function (e) {
+  $('.clearClinicHist').click(function (e) {
       e.preventDefault();
       var id = $(this).data('id');
-      if (confirm('Limpiar los datos actuales de la encuesta?')) {
+      if (confirm('Limpiar los datos actuales de la Historia Clínica?')) {
           var data = {
               uID: id,
               _token: '{{csrf_token()}}'
           };
-          var posting = $.post('/admin/clearEncuesta', data).done(function (data) {
+          var posting = $.post('/admin/clearClinicHist', data).done(function (data) {
               if (data == 'OK') {
                   location.reload();
               } else {

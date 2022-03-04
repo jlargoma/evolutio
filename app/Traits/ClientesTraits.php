@@ -392,6 +392,13 @@ trait ClientesTraits {
     }
     /*-------------------------------------*/
     $sEncNutri = new \App\Services\EncuestaNutriService();
+    
+    $seeClinicalHistory = null;
+    if ($user->getMetaContent('hclinic_q1') != ''){
+      $seeClinicalHistory = '/admin/ver-historia-clinica/'. \App\Services\LinksService::getLinkBasic($user->id);
+    }
+    
+    
     /********************************/
     return view('/admin/usuarios/clientes/informe', [
         'aRates' => $aRates,
@@ -424,6 +431,7 @@ trait ClientesTraits {
         'encNutr'=>$sEncNutri->get_enc($user),
         'filesNutri'=>$this->getFileLst($user->id, 'nutri'),
         'filesFisio'=>$this->getFileLst($user->id, 'fisio'),
+        'seeClinicalHistory'=>$seeClinicalHistory,
     ]);
   }
 

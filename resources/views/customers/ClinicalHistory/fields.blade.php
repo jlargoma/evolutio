@@ -1,184 +1,139 @@
-<?php
-
-function Qblock($data, $qID) {
-  ?>
-
-  <label>{{$data[$qID]}}</label>
-  <input type="text" id="<?= $qID ?>" name="<?= $qID ?>" value="" required="">
-  <?php
-}
-
-function QblockOpt($data, $qID, $qIDsub) {
-  ?>
-  <h4>{{$data[$qID]}}</h4>
-  <div class="field f4_1">
-    <div class="radios">
-      <input type="radio" id="<?= $qID ?>" name="<?= $qID ?>" value="SI"> <span style="margin-right: 12px;">SI</span>
-      <input type="radio" id="<?= $qID ?>" name="<?= $qID ?>" value="NO"> <span>NO</span>
-    </div>
-  </div>
-  <div class="field f4_2">
-    <label>{{$data[$qIDsub]}}</label>
-    <input type="text" id="<?= $qIDsub ?>" name="<?= $qIDsub ?>" value="">
-  </div>
-  <?php
-}
-
-$opt_hclinic_q39 = ['Sordo','Profundo','Pulsátil','  Eléctrico','  Punzante','  Agudo',' Localizado','Quemante','Presión'];
-?>
 <div class="fromEncNutri">
   <div class="clearfix"></div>
   <div class="field f1 bT bL">
-    <?php echo Qblock($data, 'hclinic_q1'); ?>
+    <?php Qblock($data, 'hclinic_q1'); ?>
   </div>
   <div class="field f1 bT bL bR ">
-    <?php echo Qblock($data, 'hclinic_q2'); ?>
+    <?php Qblock($data, 'hclinic_q2'); ?>
   </div>
   <div class="field f1 bT bL">
-    <label>{{$data['hclinic_q3']}}</label>
-    <input  size="10" maxlength="10" onKeyUp = "this.value = formateafecha(this.value);" placeholder="DD-MM-YYYY" id="hclinic_q3" name="hclinic_q3" required="">
+    <?php QDate($data, 'hclinic_q3'); ?>
   </div>
   <div class="field f1 bT bL bR">
-    <?php echo Qblock($data, 'hclinic_q4'); ?>
+    <?php Qblock($data, 'hclinic_q4'); ?>
   </div>
   <div class="field f1 bT bL ">
-    <?php echo Qblock($data, 'hclinic_q5'); ?>
+    <?php Qblock($data, 'hclinic_q5'); ?>
   </div>
   <div class="field f1 bT bL bR">
-    <?php echo Qblock($data, 'hclinic_q6'); ?>
+    <?php Qblock($data, 'hclinic_q6'); ?>
   </div>
   <div class="field f2 bT bL bR">
-    <?php echo Qblock($data, 'hclinic_q7'); ?>
+    <?php Qblock($data, 'hclinic_q7'); ?>
   </div>
   <div class="field f3 bT bL">
-    <?php echo Qblock($data, 'hclinic_q8'); ?>
+    <?php Qblock($data, 'hclinic_q8'); ?>
   </div>
   <div class="field f3 bT bL">
-    <?php echo Qblock($data, 'hclinic_q9'); ?>
+    <?php Qblock($data, 'hclinic_q9'); ?>
   </div>
   <div class="field f3 bT bL bR">
-    <?php echo Qblock($data, 'hclinic_q10'); ?>
+    <?php Qblock($data, 'hclinic_q10'); ?>
   </div>
   <div class="field f2 bT bL bR">
-    <?php echo Qblock($data, 'hclinic_q11'); ?>
+    <?php Qblock($data, 'hclinic_q11'); ?>
   </div>
   <div class="field f2 bT bL bR bB">
-    <?php echo Qblock($data, 'hclinic_q12'); ?>
+    <?php Qblock($data, 'hclinic_q12'); ?>
   </div>
   <div class="clearfix"><br/></div>
   <br/>
   <div class="field f3 bT bL">
-    <?php echo Qblock($data, 'hclinic_q13'); ?>
+    <?php Qblock($data, 'hclinic_q13'); ?>
   </div>
   <div class="field f3 bT bL">
-    <?php echo Qblock($data, 'hclinic_q14'); ?>
+    <?php Qblock($data, 'hclinic_q14'); ?>
   </div>
   <div class="field f3 bT bL bR">
-    <?php echo Qblock($data, 'hclinic_q15'); ?>
+    <?php Qblock($data, 'hclinic_q15'); ?>
   </div>
   <div class="field f3 bT bL bB">
-    <?php echo Qblock($data, 'hclinic_q16'); ?>
+    <?php Qblock($data, 'hclinic_q16'); ?>
   </div>
   <div class="field f3 bT bL bB">
-    <?php echo Qblock($data, 'hclinic_q17'); ?>
+    <?php Qblock($data, 'hclinic_q17'); ?>
   </div>
   <div class="field f3 bT bL bR bB">
-    <?php echo Qblock($data, 'hclinic_q18'); ?>
+    <?php Qblock($data, 'hclinic_q18'); ?>
   </div>
 
   <div class="clearfix"><br/></div>
   <h3>Antecedentes personales:</h3>
 
   <div class="fieldDouble bT bL bR">
-    <?php echo QblockOpt($data, 'hclinic_q19', 'hclinic_q20'); ?>
+    <?php QblockOpt($data, 'hclinic_q19', 'hclinic_q20'); ?>
   </div>
   <div class="fieldDouble bT bL bR">
-    <?php echo QblockOpt($data, 'hclinic_q21', 'hclinic_q22'); ?>
-    <?php echo QblockOpt($data, 'hclinic_q23', 'hclinic_q24'); ?>
+    <?php QblockOpt($data, 'hclinic_q21', 'hclinic_q22'); ?>
+    <?php QblockOpt($data, 'hclinic_q23', 'hclinic_q24'); ?>
   </div>
   <div class="fieldDouble bT bL bR">
-    <?php echo QblockOpt($data, 'hclinic_q25', 'hclinic_q26'); ?>
+    <?php QblockOpt($data, 'hclinic_q25', 'hclinic_q26'); ?>
   </div>
   <div class="fieldDouble bT bL bR">
-    <?php echo QblockOpt($data, 'hclinic_q27', 'hclinic_q28'); ?>
+    <?php QblockOpt($data, 'hclinic_q27', 'hclinic_q28'); ?>
   </div>
   <div class="fieldDouble bT bL bR">
-    <?php echo QblockOpt($data, 'hclinic_q29', 'hclinic_q30'); ?>
+    <?php QblockOpt($data, 'hclinic_q29', 'hclinic_q30'); ?>
   </div>
   <div class="fieldDouble bT bL bR">
-    <?php echo QblockOpt($data, 'hclinic_q31', 'hclinic_q32'); ?>
+    <?php QblockOpt($data, 'hclinic_q31', 'hclinic_q32'); ?>
   </div>
   <div class="fieldDouble bT bL bR bB ">
-    <?php echo QblockOpt($data, 'hclinic_q33', 'hclinic_q34'); ?>
+    <?php QblockOpt($data, 'hclinic_q33', 'hclinic_q34'); ?>
   </div>
 
   <div class="clearfix"><br/></div>
   <h3>Antecedentes familiares:</h3>
-  <h4>Colorea todas las zonas en las que Usted siente dolor</h4>
-  <h4>Responda según su dolor</h4>
-
-  <label>{{$data['hclinic_q35']}}</label>
-  <textarea id="hclinic_q35" name="hclinic_q35" value="" required=""></textarea>
-  <div class="clearfix"><br/></div>
+  <div class="p9">
+    <?php printPainImg(); ?>
+  </div>
+  <div class="p9">
+    <h4>Responda según su dolor</h4>
+    <?php QTextarea($data, 'hclinic_q35'); ?>
+  </div>
   <div class="field f2">
-    <?php echo Qblock($data, 'hclinic_q36'); ?>
+    <?php Qblock($data, 'hclinic_q36'); ?>
   </div>
   <div class="fieldRadios">
-    <label>{{$data['hclinic_q37']}}</label>
-    <div class="radios">
-    <input type="radio" id="hclinic_q37" name="hclinic_q37" value="Brusca y rápida">Brusca y rápida
-     </div>
-    <div class="radios">
-    <input type="radio" id="hclinic_q37" name="hclinic_q37" value="Lenta y progresiva">Lenta y progresiva
-    </div>
+    <?php QblockOption($data, 'hclinic_q37', ['Brusca y rápida', 'Lenta y progresiva']); ?>
   </div>
   <div class="field f2">
-    <?php echo Qblock($data, 'hclinic_q38'); ?>
+    <?php Qblock($data, 'hclinic_q38'); ?>
   </div>
   <div class="fieldRadios">
-    <label>{{$data['hclinic_q39']}}</label>
-    @foreach($opt_hclinic_q39 as $q)
-    <div class="radios">
-    <input type="checkbox" id="hclinic_q37" name="hclinic_q37[]" value="{{$q}}">{{$q}}
-     </div>
-    @endforeach
-    <div class="otros">
-    <?php echo Qblock($data, 'hclinic_q40'); ?>
-    </div>
+    <?php qLstOptions($data, 'hclinic_q39', 'hclinic_q40',$options['hclinic_q39']); ?>
+
   </div>
   <div class="field f2">
-    <?php echo Qblock($data, 'hclinic_q41'); ?>
+    <?php Qblock($data, 'hclinic_q41'); ?>
   </div>
   <div class="field f2">
-    <?php echo Qblock($data, 'hclinic_q42'); ?>
+    <?php Qblock($data, 'hclinic_q42'); ?>
   </div>
 
+  <div class="fieldRadios">
     <div class="fieldRadios">
-    <label>{{$data['hclinic_q43']}}</label>
-    <div class="radios">
-    <input type="radio" id="hclinic_q43" name="hclinic_q43" value="SI">SI
-     </div>
-    <div class="radios">
-    <input type="radio" id="hclinic_q43" name="hclinic_q43" value="NO">NO
+      <?php QblockOption($data, 'hclinic_q43', ['SI', 'NO']); ?>
     </div>
   </div>
-  
+
   <div class="fieldDouble">
-    <?php echo QblockOpt($data, 'hclinic_q44', 'hclinic_q45'); ?>
+    <?php QblockOpt($data, 'hclinic_q44', 'hclinic_q45'); ?>
   </div>
   <div class="fieldDouble">
-    <?php echo QblockOpt($data, 'hclinic_q46', 'hclinic_q47'); ?>
+    <?php QblockOpt($data, 'hclinic_q46', 'hclinic_q47'); ?>
   </div>
   <div class="fieldDouble">
-    <?php echo QblockOpt($data, 'hclinic_q48', 'hclinic_q49'); ?>
+    <?php QblockOpt($data, 'hclinic_q48', 'hclinic_q49'); ?>
   </div>
   <div class="field f2">
-    <?php echo Qblock($data, 'hclinic_q50'); ?>
+    <?php Qblock($data, 'hclinic_q50'); ?>
   </div>
   <div class="field f2">
-    <?php echo Qblock($data, 'hclinic_q51'); ?>
+    <?php Qblock($data, 'hclinic_q51'); ?>
   </div>
-  
+
 </div>
 
 
@@ -245,7 +200,7 @@ $opt_hclinic_q39 = ['Sordo','Profundo','Pulsátil','  Eléctrico','  Punzante','
   .field.f3 {
     width: 33.333%;
   }
-  
+
 
   .fromEncNutri .bT{
     border-top-width: 1px;
@@ -267,7 +222,7 @@ $opt_hclinic_q39 = ['Sordo','Profundo','Pulsátil','  Eléctrico','  Punzante','
 
   .fromEncNutri label {
     font-size: 12px;
-    margin-right: 12px;
+    margin-right: 4px;
     font-weight: 400;
   }
 
@@ -276,10 +231,13 @@ $opt_hclinic_q39 = ['Sordo','Profundo','Pulsátil','  Eléctrico','  Punzante','
     width: 100%;
     min-height: 73px;
   }
-  
-  
+
+
+  .p9{
+    padding: 9px;
+  }
   .fieldRadios {
-   float: none;
+    float: none;
     padding: 9px;
   }
   .fieldRadios label {
@@ -302,4 +260,29 @@ $opt_hclinic_q39 = ['Sordo','Profundo','Pulsátil','  Eléctrico','  Punzante','
     border: none;
     border-bottom: 1px dashed;
   }
+
+  .canvasBox {
+    clear: both;
+    overflow: auto;
+    display: block;
+    text-align: center;
+    max-width: 630px;
+    margin: 2em auto 65px;
+  }
+
+  .pain_img-box{
+    background-image: url('/public/img/hClinic.jpg');
+    width: 320px;
+    background-size: contain;
+    height: 197px;
+    background-repeat: no-repeat;
+    float: left;
+    border: 2px solid #b3b3b3;
+  }
+  .canvasText{
+    float: left;
+    text-align: center;
+    width: 310px;
+  }
+
 </style>
