@@ -284,5 +284,25 @@
     text-align: center;
     width: 310px;
   }
+  
+    @media only screen and (max-width: 626px){
+    .field.f1,.field.f2,.field.f3 {
+      width: 100%;
+      float: none;
+    }
+  .fromEncNutri .bL{
+    border-right-width:  1px;
+  }
+    
+    .content-box {
+      max-width: 100% !important;
+    }
+    .fromEncNutri .fieldDouble .f4_1,
+    .fromEncNutri .fieldDouble .f4_2{
+      width: 100%;
+      float: none;
+      
+    }
+  }
 
 </style>

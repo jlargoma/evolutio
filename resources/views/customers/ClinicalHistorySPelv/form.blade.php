@@ -112,15 +112,15 @@ function QDate($data, $qID) {
         $(this).find('input').width(width - label - 35);
       });
     
-    $('.fromEncNutri .field').each(function () {
-      var width = $(this).width();
-      if($(this).find('input').attr('type') == 'text')
-        $(this).find('input').val('Campo: '+$(this).find('label').text());
-    });
-    $('.fromEncNutri .fieldTextArea').each(function () {
-      var width = $(this).width();
-        $(this).find('textarea').val('Campo: '+$(this).find('label').text());
-    });
+//    $('.fromEncNutri .field').each(function () {
+//      var width = $(this).width();
+//      if($(this).find('input').attr('type') == 'text')
+//        $(this).find('input').val('Campo: '+$(this).find('label').text());
+//    });
+//    $('.fromEncNutri .fieldTextArea').each(function () {
+//      var width = $(this).width();
+//        $(this).find('textarea').val('Campo: '+$(this).find('label').text());
+//    });
     
  });
 

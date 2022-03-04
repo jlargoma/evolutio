@@ -159,9 +159,11 @@ $count = 1;
 
  $(document).ready(function () {
     $('.fromEncNutri .field').each(function () {
-    var width = $(this).width();
-      var label = $(this).find('label').width();
-      $(this).find('input').width(width - label - 35);
+      if($(this).find('input').attr('type') == 'text'){
+        var width = $(this).width();
+        var label = $(this).find('label').width();
+        $(this).find('input').width(width - label - 35);
+      }
     });
       var canvas = document.querySelector("canvas");
       var optCanvas = {

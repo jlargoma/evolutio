@@ -127,6 +127,13 @@
     padding: 9px;
   }
 
-
-
+  @media only screen and (max-width: 626px){
+    .field.f1,.field.f3 {
+      width: 100%;
+      border:1px solid #b3b3b3;
+    }
+    .content-box {
+      max-width: 100% !important;
+    }
+  }
 </style>
