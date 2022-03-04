@@ -271,7 +271,7 @@
   }
 
   .pain_img-box{
-    background-image: url('/public/img/hClinic.jpg');
+    background-image: url('/img/hClinic.jpg');
     width: 320px;
     background-size: contain;
     height: 197px;

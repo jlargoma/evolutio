@@ -156,15 +156,17 @@ class User extends Authenticatable
     if (count($metaDataUPD)){
       $d = [];
       foreach ($metaDataUPD as $k=>$v){
-        $updated =  DB::table('user_meta')->where('user_id',$this->id)
-              ->where('meta_key',$k)
+        $oMeta = DB::table('user_meta')
+            ->where('user_id',$this->id)->where('meta_key',$k)->first();
+        if ($oMeta){
+          $updated =  DB::table('user_meta')->where('id',$oMeta->id)
               ->update(['meta_value' => $v]);
-        if (!$updated) {
+          
+        } else {
           $metaDataADD[$k] = $v;
         }
       }
     }
-    
     if (count($metaDataADD)){
       $d = [];
       foreach ($metaDataADD as $k=>$v) $d[] = ['user_id'=>$this->id,'meta_key'=>$k,'meta_value'=>$v];

@@ -92,6 +92,7 @@ class HClinicaService {
     $code = encriptID($user->id) . '-' . encriptID(time() * rand());
     $keys = $code . '/' . getKeyControl($code);
     $data['url'] = \App\Services\LinksService::getLinkHClinica($user->id);
+    $data['urlCode'] = \App\Services\LinksService::getLinkBasic($user->id);
     $data['url_get'] = '/admin/ver-historia-clinica/' . $keys;
 
     return['resps'=>$data, 'questions'=>$this->get_Questions()];

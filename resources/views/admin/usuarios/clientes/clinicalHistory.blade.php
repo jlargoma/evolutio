@@ -121,7 +121,7 @@ $count = 1;
       <button class="btn btn-success" type="submit">
         <i class="fa fa-floppy-o" aria-hidden="true"></i> Actualizar
       </button>
-      <a class="btn btn-success" href="" target="_blank" >
+      <a class="btn btn-success" href="/admin/ver-historia-clinica/{{$resp['urlCode']}}"  >
         <i class="fa fa-file" aria-hidden="true"></i> Imprimir / Descargar
       </a>
     </div>
