@@ -45,6 +45,7 @@ class CitasService {
       $oServicios = Rates::getByTypeRate($oDate->date_type);
       $ecogr = $oDate->getMetaContent('ecogr');
       $indiba = $oDate->getMetaContent('indiba');
+      $motive = $oDate->getMetaContent('motive');
       return [
           'date' => date('d-m-Y', strtotime($date[0])),
           'time' => intval($date[1]),
@@ -68,6 +69,7 @@ class CitasService {
           'urlBack' => self::get_urlBack($oDate->date_type,$date[0]),
           'ecogr' => $ecogr,
           'indiba' => $indiba,
+          'motive' => $motive,
       ];
     }
     return null;
@@ -76,7 +78,7 @@ class CitasService {
   static function get_create($date,$time,$type) {
     if (!$date) $date = time();
 
-    if($time>0) $time = '0'.$time;
+    if($time>0 && $time<10) $time = '0'.$time;
     return [
       'date' => date('d-m-Y', $date),
       'time' => $time,
@@ -135,16 +137,26 @@ class CitasService {
           if (!is_array($times)) $times = [];
       }
     }
+    $oLst = $sql->get();
+    $oLst_IDs = $sql->pluck('id');
 
     /****************/
     $ecogrs = \DB::table('appointment_meta')
             ->where('meta_value',1)
-            ->where('meta_key','ecogr')->pluck('appoin_id')->toArray();
+            ->where('meta_key','ecogr')
+            ->whereIn('appoin_id',$oLst_IDs)
+            ->pluck('appoin_id')->toArray();
     $indiba = \DB::table('appointment_meta')
             ->where('meta_value',1)
-            ->where('meta_key','indiba')->pluck('appoin_id')->toArray();
+            ->where('meta_key','indiba')
+            ->whereIn('appoin_id',$oLst_IDs)
+            ->pluck('appoin_id')->toArray();
+    $motives = \DB::table('appointment_meta')
+            ->where('meta_key','motive')
+            ->whereIn('appoin_id',$oLst_IDs)
+            ->pluck('meta_value','appoin_id')->toArray();
     /****************/
-    $oLst = $sql->get();
+    
     $detail = [];
     $days = listDaysSpanish();
     $months = lstMonthsSpanish();
@@ -191,6 +203,7 @@ class CitasService {
                   'p'=> '',
                   's'=> ($item->service) ? $item->service->name : '-',
                   'cn' => isset($cNames[$item->id_coach]) ? $cNames[$item->id_coach] : '-',
+                  'mtv' => isset($motives[$item->id]) ? $motives[$item->id] : '',
                   'mc'=>'', //Metodo pago
                   'dc'=>'', // fecha pago
                   'd'=>$dTime, // fecha 
@@ -237,6 +250,7 @@ class CitasService {
                 'mc'=>'', //Metodo pago
                 'dc'=>'', // fecha pago
                 'd'=>$dTime, // fecha 
+                'mtv' => isset($motives[$item->id]) ? $motives[$item->id] : '',
             ];
 
             if ($charge){

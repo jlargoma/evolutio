@@ -72,4 +72,9 @@ class Dates extends Model
     }
     return null;
   }
+  public function delMetaContent($key) {
+    DB::table('appointment_meta')
+            ->where('appoin_id',$this->id)
+            ->where('meta_key',$key)->delete();
+  }
 }

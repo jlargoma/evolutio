@@ -39,6 +39,10 @@
           <label for="date">Fecha de Finalización</label>
           <input class="js-datepicker form-control" type="text" id="end" name="end" placeholder="Fecha y hora..." style="cursor: pointer;" data-date-format="dd-mm-yyyy"/>
         </div>
+        <div class="col-xs-3 col-md-2  push-20">
+          <label for="date">Motivo</label>
+          <input class="form-control" type="text" id="motive" name="motive" placeholder="Motivo..."/>
+        </div>
 
         <div class="col-xs-12 ck-box push-20">
 

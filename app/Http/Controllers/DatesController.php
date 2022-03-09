@@ -72,7 +72,6 @@ class DatesController extends Controller {
     /* -------------------------------------------------------------------- */
     $oCarbon = Carbon::createFromFormat('d-m-Y H:00:00', "$date $hour:00:00");
     $date_compl = $oCarbon->format('Y-m-d H:i:00');
-
     /* -------------------------------------------------------------------- */
     if ($blocked && !$isGroup) {
       $alreadyExit = Dates::where('date', $date_compl)
@@ -88,6 +87,14 @@ class DatesController extends Controller {
       $oObj->date = $date_compl;
       $oObj->updated_at = $date;
       $oObj->save();
+
+      $motive = $request->input('motive','');
+      if (trim($motive) != ''){
+        $oObj->setMetaContent('motive', $motive);
+      }  else {
+        $oObj->delMetaContent('motive');
+      }     
+      
       return redirect()->back();
     }
     /* -------------------------------------------------------------------- */
@@ -427,7 +434,11 @@ class DatesController extends Controller {
     $end = $req->input('end');
     $hours = $req->input('hours');
     $uIDs = $req->input('user_ids');
+    $id_coach = $req->input('id_coach');
     $wDays = $req->input('wDay');
+    $motive = $req->input('motive');
+    if (trim($motive) == '') $motive = null;
+    if (!$uIDs && $id_coach) $uIDs = [$id_coach]; 
 
     if (!$uIDs)
       return back()->withErrors(['Debe seleccionar al menos un Coach']);
@@ -450,7 +461,6 @@ class DatesController extends Controller {
       for ($i = 8; $i <= 22; $i++)
         $hours[] = $i;
     }
-
     foreach ($aDays as $d => $wd) {
       if ($wd > 0) {
         if ($wDays && !in_array($wd, $wDays))
@@ -473,6 +483,9 @@ class DatesController extends Controller {
               $oObj->date_type = $type;
               $oObj->date = $dateHour;
               $oObj->save();
+              if ($motive){
+                $oObj->setMetaContent('motive', $motive);
+              }
             }
 
             //desbloqueo de fechas

@@ -10,6 +10,8 @@ $(document).ready(function () {
       html += '<p>' + data.dc + ' / ' + data.mc + '</p>';
     if (data.date)
       html += '<p>Cita: ' + data.date + '</p>';
+    if (data.mtv)
+      html += '<p>Motivo: ' + data.mtv + '</p>';
 
     obj.html(html);
     if (screen.width < 768) {
