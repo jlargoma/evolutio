@@ -402,26 +402,27 @@ class InformesController extends Controller {
         $lstBonos = \App\Models\UserBonosLogs::whereNotNull('bono_id')
                 ->whereYear('created_at','=',$year)
                 ->whereMonth('created_at','=',$month)
-                ->with('ubonos')
+                ->with('ubonos','charge')
                 ->get();
         if ($lstBonos){
           foreach ($lstBonos as $item){
             if (!isset($countCoachs[$item->coach_id])) $countCoachs[$item->coach_id] = $auxCount;
             $countCoachs[$item->coach_id]['bonos']++;
             $aLstCoachs[] = $item->coach_id;
+            $price = $item->charge->import;
             if ($item->ubonos){
               $rByCoach[$item->coach_id][] = [
                   $item->ubonos->user_id,
                   $item->text,
                   null,
-                  $item->price,
+                  $price,
                   $item->discount,
                   'bono',
                   ''
               ];
               
               if (!isset($tCoachs[$item->coach_id])) $tCoachs[$item->coach_id] = 0;
-              $tCoachs[$item->coach_id] += $item->price;
+              $tCoachs[$item->coach_id] += $price;
               $uIDs[] = $item->ubonos->user_id;
               
               if (!isset($countByCoach[$item->coach_id])) $countByCoach[$item->coach_id] = 0;

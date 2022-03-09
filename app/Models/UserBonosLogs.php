@@ -24,4 +24,8 @@ class UserBonosLogs extends Model {
   public function ubonos() {
     return $this->hasOne('\App\Models\UserBonos', 'id', 'bono_id');
   }
+  
+  public function charge() {
+    return $this->hasOne('\App\Models\Charges', 'id', 'charge_id');
+  }
 }
