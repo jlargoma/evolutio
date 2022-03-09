@@ -22,7 +22,7 @@ class UserBonosLogs extends Model {
   }
 
   public function ubonos() {
-    return $this->hasOne('\App\Models\UserBonos', 'id', 'bono_id');
+    return $this->hasOne('\App\Models\UserBonos', 'id', 'user_bonos_id');
   }
   
   public function charge() {
