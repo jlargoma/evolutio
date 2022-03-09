@@ -64,8 +64,7 @@
     </div>
     <div class="col-md-3  push-20">
       <div class="form-material">
-        <select class="form-control" name="id_rateCoach" id="id_rateCoach" disabled>
-          <option value=""> -- </option>
+        <select class="form-control" name="id_rateCoach" id="id_rateCoach" required >
           <?php
           foreach ($aCoachs as $k => $v) {
             echo '<option value="' . $k . '">' . $v . '</option>';

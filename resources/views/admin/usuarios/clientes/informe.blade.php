@@ -156,14 +156,14 @@
           var data = obj.data('t');
             
           $('#r_price').val(obj.data('p'));
-          if (data == 'pt'){
-            $('#rateCoach').removeClass('disabled');
-            $('#id_rateCoach').attr('disabled',false);
-          }
-          else {
-            $('#rateCoach').addClass('disabled');
-            $('#id_rateCoach').val('').attr('disabled',true);
-          }
+//          if (data == 'pt'){
+//            $('#rateCoach').removeClass('disabled');
+//            $('#id_rateCoach').attr('disabled',false);
+//          }
+//          else {
+//            $('#rateCoach').addClass('disabled');
+//            $('#id_rateCoach').val('').attr('disabled',true);
+//          }
               
           var tarifa = obj.data('tarifa');
           $('#showTartifa').html('');

@@ -119,7 +119,7 @@ class User extends Authenticatable
   }
   static function getCoachs($type=null,$includeAdmin=false) {
     return User::whereCoachs($type,$includeAdmin)
-            ->where('status', 1)->orderBy('status', 'DESC')->get();
+            ->where('status', 1)->orderBy('name')->orderBy('status', 'DESC')->get();
     
   }
   /**********************************************************************/

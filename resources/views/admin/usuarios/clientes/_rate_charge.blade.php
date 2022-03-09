@@ -66,6 +66,7 @@
                 
                 <option value="<?php echo $rate->id ?>" 
                     data-price="<?php echo $price ?>"
+                    data-family="<?php echo $k ?>"
                     orig="<?php echo $rate->price ?>"
                     data-tarifa="{{$tarifa}}"
                     {{$sel}}>
@@ -158,9 +159,11 @@ jQuery(function () {
 });
 $(document).ready(function () {
   var origPrice = 0;
+  var defaultCoach = {{$coachs[0]->id}};
   $('#id_rate').change(function (event) {
     var that = $("#id_rate option:selected");
     var price = that.data('price');
+    var family = that.data('family');
     $('#importeFinal').val(price);
     origPrice = price;
     
@@ -169,6 +172,11 @@ $(document).ready(function () {
     $('#showTartifa').html('');
     if (tarifa == 'fidelity') $('#showTartifa').html('<i class="fa fa-heart text-success"></i> Plan Fidelity');
     if (tarifa == 'nofidelity') $('#showTartifa').html('<i class="fa fa-heart text-danger"></i> Plan Básico');
+
+    if (family == 1 && $('#id_coach').val() == 'null'){
+      $('#id_coach').val(defaultCoach);
+    }
+    
   });
 
   $('#discount').change(function (event) {
