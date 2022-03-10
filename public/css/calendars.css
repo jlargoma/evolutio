@@ -130,13 +130,14 @@ ul.selectType li.active {
   opacity: 1.0;
 }
 .events.blocked span{
-    width: 30px;
-    height: 2px;
-    background-color: #9f9f9f;
+/*    width: 30px;
+    height: 2px;*/
+    min-width: 30px;
+    border: 1px solid #9f9f9f;
     display: inline-block;
-    /* transform: rotate(
-13deg); */
+    padding: 0px 4px;
     margin: 1px 8px 4px 15px;
+    border-radius: 3px;
 }
 button.btn.btn-success.btnAvails {
     float: left;

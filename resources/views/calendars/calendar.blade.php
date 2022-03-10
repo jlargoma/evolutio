@@ -18,13 +18,17 @@ function printEvents($lst){
     if (isset($item['indiba']) && $item['indiba']){
       $indiba = '<img src="/img/indiba.png" class="ecogrf" title="indiba" alt="indiba">';
     }
+    $motive = '';
+    if (isset($item['mtv']) && $item['mtv']){
+      $motive = str_limit($item['mtv'],10);
+    }
     
     switch ($item['charged']){
       case 2:
         echo '<div '
           . 'data-id="'.$item['id'].'"  data-name=""  '
           . 'class="eventType_'.$item['coach'].' events blocked">'
-          .$item['h'].'<span></span><toltip/>'
+          .$item['h'].'<span>'.$motive.'</span><toltip/>'
           . '</div>';
         break;
       case 3:

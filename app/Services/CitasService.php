@@ -189,6 +189,7 @@ class CitasService {
             }
             $daysCoatch[$time][$hour][$item->id_coach] = 1;
             if ($item->blocked){
+              $mtv = isset($motives[$item->id]) ? $motives[$item->id] : '';
               $aLst[$time][$hour][] = [
                 'id' => $item->id,
                 'charged' => ($item->is_group) ? 3 : 2,
@@ -196,14 +197,15 @@ class CitasService {
                 'coach' => $item->id_coach,
                 'h'=>$hTime,
                 'name' => ($item->is_group) ? 'grupo' : 'bloqueo',
-                'ecogr' => false
+                'ecogr' => false,
+                'mtv' => $mtv
               ];
               $detail[$item->id] = [
                   'n' => ($item->is_group) ? 'Cita Grupal' : 'bloqueo',
                   'p'=> '',
                   's'=> ($item->service) ? $item->service->name : '-',
                   'cn' => isset($cNames[$item->id_coach]) ? $cNames[$item->id_coach] : '-',
-                  'mtv' => isset($motives[$item->id]) ? $motives[$item->id] : '',
+                  'mtv' => $mtv,
                   'mc'=>'', //Metodo pago
                   'dc'=>'', // fecha pago
                   'd'=>$dTime, // fecha 
@@ -241,6 +243,7 @@ class CitasService {
                 'h'=>$hTime,
                 'ecogr' => (in_array($item->id,$ecogrs)),
                 'indiba' => (in_array($item->id,$indiba)),
+                'mtv' => ''
             ];
             $detail[$item->id] = [
                 'n' => $u_name,
