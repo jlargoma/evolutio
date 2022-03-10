@@ -28,8 +28,8 @@
       <select class="form-control" name="type_payment" id="type_payment">
         <option value="" <?= ($type_payment === '') ? 'selected' : '' ?>>Todos</option>
         <option value="cash" <?= ($type_payment === 'cash') ? 'selected' : '' ?>>Efectivo</option>
-        <option value="card" <?= ($type_payment === 'card') ? 'selected' : '' ?>>Banco</option>
-        <option value="banco" <?= ($type_payment === 'banco') ? 'selected' : '' ?>>Tarjeta</option>
+        <option value="card" <?= ($type_payment === 'card') ? 'selected' : '' ?>>Tarjeta</option>
+        <option value="banco" <?= ($type_payment === 'banco') ? 'selected' : '' ?>>Banco</option>
         <option value="bono" <?= ($type_payment === 'bono') ? 'selected' : '' ?>>Bono</option>
       </select>
     </div>
@@ -108,9 +108,9 @@
         </tbody>
         <tfoot>
         <th colspan="5" class="tleft">TOTAL</th>
-        <th>{{$tPay}}</th>
-        <th>{{$tDebe}}</th>
-        <th>{{$tPay+$tDebe}}</th>
+        <th>{{moneda($tPay)}}</th>
+        <th>{{moneda($tDebe)}}</th>
+        <th>{{moneda($tPay+$tDebe)}}</th>
         </tfoot>
       </table>
     </div>
@@ -151,7 +151,7 @@
         </tbody>
         <tfoot>
         <th colspan="3" class="tleft">TOTAL</th>
-        <th>{{$tPayBono}}</th>
+        <th>{{moneda($tPayBono)}}</th>
         <td></td>
         </tfoot>
       </table>
@@ -168,9 +168,9 @@
           </tr>
         </thead>
         <tbody>
-        <th>{{$tPay}}</th>
-        <th>{{$tDebe}}</th>
-        <th>{{$tPayBono}}</th>
+        <th>{{moneda($tPay)}}</th>
+        <th>{{moneda($tDebe)}}</th>
+        <th>{{moneda($tPayBono)}}</th>
         <th>{{moneda($tPay+$tDebe+$tPayBono)}}</th>
         </tbody>
       </table>

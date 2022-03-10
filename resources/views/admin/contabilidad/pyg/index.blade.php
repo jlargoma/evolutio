@@ -84,31 +84,39 @@ function sumMonthValue($m){
         </table>
       </div>
     </div>
-    <div class="col-lg-3 col-sm-6 col-xs-12 chart_1">
+    <div class="col-lg-9 col-sm-12 col-xs-12 ">
+      <div class="col-lg-5 col-sm-6 col-xs-12 chart_1">
       <canvas id="chart_1" width="50" height="50"></canvas>
-    </div>
-    <div class="col-lg-4 col-sm-6 col-xs-12 chart_2">
-      <canvas id="myChart" width="400" height="200"></canvas>
-    </div>
-    <div class="col-lg-2 col-sm-6 col-xs-12">
-      <table class="table">
+      </div>
+      <div class="col-lg-7 col-sm-6 col-xs-12">
+        <table class="table">
         <tr>
           <th>Total</th>
-          <th>{{moneda($pay_method['c'][0]+$pay_method['b'][0]+$pay_method['v'][0])}}</th>
+          <th>{{moneda($tPay)}}</th>
         </tr>
         <tr>
           <td class="square" ><span style="background-color: rgba(52,162,99,1);"></span>METALICO</td>
-          <td>{{moneda($pay_method['c'][0])}}</td>
+          <td>{{moneda(array_sum($pay_method['c']))}}</td>
         </tr>
         <tr>
           <td class="square" ><span style="background-color: #5c90d2;"></span>BANCO</td>
-          <td>{{moneda($pay_method['b'][0])}}</td>
+          <td>{{moneda(array_sum($pay_method['b']))}}</td>
         </tr>
         <tr>
           <td class="square" ><span style="background-color: #d25c93;"></span>VISA</td>
-          <td>{{moneda($pay_method['v'][0])}}</td>
+          <td>{{moneda(array_sum($pay_method['v']))}}</td>
         </tr>
+        <tfoot>
+        <tr>
+          <td class="square" ><span style="background-color: #b2bd06;"></span>No Pay</td>
+          <td>{{moneda(array_sum($pay_method['np']))}}</td>
+        </tr>
+        </tfoot>
       </table>
+      </div>
+      <div class="col-lg-12 col-sm-12 col-xs-12 chart_2">
+        <canvas id="myChart" width="400" height="130"></canvas>
+      </div>
     </div>
     <div class="col-xs-12">
 @include('admin.contabilidad.pyg.table')

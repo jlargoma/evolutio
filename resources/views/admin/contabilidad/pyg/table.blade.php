@@ -13,7 +13,7 @@ $tGast = $currentY['Gastos'];
           <th class="static thBlue">Ingresos</th>
           <th class="first-col"></th>
           <th class="">Total <br/>({{ moneda($tIngr[0])}})</th>
-          @foreach($monts as $k=>$v)
+          @foreach($lstMonths as $k=>$v)
           <th>{{$v}} <br/>({{ moneda($tIngr[$k])}})</th>
           @endforeach
         </tr>
@@ -27,7 +27,7 @@ $tGast = $currentY['Gastos'];
             $aux_i[0]+= $v1[0];
             ?>
             <td><b>{{ moneda($v1[0])}}</b></td>
-            @foreach($monts as $k=>$v)
+            @foreach($lstMonths as $k=>$v)
             <?php $aux_i[$k]+= $v1[$k];?>
             <td>{{moneda($v1[$k])}}</td>
             @endforeach
@@ -39,7 +39,7 @@ $tGast = $currentY['Gastos'];
           <th class="static thBlue">Gastos</th>
           <th class="first-col"></th>
           <th class="">Total <br/>({{ moneda($tGast[0])}})</th>
-          @foreach($monts as $k=>$v)
+          @foreach($lstMonths as $k=>$v)
           <th>{{$v}}<br/>({{ moneda($tGast[$k])}})</th>
           @endforeach
         </tr>
@@ -54,7 +54,7 @@ $tGast = $currentY['Gastos'];
             $aux_e[0]+= $sumMonthValue;
             ?>
             <td><b>{{moneda($sumMonthValue)}}</b></td>
-            @foreach($monts as $k=>$v)
+            @foreach($lstMonths as $k=>$v)
             <?php $aux_e[$k]+= $v1[$k];?>
             <td>{{moneda($v1[$k])}}</td>
             @endforeach

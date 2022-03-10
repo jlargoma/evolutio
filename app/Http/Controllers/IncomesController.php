@@ -110,14 +110,15 @@ class IncomesController extends Controller {
     $byYears = $tByYears = [];
     for($i=2;$i>=0;$i--){
       $yAux = $year-$i;
-      $byYears[$yAux] = $mm;
-      $tByYears[$yAux] = 0;
-      $oCharges = Charges::whereYear('date_payment','=',$yAux)->get();
-      foreach ($oCharges as $c){
-        $m = intval(substr($c->date_payment,5,2));
-        $byYears[$yAux][$m] += $c->import;
-        $tByYears[$yAux] += $c->import;
-      }
+      $aux = \App\Models\UserRates::getSumYear_months($yAux);
+      $byYears[$yAux] = $aux;
+      $tByYears[$yAux] = array_sum($aux);
+//      $oCharges = Charges::whereYear('date_payment','=',$yAux)->get();
+//      foreach ($oCharges as $c){
+//        $m = intval(substr($c->date_payment,5,2));
+//        $byYears[$yAux][$m] += $c->import;
+//        $tByYears[$yAux] += $c->import;
+//      }
     }
     //----------------------------------//
     $totals = $mm;

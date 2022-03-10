@@ -9,6 +9,7 @@ use App\Models\Expenses;
 use App\Models\Charges;
 use App\Services\CoachLiqService;
 use App\Models\User;
+use App\Models\UserRates;
 
 class PyGController extends Controller {
 
@@ -40,32 +41,39 @@ class PyGController extends Controller {
     //---------------------------------------------------------//
     for ($i = 2; $i >= 0; $i--) {
       $yAux = $year - $i;
-      $incomesYear[$yAux] = Charges::getSumYear($yAux);
-//      $incomesYear[$yAux] = Charges::whereYear('date_payment', '=', $yAux)->sum('import');
+//      $incomesYear[$yAux] = Charges::getSumYear($yAux);
+      $incomesYear[$yAux] = UserRates::getSumYear($yAux);
+      
     }
     //----------------------------------------------------------//
-    $uRates = \App\Models\UserRates::where('id_charges', '>', 0)
-              ->where('rate_year',$year)->get();
+    $uRates = UserRates::where('rate_year',$year)->get();
       
     $aux = $months_empty;
-    $pay_method = ['c'=>$months_empty,'b'=>$months_empty,'v'=>$months_empty];
+    $pay_method = ['c'=>$months_empty,'b'=>$months_empty,'v'=>$months_empty,'np'=>$months_empty];
+    $tPay = 0;
     foreach ($uRates as $item){
       $c = $item->charges;
-      if (!$c)        continue;
       $m = $item->rate_month;
-      switch ($c->type_payment){
-        case 'cash':
-          $pay_method['c'][$m] += $c->import;
-          break;
-        case 'card':
-          $pay_method['v'][$m] += $c->import;
-          break;
-        case 'banco':
-          $pay_method['b'][$m] += $c->import;
-          break;
+      if ($c){
+        switch ($c->type_payment){
+          case 'cash':
+            $pay_method['c'][$m] += $c->import;
+            break;
+          case 'card':
+            $pay_method['v'][$m] += $c->import;
+            break;
+          case 'banco':
+            $pay_method['b'][$m] += $c->import;
+            break;
+        }
+        $rateGr = isset($aRates[$c->id_rate]) ? $aRates[$c->id_rate] : 3;
+        $crLst[$rateGr][$m] += $c->import;
+        $tPay += $c->import;
+      } else {
+        $rateGr = isset($aRates[$item->id_rate]) ? $aRates[$item->id_rate] : 3;
+        $crLst[$rateGr][$m] += $item->price;
+        $pay_method['np'][$m] += $item->price;
       }
-      $rateGr = isset($aRates[$c->id_rate]) ? $aRates[$c->id_rate] : 3;
-      $crLst[$rateGr][$m] += $c->import;
     }
     //--------------------------------------------------------------------//
     $aBonos = \App\Models\Bonos::orderBy('name')->get();
@@ -191,7 +199,7 @@ class PyGController extends Controller {
     /***************************************/
     return view('admin.contabilidad.pyg.index',[
         'year'=>$year,
-        'monts'=>$lstMonths,
+        'lstMonths'=>$lstMonths,
         'currentY'=>$currentY,
         'incomesYear'=>$incomesYear,
         'expensesYear'=>$expensesYear,
@@ -204,6 +212,7 @@ class PyGController extends Controller {
         'aux_i'=>$aux_i,
         'aux_e'=>$aux_e,
         'tIncomes'=>$tIncomes,
+        'tPay'=>$tPay,
         'pay_method'=>$pay_method,
         'subscsFidelity'=>$subscsFidelity,
         'uActivsFidelity'=>$uActivsFidelity

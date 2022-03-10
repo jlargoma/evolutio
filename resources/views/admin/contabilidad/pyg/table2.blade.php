@@ -1,8 +1,8 @@
 <?php 
 $auxTM = [];
-$pmName = ['c'=>'Cash','v'=>'Visa','b'=>'Banco'];
-foreach ($monts as $k=>$v){
-  $auxTM[$k] = $pay_method['c'][$k] + $pay_method['v'][$k] + $pay_method['b'][$k];
+$pmName = ['c'=>'Cash','v'=>'Visa','b'=>'Banco','np'=>'No Pay'];
+foreach ($lstMonths as $k=>$v){
+  $auxTM[$k] = $pay_method['c'][$k] + $pay_method['v'][$k] + $pay_method['b'][$k] + $pay_method['np'][$k];
 }
 ?>
 <br class='mt-1em' />
@@ -15,7 +15,7 @@ foreach ($monts as $k=>$v){
           <th class="static thBlue">Tipo</th>
           <th class="first-col"></th>
           <th class="">Total <br/>({{ moneda(array_sum($auxTM))}})</th>
-          @foreach($monts as $k=>$v)
+          @foreach($lstMonths as $k=>$v)
           <th>{{$v}} <br/>({{ moneda($auxTM[$k])}})</th>
           @endforeach
         </tr>
@@ -24,7 +24,7 @@ foreach ($monts as $k=>$v){
             <td class="static"><?php echo $pmName[$k1]; ?></td>
             <td class="first-col"></td>
             <td><b>{{ moneda(array_sum($v1))}}</b></td>
-            @foreach($monts as $k=>$v)
+            @foreach($lstMonths as $k=>$v)
             <td>{{moneda($v1[$k])}}</td>
             @endforeach
           </tr>

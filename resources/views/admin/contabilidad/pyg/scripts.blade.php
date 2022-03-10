@@ -59,7 +59,7 @@ $(document).ready(function () {
     type: 'line',
     data: {
       labels: [
-<?php foreach ($monts as $v)
+<?php foreach ($lstMonths as $v)
   echo "'" . $v . "',"; ?>
       ],
       datasets: [<?php echo $tYearMonths; ?>]
@@ -123,7 +123,7 @@ var ctx = document.getElementById("myChart");
 var myChart = new Chart(ctx, {
   type: 'bar',
   data: {
-    labels: [<?php foreach ($monts as $v) echo "'" . $v . "',"; ?>],
+    labels: [<?php foreach ($lstMonths as $v) echo "'" . $v . "',"; ?>],
     datasets: [{
         label: 'METALICO',
         data: [<?php for($i=1;$i<13;$i++) echo "'" . round($pay_method['c'][$i]) . "',"; ?>],
@@ -143,6 +143,13 @@ var myChart = new Chart(ctx, {
         data: [<?php for($i=1;$i<13;$i++) echo "'" . round($pay_method['v'][$i]) . "',"; ?>],
         backgroundColor: 'rgb(210,92,147,0.2)',
         borderColor: '#d25c93',
+        borderWidth: 2
+      },
+      {
+        label: 'No Pay',
+        data: [<?php for($i=1;$i<13;$i++) echo "'" . round($pay_method['np'][$i]) . "',"; ?>],
+        backgroundColor: 'rgb(178,189,6,0.2)',
+        borderColor: '#b2bd06',
         borderWidth: 2
       }
     ]
