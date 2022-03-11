@@ -17,6 +17,9 @@ use \Carbon\Carbon; ?>
     text-align: center;
     vertical-align: middle !important;
   }
+  .b-r1 {
+   border-right: 3px solid black;
+  }
   .btn-months{
     text-align: center;
   }
@@ -49,11 +52,11 @@ use \Carbon\Carbon; ?>
             <table class="table table-striped table-header-bg dataTable-mobile">
               <thead>
                 <tr>
-                  <th class="text-left t-bg static">Coach</th>
-                  <td  class="show_mobile"></td>
-                  <th class="t-bg jsRt td1">Beneficio</th>
-                  <th class="t-bg jsRt td2">Salario</th>
-                  <th class="t-bg jsRt td3">Ingreso</th>
+                  <th class="text-left t-bg  b-r1">Coach</th>
+                  
+                  <th class="t-bg jsRt td1 b-r1">Beneficio</th>
+                  <th class="t-bg jsRt td2 b-r1">Salario</th>
+                  <th class="t-bg jsRt td3 b-r1">Ingreso</th>
                   <th class="t-bg jsRt td4">Nutri</th>
                   <th class="t-bg jsRt td5">Fisio</th>
                   <th class="t-bg jsRt td6">Suscrip</th>
@@ -78,11 +81,10 @@ use \Carbon\Carbon; ?>
                 
                 ?>
                 <tr>
-                  <td class="text-left showCoach" data-k="{{$cID}}">{{$cname}}</td>
-                  <td  class="show_mobile"></td>
-                  <td class="text-center" data-order="{{$amount}}">{{moneda($amount-$liquid,false)}}</td>
-                  <td class="text-center" data-order="{{$liquid}}">{{moneda($liquid,false)}}</td>
-                  <td class="text-center" data-order="{{$amount}}">{{moneda($amount,false)}}</td>
+                  <td class="text-left showCoach b-r1" data-k="{{$cID}}">{{$cname}}</td>
+                  <td class="text-center b-r1" data-order="{{$amount}}">{{moneda($amount-$liquid,false)}}</td>
+                  <td class="text-center b-r1" data-order="{{$liquid}}">{{moneda($liquid,false)}}</td>
+                  <td class="text-center b-r1" data-order="{{$amount}}">{{moneda($amount,false)}}</td>
                   <td class="text-center">{{$data['nutri']}}</td>
                   <td class="text-center">{{$data['fisio']}}</td>
                   <td class="text-center">{{$data['suscrip']}}</td>
@@ -94,11 +96,10 @@ use \Carbon\Carbon; ?>
               </tbody>
               <tfoot>
                 <tr>
-                  <th class="text-left t-bg font-w800 static">Total</th>
-                  <td  class="show_mobile"></td>
-                  <th class="t-bg jsRt td1">{{moneda(array_sum($tCoachs)-array_sum($cLiq))}}</th>
-                  <th class="t-bg jsRt td2">{{moneda(array_sum($cLiq))}}</th>
-                  <th class="t-bg jsRt td3">{{moneda(array_sum($tCoachs))}}</th>
+                  <th class="text-left t-bg font-w800  b-r1">Total</th>
+                  <th class="t-bg jsRt td1 b-r1">{{moneda(array_sum($tCoachs)-array_sum($cLiq))}}</th>
+                  <th class="t-bg jsRt td2 b-r1">{{moneda(array_sum($cLiq))}}</th>
+                  <th class="t-bg jsRt td3 b-r1">{{moneda(array_sum($tCoachs))}}</th>
                   <th class="t-bg jsRt td4">{{$total['nutri']}}</th>
                   <th class="t-bg jsRt td5">{{$total['fisio']}}</th>
                   <th class="t-bg jsRt td6">{{$total['suscrip']}}</th>
@@ -274,16 +275,17 @@ use \Carbon\Carbon; ?>
             filterCobros();
             $('#modalCobros').modal();
         });
-        
-        $('tfoot .jsRt').each(function(){
-          var class_css = $(this).attr('class');
-          var aClass_css = class_css.split(' ');
-          class_css = aClass_css.join('.');
-          console.log($('thead .'+class_css).length,class_css);
-          if ($('thead .'+class_css).length > 0){
-            $('thead .'+class_css).append('<d>'+$(this).html()+'</d>');
-          }
-        });
+        if (screen.width>480){
+          $('tfoot .jsRt').each(function(){
+            var class_css = $(this).attr('class');
+            var aClass_css = class_css.split(' ');
+            class_css = aClass_css.join('.');
+            console.log($('thead .'+class_css).length,class_css);
+            if ($('thead .'+class_css).length > 0){
+              $('thead .'+class_css).append('<d>'+$(this).html()+'</d>');
+            }
+          });
+        }
                 
 
     });
