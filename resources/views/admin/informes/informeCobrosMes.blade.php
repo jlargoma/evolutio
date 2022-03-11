@@ -36,6 +36,7 @@ use \Carbon\Carbon; ?>
           <h2 class="text-center">INFORME DE INGRESOS POR EMPLEADO</h2>
         </div>
         <div class="col-xs-12 btn-months mx-1em">
+           <a href="/admin/informes/cobros-mes/0" class=" btn btn-success <?php echo ($month == 0) ? 'active' : '' ?>">Anual</a>
           @foreach($months as $k=>$v)
           <a href="/admin/informes/cobros-mes/{{$k}}" class=" btn btn-success <?php echo ($month == $k) ? 'active' : '' ?>">
             {{$v.' '.$year}}

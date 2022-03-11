@@ -301,8 +301,7 @@ class InformesController extends Controller {
   public function informeCobrosMes(Request $request, $month = null, $day = null) {
 
     $year = getYearActive();
-    if (!$month)
-      $month = date('m');
+    if ($month == null)   $month = date('m');
 
 
     $aRType = \App\Models\TypesRate::all()->pluck('name', 'id')->toArray();
@@ -314,13 +313,14 @@ class InformesController extends Controller {
     $countByCoach = [];
     $tCoachs = [];
     $uIDs = [];
-    $uRates = \App\Models\UserRates::select(
+    $sql_uRates = \App\Models\UserRates::select(
                             'users_rates.*', 'charges.type_payment',
                             'charges.import', 'charges.discount')
-                    ->where('rate_year', $year)
-                    ->where('rate_month', $month)
-                    ->join('charges', 'id_charges', '=', 'charges.id')->get();
-
+                    ->where('rate_year', $year);
+                    
+    if ($month>0) $sql_uRates->where('rate_month', $month);
+                    
+    $uRates = $sql_uRates->join('charges', 'id_charges', '=', 'charges.id')->get();
     if ($uRates) {
       foreach ($uRates as $uR) {
         if (!isset($rByCoach[$uR->coach_id]))
@@ -357,11 +357,11 @@ class InformesController extends Controller {
 
     $auxCount = ['nutri' => 0, 'fisio' => 0, 'suscrip' => 0, 'bonos' => 0, 'otros' => 0];
     $countCoachs = [null => $auxCount];
-    $lstDates = \App\Models\Dates::whereIn('date_type', ['nutri', 'fisio'])
+    $sql_lstDates = \App\Models\Dates::whereIn('date_type', ['nutri', 'fisio'])
             ->whereYear('date', '=', $year)
-            ->whereMonth('date', '=', $month)
-            ->where('id_user_rates', '>', 1)
-            ->get();
+            ->where('id_user_rates', '>', 1);
+    if ($month>0) $sql_lstDates->whereMonth('date', '=', $month);
+    $lstDates = $sql_lstDates->get();
     if ($lstDates) {
       foreach ($lstDates as $item) {
         if (!isset($countCoachs[$item->id_coach]))
@@ -381,11 +381,11 @@ class InformesController extends Controller {
       }
     }
 
-    $lstBonos = \App\Models\UserBonosLogs::whereNotNull('bono_id')
+    $sql_lstBonos = \App\Models\UserBonosLogs::whereNotNull('bono_id')
             ->whereYear('created_at', '=', $year)
-            ->whereMonth('created_at', '=', $month)
-            ->with('ubonos', 'charge')
-            ->get();
+            ->with('ubonos', 'charge');
+    if ($month>0) $sql_lstBonos->whereMonth('created_at', '=', $month);
+    $lstBonos = $sql_lstBonos->get();
     if ($lstBonos) {
       foreach ($lstBonos as $item) {
         if (!isset($countCoachs[$item->coach_id]))
@@ -426,10 +426,15 @@ class InformesController extends Controller {
     /* -------------------------------- */
     $cLiq = [];
     $sCoachLiqService = new \App\Services\CoachLiqService();
-    foreach ($aCoachs as $cid=>$name){
-      $aux = $sCoachLiqService->liquMensual($cid,$year,$month);
-      $cLiq[$cid] = $aux['salary'] + array_sum($aux['totalExtr'])+ $aux['commision'];
+    if ($month>0){
+      foreach ($aCoachs as $cid=>$name){
+        $cLiq[$cid] = $sCoachLiqService->payToCoachMonths($cid,$year,$month);
+        //$cLiq[$cid] = $aux['salary'] + array_sum($aux['totalExtr'])+ $aux['commision'];
+      }
+    } else {
+      foreach ($aCoachs as $cid=>$name) $cLiq[$cid] = $sCoachLiqService->payToCoachMonths($cid,$year);
     }
+    
     /* -------------------------------- */
     $aCustomers = User::whereIn('id', $uIDs)
                     ->pluck('name', 'id')->toArray();

@@ -235,4 +235,28 @@ class CoachLiqService {
     
     return ['liq'=>$aLiq,'months'=>$months];
   }
+//---------------------------------------------------------------//
+  function payToCoachMonths($id,$year,$month=null) {
+
+    $total = 0;
+    $sql_oLiq = CoachLiquidation::where('id_coach', $id)
+            ->whereYear('date_liquidation', '=', $year);
+    if ($month) $sql_oLiq->whereMonth('date_liquidation', '=', $month);
+    $sqlSalary = $sql_oLiq->clone();
+    $total += $sqlSalary->sum('salary');
+    $total += $sql_oLiq->sum('commision');
+    
+     // get expenses asociated
+    $sql_oExpenses = \App\Models\Expenses::where('to_user',$id)
+            ->whereYear('date', '=', $year);
+    if ($month) $sql_oExpenses->whereMonth('date', '=', $month);
+    
+    $oExpenses = $sql_oExpenses->sum('import');
+    if ($oExpenses) {
+       $total += $oExpenses;
+    }
+    
+    
+    return $total;
+  }
 }
