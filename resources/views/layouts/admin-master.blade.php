@@ -78,7 +78,7 @@
                     ?>
                     <li class="text-center">
                         <a href="{{ url('admin/informes/cliente-mes') }}" class="btn btn-success btn-home">
-                            Inf. Clientes mes
+                          Cobros Clientes
                         </a>
                     </li>
                     <li class="text-center">

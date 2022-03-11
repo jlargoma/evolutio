@@ -14,29 +14,6 @@
         </tr>
         </thead>
         <tbody>
-        <?php foreach ($extrasCharges as $charge): ?>
-        <tr>
-            <td class="text-center sorting_disabled"></td>
-            <td class="text-center"><b>{{dateMin($charge->date)}}</b></td>
-            <td class="text-center">
-		        <b><?php  echo (!empty($charge->comment)) ?strtoupper($charge->comment) : strtoupper($charge->concept) ?></b>
-            </td>
-            <td class="text-center">
-                <b><?php  echo strtoupper($charge->concept) ?></b>
-            </td>
-            <td class="text-center">
-                
-            </td>
-            <td class="text-center">
-                <b><?php  echo $charge->import; ?> €</b>
-            </td>
-            <td class="text-center">
-                <b>METALICO</b>
-            </td>
-            <td class="text-center">
-            </td>
-        </tr>
-        <?php endforeach ?>
 		<?php foreach ($charges as $charge): ?>
         <tr>
             <td class="text-center sorting_disabled">{{$charge->id}}</td>
