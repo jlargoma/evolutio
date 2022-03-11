@@ -80,7 +80,7 @@
                   {{moneda($aux)}}
                 </td>
                 @endforeach
-                <td class="text-center">{{moneda(array_sum($payMonth))}}</td>
+                <td class="text-center">{{moneda($payMonth[0])}}</td>
             </tr>
         </tbody>
     </table>

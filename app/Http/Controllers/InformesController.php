@@ -420,13 +420,22 @@ class InformesController extends Controller {
 
     /*     * *************************************************** */
 
-    $aCoachs = User::whereIn('id', array_unique($aLstCoachs))
+    $aCoachs = User::whereCoachs()->where('status',1)
                     ->pluck('name', 'id')->toArray();
 
+    /* -------------------------------- */
+    $cLiq = [];
+    $sCoachLiqService = new \App\Services\CoachLiqService();
+    foreach ($aCoachs as $cid=>$name){
+      $aux = $sCoachLiqService->liquMensual($cid,$year,$month);
+      $cLiq[$cid] = $aux['salary'] + array_sum($aux['totalExtr'])+ $aux['commision'];
+    }
+    /* -------------------------------- */
     $aCustomers = User::whereIn('id', $uIDs)
                     ->pluck('name', 'id')->toArray();
 
     $data['aCoachs'] = $aCoachs;
+    $data['cLiq'] = $cLiq;
     $data['aCust'] = $aCustomers;
     $data['months'] = $lstMonthsSpanish;
 

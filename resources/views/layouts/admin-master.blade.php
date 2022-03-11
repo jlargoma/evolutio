@@ -93,7 +93,7 @@
                     </li>
                     <li class="text-center">
                         <a href="{{ url('admin/informes/cobros-mes') }}" class="btn btn-success btn-home">
-                            Cobros Mes
+                            Ing-Empleado
                         </a>
                     </li>
                     <?php else: ?>

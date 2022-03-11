@@ -9,18 +9,21 @@ use \Carbon\Carbon; ?>
 
 @section('externalScripts')
 <style>
-  .bg-complete {
+  .t-bg {
     color: #fff !important;
     background-color: #5c90d2 !important;
     border-bottom-color: #5c90d2 !important;
     font-weight: 800;
+    text-align: center;
     vertical-align: middle !important;
   }
   .btn-months{
     text-align: center;
   }
-  .btn-months a{
-
+ 
+  d {
+    display: block;
+    font-size: 12px;
   }
 </style>
 @endsection
@@ -30,7 +33,7 @@ use \Carbon\Carbon; ?>
     <div class="col-xs-12 push-20">
       <div class="row">
         <div class="col-md-12 col-xs-12 push-20">
-          <h2 class="text-center">INFORME DE COBROS AL MES</h2>
+          <h2 class="text-center">INFORME DE INGRESOS POR EMPLEADO</h2>
         </div>
         <div class="col-xs-12 btn-months mx-1em">
           @foreach($months as $k=>$v)
@@ -45,31 +48,39 @@ use \Carbon\Carbon; ?>
             <table class="table table-striped table-header-bg dataTable-mobile">
               <thead>
                 <tr>
-                  <th class="text-left bg-complete font-w800 static">Coach</th>
+                  <th class="text-left t-bg static">Coach</th>
                   <td  class="show_mobile"></td>
-                  <th class="text-center bg-complete font-w800">€</th>
-                  <th class="text-center bg-complete font-w800">Nutri</th>
-                  <th class="text-center bg-complete font-w800">Fisio</th>
-                  <th class="text-center bg-complete font-w800">Suscrip</th>
-                  <th class="text-center bg-complete font-w800">Bonos</th>
-                  <th class="text-center bg-complete font-w800">Total</th>
-                  <th class="text-center bg-complete font-w800">Todos los servicios</th>
+                  <th class="t-bg jsRt td1">Beneficio</th>
+                  <th class="t-bg jsRt td2">Salario</th>
+                  <th class="t-bg jsRt td3">Ingreso</th>
+                  <th class="t-bg jsRt td4">Nutri</th>
+                  <th class="t-bg jsRt td5">Fisio</th>
+                  <th class="t-bg jsRt td6">Suscrip</th>
+                  <th class="t-bg jsRt td7">Bonos</th>
+                  <th class="t-bg jsRt td8">Total</th>
+                  <th class="t-bg jsRt td9">Todos los servicios</th>
                 </tr>
               </thead>
               <tbody>
-                <?php $total = ['nutri' => 0, 'fisio' => 0, 'suscrip' => 0, 'bonos' => 0]; ?>
-                @foreach($countCoachs as $cID=>$data)
+                <?php 
+                  $total = ['nutri' => 0, 'fisio' => 0, 'suscrip' => 0, 'bonos' => 0]; 
+                ?>
+                @foreach($aCoachs as $cID=>$cname)
                 <?php
-                $cname = isset($aCoachs[$cID]) ? $aCoachs[$cID] : '- ' . $cID;
+                $data = isset($countCoachs[$cID]) ? $countCoachs[$cID] : ['nutri'=>0, 'fisio' => 0, 'suscrip' => 0, 'bonos' => 0];
                 $total['nutri'] += $data['nutri'];
                 $total['fisio'] += $data['fisio'];
                 $total['suscrip'] += $data['suscrip'];
                 $total['bonos'] += $data['bonos'];
                 $amount = isset($tCoachs[$cID]) ? $tCoachs[$cID] : '0';
+                $liquid = isset($cLiq[$cID]) ? $cLiq[$cID] : '0';
+                
                 ?>
                 <tr>
                   <td class="text-left showCoach" data-k="{{$cID}}">{{$cname}}</td>
                   <td  class="show_mobile"></td>
+                  <td class="text-center" data-order="{{$amount}}">{{moneda($amount-$liquid,false)}}</td>
+                  <td class="text-center" data-order="{{$liquid}}">{{moneda($liquid,false)}}</td>
                   <td class="text-center" data-order="{{$amount}}">{{moneda($amount,false)}}</td>
                   <td class="text-center">{{$data['nutri']}}</td>
                   <td class="text-center">{{$data['fisio']}}</td>
@@ -82,15 +93,17 @@ use \Carbon\Carbon; ?>
               </tbody>
               <tfoot>
                 <tr>
-                  <th class="text-left bg-complete font-w800 static">Total</th>
+                  <th class="text-left t-bg font-w800 static">Total</th>
                   <td  class="show_mobile"></td>
-                  <th class="text-center bg-complete font-w800">{{moneda(array_sum($tCoachs))}}</th>
-                  <th class="text-center bg-complete font-w800">{{$total['nutri']}}</th>
-                  <th class="text-center bg-complete font-w800">{{$total['fisio']}}</th>
-                  <th class="text-center bg-complete font-w800">{{$total['suscrip']}}</th>
-                  <th class="text-center bg-complete font-w800">{{$total['bonos']}}</th>
-                  <th class="text-center bg-complete font-w800">{{array_sum($total)}}</th>
-                  <th class="text-center bg-complete font-w800">{{array_sum($countByCoach)}}</th>
+                  <th class="t-bg jsRt td1">{{moneda(array_sum($tCoachs)-array_sum($cLiq))}}</th>
+                  <th class="t-bg jsRt td2">{{moneda(array_sum($cLiq))}}</th>
+                  <th class="t-bg jsRt td3">{{moneda(array_sum($tCoachs))}}</th>
+                  <th class="t-bg jsRt td4">{{$total['nutri']}}</th>
+                  <th class="t-bg jsRt td5">{{$total['fisio']}}</th>
+                  <th class="t-bg jsRt td6">{{$total['suscrip']}}</th>
+                  <th class="t-bg jsRt td7">{{$total['bonos']}}</th>
+                  <th class="t-bg jsRt td8">{{array_sum($total)}}</th>
+                  <th class="t-bg jsRt td9">{{array_sum($countByCoach)}}</th>
                 </tr>
               </tfoot>
             </table>
@@ -133,9 +146,9 @@ use \Carbon\Carbon; ?>
               <table class="table table-striped table-header-bg">
                 <thead>
                   <tr>
-                    <th class="text-left bg-complete font-w800">Cliente</th>
-                    <th class="text-center bg-complete font-w800">Servicio</th>
-                    <th class="text-center bg-complete font-w800">Monto €</th>
+                    <th class="text-left t-bg font-w800">Cliente</th>
+                    <th class="t-bg">Servicio</th>
+                    <th class="t-bg">Monto €</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -174,9 +187,9 @@ use \Carbon\Carbon; ?>
                 </tbody>
                 <tfoot>
                   <tr>
-                    <th class="text-left bg-complete font-w800">Total</th>
-                    <th class="text-left bg-complete"></th>
-                    <th class="text-center bg-complete font-w800 trTotal"></th>
+                    <th class="text-left t-bg font-w800">Total</th>
+                    <th class="text-left t-bg"></th>
+                    <th class="t-bg trTotal"></th>
                   </tr>
                 </tfoot>
               </table>
@@ -261,7 +274,16 @@ use \Carbon\Carbon; ?>
             $('#modalCobros').modal();
         });
         
-        
+        $('tfoot .jsRt').each(function(){
+          var class_css = $(this).attr('class');
+          var aClass_css = class_css.split(' ');
+          class_css = aClass_css.join('.');
+          console.log($('thead .'+class_css).length,class_css);
+          if ($('thead .'+class_css).length > 0){
+            $('thead .'+class_css).append('<d>'+$(this).html()+'</d>');
+          }
+        });
+                
 
     });
 

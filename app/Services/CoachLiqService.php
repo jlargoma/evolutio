@@ -64,7 +64,7 @@ class CoachLiqService {
 
     $taxCoach = CoachRates::where('id_user', $id)->first();
 
-    $ppc = $salary = $comm = $pppt = $ppcg = 0;
+    $ppc = $salary = $comm = $pppt = $ppcg = $commision = 0;
     if ($taxCoach) {
       $ppc = $taxCoach->ppc;
       $pppt = $taxCoach->pppt;
@@ -81,6 +81,7 @@ class CoachLiqService {
     if ($oLiq) {
       if ($oLiq->salary)
         $salary = $oLiq->salary;
+      $commision = $oLiq->commision;
     }
     //---------------------------------------------------------------//
     /** @ToDo ver si es sólo citas o todos los cobros */
@@ -167,7 +168,7 @@ class CoachLiqService {
     
     
     
-    return compact('pagosClase', 'totalClase', 'classLst', 'ppc', 'salary');
+    return compact('pagosClase', 'totalClase', 'classLst', 'ppc', 'salary','commision');
   }
 
   function liquMensual($id, $year, $month) {
