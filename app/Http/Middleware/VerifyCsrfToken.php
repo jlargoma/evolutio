@@ -15,6 +15,7 @@ class VerifyCsrfToken extends Middleware
         '/offert/payment/bono',
         '/changeActiveYear',
         'stripe/*',
+        'api/*',
         'stripe-events/*',
         'admin/clientes/autosaveNutri',
         'admin/clientes/autosaveValora',

@@ -217,4 +217,20 @@ class StripeService {
         }
         return $error;
   }
+
+  /**
+   * 
+   * @param Request $req
+   * @return type
+   */
+  public function getUser_byemail($uEmail) {
+      Stripe::setApiKey($this->sPRivKey);
+      try {
+        $customer = \Stripe\Customer::all(['email'=>$uEmail]);
+        return $customer->data[0]->id;
+      } catch (\Exception $ex) {
+        return '';
+        dd($ex);
+      }
+  }
 }

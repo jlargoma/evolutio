@@ -14,23 +14,23 @@ class CitasService {
       $date = explode(' ', $oDate->date);
       $uRates = $oDate->uRates;
       $id_serv = $oDate->id_rate;
-      $card    = null;
-      $price   = $oDate->price;
+      $card = null;
+      $price = $oDate->price;
       $id_user = -1;
-      $email   = null;
-      $phone   = null;
-      $charge  = null;
-      $oUser  = null;
-      if ($uRates){
-        $price   = $uRates->price;
+      $email = null;
+      $phone = null;
+      $charge = null;
+      $oUser = null;
+      if ($uRates) {
+        $price = $uRates->price;
         $id_serv = $uRates->id_rate;
         $oUser = $uRates->user;
-        if ($oUser){
+        if ($oUser) {
           $id_user = $oUser->id;
           $email = $oUser->email;
           $phone = $oUser->telefono;
           $charge = $uRates->charges;
-          
+
           $paymentMethod = $oUser->getPayCard();
           if ($paymentMethod) {
             $aux = $paymentMethod->toArray();
@@ -39,7 +39,6 @@ class CitasService {
             $card['exp_year'] = $aux['card']['exp_year'];
             $card['last4'] = $aux['card']['last4'];
           }
-      
         }
       }
       $oServicios = Rates::getByTypeRate($oDate->date_type);
@@ -66,7 +65,7 @@ class CitasService {
           'coachs' => self::getCoachs($oDate->date_type),
           'blocked' => $oDate->blocked,
           'isGroup' => $oDate->is_group,
-          'urlBack' => self::get_urlBack($oDate->date_type,$date[0]),
+          'urlBack' => self::get_urlBack($oDate->date_type, $date[0]),
           'ecogr' => $ecogr,
           'indiba' => $indiba,
           'motive' => $motive,
@@ -75,88 +74,91 @@ class CitasService {
     return null;
   }
 
-  static function get_create($date,$time,$type) {
-    if (!$date) $date = time();
+  static function get_create($date, $time, $type) {
+    if (!$date)
+      $date = time();
 
-    if($time>0 && $time<10) $time = '0'.$time;
+    if ($time > 0 && $time < 10)
+      $time = '0' . $time;
     return [
-      'date' => date('d-m-Y', $date),
-      'time' => $time,
-      'id_serv' => -1,
-      'id_user' => -1,
-      'id_coach' => -1,
-      'customTime' => $time.':00',
-      'email' => '',
-      'phone' => '',
-      'card' => null,
-      'id' => -1,
-      'charge' => null,
-      'price' => 0,
-      'type' => $type,
-      'services' => Rates::getByTypeRate($type),
-      'users' => User::where('role', 'user')->where('status', 1)->orderBy('name', 'ASC')->get(),
-      'coachs' => self::getCoachs($type),
-      'blocked' => false,
-      'urlBack' => self::get_urlBack($type,date('Y-m-d', $date)),
-     ];
+        'date' => date('d-m-Y', $date),
+        'time' => $time,
+        'id_serv' => -1,
+        'id_user' => -1,
+        'id_coach' => -1,
+        'customTime' => $time . ':00',
+        'email' => '',
+        'phone' => '',
+        'card' => null,
+        'id' => -1,
+        'charge' => null,
+        'price' => 0,
+        'type' => $type,
+        'services' => Rates::getByTypeRate($type),
+        'users' => User::where('role', 'user')->where('status', 1)->orderBy('name', 'ASC')->get(),
+        'coachs' => self::getCoachs($type),
+        'blocked' => false,
+        'urlBack' => self::get_urlBack($type, date('Y-m-d', $date)),
+    ];
   }
-  
-  static function get_calendars($start,$finish,$serv,$coach,$type,$lstDays=null) {
-        
-    $times = [];    
-    /**************************************************** */
+
+  static function get_calendars($start, $finish, $serv, $coach, $type, $lstDays = null) {
+
+    $times = [];
+    /*  ---------------------------   */
     $servLst = Rates::getByTypeRate($type)->pluck('name', 'id');
-    /**************************************************** */
+    /*  ---------------------------   */
     $coachs = self::getCoachs($type);
     $tColors = [];
     $cNames = [];
     if ($coachs) {
-        $auxColors = colors();
-        $i = 0;
-        foreach ($coachs as $item) {
-            if (!isset($auxColors[$i]))
-                $i = 0;
-            $tColors[$item->id] = $auxColors[$i];
-            $cNames[$item->id] = $item->name;
-            $i++;
-        }
+      $auxColors = colors();
+      $i = 0;
+      foreach ($coachs as $item) {
+        if (!isset($auxColors[$i]))
+          $i = 0;
+        $tColors[$item->id] = $auxColors[$i];
+        $cNames[$item->id] = $item->name;
+        $i++;
+      }
     }
 
-    /**************************************************** */
+    /*  ---------------------------   */
     $aLst = [];
     $sql = Dates::where('date_type', $type)
             ->where('date', '>=', date('Y-m-d', $start))
             ->where('date', '<=', date('Y-m-d', $finish));
     if ($serv && $serv != 0)
-        $sql->where('id_rate', $serv);
-    if ($coach && $coach > 0){
+      $sql->where('id_rate', $serv);
+    if ($coach && $coach > 0) {
       $sql->where('id_coach', $coach);
-      $coachTimes = \App\Models\CoachTimes::where('id_coach',$coach)->first(); 
-      if ($coachTimes){
-          $times = json_decode($coachTimes->times,true);
-          if (!is_array($times)) $times = [];
+      $coachTimes = \App\Models\CoachTimes::where('id_coach', $coach)->first();
+      if ($coachTimes) {
+        $times = json_decode($coachTimes->times, true);
+        if (!is_array($times))
+          $times = [];
       }
     }
     $oLst = $sql->get();
     $oLst_IDs = $sql->pluck('id');
 
-    /****************/
+    /*  ---------------------------  */
     $ecogrs = \DB::table('appointment_meta')
-            ->where('meta_value',1)
-            ->where('meta_key','ecogr')
-            ->whereIn('appoin_id',$oLst_IDs)
-            ->pluck('appoin_id')->toArray();
+                    ->where('meta_value', 1)
+                    ->where('meta_key', 'ecogr')
+                    ->whereIn('appoin_id', $oLst_IDs)
+                    ->pluck('appoin_id')->toArray();
     $indiba = \DB::table('appointment_meta')
-            ->where('meta_value',1)
-            ->where('meta_key','indiba')
-            ->whereIn('appoin_id',$oLst_IDs)
-            ->pluck('appoin_id')->toArray();
+                    ->where('meta_value', 1)
+                    ->where('meta_key', 'indiba')
+                    ->whereIn('appoin_id', $oLst_IDs)
+                    ->pluck('appoin_id')->toArray();
     $motives = \DB::table('appointment_meta')
-            ->where('meta_key','motive')
-            ->whereIn('appoin_id',$oLst_IDs)
-            ->pluck('meta_value','appoin_id')->toArray();
-    /****************/
-    
+                    ->where('meta_key', 'motive')
+                    ->whereIn('appoin_id', $oLst_IDs)
+                    ->pluck('meta_value', 'appoin_id')->toArray();
+    /*  ---------------------------  */
+
     $detail = [];
     $days = listDaysSpanish();
     $months = lstMonthsSpanish();
@@ -165,121 +167,121 @@ class CitasService {
     global $countByCoah;
     $countByCoah = [];
     if ($oLst) {
-        foreach ($oLst as $item) {
-            $time = strtotime($item->date);
-            $hour = date('G', $time);
-            $date = date('Y-m-d', $time);
-            $time = strtotime($date);
-            $month = date('Y-m',$time);
+      foreach ($oLst as $item) {
+        $time = strtotime($item->date);
+        $hour = date('G', $time);
+        $date = date('Y-m-d', $time);
+        $time = strtotime($date);
+        $month = date('Y-m', $time);
 
-            $dTime = $hTime = $item->getHour();
-            $dTime .= ' '.$days[date('w',$time)];
-            $dTime .= ' '.date('d',$time).' '.$months[date('n',$time)];
-            
-            $hTime = substr($hTime, 3,2);
-            
-            
-            if (!isset($aLst[$time])){
-                $aLst[$time] = [];
-                $daysCoatch[$time] = [];
-            }
-            if (!isset($aLst[$time][$hour])){
-              $aLst[$time][$hour] = [];
-              $daysCoatch[$time][$hour] = [];
-            }
-            $daysCoatch[$time][$hour][$item->id_coach] = 1;
-            if ($item->blocked){
-              $mtv = isset($motives[$item->id]) ? $motives[$item->id] : '';
-              $aLst[$time][$hour][] = [
-                'id' => $item->id,
-                'charged' => ($item->is_group) ? 3 : 2,
-                'type' => $item->id_rate,
-                'coach' => $item->id_coach,
-                'h'=>$hTime,
-                'name' => ($item->is_group) ? 'grupo' : 'bloqueo',
-                'ecogr' => false,
-                'mtv' => $mtv
-              ];
-              $detail[$item->id] = [
-                  'n' => ($item->is_group) ? 'Cita Grupal' : 'bloqueo',
-                  'p'=> '',
-                  's'=> ($item->service) ? $item->service->name : '-',
-                  'cn' => isset($cNames[$item->id_coach]) ? $cNames[$item->id_coach] : '-',
-                  'mtv' => $mtv,
-                  'mc'=>'', //Metodo pago
-                  'dc'=>'', // fecha pago
-                  'd'=>$dTime, // fecha 
-              ];
-              if (($item->is_group)){
-                self::countByCoah($item->id_coach,$month);
-              }
-              continue;
-            }
+        $dTime = $hTime = $item->getHour();
+        $dTime .= ' ' . $days[date('w', $time)];
+        $dTime .= ' ' . date('d', $time) . ' ' . $months[date('n', $time)];
 
-            $u_name = '';
-            $uRates = $item->uRates;
-            $charge = null;
-            if ($uRates){
-              $u_name = ($uRates->user) ? $uRates->user->name : null;
-              $charge = $uRates->charges;
-            }
-            if ($type == 'pt' && !$sValora->isRate($uRates->id_rate))
-              $charged = 1;
-            else $charged = ($charge) ? 1 : 0;
-            //------------------------------------
-            $halfTime = false;
-            if ($item->customTime){
-              $dateTime = explode(' ', $item->date);
-              $halfTime = ($dateTime[1] != $item->customTime);
-            }
-            //------------------------------------
-            $aLst[$time][$hour][] = [
-                'id' => $item->id,
-                'charged' => $charged,
-                'type' => $item->id_rate,
-                'coach' => $item->id_coach,
-                'name' => $u_name,
-                'halfTime'=>$halfTime,
-                'h'=>$hTime,
-                'ecogr' => (in_array($item->id,$ecogrs)),
-                'indiba' => (in_array($item->id,$indiba)),
-                'mtv' => ''
-            ];
-            $detail[$item->id] = [
-                'n' => $u_name,
-                'p'=>($uRates) ? moneda($uRates->price): '--',
-                's'=> ($item->service) ? $item->service->name : '-',
-                'cn' => isset($cNames[$item->id_coach]) ? $cNames[$item->id_coach] : '-',
-                'mc'=>'', //Metodo pago
-                'dc'=>'', // fecha pago
-                'd'=>$dTime, // fecha 
-                'mtv' => isset($motives[$item->id]) ? $motives[$item->id] : '',
-            ];
+        $hTime = substr($hTime, 3, 2);
 
-            if ($charge){
-              $detail[$item->id]['mc'] = payMethod($charge->type_payment);
-              $detail[$item->id]['dc'] = dateMin($charge->date_payment);
-            }
-            
-            self::countByCoah($item->id_coach,$month);
+        if (!isset($aLst[$time])) {
+          $aLst[$time] = [];
+          $daysCoatch[$time] = [];
         }
+        if (!isset($aLst[$time][$hour])) {
+          $aLst[$time][$hour] = [];
+          $daysCoatch[$time][$hour] = [];
+        }
+        $daysCoatch[$time][$hour][$item->id_coach] = 1;
+        if ($item->blocked) {
+          $mtv = isset($motives[$item->id]) ? $motives[$item->id] : '';
+          $aLst[$time][$hour][] = [
+              'id' => $item->id,
+              'charged' => ($item->is_group) ? 3 : 2,
+              'type' => $item->id_rate,
+              'coach' => $item->id_coach,
+              'h' => $hTime,
+              'name' => ($item->is_group) ? 'grupo' : 'bloqueo',
+              'ecogr' => false,
+              'mtv' => $mtv
+          ];
+          $detail[$item->id] = [
+              'n' => ($item->is_group) ? 'Cita Grupal' : 'bloqueo',
+              'p' => '',
+              's' => ($item->service) ? $item->service->name : '-',
+              'cn' => isset($cNames[$item->id_coach]) ? $cNames[$item->id_coach] : '-',
+              'mtv' => $mtv,
+              'mc' => '', //Metodo pago
+              'dc' => '', // fecha pago
+              'd' => $dTime, // fecha 
+          ];
+          if (($item->is_group)) {
+            self::countByCoah($item->id_coach, $month);
+          }
+          continue;
+        }
+
+        $u_name = '';
+        $uRates = $item->uRates;
+        $charge = null;
+        if ($uRates) {
+          $u_name = ($uRates->user) ? $uRates->user->name : null;
+          $charge = $uRates->charges;
+        }
+        if ($type == 'pt' && !$sValora->isRate($uRates->id_rate))
+          $charged = 1;
+        else
+          $charged = ($charge) ? 1 : 0;
+        //------------------------------------
+        $halfTime = false;
+        if ($item->customTime) {
+          $dateTime = explode(' ', $item->date);
+          $halfTime = ($dateTime[1] != $item->customTime);
+        }
+        //------------------------------------
+        $aLst[$time][$hour][] = [
+            'id' => $item->id,
+            'charged' => $charged,
+            'type' => $item->id_rate,
+            'coach' => $item->id_coach,
+            'name' => $u_name,
+            'halfTime' => $halfTime,
+            'h' => $hTime,
+            'ecogr' => (in_array($item->id, $ecogrs)),
+            'indiba' => (in_array($item->id, $indiba)),
+            'mtv' => ''
+        ];
+        $detail[$item->id] = [
+            'n' => $u_name,
+            'p' => ($uRates) ? moneda($uRates->price) : '--',
+            's' => ($item->service) ? $item->service->name : '-',
+            'cn' => isset($cNames[$item->id_coach]) ? $cNames[$item->id_coach] : '-',
+            'mc' => '', //Metodo pago
+            'dc' => '', // fecha pago
+            'd' => $dTime, // fecha 
+            'mtv' => isset($motives[$item->id]) ? $motives[$item->id] : '',
+        ];
+
+        if ($charge) {
+          $detail[$item->id]['mc'] = payMethod($charge->type_payment);
+          $detail[$item->id]['dc'] = dateMin($charge->date_payment);
+        }
+
+        self::countByCoah($item->id_coach, $month);
+      }
     }
-    /**************************************************** */
+    /*  ---------------------------   */
     $lstMonts = lstMonthsSpanish();
     $aMonths = [];
     $year = getYearActive();
     foreach ($lstMonts as $k => $v) {
-        if ($k > 0)
-            $aMonths[$year . '-' . str_pad($k, 2, "0", STR_PAD_LEFT)] = $v;
+      if ($k > 0)
+        $aMonths[$year . '-' . str_pad($k, 2, "0", STR_PAD_LEFT)] = $v;
     }
-    /**************************************************** */
+    /*  ---------------------------   */
 
 
-    if (count($detail)>0){
+    if (count($detail) > 0) {
       $aux = '';
-      foreach ($detail as $k=>$d){
-        $aux .= $k.':{';
-        foreach ($d as $k2=>$i2){
+      foreach ($detail as $k => $d) {
+        $aux .= $k . ':{';
+        foreach ($d as $k2 => $i2) {
           $aux .= "$k2: '$i2',";
         }
         $aux .= '},';
@@ -288,67 +290,74 @@ class CitasService {
     } else {
       $detail = null;
     }
-    if ($type == 'pt') $avails = [];
-    else $avails = self::timeAvails($daysCoatch,$coachs,$lstDays,$coach);
-    
-    return  [
+    if ($type == 'pt')
+      $avails = [];
+    else
+      $avails = self::timeAvails($daysCoatch, $coachs, $lstDays, $coach);
+
+    return [
         'servLst' => $servLst,
         'serv' => $serv,
         'aLst' => $aLst,
-        'aMonths'=> $aMonths,
-        'year'   => $year,
-        'tColors'=> $tColors,
+        'aMonths' => $aMonths,
+        'year' => $year,
+        'tColors' => $tColors,
         'coachs' => $coachs,
-        'coach'  => $coach,
-        'times'  => $times,
+        'coach' => $coach,
+        'times' => $times,
         'detail' => $detail,
         'avails' => $avails,
         'countByCoah' => $countByCoah,
     ];
   }
-  
-  static function countByCoah($cID,$month){
+
+  static function countByCoah($cID, $month) {
     global $countByCoah;
-    
-    if (!isset($countByCoah[$month])) $countByCoah[$month] = [];
-    if (!isset($countByCoah[$month][$cID])) $countByCoah[$month][$cID] = 0;
+
+    if (!isset($countByCoah[$month]))
+      $countByCoah[$month] = [];
+    if (!isset($countByCoah[$month][$cID]))
+      $countByCoah[$month][$cID] = 0;
     $countByCoah[$month][$cID]++;
-    
-    if (!isset($countByCoah['w'])) $countByCoah['w'] = [];
-    if (!isset($countByCoah['w'][$cID])) $countByCoah['w'][$cID] = 0;
+
+    if (!isset($countByCoah['w']))
+      $countByCoah['w'] = [];
+    if (!isset($countByCoah['w'][$cID]))
+      $countByCoah['w'][$cID] = 0;
     $countByCoah['w'][$cID]++;
   }
-  
-  
+
   static function getCoachs($type) {
-    if ($type == 'pt') $type = 'teach';
+    if ($type == 'pt')
+      $type = 'teach';
     return User::whereCoachs($type)->where('status', 1)->get();
   }
-  
-  static function timeAvails($daysCoatch,$coachs,$lstDays,$coachID=null){
+
+  static function timeAvails($daysCoatch, $coachs, $lstDays, $coachID = null) {
     $tCoach = [];
-    if ($coachID){
-      $tCoach[$coachID]=1;
+    if ($coachID) {
+      $tCoach[$coachID] = 1;
     } else {
-      foreach ($coachs as $i)  $tCoach[$i->id]=1;
-    } 
-    
+      foreach ($coachs as $i)
+        $tCoach[$i->id] = 1;
+    }
+
     $disponibles = [];
-    for($i=1; $i<7; $i++){
+    for ($i = 1; $i < 7; $i++) {
       $aux = [];
-      for($j=8; $j<23; $j++){
+      for ($j = 8; $j < 23; $j++) {
         $aux[$j] = $tCoach;
       }
       $disponibles[$i] = $aux;
     }
 
-    $coachTimes = \App\Models\CoachTimes::whereIn('id_coach', array_keys($tCoach))->pluck('times','id_coach'); 
-    if ($coachTimes){
-      foreach ($coachTimes as $idCoach => $t){
-        $times = json_decode($t,true);
-        if (is_array($times)){
-          foreach ($times as $d=>$hs){
-            foreach ($hs as $h=>$enable){
+    $coachTimes = \App\Models\CoachTimes::whereIn('id_coach', array_keys($tCoach))->pluck('times', 'id_coach');
+    if ($coachTimes) {
+      foreach ($coachTimes as $idCoach => $t) {
+        $times = json_decode($t, true);
+        if (is_array($times)) {
+          foreach ($times as $d => $hs) {
+            foreach ($hs as $h => $enable) {
               $disponibles[$d][$h][$idCoach] = $enable;
             }
           }
@@ -357,45 +366,46 @@ class CitasService {
     }
     $wDay = listDaysSpanish(true);
     $used = [];
-    if ($lstDays){
-      foreach ($lstDays as $k=>$days){
-       
-          foreach($days as $k=>$d){
-            $time = $d['time'];
-            $wID = array_search($d['day'], $wDay);
-            
-            /////////////////////
-            $aux = [];
-            for($h=8; $h<23; $h++){
-              $aux2 = [];
-              foreach ($disponibles[$wID][$h] as $cID => $cAvail){
-                if ($cAvail == 1) $aux2[] = $cID;
-              }
-              $aux[$h] = $aux2;
+    if ($lstDays) {
+      foreach ($lstDays as $k => $days) {
+
+        foreach ($days as $k => $d) {
+          $time = $d['time'];
+          $wID = array_search($d['day'], $wDay);
+
+          /////////////////////
+          $aux = [];
+          for ($h = 8; $h < 23; $h++) {
+            $aux2 = [];
+            foreach ($disponibles[$wID][$h] as $cID => $cAvail) {
+              if ($cAvail == 1)
+                $aux2[] = $cID;
             }
-            /////////////////////
-            if (isset($daysCoatch[$time])){
-              foreach ($daysCoatch[$time] as $h=>$item){
-                $aux4 = isset($aux[$h]) ? $aux[$h] : [];
-                foreach ($item as $cID=>$u){
-                  $aux3 = array_search($cID, $aux4);
-                  if ($aux3 !== false) unset($aux[$h][$aux3]);
-                }
+            $aux[$h] = $aux2;
+          }
+          /////////////////////
+          if (isset($daysCoatch[$time])) {
+            foreach ($daysCoatch[$time] as $h => $item) {
+              $aux4 = isset($aux[$h]) ? $aux[$h] : [];
+              foreach ($item as $cID => $u) {
+                $aux3 = array_search($cID, $aux4);
+                if ($aux3 !== false)
+                  unset($aux[$h][$aux3]);
               }
             }
-            /////////////////////
-            
-            $used[$time] = $aux;
+          }
+          /////////////////////
+
+          $used[$time] = $aux;
         }
- 
       }
     }
     return $used;
   }
-  
-  static function get_urlBack($type,$date){
+
+  static function get_urlBack($type, $date) {
     $urlBack = '/admin';
-    if (isset($_GET['weekly'])){
+    if (isset($_GET['weekly'])) {
       switch ($type) {
         case 'nutri':
           $urlBack = '/admin/citas-nutricion-week/';
@@ -406,18 +416,18 @@ class CitasService {
         case 'pt':
           $urlBack = '/admin/citas-pt-week/';
           break;
-    }
-    
+      }
+
       $week = date('W', strtotime($date));
-      if (date('W') != $week){
+      if (date('W') != $week) {
         $urlBack .= $week;
       }
       return $urlBack;
     }
-    
-    
-    $date = substr($date,0,7);
-    
+
+
+    $date = substr($date, 0, 7);
+
     switch ($type) {
       case 'nutri':
         $urlBack = '/admin/citas-nutricion/';
@@ -429,9 +439,74 @@ class CitasService {
         $urlBack = '/admin/citas-pt/';
         break;
     }
-     
+
     if (date('Y-m') != $date)
       $urlBack .= $date;
     return $urlBack;
   }
+
+  static function datesAvails($type, $start, $end) {
+
+    $hours = [];
+    for ($i = 8; $i < 20; $i++) {
+      $hours[$i] = 0;
+      $enambleds[$i] = 1;
+    }
+
+
+    $lstDays = arrayDays($start, $end, 'Y-m-d', $hours);
+    $lstDaysEmpty = arrayDays($start, $end, 'Y-m-d', $enambleds);
+    $lstDaysW = arrayDays($start, $end, 'Y-m-d');
+
+    $aCoachs = User::whereCoachs($type)->where('status', 1)->pluck('id');
+    foreach ($aCoachs as $cID) {
+      $aux = $lstDaysEmpty;
+
+      /* -------------------------------------------------------- */
+      /* --   GET COACHs hours    ------------------------------ */
+      $coachTimes = \App\Models\CoachTimes::where('id_coach', $cID)->first();
+      if ($coachTimes) {
+        $times = json_decode($coachTimes->times, true);
+        if (is_array($times)) {
+          foreach ($aux as $d => $hs) {
+            $dw = $lstDaysW[$d];
+            if (isset($times[$dw])) {
+              foreach ($times[$dw] as $h => $enable) {
+                $aux[$d][$h] = $enable;
+              }
+            }
+          }
+        }
+      }
+      /* -------------------------------------------------------- */
+      /* ---- GET COACHs APPOINTMENTS         ------------------ */
+
+      $oDates = Dates::where('date_type', $type)
+                      ->where('date', '>=', $start)
+                      ->where('date', '<=', $end)
+                      ->where('id_coach', $cID)->pluck('date');
+      if (count($oDates) > 0) {
+        foreach ($oDates as $dateTime) {
+          $aux_date = substr($dateTime, 0, 10);
+          $aux_time = intval(substr($dateTime, 11, 2));
+          if (isset($aux[$aux_date])) {
+            if (isset($aux[$aux_date][$aux_time])) {
+              $aux[$aux_date][$aux_time] = 0;
+            }
+          }
+        }
+      }
+      /* -------------------------------------------------------- */
+      /* -------------------------------------------------------- */
+      foreach ($aux as $d => $hs) {
+        foreach ($hs as $h => $enable) {
+          if ($enable) {
+            $lstDays[$d][$h] = 1;
+          }
+        }
+      }
+    }
+    return $lstDays;
+  }
+
 }
