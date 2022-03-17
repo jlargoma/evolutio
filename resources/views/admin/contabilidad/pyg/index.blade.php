@@ -46,22 +46,26 @@ function sumMonthValue($m){
           @endif
         </span></div>
     </div>
-    <div class="col-lg-3 col-md-6 col-xs-12 col-smal">
+    <div class="col-lg-4 col-md-6 col-xs-12 col-smal">
       <div class="box">
         <h2>Suscripciones activas</h2><span>{{$subscs}}</span>
         <table class="table tFidelity">
           <tr>
             <th colspan="2">Fidelity</th>
             <th colspan="2">Plan Básico</th>
+            <th colspan="2">Sin Plan</th>
           </tr>
           <?php 
             $subscsFidelityPerc = ($subscs>0) ? round($subscsFidelity/$subscs*100):0;
+            $subscsFidelityBasic = ($subscs>0) ? round($subscsBasic/$subscs*100):0;
           ?>
           <tr>
           <td> {{$subscsFidelity}}</td>
           <td class="text-danger">{{$subscsFidelityPerc}}%</td>
-          <td> {{$subscs-$subscsFidelity}}</td>
-          <td class="text-danger"> {{100-$subscsFidelityPerc}}%</td>
+          <td> {{$subscsBasic}}</td>
+          <td class="text-danger">{{$subscsFidelityBasic}}%</td>
+          <td> {{$subscs-$subscsFidelity-$subscsBasic}}</td>
+          <td class="text-danger"> {{100-$subscsFidelityPerc-$subscsFidelityBasic}}%</td>
           </tr>
         </table>
       </div>
@@ -71,20 +75,24 @@ function sumMonthValue($m){
           <tr>
             <th colspan="2">Fidelity</th>
             <th colspan="2">Plan Básico</th>
+            <th colspan="2">Sin Plan</th>
           </tr>
           <?php 
             $uActivsFidelityPerc = ($uActivs>0) ? round($uActivsFidelity/$uActivs*100):0;
+            $uActivsFidelityBasic = ($uActivs>0) ? round($uActivsBasic/$uActivs*100):0;
           ?>
           <tr>
           <td> {{$uActivsFidelity}}</td>
           <td class="text-danger">{{$uActivsFidelityPerc}}%</td>
-          <td> {{$uActivs-$uActivsFidelity}}</td>
-          <td class="text-danger"> {{100-$uActivsFidelityPerc}}%</td>
+          <td> {{$uActivsBasic}}</td>
+          <td class="text-danger">{{$uActivsFidelityBasic}}%</td>
+          <td> {{$uActivs-$uActivsFidelity-$uActivsBasic}}</td>
+          <td class="text-danger"> {{100-$uActivsFidelityPerc-$uActivsFidelityBasic}}%</td>
           </tr>
         </table>
       </div>
     </div>
-    <div class="col-lg-9 col-sm-12 col-xs-12 ">
+    <div class="col-lg-8 col-sm-12 col-xs-12 ">
       <div class="col-lg-5 col-sm-6 col-xs-12 chart_1">
       <canvas id="chart_1" width="50" height="50"></canvas>
       </div>

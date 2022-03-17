@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\UserRates;
 use App\Models\Rates;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 include_once app_path().'/Functions.php';
 

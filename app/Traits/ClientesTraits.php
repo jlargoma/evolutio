@@ -454,7 +454,10 @@ trait ClientesTraits {
     }
     
     $uPlan = $oUser->getPlan();
-    $tarifa = ($uPlan == 1 && $oRate->tarifa == 'fidelity') ? 'fidelity' : '';
+    $tarifa = $uPlan;
+    if ($uPlan == 'fidelity' && $oRate->tarifa != 'fidelity'){
+      $tarifa = '';
+    }
               
 
     $oObj = new UserRates();

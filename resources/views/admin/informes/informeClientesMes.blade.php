@@ -40,7 +40,7 @@ use \Carbon\Carbon; ?>
   <div class="row mt-1">
     <div class="col-md-2 col-xs-3">
       <label>Mes</label>
-      <select id="month" class="form-control">
+      <select id="f_month" class="form-control">
         <option> -- </option>
         <?php
         foreach ($months as $k => $v):
@@ -109,19 +109,24 @@ use \Carbon\Carbon; ?>
   $('#date, #month,#f_rate,#f_method,#f_coach').change(function (event) {
 
       var year = $('#date').val();
-      var month = $('#month').val();
+      var f_month = $('#f_month').val();
       var f_rate = $('#f_rate').val();
       var f_method = $('#f_method').val();
       var f_coach = $('#f_coach').val();
-      window.location.href = '/admin/informes/cliente-mes/{{$month}}/' + month + '/' + f_rate + '/' + f_method + '/' + f_coach;
+      window.location.href = '/admin/informes/cliente-mes/{{$month}}/' + f_month + '/' + f_rate + '/' + f_method + '/' + f_coach;
   });
 
   $('#searchInform').keydown(function (evt) {
       setTimeout(function () {
           var search = $('#searchInform').val();
           var token = $('#_token').val();
-          var month = $('#month').val();
-          $.post('/admin/informes/search/' + month, {search: search, _token: token}).done(function
+          
+          $('#f_month').val('');
+          $('#f_rate').val('');
+          $('#f_method').val('');
+          $('#f_coach').val('');
+      
+          $.post('/admin/informes/search/{{$month}}' , {search: search, _token: token}).done(function
             (data) {
               $('#content-table-inform').empty().append(data);
           });
