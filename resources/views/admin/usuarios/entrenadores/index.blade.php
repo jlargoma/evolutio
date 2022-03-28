@@ -1,6 +1,6 @@
 @extends('layouts.admin-master')
 
-@section('title') Entrenadores - Evolutio HTS @endsection
+@section('title') Sueldos y Salarios - Evolutio HTS @endsection
 
 @section('externalScripts')
 <link rel="stylesheet" href="{{ asset('admin-css/assets/js/plugins/datatables/jquery.dataTables.min.css') }}">
@@ -21,7 +21,7 @@
 
 <div class="content content-full bg-white">
   <h3 class="text-center">
-    Listado de Entrenadores
+    Sueldos y Salarios
   </h3>
   <div class="row">
     <div class="col-xs-12 push-20 not-padding">

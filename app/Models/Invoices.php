@@ -45,7 +45,7 @@ class Invoices extends Model
   /////////  invoice_meta //////////////
   public function setMetaContent($key,$content) {
     $oMeta =  DB::table('invoices_meta')->where('invoice_id',$this->id)
-              ->where('meta_key',$key);
+              ->where('meta_key',$key)->first();
     
     if ($oMeta){
       DB::table('invoices_meta')->where('id',$oMeta->id)

@@ -72,6 +72,9 @@ class DatesController extends Controller {
     /* -------------------------------------------------------------------- */
     $oCarbon = Carbon::createFromFormat('d-m-Y H:00:00', "$date $hour:00:00");
     $date_compl = $oCarbon->format('Y-m-d H:i:00');
+    
+    $aux_week = $oCarbon->format('w');
+    if ($aux_week == 0) return redirect()->back()->withErrors(['Domingos no habilitados']);
     /* -------------------------------------------------------------------- */
     if ($blocked && !$isGroup) {
       $alreadyExit = Dates::where('date', $date_compl)
