@@ -8,23 +8,25 @@ use \Carbon\Carbon;
 use Stripe;
 use App\Models\Rates;
 use App\Models\User;
+use App\Models\Dates;
 
 class ApiController extends Controller {
 
   private $items = [
       17 => 'cita-nutricion',
+      23 => 'fisio-sesion',
       25 => 'fisio-ecografia',
-//      27 => 'fisio-sesion-suelo-pelvico'
+      27 => 'fisio-sesion-suelo-pelvico'
   ];
   private $itemsType = [
       17 => 'nutri',
+      23 => 'fisio',
       25 => 'fisio',
-      27 => 'fisio'
+      27 => 'fisio',
   ];
   private $itemsCoachs = [
-      17 => 1715,
-      25 => 1971,
-      27 => 1971
+      'nutri' => 1715,
+      'fisio' => 1971,
   ];
 
   public function index() {
@@ -32,12 +34,31 @@ class ApiController extends Controller {
   }
 
   public function getItems(Request $request) {
-    $oRates = Rates::whereIN('id', array_keys($this->items))
+    $type = $request->input('type');
+    switch ($type) {
+      case 'fisioterapia':
+        $type = 'fisio';
+        break;
+    }
+
+    $IDs = [];
+    foreach ($this->itemsType as $k => $v)
+      if ($v == $type)
+        $IDs[] = $k;
+
+
+
+    $oRates = Rates::whereIN('id', $IDs)
                     ->where('status', 1)->get();
     $response = [];
     if ($oRates) {
       foreach ($oRates as $r) {
-        $response[$this->items[$r->id]] = $r->price;
+        if (isset($this->items[$r->id]))
+          $response[] = [
+              $this->items[$r->id],
+              $r->name,
+              $r->price
+          ];
       }
     }
 
@@ -62,10 +83,11 @@ class ApiController extends Controller {
 
     $sCitas = new \App\Services\CitasService();
 //    $lst = $sCitas->datesAvails($rType, date('Y-m-d', strtotime('+1 days')), date('Y-m-d', strtotime('+31 days')));
-
+    $ecograf = ($rID == 25);
     $response = [
+        'name' => $oRate->name,
         'price' => $oRate->price,
-        'availables' => $sCitas->datesAvails($rType, date('Y-m-d', strtotime('+1 days')), date('Y-m-d', strtotime('+31 days')))
+        'availables' => $sCitas->datesAvails($rType, date('Y-m-d', strtotime('+1 days')), date('Y-m-d', strtotime('+31 days')), $ecograf)
     ];
 
     return response()->json($response);
@@ -91,9 +113,10 @@ class ApiController extends Controller {
 
     $rType = $this->itemsType[$rID];
 
-    $id_coach = $this->itemsCoachs[$rID];
+    $coachID = $this->getCoachID($rType, $date);
 
     $sCitas = new \App\Services\CitasService();
+
     $response = [
         'price' => $oRate->price,
         'availables' => $sCitas->datesAvails($rType, date('Y-m-d', strtotime('+1 days')), date('Y-m-d', strtotime('+31 days')))
@@ -118,13 +141,13 @@ class ApiController extends Controller {
     $uRate->rate_year = date('Y', $dateTime);
     $uRate->rate_month = date('n', $dateTime);
     $uRate->price = $price;
-    $uRate->coach_id = $id_coach;
+    $uRate->coach_id = $coachID;
     $uRate->save();
 
     $oDates = new \App\Models\Dates();
     $oDates->id_rate = $rID;
     $oDates->id_user = $oUser->id;
-    $oDates->id_coach = $id_coach;
+    $oDates->id_coach = $coachID;
     $oDates->id_user_rates = $uRate->id;
     $oDates->date_type = $rType;
     $oDates->date = $date;
@@ -137,6 +160,43 @@ class ApiController extends Controller {
 
     \App\Models\Stripe3DS::addNew($oUser->id, $stripe, $cID, 'cita', ['dID' => $oDates->id]);
     return 'OK';
+  }
+
+  function getCoachID($type = 'fisio', $date = null) {
+
+    $date = '2022-04-07 19:00:00';
+    $dateTime = strtotime($date);
+    $week = date('w', $dateTime);
+    $hour = date('H', $dateTime);
+
+    $IDs = [];
+    $aCoachs = User::whereCoachs($type)->where('status', 1)->orderBy('priority')->pluck('id')->toArray();
+    
+    $coachTimes = \App\Models\CoachTimes::whereIn('id_coach', $aCoachs)->get();
+    if ($coachTimes) {
+      foreach ($coachTimes as $i) {
+        unset($aCoachs[array_search($i->id_coach, $aCoachs)]);
+        $cTimes = json_decode($i->times, true);
+        if (isset($cTimes[$week]) && isset($cTimes[$week][$hour]) && $cTimes[$week][$hour] == 1
+        ) {
+          $IDs[] = $i->id_coach;
+        }
+      }
+    }
+    if (count($IDs) > 0) {
+      if (count($aCoachs) > 0)
+        $IDs = array_merge($IDs, $aCoachs);
+    } else
+      $IDs = $aCoachs;
+
+    foreach ($IDs as $cId) {
+      $alreadyExit = Dates::where('date', $date)->where('id_coach', $cId)->count();
+      if ($alreadyExit < 2)
+        return $cId;
+    }
+    
+    return 'dd'. $this->itemsCoachs[$type];
+    
   }
 
 }

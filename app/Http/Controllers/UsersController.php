@@ -278,6 +278,7 @@ class UsersController extends Controller {
     if (in_array($userToUpdate->role,['teach','fisio','nutri','empl','teach_nutri','teach_fisio'])) {
       $userToUpdate->iban = $request->input('iban');
       $userToUpdate->ss = $request->input('ss');
+      $userToUpdate->priority = $request->input('priority');
       $CoachRates = \App\Models\CoachRates::where('id_user', $userToUpdate->id)->first();
 
       if (!$CoachRates) {

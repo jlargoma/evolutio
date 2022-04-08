@@ -19,8 +19,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::group(['middleware' => 'apiControl','prefix' => 'api'], function () {
-  Route::get('get-items','ApiController@getItems');
+  Route::post('get-items','ApiController@getItems');
   Route::get('get-item','ApiController@getItem');
   Route::post('get-item','ApiController@getItem');
   Route::post('save-service','ApiController@addAppointment');
+  Route::get('get-getCoachID','ApiController@getCoachID');
 });

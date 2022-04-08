@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Dates;
 use App\Models\Rates;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class CitasService {
 
@@ -445,7 +446,7 @@ class CitasService {
     return $urlBack;
   }
 
-  static function datesAvails($type, $start, $end) {
+  static function datesAvails($type, $start, $end, $ecograf = false) {
 
     $hours = [];
     for ($i = 8; $i < 20; $i++) {
@@ -505,6 +506,30 @@ class CitasService {
           }
         }
       }
+      /* -------------------------------------------------------- */
+      /* ---- REMOVE APPOINTMENTS WITH ECOGRAFIA      ----------- */
+      if ($ecograf){
+            $oDates = Dates::where('date_type', $type)
+                    ->join('appointment_meta', function($join)
+                {
+                  $join->on('appointment_meta.appoin_id', '=', 'appointment.id');
+                  $join->where('appointment_meta.meta_key', "ecogr");
+                })->where('date', '>=', $start)
+                ->where('date', '<=', $end)->get();
+          if ($oDates){
+            foreach ($oDates as $d){
+              if ($d->meta_value == 1){
+                $aux_date = substr($d->date, 0, 10);
+                $aux_time = intval(substr($d->date, 11, 2));
+                if (isset($lstDays[$aux_date][$aux_time]))
+                  $lstDays[$aux_date][$aux_time] = 0;
+              }
+            }
+          }     
+               
+      }
+      
+      
     }
     return $lstDays;
   }

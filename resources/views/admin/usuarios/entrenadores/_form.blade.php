@@ -60,6 +60,13 @@
                         <label for="role">Role</label>
                     </div>
                 </div>
+              <div class="col-lg-2 col-sm-4 push-20">
+                    <div class="form-material">
+                        <input class="form-control" type="text" id="priority" name="priority" maxlength="99" value="{{$user->priority}}">
+                        <label for="ppc">Prioridad</label>
+                        <small>Prioridad de asignación automática</small>
+                    </div>
+                </div>
               <div class="col-lg-4 col-sm-4 push-20" style="height: 4em;">
                   <div class="form-material"><label>&nbsp;</label></div>
                 </div>
