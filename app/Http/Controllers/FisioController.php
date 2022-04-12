@@ -35,6 +35,7 @@ class FisioController extends Controller {
         $rslt = CitasService::get_calendars($start,$finish,$serv,$coach,'fisio',$calendar['days']);
         $rslt['calendar'] = $calendar['days'];
         $rslt['month'] = $month;
+        $rslt['tColors'] = $this->changeColors($rslt['tColors']);
         /*******************************************/
         return view('fisioterapia.index', $rslt);
     }
@@ -62,6 +63,7 @@ class FisioController extends Controller {
         $rslt['calendar'] = $calendar['days'];
         $rslt['week'] = $week;
         $rslt['time'] = $time;
+        $rslt['tColors'] = $this->changeColors($rslt['tColors']);
         /*******************************************/
         return view('fisioterapia.indexWeek', $rslt);
     }
@@ -184,8 +186,7 @@ class FisioController extends Controller {
                 $i++;
             }
         }
-
-
+        $tColors = $this->changeColors($tColors);
 
         $rslt = [
             'type' => $type,
@@ -306,6 +307,14 @@ class FisioController extends Controller {
       
       return 'OK';
       
+    }
+    
+    private function changeColors($tColors){
+      $tColors[1716] = '#9b59ff';
+      $tColors[1971] = '#295d9b';
+      $tColors[2347] = '#ffa116';
+      $tColors[2504] = '#10cfbd';
+      return $tColors;
     }
 
 }
