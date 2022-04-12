@@ -6,7 +6,7 @@
   <li <?php if ($tab == 'datos') echo 'class="active"'; ?>><a data-toggle="tab" href="#datos">Datos</a></li>
   <li <?php if ($tab == 'servic') echo 'class="active"'; ?>><a data-toggle="tab" href="#servic">Suscripciones</a></li>
   <li <?php if ($tab == 'history') echo 'class="active"'; ?>><a data-toggle="tab" href="#history">Historial</a></li>
-  <li <?php if ($tab == 'notes') echo 'class="active"'; ?>><a data-toggle="tab" href="#notes">Anotaciones</a></li>
+  <li <?php if ($tab == 'notes') echo 'class="active"'; ?>><a data-toggle="tab" href="#notes">ENTR. PERSONAL</a></li>
   <li <?php if ($tab == 'consent') echo 'class="active"'; ?>><a data-toggle="tab" href="#consent">Consentimiento</a></li>
   <li <?php if ($tab == 'invoice') echo 'class="active"'; ?>><a data-toggle="tab" href="#invoice">Factura</a></li>
   <li <?php if ($tab == 'bono') echo 'class="active"'; ?>><a data-toggle="tab" href="#bono">Bonos</a></li>

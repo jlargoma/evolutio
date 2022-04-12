@@ -435,6 +435,7 @@ trait ClientesTraits {
         'encNutr'=>$sEncNutri->get_enc($user),
         'filesNutri'=>$this->getFileLst($user->id, 'nutri'),
         'filesFisio'=>$this->getFileLst($user->id, 'fisio'),
+        'filesPT'=>$this->getFileLst($user->id, 'pt'),
         'seeClinicalHistory'=>$seeClinicalHistory,
         'seeClinicalHistorySP'=>$seeClinicalHistorySP,
     ]);
