@@ -146,9 +146,31 @@ trait ClientesFilesTraits {
       $file = File::get(public_path('/img/userIcondefault.png'));
       $type = 'png';
     }
-    $response = \Response::make($file, 200);
-    $response->header("Content-Type", $type);
-    return $response;
+    // Creamos una imagen
+    switch($type){ 
+      case 'image/jpeg': 
+          $image = imagecreatefromjpeg($path); 
+          break; 
+      case 'image/png': 
+          $image = imagecreatefrompng($path); 
+          break; 
+      case 'image/gif': 
+          $image = imagecreatefromgif($path); 
+          break; 
+      default: 
+          $image = imagecreatefromjpeg($path); 
+  } 
+
+
+$calidad = 15; // Valor entre 0 y 100. Mayor calidad, mayor peso
+header("Content-Type: image/jpeg");
+imagejpeg($image, null, $calidad);
+exit;
+
+
+    // $response = \Response::make($file, 200);
+    // $response->header("Content-Type", $type);
+    // return $response;
   }
 
   /* ----------------------------------------------------------------------- */
