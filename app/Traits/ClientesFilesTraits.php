@@ -127,6 +127,30 @@ trait ClientesFilesTraits {
     }
   }
 
+
+  function getPhoto($uID) {
+
+    $oUser = User::find($uID);
+    if (!$oUser) return 'Usuario no encontrado';
+    
+    $photo = $oUser->getMetaContent('photo');
+    if ($photo){
+      $path = storage_path('/app/photos/' . $photo);
+      if (!File::exists($path)) {
+        abort(404);
+      }
+
+      $file = File::get($path);
+      $type = File::mimeType($path);
+    } else {
+      $file = File::get(public_path('/img/userIcondefault.png'));
+      $type = 'png';
+    }
+    $response = \Response::make($file, 200);
+    $response->header("Content-Type", $type);
+    return $response;
+  }
+
   /* ----------------------------------------------------------------------- */
   /* ---- END:  ARCHIVOS        ------------------- */
   /* ----------------------------------------------------------------------- */

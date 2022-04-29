@@ -6,10 +6,10 @@
     <i class="fa fa-plus-circle" aria-hidden="true"></i> Asignar Bono
   </button>
 </h3>
-<form class="row" action="{{ url('/admin/clientes/update') }}" method="post">
+<form class="row" action="{{ url('/admin/clientes/update') }}" method="post" enctype="multipart/form-data">
   <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
   <input type="hidden" name="id" value="{{ $user->id }}">
-  <div class="col-md-6 ">
+  <div class="col-md-5 ">
     <div class="form-material mt-5">
       <input class="form-control" type="text"  name="name" required value="<?php echo $user->name ?>">
       <label for="name">Nombre</label>
@@ -23,7 +23,7 @@
       <label for="telefono">Teléfono</label>
     </div>
   </div>
-  <div class="col-md-6 ">
+  <div class="col-md-4 ">
     <div class="form-material mt-5">
       <input class="form-control" type="text" id="dni" name="dni" value="<?php echo $user->dni ?>">
       <label for="name">DNI</label>
@@ -33,13 +33,22 @@
       <label for="email">Dirección</label>
     </div>
   </div>
+  <div class="col-md-3 box-photo">
+    <img src="/admin/photo/{{$user->id}}"  class="photo">
+    <div class="">
+      <label class="custom-file-upload">
+        <input type="file" name="f_photo" accept="image/*" capture="user">
+        <i class="fa fa-cloud-upload"></i> Buscar Foto
+      </label>
+    </div>
+  </div>
   <div class="col-md-6 hidden">
     <div class="form-material ">
       <input class="form-control" type="password" id="password" name="password" value="">
       <label for="password">Contraseña</label>
     </div>
   </div>
-  <div class="col-md-2 mt-1 fFIDELITY">
+  <div class="col-md-2 col-xs-6 mt-1 fFIDELITY">
     <select name="fidelity" class="form-control">
       <option value="none" <?php if($uPlan == 'none') echo "selected"; ?>>SIN PLAN</option>
       <option value="basic" <?php if($uPlan == 'basic') echo "selected"; ?>>PLAN BASICO</option>
@@ -48,7 +57,7 @@
     <?php if($uPlan == 'fidelity') echo '<i class="fa fa-heart text-success"></i>'; ?>
     <?php if($uPlan == 'basic') echo '<i class="fa fa-heart text-danger"></i>'; ?>
   </div>
-  <div class="col-md-2 mt-1">
+  <div class="col-md-2 col-xs-6 mt-1">
     <select name="status" class="form-control">
       <option value="1" <?php if($user->status == 1) echo "selected"; ?>>Activo</option>
       <option value="0" <?php if($user->status != 1) echo "selected"; ?>>No Activo</option>

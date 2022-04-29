@@ -203,6 +203,8 @@ class UsersController extends Controller {
 
     $id = $request->input('id');
     $userToUpdate = User::find($id);
+    if (!$userToUpdate) return 'Usuario no encontrado';
+
     $userToUpdate->name = $request->input('name');
     $userToUpdate->email = $request->input('email');
     $userToUpdate->role = $request->input('role', 'user');
@@ -228,6 +230,24 @@ class UsersController extends Controller {
         }
       }
     }
+
+    /* ------------------------- */
+    if ($request->hasfile('f_photo')) {
+      $validated = $request->validate(
+              ['f_photo' => 'required|file|mimes:jpeg,webp,png,jpg|max:204800'],
+              ['f_photo.mimes' => 'La foto debe ser png o jpg',
+                  'f_photo.max' => 'La foto debe ser menor de 200 Mb',
+                
+      ]);
+
+      $file = $request->file('f_photo');
+      $filename = 'photo_' . $userToUpdate->id . '.' . $file->extension();
+      \Storage::disk('local')->put('photos/' . $filename, \File::get($file));
+      $path = storage_path('app/photos/' . $filename);
+      $userToUpdate->setMetaContent('photo',$filename);
+    }
+    /* ------------------------- */
+    
     return redirect()->back()->with('success', 'Cliente actualizado');
   }
   public function update(Request $request) {

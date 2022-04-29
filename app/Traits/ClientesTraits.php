@@ -402,7 +402,8 @@ trait ClientesTraits {
       $seeClinicalHistorySP = '/admin/ver-historia-clinica-suelo-pelvico/'. \App\Services\LinksService::getLinkBasic($user->id);
     }
     
-    
+    /*-------------------------------------*/
+    $photo = $user->getMetaContent('photo');
     /********************************/
     return view('/admin/usuarios/clientes/informe', [
         'aRates' => $aRates,
@@ -438,6 +439,7 @@ trait ClientesTraits {
         'filesPT'=>$this->getFileLst($user->id, 'pt'),
         'seeClinicalHistory'=>$seeClinicalHistory,
         'seeClinicalHistorySP'=>$seeClinicalHistorySP,
+        'photo'=>$photo
     ]);
   }
 

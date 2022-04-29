@@ -17,6 +17,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::post('/clientes/setValora', 'UsersController@setValora');
   Route::post('/clientes/saveFiles', 'UsersController@saveFiles');
   Route::post('/clientes/delFiles', 'UsersController@delFiles');
+  Route::get('/photo/{id}', 'CustomerController@getPhoto');
   Route::post('/clientes/autosaveValora', 'UsersController@autosaveValora');
   Route::get('/get-mail/{id?}', 'UsersController@getMail');
   Route::get('/get-rates/{id?}', 'UsersController@getRates');

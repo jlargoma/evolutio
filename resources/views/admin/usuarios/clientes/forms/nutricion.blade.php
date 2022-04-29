@@ -18,11 +18,11 @@ $csrf_token = csrf_token();
             <div class="col-md-3">
               <label class="custom-file-upload">
                 <input type="file" name="file"/>
-                <i class="fa fa-cloud-upload"></i> Subir Archivo
+                <i class="fa fa-cloud-upload"></i> Buscar Archivo
               </label>
             </div>
             <div class="col-md-3">
-              <button type="submit" class="btn btn-primary">Enviar</button>
+              <button type="submit" class="btn btn-primary">Guardar</button>
             </div>
           </div>
         </div>

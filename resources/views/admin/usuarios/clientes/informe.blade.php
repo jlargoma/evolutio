@@ -385,5 +385,14 @@
     font-size: 21px;
     margin-left: 7px;
   }
+  .box-photo{
+    min-height: 12em;
+    text-align: center;
+  }
+  img.photo {
+    max-width: 100%;
+    max-height: 8em;
+    margin: 0 auto 8px;
+}
 </style>
 @endsection
