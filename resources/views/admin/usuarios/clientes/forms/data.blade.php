@@ -37,8 +37,12 @@
     <img src="/admin/photo/{{$user->id}}"  class="photo">
     <div class="">
       <label class="custom-file-upload">
-        <input type="file" name="f_photo" accept="image/*" capture="user">
+        <input type="file" name="f_photo">
         <i class="fa fa-cloud-upload"></i> Buscar Foto
+      </label>
+      <label class="custom-file-upload show_mobile">
+        <input type="file" name="f_photoMobil" accept="image/*" capture="user">
+        <i class="fa fa-cloud-upload"></i> Tomar una Foto
       </label>
     </div>
   </div>

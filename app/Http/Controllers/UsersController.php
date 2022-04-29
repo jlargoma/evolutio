@@ -232,6 +232,7 @@ class UsersController extends Controller {
     }
 
     /* ------------------------- */
+    $file = null;
     if ($request->hasfile('f_photo')) {
       $validated = $request->validate(
               ['f_photo' => 'required|file|mimes:jpeg,webp,png,jpg|max:204800'],
@@ -241,6 +242,18 @@ class UsersController extends Controller {
       ]);
 
       $file = $request->file('f_photo');
+    }
+    if ($request->hasfile('f_photoMobil')) {
+      $validated = $request->validate(
+              ['f_photoMobil' => 'required|file|mimes:jpeg,webp,png,jpg|max:204800'],
+              ['f_photoMobil.mimes' => 'La foto debe ser png o jpg',
+                  'f_photoMobil.max' => 'La foto debe ser menor de 200 Mb',
+                
+      ]);
+
+      $file = $request->file('f_photoMobil');
+    }
+    if ($file){
       $filename = 'photo_' . $userToUpdate->id . '.' . $file->extension();
       \Storage::disk('local')->put('photos/' . $filename, \File::get($file));
       $path = storage_path('app/photos/' . $filename);
