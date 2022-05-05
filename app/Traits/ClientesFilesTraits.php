@@ -140,10 +140,11 @@ trait ClientesFilesTraits {
         abort(404);
       }
 
-      $file = File::get($path);
+    //  $file = File::get($path);
       $type = File::mimeType($path);
     } else {
-      $file = File::get(public_path('/img/userIcondefault.png'));
+      //$file = File::get(public_path('/img/userIcondefault.png'));
+      $path = public_path('/img/userIcondefault.png');
       $type = 'png';
     }
     // Creamos una imagen
@@ -162,7 +163,7 @@ trait ClientesFilesTraits {
   } 
 
 
-$calidad = 15; // Valor entre 0 y 100. Mayor calidad, mayor peso
+$calidad = 8; // Valor entre 0 y 100. Mayor calidad, mayor peso
 header("Content-Type: image/jpeg");
 imagejpeg($image, null, $calidad);
 exit;
