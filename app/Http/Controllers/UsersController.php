@@ -218,11 +218,11 @@ class UsersController extends Controller {
     $userToUpdate->telefono = $request->input('telefono');
     $userToUpdate->save();
     if ($request->has('fidelity')){
-      $oldFidelity = $userToUpdate->getPlan();
+      $oldFidelity = $userToUpdate->getMetaContent('has_fidelity');
       $userToUpdate->setMetaContent('plan',$request->input('fidelity'));
-      
       // agrega un bono de Fisio y otro de Nutry
       if (!$oldFidelity && $request->input('fidelity') == 'fidelity'){
+        $userToUpdate->setMetaContent('has_fidelity',1);
         $sBono = new \App\Services\BonoService();
         $rateBonos = \App\Models\TypesRate::whereIn('type',['fisio','nutri'])->pluck('id');
         foreach ($rateBonos as $rTypeID){
