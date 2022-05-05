@@ -17,6 +17,7 @@ class Tasks extends Command
    * The name and signature of the console command.
    *
    * @var string
+   * /opt/plesk/php/7.3/bin/php artisan Tasks:start
    */
   protected $signature = 'Tasks:start';
 
@@ -49,25 +50,27 @@ class Tasks extends Command
    */
   public function handle()
   {
-/*
+
+    return null;
+
     $oLst = DB::table('user_meta')->where('meta_key', 'plan')->where('meta_value', 'fidelity')->pluck('user_id');
     if ($oLst) {
       foreach ($oLst as $uid) {
 
-        $exists = DB::table('user_meta')
-          ->where('meta_key', 'has_fidelity')
-          ->where('user_id', $uid)->first();
+        $exists = DB::table('users_bonos')->where('user_id', $uid)->count();
+        if ($exists<2) {
 
-        if (!$exists) {
-          DB::table('user_meta')->insert([
-            'meta_key' => 'has_fidelity',
-            'user_id' => $uid,
-            'meta_value' => 1
-          ]);
+          $user = DB::table('users')->where('id', $uid)->first();
+          echo 'https://desarrollo.evolutio.fit/admin/usuarios/informe/'.$uid."\n";
+          echo $user->name."\n";
+          DB::table('user_meta')
+          ->where('meta_key','has_fidelity')
+          ->where('user_id', $uid)
+          ->update([ 'meta_value' => 0]);
         }
       }
     }
-    */
+   
 
   }
 }
