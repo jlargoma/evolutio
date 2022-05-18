@@ -249,11 +249,11 @@ class BonosController extends Controller {
   function getByUsers(Request $req) {
     $filter = $req->input('f', null);
     if ($filter){
-      if (is_numeric($filter)) $oUsrBonos = UserBonos::where('rate_id',$filter)->get();
+      if (is_numeric($filter)) $oUsrBonos = UserBonos::where('rate_type',$filter)->get();
       else    $oUsrBonos = UserBonos::where('rate_subf',$filter)->get();
       
     } else $oUsrBonos = UserBonos::all();
-    
+    // dd($oUsrBonos);
     $rate_subf = \App\Models\TypesRate::subfamily();
     $aUB = [];
     $totals = ['i'=>0,'d'=>0,'t'=>0,'p'=>0];
@@ -261,7 +261,7 @@ class BonosController extends Controller {
       if (!isset($aUB[$ub->user_id]))
         $aUB[$ub->user_id] = [];
       
-      $t = $ub->rate_id ? $ub->rate_id : $ub->rate_subf;
+      $t = $ub->rate_type ? $ub->rate_type : $ub->rate_subf;
       $data = ['type'=>$t,'i'=>0,'d'=>0,'t'=>$ub->qty,'p'=>0];
       $lst = $ub->logs()->orderBy('created_at')->get();
       foreach ($lst as $l){
@@ -280,7 +280,7 @@ class BonosController extends Controller {
     
     
     $aUsers = \App\Models\User::whereIN('id',array_keys($aUB))->pluck('name','id')->toArray();
-    $aRates = \App\Models\Rates::all()->pluck('name','id')->toArray();
+    $aRates = \App\Models\TypesRate::all()->pluck('name','id')->toArray();
     $rateFilter = \App\Models\TypesRate::getWithsubfamily();
     return view('admin.contabilidad.bonos.by_customer', compact('aUB','aUsers','aRates','rate_subf','rateFilter','filter','totals'));
   }
