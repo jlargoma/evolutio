@@ -158,6 +158,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::get('/bonologs/{id}', 'BonosController@printBonologs');
   Route::post('/bonos/updCant', 'BonosController@updBonologs');
   Route::get('/bonos-clientes', 'BonosController@getByUsers');
+  Route::get('/bonos/{type}/{id}', 'BonosController@disableEnable');
 
   /* informes */
   Route::get('/informes/cajas', 'InformesController@informeCaja');

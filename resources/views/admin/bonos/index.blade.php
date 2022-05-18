@@ -20,6 +20,7 @@
           <table class="table table-bordered table-striped js-dataTable-full table-header-bg">
             <thead>
               <tr>
+               <th class="text-center tc0 hidden-xs hidden-sm" style="background-color: #46c37b; width: 60px;"><i class="fa fa-eye"></i></th>
                 <th class="text-center hidden-xs hidden-sm" style="background-color: #46c37b; width: 60px;">id</th>
                 <th class="text-center" style="background-color: #46c37b; min-width: 280px;">Bono</th>
                 <th class="text-center" style="background-color: #46c37b;">Servicios</th>
@@ -32,6 +33,12 @@
             <tbody>	
               <?php foreach ($objs as $obj): ?>
                 <tr>
+                <td class="text-center hidden-xs hidden-sm tc0">
+                    <label class="css-input switch switch-sm switch-success">
+                        <?php $checked = ($obj->purcharse == 1) ? 'checked' : ''; ?>
+                        <input type="checkbox" class="switchPurcharse" data-id="<?php echo $obj->id ?>" <?php echo $checked ?>><span></span>
+                    </label>
+                </td>
                   <td class="text-center hidden-xs hidden-sm"><?php echo $obj->id ?></td>
                   <td class="text-center">
                     <input type="text" class="form-control editables name-bono-<?php echo $obj->id ?>"  data-id="<?php echo $obj->id; ?>" value="<?php echo $obj->name; ?>" />
@@ -189,6 +196,19 @@
 
       });
    
+     
+    $('.switchPurcharse').change(function (event) {
+    var id = $(this).attr('data-id');
+
+    if ($(this).is(':checked')) {
+      $.get('/admin/bonos/enable/' + id, function (data) {
+      });
+    } else {
+      $.get('/admin/bonos/disable/' + id, function (data) {
+      });
+    }
+  });
+
   });
 </script>
 @endsection

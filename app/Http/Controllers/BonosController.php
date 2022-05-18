@@ -194,7 +194,7 @@ class BonosController extends Controller {
       return view('admin.usuarios.clientes.bono', [
         'user'=>$oUser,
         'card'=>$card,
-        'oBonos' => Bonos::where('status', 1)->orderBy('name', 'asc')->get(),
+        'oBonos' => Bonos::where('status', 1)->where('purcharse', 1)->orderBy('name', 'asc')->get(),
         'type'=>$t,
         'id_back'=>$id,
         'typesRate'=> \App\Models\TypesRate::pluck('name','id')->toArray(),
@@ -342,6 +342,15 @@ class BonosController extends Controller {
         <?php
       }
           
+  
+  }
+  function disableEnable($type,$bID){
+
+
+    $oObj = Bonos::find($bID);
+    if ($type == 'disable')    $oObj->purcharse = 0;
+    if ($type == 'enable')    $oObj->purcharse = 1;
+    $oObj->save();
   
   }
 }
