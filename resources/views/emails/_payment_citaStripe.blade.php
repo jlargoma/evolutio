@@ -53,7 +53,9 @@ Hola! <?php echo $user->name ?><br><br>
   </p>
   @endif
 @endif
-
+<p style="font-weight: bold; color: red; font-size: 12px;">
+  Las citas se pueden cancelar o modificar con una antelación de hasta 24 horas, <u>fuera de ese periodo, se deben abonar aunque se cancelen,</u> por favor tened en cuenta que el fisioterapeuta ha reservado esa hora para tu tratamiento.
+</p>
 <h5 style="color: black ;margin-bottom: 5px;">
     Muchas gracias por tu confianza en nosotros!! Tú compromiso es el nuestro
 </h5>
