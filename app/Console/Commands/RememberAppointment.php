@@ -109,7 +109,23 @@ class RememberAppointment extends Command {
                 $mailData['urlSuelPelv'] = $helpCitaCont->get_urlSuelPelv($oUser,$oRate);
               }
               /***********************************************************/
-              $sended = Mail::send('emails._remember_citaStripe', $mailData,
+              $pStripe = null;
+              if ($type == 'nutri' || $type == 'fisio'){
+                $uRate = $oDate->uRates;
+                $charge = ($uRate) ? $uRate->charges : null;
+                if (!$charge) {
+                  $data = [$oDate->id, $oUser->id, $importe * 100, $oRate->id];
+                  $sStripe = new \App\Services\StripeService();
+                  $rType = \App\Models\TypesRate::find($oRate->type);
+                  $pStripe = url($sStripe->getPaymentLink($rType->type, $data));
+                }
+              }
+              $mailData['pStripe'] = $pStripe;
+              /***********************************************************/
+              $mailData['remember'] = true;
+
+
+              $sended = Mail::send('emails._payment_citaStripe', $mailData,
                   function ($message) use ($email,$subj) {
                       $message->subject($subj);
                       $message->from(config('mail.from.address'), config('mail.from.name'));

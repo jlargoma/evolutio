@@ -3,10 +3,10 @@ $tit = 'Su cita en Evolutio';
 ?>
 @include('emails.head')
 
-Hola! <?php echo $user->name ?><br><br>
+¡Hola! <?php echo $user->name ?><br><br>
 
 <p style="color: black">
-    Tienes una cita en nuestro centro de <b><?php echo $rate->name ?></b> en <strong> Evolutio</strong>
+  <?php echo ($remember) ? 'Le recordamos su' : 'Tienes una';?> cita en nuestro centro de <b><?php echo $rate->name ?></b> en <strong> Evolutio</strong>
 </p>
 
 <p style="color: black;font-size: 18px;">
@@ -25,22 +25,22 @@ Hola! <?php echo $user->name ?><br><br>
 </p>
 @if($pStripe)
 <p>
-    Para realizar el pago, haga click en el enlace o copie y pegue el mismo en su navegador de preferencia<br/>
+    Para realizar el pago, haz click en este enlace o copia y pega en tu navegador habitual.<br/>
     <a href="{{$pStripe}}" title="link pago Stripe">{{$pStripe}}</a>
 </p>
 @endif
 @if($urlEntr)
 <p style="text-align: center;background-color: #e0f5e9;padding: 9px;color: #000;font-size: 16px;font-weight: bold;margin: 32px 0;">
-    Por favor, complete la siguente encuesta antes de su cita<br/>
+    Por favor, completa la siguiente encuesta antes de tu cita:<br/>
     <a href="{{$urlEntr}}" title="Encuesta nutrición">{{$urlEntr}}</a>
 </p>
 @endif
 @if($urlSuelPelv)
 <p style="text-align: center;background-color: #e0f5e9;padding: 9px;color: #000;font-size: 16px;font-weight: bold;margin: 32px 0;">
-    Antes de su cita debe aceptar y firmar el documento de <b>CONSENTIMIENTO SUELO PELVICO</b><br/>
+Antes de tu cita debes aceptar y firmar el documento de <b>CONSENTIMIENTO SUELO PELVICO</b><br/>
     <a href="{{$urlSuelPelv}}" title="CONSENTIMIENTO SUELO PELVICO">{{$urlSuelPelv}}</a>
     @if($urlIndiba)
-      <br/><br/>También debe aceptar y firmar el documento de <b>CONSENTIMIENTO FISIOTERAPIA CON INDIBA</b> <br/>
+      <br/><br/>También debes aceptar y firmar el documento de <b>CONSENTIMIENTO FISIOTERAPIA CON INDIBA</b> <br/>
       <a href="{{$urlIndiba}}" title="CONSENTIMIENTO FISIOTERAPIA CON INDIBA">{{$urlIndiba}}</a>
     </p>
     @endif
@@ -48,15 +48,15 @@ Hola! <?php echo $user->name ?><br><br>
 @else
   @if($urlIndiba)
   <p style="text-align: center;background-color: #e0f5e9;padding: 9px;color: #000;font-size: 16px;font-weight: bold;margin: 32px 0;">
-    Antes de su cita debe aceptar y firmar el documento de <b>CONSENTIMIENTO FISIOTERAPIA CON INDIBA</b> <br/>
+    Antes de tu cita debes aceptar y firmar el documento de <b>CONSENTIMIENTO FISIOTERAPIA CON INDIBA</b> <br/>
     <a href="{{$urlIndiba}}" title="CONSENTIMIENTO FISIOTERAPIA CON INDIBA">{{$urlIndiba}}</a>
   </p>
   @endif
 @endif
 <p style="font-weight: bold; color: red; font-size: 12px;">
-  Las citas se pueden cancelar o modificar con una antelación de hasta 24 horas, <u>fuera de ese periodo, se deben abonar aunque se cancelen,</u> por favor tened en cuenta que el fisioterapeuta ha reservado esa hora para tu tratamiento.
+  Las citas podrán ser modificadas o canceladas con una antelación mínima de 24 horas. En caso de cancelar pasado ese plazo, deberá abonarse o ser descontada de bono (excepto en casos de urgencia justificada). Por favor, ten en cuenta que la persona de nuestro equipo ha reservado esa hora para atenderte.
 </p>
 <h5 style="color: black ;margin-bottom: 5px;">
-    Muchas gracias por tu confianza en nosotros!! Tú compromiso es el nuestro
+  Muchas gracias por tu confianza. Tu compromiso es el nuestro.
 </h5>
 @include('emails.footer')

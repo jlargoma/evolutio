@@ -134,7 +134,7 @@ class MailController extends Controller
               $mailData['urlSuelPelv'] = $helpCitaCont->get_urlSuelPelv($oUser,$oRate);
             }
             /***********************************************************/
-        
+            $mailData['remember'] = false;
         
         
             
@@ -159,7 +159,8 @@ class MailController extends Controller
             }
             return 'OK';
 	}
-    public static function sendEmailCita($oDate, $oUser, $oRate,$oCoach,$importe,$subj=null,$calFile=null)
+    
+  public static function sendEmailCitaOLD($oDate, $oUser, $oRate,$oCoach,$importe,$subj=null,$calFile=null)
 	{
             $email    = $oUser->email;
             $dateTime = strtotime($oDate->date);
@@ -171,7 +172,7 @@ class MailController extends Controller
               
               if (!$subj)  $subj = 'Recordatorio de su Cita de Evolutio';
               
-              $sended = Mail::send('emails._remember_citaStripe', [
+              $sended = Mail::send('emails._payment_citaStripe', [
                       'user'    => $oUser,
                       'obj'     => $oDate,
                       'rate'    => $oRate,

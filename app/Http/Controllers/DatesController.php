@@ -293,19 +293,20 @@ class DatesController extends Controller {
         if ($ID)
           $subjet = 'Actualización de su cita';
 
-        MailController::sendEmailCita($oObj, $oUser, $oRate, $coach, $importe, $subjet, $calFile);
+        MailController::sendEmailPayDateByStripe($oObj, $oUser, $oRate, $coach,null, $importe, $subjet, $calFile);
         return redirect('/admin/citas-pt/edit/' . $oObj->id);
       }
       /* -------------------------------------------------------------------- */
       //crear el pago
       $pStripe = null;
-      if (!$ID) {
+      $uRate = $oObj->uRates;
+      $charge = ($uRate) ? $uRate->charges : null;
+      if (!$charge) {
         $data = [$oObj->id, $oUser->id, $importe * 100, $oRate->id];
         $sStripe = new \App\Services\StripeService();
         $rType = \App\Models\TypesRate::find($oRate->type);
         $pStripe = url($sStripe->getPaymentLink($rType->type, $data));
       }
-
       /* -------------------------------------------------------------------- */
       /* -------------------------------------------------------------------- */
       $subjet = 'Nueva cita en Evolutio';
