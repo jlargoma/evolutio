@@ -30,17 +30,17 @@ $csrf_token = csrf_token();
 
 
       @if(isset($filesFisio) && count($filesFisio) )
-      <form action="{{ url('/admin/clientes/delFiles') }}" method="post" id="delFiles">
+      <form action="{{ url('/admin/clientes/delFiles') }}" method="post" id="delFilesFisio">
         <input type="hidden" name="_token" value="{{ $csrf_token }}">
         <input type="hidden" name="uid" value="{{ $user->id }}">
-        <input type="hidden" name="fid" id="fileID">
+        <input type="hidden" name="fid" id="fileIDfisio">
       </form>
       <table class="table">
         @foreach($filesFisio as $k=>$v)
         <tr>
           <th style="width: 80%;">{{$v['name']}}</th>
           <td>
-            <button class="btn btn-danger delFileNutri" title="Borrar Archivo" data-k="{{$k}}"><i class="fa fa-trash"></i></button>
+            <button class="btn btn-danger delFileFisio" title="Borrar Archivo" data-k="{{$k}}"><i class="fa fa-trash"></i></button>
           </td>
           <td>
             <a class="btn btn-info" href="<?= $v['url']; ?>" target="_black" title="Ver Archivo"><i class="fa fa-eye"></i></a>
@@ -184,10 +184,10 @@ $csrf_token = csrf_token();
 
 
 <script>
-  $('.delFileNutri').on('click', function (e) {
+  $('.delFileFisio').on('click', function (e) {
       if (confirm('Eliminar el archivo?')) {
-          $('#fileID').val($(this).data('k'));
-          $('#delFiles').submit();
+          $('#fileIDfisio').val($(this).data('k'));
+          $('#delFilesFisio').submit();
       }
   });
   $('.clearClinicHist').click(function (e) {
