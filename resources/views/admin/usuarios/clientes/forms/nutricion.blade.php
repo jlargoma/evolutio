@@ -43,6 +43,9 @@ $csrf_token = csrf_token();
             <button class="btn btn-danger delFileNutri" title="Borrar Archivo" data-k="{{$k}}"><i class="fa fa-trash"></i></button>
           </td>
           <td>
+            <button class="btn btn-success sendMail" title="Enviar Archivo" data-k="{{$k}}" data-n="{{$v['name']}}"><i class="fa fa-send"></i></button>
+          </td>
+          <td>
             <a class="btn btn-info" href="<?= $v['url']; ?>" target="_black" title="Ver Archivo"><i class="fa fa-eye"></i></a>
           </td>
         </tr>

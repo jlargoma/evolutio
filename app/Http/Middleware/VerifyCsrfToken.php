@@ -19,6 +19,7 @@ class VerifyCsrfToken extends Middleware
         'stripe-events/*',
         'admin/clientes/autosaveNutri',
         'admin/clientes/autosaveValora',
+        'admin/clientes/sendFileTo',
         'admin/autosaveClinicHist',
         'admin/autosaveClinicHistSPelv',
     ];

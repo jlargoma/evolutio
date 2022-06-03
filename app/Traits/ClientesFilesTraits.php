@@ -75,6 +75,28 @@ trait ClientesFilesTraits {
       return back()->withErrors(['Archivo no encontrado']);
     }
   }
+  public function sendFileTo(Request $req) {
+    $uID = $req->input('uid');
+    $fID = $req->input('fid');
+    $emailTo = $req->input('mail');
+    $nameTo = $req->input('nameTo','');
+    $uFile = \App\Models\UsersFiles::find($fID);
+    if ($uFile && $uFile->id_user == $uID) {
+
+
+
+      $path  = storage_path($uFile->file_path);
+      $fName = $uFile->file_name;
+
+      $ext = '';
+      $aName = explode('.',$uFile->file_path);
+      if (is_array($aName)) $ext = $aName[count($aName)-1];
+      $mimeType = mime_content_type($path);
+      return \App\Services\MailsService::sendMailFile($nameTo, $emailTo, $fName, $path, $mimeType, $ext);
+    } else {
+      return 'Archivo no encontrado';
+    }
+  }
 
   /**
    * 

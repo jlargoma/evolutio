@@ -79,6 +79,36 @@
     </div>
   </div>
 </div>
+
+<div class="modal fade in" id="modalSendFile" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="block block-themed block-transparent remove-margin-b">
+        <div class="block-header bg-primary-dark">
+          <ul class="block-options">
+            <li>
+              <button data-dismiss="modal" type="button" ><i class="si si-close "> Cerrar</i></button>
+            </li>
+          </ul>
+        </div>
+        <div class="p-3">
+          <h2>Enviar <span class="filename"></span></h2>
+          <div class="p-3">
+            <label>Nombre:</label>
+            <input type="text" placeholder="Enviar a.." class="form-control" id="nameFileTo">
+          </div>
+          <div class="p-3">
+            <label>Correo electrónico</label>
+            <input type="email" placeholder="Enviar a.." class="form-control" id="emailFileTo">
+          </div>
+          <div class="p-3 text-center"><button type="button" class="sendFileTo btn btn-success"><i class="fa fa-emvolpe"></i>Enviar</button></div>
+          <div class="p-3 text-center alert alert-danger" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="{{ asset('admin-css/assets/js/plugins/datatables/jquery.dataTables.min.js')}}"></script>
 <script src="{{ asset('admin-css/assets/js/pages/base_tables_datatables.js')}}"></script>
 <script type="text/javascript">
@@ -305,6 +335,34 @@
          var href =$(this).attr('href');
          window.history.pushState("", "", newURL+href.slice(1));
        });
+        /**************************************************/
+        var fileSendID = null;
+        $('.sendMail').on('click',function(){
+          fileSendID = $(this).data('k');
+          $('#modalSendFile .filename').text($(this).data('n'));
+          $('#modalSendFile #emailFileTo').val('');
+          $('#modalSendFile #nameFileTo').val('');
+          $('#modalSendFile').modal();
+        });
+        $('#modalSendFile').on('click','.sendFileTo',function(){
+          var posting = $.post('/admin/clientes/sendFileTo', {
+            uid: {{$user->id}},
+            fid: fileSendID,
+            mail: $('#emailFileTo').val(),
+            nameTo: $('#nameFileTo').val()
+          }).done(function (data) {
+            if (data == 'OK'){
+              $('#modalSendFile #emailFileTo').val('');
+              $('#modalSendFile #nameFileTo').val('');
+              $('#modalSendFile .alert').removeClass('alert-danger').addClass('alert-success').text('Archivo enviado');
+            } else {
+              $('#modalSendFile .alert').removeClass('alert-success').addClass('alert-danger').text(data);
+            }
+            $('#modalSendFile .alert').show();
+          });
+        });
+        /**************************************************/
+
     });
 
   @if($detail)

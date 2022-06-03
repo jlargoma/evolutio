@@ -150,22 +150,21 @@ class MailsService {
     }
 
     
-    public static function sendMailFile($oUser,$fName, $file, $fileMine,$fileExtens)
+    public static function sendMailFile($nameTo,$emailTo,$fName, $file, $fileMine,$fileExtens)
 	{
-            $email    = $oUser->email;
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return $email.' no es un mail válido';
+            if (!filter_var($emailTo, FILTER_VALIDATE_EMAIL)) return $emailTo.' no es un mail válido';
             try{
               
-              $subj = 'Nuevo archivo de Evolutio';
+              $subj = 'Evolutio - '.$fName;
               
-              $sended = Mail::send('emails._nutri_file', [
-                  'userName'    => $oUser->name,
+              $sended = Mail::send('emails._files', [
+                  'userName'    => $nameTo,
                   'fName'    => $fName,
                   'tit'=>$subj
-              ], function ($message) use ($email,$subj,$file,$fileMine,$fileExtens,$fName) {
+              ], function ($message) use ($emailTo,$subj,$file,$fileMine,$fileExtens,$fName) {
                       $message->subject($subj);
                       $message->from(config('mail.from.address'), config('mail.from.name'));
-                      $message->to($email);
+                      $message->to($emailTo);
                       $message->attach($file, array(
                             'as' => $fName.'.'.$fileExtens, 
                             'mime' =>$fileMine));
