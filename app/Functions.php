@@ -372,3 +372,13 @@ function priceNoFidelity($val) {
 function orderByDate($a, $b) {
   return strtotime($a["date"]) - strtotime($b["date"]);
 }
+
+function getIP(){
+  if (!empty($_SERVER['HTTP_CLIENT_IP']))
+    return $_SERVER['HTTP_CLIENT_IP'];
+
+  if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) 
+    return $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+
+  return $_SERVER['REMOTE_ADDR'];
+}

@@ -92,7 +92,23 @@ trait ClientesFilesTraits {
       $aName = explode('.',$uFile->file_path);
       if (is_array($aName)) $ext = $aName[count($aName)-1];
       $mimeType = mime_content_type($path);
-      return \App\Services\MailsService::sendMailFile($nameTo, $emailTo, $fName, $path, $mimeType, $ext);
+      $return = \App\Services\MailsService::sendMailFile($nameTo, $emailTo, $fName, $path, $mimeType, $ext);
+
+
+      $log = new \App\Models\LogMailFile();
+
+      $user = Auth::user();
+      $log->user_id = $user->id;
+      $log->customer_id = $uID;
+      $log->file_id = $fID;
+      $log->file_name = $fName;
+      $log->email_to = $emailTo;
+      $log->ip = getIP();
+      $log->result = $return;
+      $log->save();
+
+
+      return $return;
     } else {
       return 'Archivo no encontrado';
     }
