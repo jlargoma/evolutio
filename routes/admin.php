@@ -22,7 +22,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::post('/clientes/sendFileTo', 'UsersController@sendFileTo');
   Route::get('/get-mail/{id?}', 'UsersController@getMail');
   Route::get('/get-rates/{id?}', 'UsersController@getRates');
-  Route::get('/clientes-export', 'UsersController@exportClients');
+  Route::get('/clientes-export/{status?}', 'UsersController@exportClients');
   Route::get('/clientes-unassigned/{idUserRate}', 'RatesController@unassignedRate');
   Route::post('/add-subscr', 'UsersController@addSubscr');
   Route::post('/change-subscr-price', 'UsersController@changeSubscr');

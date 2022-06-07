@@ -540,7 +540,9 @@ trait ClientesTraits {
     return redirect()->action('UsersController@clientes')->withErrors(['No se ha podido desuscribir']);
   }
 
-  public function exportClients() {
+  public function exportClients($status='all') {
+    global $filterStatus;
+    $filterStatus = $status;
     return Excel::download(new UsersExport, 'clientes_'.date('Y_m_d').'.xlsx');
   }
 

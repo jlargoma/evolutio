@@ -83,7 +83,7 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
           FIDELITY
         </button>
       </a>
-      <a href="{{url('/admin/clientes-export')}}" class="inline">
+      <a href="{{url('/admin/clientes-export/'.$status)}}" class="inline">
         <button class="btn btn-md">
           EXPORT EXCEL
         </button>

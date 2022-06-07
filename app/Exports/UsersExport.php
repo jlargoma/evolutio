@@ -4,10 +4,13 @@ namespace App\Exports;
 
 use App\Models\User;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Illuminate\Support\Facades\DB;
 
 class UsersExport implements FromCollection {
 
   public function collection() {
+
+    global $filterStatus;
 
     $array_excel = [];
     $array_excel[] = [
@@ -28,8 +31,27 @@ class UsersExport implements FromCollection {
       }
     }
     
-    
-    $users = \App\Models\User::where('role', 'user')->get();
+    $sqlUsers = null;
+    if ($filterStatus == 'all') {
+      $sqlUsers = User::where('role', 'user');
+    } else {
+      if ($filterStatus == 2){
+        $uPlan = DB::table('user_meta')
+                ->where('meta_key','plan')
+                ->where('meta_value','fidelity')
+                ->pluck('user_id');
+        
+        $sqlUsers = User::select('users.*')->where('role', 'user')
+              ->where('status', 1)
+              ->whereIn('id',$uPlan);
+                
+      } else {
+        $sqlUsers = User::where('role', 'user')
+              ->where('status', $filterStatus);
+      }
+    }
+
+    $users = $sqlUsers->where('role', 'user')->get();
     foreach ($users as $user) {
         $array_excel[] = [
             $user->name,
