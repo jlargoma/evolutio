@@ -25,6 +25,7 @@
                         <h2 class="text-center">INGRESOS POR CAJA / MES</h2>
                     </div>
                     <div class="col-md-12 col-xs-12 push-20">
+                        @if($showFilter)
                         <div class="col-md-4 col-xs-12">
                             <input type="text" id="searchInform" class="form-control" placeholder="Buscar"
                                    style="margin-top: 24px;"/>
@@ -54,7 +55,9 @@
                                 </select>
                             </div>
                         </div>
-                      
+                      @else
+                      <div class="col-md-4 col-xs-12"></div>
+                      @endif
                       <div class="col-md-4 col-xs-12">
                           <h2 class="text-center font-w300">
                               <?php echo convertDateToShow_text($date,true); ?>:

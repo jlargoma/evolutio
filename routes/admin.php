@@ -162,7 +162,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::get('/bonos/{type}/{id}', 'BonosController@disableEnable');
 
   /* informes */
-  Route::get('/informes/cajas', 'InformesController@informeCaja');
+  Route::get('/informes/cajaDiaria', 'InformesController@informeCajaDiaria');
   
   /* Entrenadores */
     Route::get('/horariosEntrenador/{id?}', 'UsersController@horarios');
@@ -237,6 +237,8 @@ Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function () {
   /* Text emails */
   Route::get('/settings_msgs/{key?}', 'SettingsController@messages')->name('settings.msgs');
   Route::post('/settings_msgs/{key?}', 'SettingsController@messages_upd')->name('settings.msgs.upd');
+
+  Route::get('/importarRegistro', 'FunctionalControler@importarRegistro');
   
 });
 
@@ -250,9 +252,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
 //  $output = \Artisan::output();
 //  return $output;
 //}); //->middleware('admin');
-Route::group(['middleware' => 'auth'], function () {
-  Route::get('/importarRegistro', 'FunctionalControler@importarRegistro');
-});
+
   
 Route::group(['middleware' => 'superAdmin'], function () {
   Route::get('/control-contabilidad', 'ControlsControler@contabilidad');

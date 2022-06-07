@@ -98,9 +98,12 @@
                     </li>
                     <?php else: ?>
                       <li class="text-center">
-                        <button id="button-checkCash" class="btn btn-success btn-home" data-toggle="modal" data-target="#checkCash">
+                        <!-- <button id="button-checkCash" class="btn btn-success btn-home" data-toggle="modal" data-target="#checkCash">
                             Caja
-                        </button>
+                        </button> -->
+                        <a href="{{ url('admin/informes/cajaDiaria') }}" class="btn btn-success btn-home">
+                            Caja
+                        </a>
                     </li>
                     <?php endif; ?>
                 </ul>                

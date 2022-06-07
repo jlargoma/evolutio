@@ -584,6 +584,37 @@ class InformesController extends Controller {
             ->sum('import');
     $data['date'] = $date;
     /*     * ************************************************************ */
+    $data['showFilter'] = true;
+    return view('admin.informes.informeCajaMes', $data);
+  }
+
+  public function informeCajaDiaria() {
+
+    $year = getYearActive();
+    $month = date('m');
+    $day = date('d');
+
+    $data = $this->getCharges($year, $month, $day, null, 'cash');
+    $lstMonthsSpanish = lstMonthsSpanish();
+    unset($lstMonthsSpanish[0]);
+    $data['months'] = $lstMonthsSpanish;
+
+    $chargesIDs = [];
+    foreach ($data['charges'] as $c) {
+      $chargesIDs[] = $c->id;
+    }
+    $data['aURates'] = \App\Models\UserRates::whereIn('id_charges', $chargesIDs)
+                    ->pluck('rate_month', 'id_charges')->toArray();
+
+    /*     * ************************************************************ */
+    $date = date('Y-m-d');
+    $data['totalCash'] = Charges::where('import', '!=', 0)
+            ->where('date_payment', '=', $date)
+            ->where('type_payment', 'cash')
+            ->sum('import');
+    $data['date'] = $date;
+    /*     * ************************************************************ */
+    $data['showFilter'] = false;
     return view('admin.informes.informeCajaMes', $data);
   }
 

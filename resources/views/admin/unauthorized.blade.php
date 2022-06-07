@@ -13,7 +13,13 @@
             <div class="panel panel-default divcenter noradius noborder" style="    margin: 6em auto;max-width: 400px; background-color: rgba(255,255,255,0.93);">
                 <h1 style="margin: 1em 0px">Acceso no autorizado</h1>
                 <h4>Ooopps.! Lo siento <b class="text-green"><?php echo $user->name ?></b>, No puedes acceder a esta sección.</h4>
-                <p style="margin: 1em 0px">Prueba a logearte con otro usuario <a href="{{ url('/logout') }}">pincha aquí</a></p>
+                <p style="margin: 1em 0px">
+                Prueba a logearte con otro usuario 
+                <form action="{{ url('/logout') }}" method="POST">
+                    {{ csrf_field() }}
+                    <button class="alert alert-success">pincha aquí</button>
+                </form>
+            </p>
             </div>
         </div>
     </div>
