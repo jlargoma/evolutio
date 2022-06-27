@@ -36,6 +36,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::post('/usuarios/send-valoracion', 'UsersController@sendValoracion');
   Route::get('/see-consent/{id}/{type}', 'UsersController@seeConsent');
   Route::get('/downl-consent/{id}/{type}', 'UsersController@downlConsent');
+  Route::get('/autorizacion/{id}', 'UsersController@downlAutorizacion');
   Route::get('/usuarios/informe/{id}/{tab?}', 'UsersController@informe');
   Route::get('/usuarios/disable/{id}', 'UsersController@disable');
   Route::get('/usuarios/activate/{id}', 'UsersController@activate');

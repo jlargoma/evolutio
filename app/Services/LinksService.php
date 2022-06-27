@@ -55,6 +55,10 @@ class LinksService {
         $code = 3003;
         $link = URL::to('/firmar-contrato/') . '/';
         break;
+      case 'autorizacion':
+        $code = 4004;
+        $link = URL::to('/autorizacion/') . '/';
+        break;
       default :
         return null;
     }

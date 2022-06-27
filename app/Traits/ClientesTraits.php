@@ -348,6 +348,13 @@ trait ClientesTraits {
       $path = storage_path('/app/' . $fileName);
       $sueloPelvico = File::exists($path);
     }
+
+    $fileName = $user->getMetaContent('contrato_autorizacion');
+    $autoInfantil = false;
+    if ($fileName){
+      $path = storage_path('/app/' . $fileName);
+      $autoInfantil = File::exists($path);
+    }
     
     //----------------------//
     // TARIFAS FIDELITY
@@ -426,6 +433,7 @@ trait ClientesTraits {
         'tab' => $tab,
         'fisioIndiba' => $fisioIndiba,
         'sueloPelvico' => $sueloPelvico,
+        'autoInfantil' => $autoInfantil,
         'invoices' => $invoices,
         'totalInvoice' => $totalInvoice,
         'invoiceModal' => $invoiceModal,
@@ -650,6 +658,31 @@ trait ClientesTraits {
         
     $pdf = \Barryvdh\DomPDF\Facade::loadHTML($view);
     return $pdf->download('invoice.pdf');
+        
+  }
+
+  function downlAutorizacion($uid) {
+
+    $oUser = User::find($uid);
+    if (!$oUser){
+      abort(404);
+      exit();
+    }
+    $fileName = $oUser->getMetaContent('contrato_autorizacion');
+    if ($fileName){
+      $path = storage_path('/app/' . $fileName);
+      if(File::exists($path)){
+        $file = File::get($path);
+        $type = File::mimeType($path);
+
+        $response = \Response::make($file, 200);
+        $response->header("Content-Type", $type);
+
+        return $response;
+      }
+    }
+
+    abort(404);
         
         
   }

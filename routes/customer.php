@@ -34,6 +34,8 @@ Route::post('/historia-clinica', 'PollController@setCliHistory');
 Route::get('/historia-clinica-suelo-pelvico/{token}/{control}', 'PollController@formCliHistorySPelv');
 Route::post('/historia-clinica-suelo-pelvico', 'PollController@setCliHistorySPelv');
 
+Route::get('/autorizacion/{token}/{control}', 'CustomerController@formAutInfantil');
+Route::post('/autorizacion', 'CustomerController@signAutInfantil');
 
 
 

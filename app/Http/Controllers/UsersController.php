@@ -525,6 +525,10 @@ class UsersController extends Controller {
         $doc = 'CONSENTIMIENTO-SUELO-PELVICO.pdf';
         $subject = 'Firma de consentimiento';
         break;
+      case 'autorizacion':
+        $tit = 'Autorización Infantil';
+        $subject = 'Firma de Autorización Infantil';
+        break;
       case 'contrato':
         
         $uPlan = $oUser->getPlan();

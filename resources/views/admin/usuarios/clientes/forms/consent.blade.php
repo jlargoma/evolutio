@@ -35,6 +35,18 @@ function btn_downlConsent($uID,$sign,$type){
   <?php endif;
 }
 
+function btn_seeAutoriz($uID,$sign,$type){
+  if($sign): ?>
+    <a href="/admin/autorizacion/{{$uID}}" title="Ver documento" class="btn btn-info" target="_black">
+      <i class="fa fa-eye"></i>
+    </a>
+  <?php else: ?>
+  <button type="button" title="Ver documento" class="btn btn-info" disabled>
+    <i class="fa fa-eye"></i>
+  </button>
+  <?php endif;
+}
+
 ?>
 <h3 class="text-left">CONSENTIMIENTOS</h3>
 <div class="table-responsive">
@@ -119,5 +131,30 @@ function btn_downlConsent($uID,$sign,$type){
     <td class="btnCel">@if($sing_contrato)<button class="btn btn-danger rmContrato" title="Reiniciar contrato" ><i class="fa fa-close"></i></button>@endif</td>
   </tr>
   @endif
+  <tr data-id="autorizacion">
+    <th>AUTORIZACIÓN INFANTIL</th>
+    <td class="btnCel">
+      <button type="button" title="Firmar" class="btn btn-default goContracts">
+        <i class="fa fa-pencil-square"></i> Firmar
+      </button>
+    </td>
+    <td class="btnCel">
+      @if($autoInfantil)
+      <button type="button" title="Firmado" class="btn btn-success">
+        <i class="fa fa-check"></i> Firmado
+      </button>
+      @else
+      <button type="button" title="Firmado" class="btn btn-danger">
+        <i class="fa fa-close"></i> No firmado
+      </button>
+      @endif
+    </td>
+    <td class="btnCel">
+      <button type="button" title="Enviar / Re-enviar mail de autorización Infantil" class="btn btn-info sendConsent">
+        <i class="fa fa-envelope"></i> Enviar
+      </button>
+    </td>
+    <td class="btnCel" ><?php echo btn_seeAutoriz($user->id,$autoInfantil,'autoInfantil'); ?></td>
+  </tr>
 </table>
   </div>

@@ -549,4 +549,128 @@ class CustomerController extends Controller {
     ];
   }
 
+
+  
+/* ------------------------------------------------------*/
+function fieldsAutInfantil(){
+return [
+  'autoriz_lugar',
+  'autoriz_dias_dia',
+  'autoriz_dias_mes',
+  'autoriz_dias_anio',
+  'autoriz_tutor',
+  'autoriz_menor',
+  'autoriz_tutorNIF',
+  'autoriz_menorNIF',
+  'autoriz_tutorFdo',
+  'autoriz_gerenteFdo',
+  'autoriz_ini_dia',
+  'autoriz_ini_mes',
+  'autoriz_ini_anio'
+];
+}
+  function formAutInfantil($code, $control) {
+    $aCode = explode('-', $code);
+    if (count($aCode) != 3)  abort(404);
+    if ($control != getKeyControl($code))  abort(404);
+    $uid = desencriptID($aCode[0]);
+    $oUser = User::find($uid);
+    if (!$oUser) {
+      abort(404);
+      exit();
+    }
+    // check already singed
+    // $fileName = $oUser->getMetaContent('contrato_autorizacion');
+    // if ($fileName){
+    //   $path = storage_path('/app/' . $fileName);
+    //   if(File::exists($path)){
+    //     return redirect('/resultado')->with(['success' => 'Documento ya firmado']);
+    //   }
+    // }
+
+    $fields = $this->fieldsAutInfantil();
+    $data = $oUser->getMetaContentGroups($fields);
+    foreach ($fields as $f)
+      if (!isset($data[$f]))
+        $data[$f] = null;
+
+    $data['autoriz_lugar'] = 'Madrid';
+    $data['autoriz_dias_dia'] = date('d');
+    $data['autoriz_dias_mes'] = getMonthSpanish(date('m'),false);
+    $data['autoriz_dias_anio'] = date('Y');
+    $data['autoriz_menor'] = $oUser->name;
+    $data['autoriz_menorNIF'] = $oUser->dni;
+
+    $data['autoriz_ini_dia'] = $data['autoriz_dias_dia'];
+    $data['autoriz_ini_mes'] = $data['autoriz_dias_mes'];
+    $data['autoriz_ini_anio'] = $data['autoriz_dias_anio'];
+
+
+
+    return view('customers.AutorizacionInfantil.form',[
+      'fields' => $fields,
+      'data' => $data,
+      'user' => $oUser,
+      'code' => $code,
+      'control' => $control,
+  ]);
+  }
+  
+  public function signAutInfantil(Request $req) {
+
+    $code = $req->input('_code');
+    $control = $req->input('_control');
+    $data = \App\Services\LinksService::getLinkData($code,$control);
+    if (!$data){
+      abort(404);
+      exit();
+    }
+    $oUser = User::find($data[0]);
+    if (!$oUser){
+      abort(404);
+      exit();
+    }
+
+    $sign = $req->input('sign');
+    $signTutor = explode(",", $sign)[1];
+    // $signTutor = base64_decode($signTutor);
+
+    $sign = $req->input('sign2');
+    $signGerente = explode(",", $sign)[1];
+    // $signGerente = base64_decode($signGerente);
+    
+    $fields = $this->fieldsAutInfantil();
+    $fData=[];
+    foreach($fields as $f){
+      $fData[$f] = $req->input($f);
+    }
+    
+    $data = ['signGerente'=>$signGerente,'signTutor'=>$signTutor,'data'=>$fData];
+  //  dd($data);
+    
+    //PDF -------------------------------------------
+    $pdf = \App::make('dompdf.wrapper');
+    $pdf->getDomPDF()->set_option("enable_php", true)->setHttpContext(
+        stream_context_create([
+            'ssl' => [
+                'allow_self_signed'=> TRUE,
+                'verify_peer' => FALSE,
+                'verify_peer_name' => FALSE,
+            ]
+        ])
+    );
+    
+    // return view('customers.AutorizacionInfantil.print',$data);
+    $pdf->loadView('customers.AutorizacionInfantil.print',$data);
+    $output = $pdf->output();
+    //return $pdf->stream();
+        
+    $fileName = 'contracts/Autorizacion-'. $oUser->id .'-'.time().'.pdf';
+    $path = storage_path('/app/' . $fileName);
+        
+    $oUser->setMetaContent('contrato_autorizacion',$fileName);
+    $storage = \Illuminate\Support\Facades\Storage::disk('local');
+    $storage->put($fileName, $output);
+    return redirect('/resultado')->with(['success' => 'Firma Guardada']);
+  }
 }
