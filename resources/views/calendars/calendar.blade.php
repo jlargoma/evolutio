@@ -53,6 +53,13 @@ function printEvents($lst){
     }
   }
 }
+function printAvail($availNames){
+  if (count($availNames)){
+    echo '<span class="availName">Disponibles<br/>';
+    echo implode(' / ',$availNames);
+    echo '</span>';
+  }
+}
               
 $thisWeek = date('W');
 ?>
@@ -61,8 +68,8 @@ $thisWeek = date('W');
 $cWeek = (date('W',$days[0]['time']) == $thisWeek) ? 'id="cweek"' : '';
 ?>
 <div class="table-responsive" <?php echo $cWeek; ?>>
-    <table class="table table-calendar">
-        <thead>
+    <table class="table table-calendar closed">
+        <thead class="openCalendar">
             <tr>
                 @foreach($days as $d)
                 <th colspan="2">{{$d['day'].' '.$d['date']}}</th>
@@ -76,15 +83,19 @@ $cWeek = (date('W',$days[0]['time']) == $thisWeek) ? 'id="cweek"' : '';
                 <?php 
                 $dk= $k+1; //corrige -> no hay domingos 
                 $avail = '';
+                $availNames = [];
                 if (isset($avails[$d['time']]) && isset($avails[$d['time']][$i]) && count($avails[$d['time']][$i])){
                   $avail = '';
-                  foreach ($avails[$d['time']][$i] as $cID)
+                  foreach ($avails[$d['time']][$i] as $cID){
                     $avail .='<span class="dateAvail coach_'.$cID.'"></span>';
+                    if (isset($cNames[$cID])){
+                      $availNames[] = $cNames[$cID];
+                    }
+                  }
                 }
-                  
                 ?>
                     @if(isset($times[$dk]) && isset($times[$dk][$i]) && $times[$dk][$i] == 0)
-                    <td class="time not">{{$i}}</td>
+                    <td class="time not">{{$i}}<?php printAvail($availNames)?></td>
                     <td class="not editDate">
                       <div class="lst_events">
                         <div class="availDate"><?= $avail?></div>
@@ -96,7 +107,7 @@ $cWeek = (date('W',$days[0]['time']) == $thisWeek) ? 'id="cweek"' : '';
                       </div>
                     </td>
                     @else
-                    <td class="time addDate" data-date="{{$d['time']}}" data-time="{{$i}}">{{$i}}</td>
+                    <td class="time addDate" data-date="{{$d['time']}}" data-time="{{$i}}">{{$i}}<?php printAvail($availNames)?></td>
                     <td class="editDate">
                       <div class="lst_events">
                       <div class="availDate"><?= $avail?></div>

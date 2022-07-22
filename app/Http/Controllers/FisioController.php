@@ -76,6 +76,7 @@ class FisioController extends Controller {
      */
     public function create($date = null, $time = null) {
       $data = CitasService::get_create($date,$time,'fisio');
+      $data['tColors'] = $this->changeColors($data['tColors']);
       return view('fisioterapia.form', $data);
     }
 
@@ -108,6 +109,7 @@ class FisioController extends Controller {
     public function edit($id) {
       $data = CitasService::get_edit($id);
       if ($data){
+        $data['tColors'] = $this->changeColors($data['tColors']);
         return view('fisioterapia.form',$data);
       } else {
         return $this->create();

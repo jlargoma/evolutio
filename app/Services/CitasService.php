@@ -46,6 +46,20 @@ class CitasService {
       $ecogr = $oDate->getMetaContent('ecogr');
       $indiba = $oDate->getMetaContent('indiba');
       $motive = $oDate->getMetaContent('motive');
+
+      $coachs = User::whereCoachs($oDate->date_type)->where('status', 1)->get();
+      $tColors = [];
+      if ($coachs) {
+          $auxColors = colors();
+          $i = 0;
+          foreach ($coachs as $item) {
+              if (!isset($auxColors[$i]))
+                  $i = 0;
+              $tColors[$item->id] = $auxColors[$i];
+              $i++;
+          }
+      }
+
       return [
           'date' => date('d-m-Y', strtotime($date[0])),
           'time' => intval($date[1]),
@@ -70,6 +84,7 @@ class CitasService {
           'ecogr' => $ecogr,
           'indiba' => $indiba,
           'motive' => $motive,
+          'tColors' => $tColors
       ];
     }
     return null;
@@ -81,6 +96,20 @@ class CitasService {
 
     if ($time > 0 && $time < 10)
       $time = '0' . $time;
+
+    $coachs = User::whereCoachs($type)->where('status', 1)->get();
+    $tColors = [];
+    if ($coachs) {
+        $auxColors = colors();
+        $i = 0;
+        foreach ($coachs as $item) {
+            if (!isset($auxColors[$i]))
+                $i = 0;
+            $tColors[$item->id] = $auxColors[$i];
+            $i++;
+        }
+    }
+
     return [
         'date' => date('d-m-Y', $date),
         'time' => $time,
@@ -100,6 +129,7 @@ class CitasService {
         'coachs' => self::getCoachs($type),
         'blocked' => false,
         'urlBack' => self::get_urlBack($type, date('Y-m-d', $date)),
+        'tColors' => $tColors
     ];
   }
 
@@ -305,6 +335,7 @@ class CitasService {
         'tColors' => $tColors,
         'coachs' => $coachs,
         'coach' => $coach,
+        'cNames' => $cNames,
         'times' => $times,
         'detail' => $detail,
         'avails' => $avails,

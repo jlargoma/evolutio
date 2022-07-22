@@ -182,7 +182,57 @@ jQuery(function () {
           }
         );
         
+      
         
+        @if($id<1)
+        $('body').on('change','#date,#hour',function(){
+          checkAvail();
+        });
+
+        availCoach = [];
+        function checkAvail(){
+          var data = {
+            id: {{$id}},
+            date: $('#date').val(),
+            time: $('#hour').val(),
+            type: 'fisio',
+            _token: '{{csrf_token()}}',
+          };
+          $.post('/admin/citas/checkDispCoaches',data, function(resp) {
+            for(cID in resp){
+              if (resp[cID] == 0 || resp[cID] == 1){
+                availCoach[cID] = '';
+              } else {
+                availCoach[cID] = 's_disable';
+              }
+            }
+            console.log(availCoach);
+          });
+        }
+        checkAvail();
+        @endif
+
+       
+
+        function formatCoach (coach) {
+          // console.log(coach);
+          if (!coach.id) {
+            return coach.text;
+          }
+          var class_css = 's_avail_' + coach.id + ' ';
+          if (typeof availCoach != 'undefined' && typeof availCoach[coach.id] != 'undefined') 
+            class_css += availCoach[coach.id];
+            
+          var $coach = $(
+            '<span class="' + class_css  + '"><b class="cColors coach_' + coach.id + '" /> ' + coach.text + '</span>'
+          );
+          return $coach;
+        };
+        
+        $(".js-select2-coach").select2({
+          templateResult: formatCoach
+        });
+
     });
 
 </script>
@@ -242,6 +292,24 @@ jQuery(function () {
     .ecografo .blue,.indiba .blue{display: none;}
     .ecografo.active .grey,.indiba.active .grey{display: none;}
     .ecografo.active .blue,.indiba.active .blue{display: block;}
+
+    
+    .cColors{
+      width: 10px;
+      height: 10px;
+      background-color: red;
+      display: inline-block;
+      border-radius: 50%;
+    }
+    span.select2-selection.select2-selection--single {
+      padding: 7px;
+    }
+    span.s_disable {
+    text-decoration: line-through;
+}
+    @foreach($tColors as $k=>$v)
+     .coach_{{$k}} {background-color: {{$v}};}
+    @endforeach
     
   @media (max-width: 780px) {  
     a.back {

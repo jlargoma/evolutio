@@ -629,4 +629,71 @@ class DatesController extends Controller {
     return ($useCoach > $useUser) ? $useCoach : $useUser;
   }
 
+
+  public function checkDispCoaches(Request $req) {
+
+    $date = $req->input('date');
+    $time = $req->input('time');
+    $type = $req->input('type');
+
+    // $date = '20-07-2022';
+    // $time = '10';
+    // $type = 'nutri';
+
+
+    $aux = explode('-', $date);
+    if (is_array($aux) && count($aux) == 3) {
+      $date = $aux[2] . '-' . $aux[1] . '-' . $aux[0];
+    }
+
+    $dateCompl = $date . " $time:00:00";
+
+
+    $oCoachs =  \App\Services\CitasService::getCoachs($type)->pluck('id');
+    $aCoachs = [];
+    if($oCoachs){
+      foreach($oCoachs as $d){
+        $aCoachs[$d] = 0;
+      }
+    }
+
+    $week = date('N',strtotime($dateCompl));
+    $coachTimes = \App\Models\CoachTimes::whereIn('id_coach', $oCoachs)->pluck('times', 'id_coach');
+    
+    if ($coachTimes) {
+      foreach ($coachTimes as $idCoach => $t) {
+        $times = json_decode($t, true);
+        if (is_array($times)) {
+          if (isset($times[$week]) && isset($times[$week][$time])){
+            if ($times[$week][$time] == 0) $aCoachs[$idCoach] = 'no';
+          } else {
+            $aCoachs[$idCoach] = 'no';
+          }
+        }
+      }
+    }
+
+    $sqlCoach = Dates::where('date', $dateCompl)->whereIn('id_coach', $oCoachs);
+    $sqlBloq = Dates::where('date', $dateCompl)->whereIn('id_coach', $oCoachs);
+    
+
+    $useCoach = $sqlCoach->get();
+    if($useCoach){
+      foreach($useCoach as $d){
+        if (isset($aCoachs[$d->id_coach]) && is_numeric($aCoachs[$d->id_coach])){
+          $aCoachs[$d->id_coach]++;
+        }
+      }
+    }
+
+    $useCoach = $sqlBloq->where('date_type', $type)->where('blocked', 1)->get();
+
+    if($useCoach){
+      foreach($useCoach as $d){
+        $aCoachs[$d->id_coach] = 'blocked';
+      }
+    }
+
+    return $aCoachs;
+  }
 }

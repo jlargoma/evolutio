@@ -156,7 +156,12 @@
         var week = $('#currentWeek').val();
         goToWeek(week)
     });
-    
+    $('.openCalendar').on('click',function (event) {
+      var table = $(this).closest('table');
+      if (table.hasClass('closed')) table.removeClass('closed')
+      else table.addClass('closed')
+  });
+  
     function goToWeek(week) {
         var type = $('#servSelect').val();
         var month = $('#selectMonth').val();

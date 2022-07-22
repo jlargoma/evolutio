@@ -71,10 +71,10 @@
     </div>
     <div class="col-xs-6 col-md-2 push-20">
       <label for="id_coach">{{$date_type_u}}</label>
-      <select class="js-select2 form-control" id="id_coach" name="id_coach" style="width: 100%; cursor: pointer" data-placeholder="Seleccione coach.." >
+      <select class="js-select2-coach form-control" id="id_coach" name="id_coach" style="width: 100%; cursor: pointer" data-placeholder="Seleccione coach.." >
         <option></option>
         <?php foreach ($coachs as $key => $coach): ?>
-          <option value="<?php echo $coach->id; ?>" <?php if (isset($id_coach) && $id_coach == $coach->id) echo 'selected' ?>>
+          <option value="<?php echo $coach->id; ?>" <?php if (isset($id_coach) && $id_coach == $coach->id) echo 'selected' ?> >
             <?php echo $coach->name; ?>
           </option>
         <?php endforeach ?>

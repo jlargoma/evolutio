@@ -172,6 +172,30 @@ span.dateAvail{
     padding: 3px;
     font-size: 12px;
 }
+.contentCalendar table thead{
+  cursor: pointer;
+}
+.contentCalendar table.closed tbody{
+  display: none;
+}
+.contentCalendar #cweek table.closed tbody{
+  display: contents;
+}
+span.availName {
+  display: none;
+}
+.table-calendar .addDate:hover span.availName {
+  display: inline;
+  border: 1px solid #5c90d2;
+  background-color: #FFF;
+  padding: 4px;
+  border-radius: 7px;
+  position: absolute;
+  color: #000;
+  font-size: 11px;
+  font-weight: bold;
+}
+
 @media only screen and (max-width:769px){
   .table-calendar tbody td.editDate .lst_events div cust{
     min-width: 80px !important;

@@ -145,6 +145,11 @@ $(document).ready(function () {
         location.assign("/admin/citas-pt-week/" + week + "/" + coach + "/" + type);
     }
     
+    $('.openCalendar').on('click',function (event) {
+        var table = $(this).closest('table');
+        if (table.hasClass('closed')) table.removeClass('closed')
+        else table.addClass('closed')
+    });
         
     if (countByCoah){
         for (var key in countByCoah){

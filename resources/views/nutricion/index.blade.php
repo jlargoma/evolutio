@@ -65,8 +65,9 @@
 
         </div>
       </div>
-
+      <div class="contentCalendar">
       @include('calendars.calendar')
+      </div>
     </div>
   </div>
 </div>
@@ -74,7 +75,7 @@
 @endsection
 
 @section('scripts')
-<link rel="stylesheet" href="{{ assetV('css/calendars.css') }}">
+<link rel="stylesheet" href="{{ assetV('css/calendars.css') }}<?= '?v'.time() ?>">
 
 <style>
     @foreach($tColors as $k=>$v)
@@ -112,6 +113,6 @@
   ?>; 
   
 </script>
-<script src="{{assetv('/js/calendar/nutri.js')}}"></script>
+<script src="{{assetv('/js/calendar/nutri.js')}}<?= '?v'.time() ?>"></script>
 <script src="{{assetV('/admin-css/assets/js/toltip.js')}}"></script>
 @endsection

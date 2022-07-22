@@ -65,8 +65,10 @@
 
         </div>
       </div>
-
+      <div class="contentCalendar">
       @include('calendars.calendar')
+      </div>
+
     </div>
   </div>
 </div>
