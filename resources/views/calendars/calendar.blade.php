@@ -68,7 +68,7 @@ $thisWeek = date('W');
 $cWeek = (date('W',$days[0]['time']) == $thisWeek) ? 'id="cweek"' : '';
 ?>
 <div class="table-responsive" <?php echo $cWeek; ?>>
-    <table class="table table-calendar closed">
+    <table class="table table-calendar <?php echo ($cWeek == '') ? 'closed' : '' ?> ">
         <thead class="openCalendar">
             <tr>
                 @foreach($days as $d)

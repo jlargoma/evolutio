@@ -76,7 +76,7 @@
 @endsection
 
 @section('scripts')
-<link rel="stylesheet" href="{{ assetV('css/calendars.css?v2') }}">
+<link rel="stylesheet" href="{{ assetV('css/calendars.css') }}">
 
 <style>
     @foreach($tColors as $k=>$v)

@@ -157,9 +157,9 @@
         goToWeek(week)
     });
     $('.openCalendar').on('click',function (event) {
-      var table = $(this).closest('table');
-      if (table.hasClass('closed')) table.removeClass('closed')
-      else table.addClass('closed')
+      var open = $(this).closest('table').hasClass('closed');
+      $('.contentCalendar .table-calendar').addClass('closed');
+      if (open)  $(this).closest('table').removeClass('closed')
   });
   
     function goToWeek(week) {

@@ -178,9 +178,9 @@ span.dateAvail{
 .contentCalendar table.closed tbody{
   display: none;
 }
-.contentCalendar #cweek table.closed tbody{
+/* .contentCalendar #cweek table.closed tbody{
   display: contents;
-}
+} */
 span.availName {
   display: none;
 }
