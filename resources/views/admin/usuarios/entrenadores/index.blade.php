@@ -99,6 +99,9 @@
                   case 'fisio';
                     echo 'Fisioterapeuta';
                     break;
+                  case 'esthetic';
+                    echo 'Estética';
+                    break;
                 }
                 ?>
               </td>

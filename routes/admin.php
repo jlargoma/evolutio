@@ -110,6 +110,15 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::get('/citas-pt/edit/{id}', 'PTController@edit');
   Route::get('/citas-pt/{month?}/{coach?}/{type?}', 'PTController@index');
   Route::get('/citas-pt-week/{week?}/{coach?}/{type?}', 'PTController@indexWeek');
+   /* Citas estetica */
+   Route::get('/citas-estetica/listado/{coach?}/{type?}', 'EstheticController@listado');
+   Route::get('/citas-estetica/create/{date?}/{time?}', 'EstheticController@create');
+   Route::get('/citas-estetica/informe/{id}', 'EstheticController@informe');
+   Route::get('/citas-estetica/edit/{id}', 'EstheticController@edit');
+   Route::get('/citas-estetica/{month?}/{coach?}/{type?}', 'EstheticController@index');
+   Route::get('/citas-estetica-week/{week?}/{coach?}/{type?}', 'EstheticController@indexWeek');
+   Route::post('/toggleA', 'EstheticController@toggleEcogr');
+   Route::post('/toggleB', 'EstheticController@toggleIndiba');
 
   //Facturas
   Route::get('/facturas/ver/{id}', 'InvoicesController@view')->name('invoice.view');

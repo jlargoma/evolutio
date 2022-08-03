@@ -56,6 +56,7 @@
                             <option value="teach_nutri" <?php if ($user->role == "teach_nutri") echo "selected";?>>Entrenador / Nutricionista</option>
                             <option value="teach_fisio" <?php if ($user->role == "teach_fisio") echo "selected";?>>Entrenador / Fisioterapia</option>
                             <option value="empl" <?php if ($user->role == "empl") echo "selected";?>>Empleado</option>
+                            <option value="esthetic" <?php if ($user->role == "esthetic") echo "selected";?>>Estética</option>
                         </select>
                         <label for="role">Role</label>
                     </div>

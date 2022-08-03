@@ -55,6 +55,7 @@
                             <option value="teach">Entrenador</option>
                             <option value="nutri">Nutricionista</option>
                             <option value="fisio">Fisioterapeuta</option>
+                            <option value="esthetic">Estética</option>
                         </select>
                     </div>
                 </div>

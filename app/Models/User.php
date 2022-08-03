@@ -108,8 +108,11 @@ class User extends Authenticatable
       case 'empl':
         $roles = ['empl'];
         break;
+      case 'esthetic':
+        $roles = ['esthetic'];
+        break;
       default:
-        $roles = ['teach','fisio','nutri','empl','teach_nutri','teach_fisio'];
+        $roles = ['teach','fisio','nutri','empl','teach_nutri','teach_fisio','esthetic'];
         break;
     }
     if ($includeAdmin) $roles[] = 'admin';

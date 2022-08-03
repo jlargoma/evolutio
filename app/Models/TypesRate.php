@@ -26,6 +26,8 @@ class TypesRate extends Model
         'f05'=>'APARATOLOGÍA',
         'f06'=>'MEDICO',
         'v01'=>'VALORACIÓN INICIAL',
+        'e01'=>'FACIAL',
+        'e02'=>'CORPORAL',
       ];
       
           

@@ -661,6 +661,7 @@ class DatesController extends Controller {
     $coachTimes = \App\Models\CoachTimes::whereIn('id_coach', $oCoachs)->pluck('times', 'id_coach');
     
     if ($coachTimes) {
+      $time = intval($time);
       foreach ($coachTimes as $idCoach => $t) {
         $times = json_decode($t, true);
         if (is_array($times)) {
