@@ -240,6 +240,8 @@ class DatesController extends Controller {
         return redirect('/admin/citas-nutricion/edit/' . $oObj->id);
       if ($type == 'fisio')
         return redirect('/admin/citas-fisioterapia/edit/' . $oObj->id);
+      if ($type == 'esthetic')
+        return redirect('/admin/citas-estetica/edit/' . $oObj->id);
     }
 
 
@@ -275,6 +277,9 @@ class DatesController extends Controller {
           break;
         case 'pt':
           $icsDetail .= 'Entrenador ';
+          break;
+        case 'esthetic':
+          $icsDetail .= 'Estética ';
           break;
       }
       $icsDetail .= $coach->name;
@@ -320,6 +325,8 @@ class DatesController extends Controller {
         return redirect('/admin/citas-nutricion/edit/' . $oObj->id);
       if ($type == 'fisio')
         return redirect('/admin/citas-fisioterapia/edit/' . $oObj->id);
+      if ($type == 'esthetic')
+        return redirect('/admin/citas-estetica/edit/' . $oObj->id);
     }
   }
 
@@ -407,6 +414,10 @@ class DatesController extends Controller {
           break;
         case 'fisio':
           header('Location: /admin/citas-fisioterapia/edit/' . $id);
+          exit();
+          break;
+        case 'esthetic':
+          header('Location: /admin/citas-estetica/edit/' . $id);
           exit();
           break;
       }
