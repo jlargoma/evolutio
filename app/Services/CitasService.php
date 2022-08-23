@@ -214,7 +214,7 @@ class CitasService {
     }
 
 
-    $oMotives = $sql3->leftJoin('appointment_meta', function ($join) {
+    $motives = $sql3->leftJoin('appointment_meta', function ($join) {
       $join->on('appointment.id', '=', 'appointment_meta.appoin_id');
     })->where('meta_key', 'motive')->pluck('meta_value', 'appoin_id')->toArray();
 
