@@ -196,6 +196,14 @@ span.availName {
   font-weight: bold;
 }
 
+img.equipment {
+  width: 14px;
+  background-color: #FFF;
+  margin: 1px;
+  border-radius: 3px;
+  padding: 1px;
+}
+
 @media only screen and (max-width:769px){
   .table-calendar tbody td.editDate .lst_events div cust{
     min-width: 80px !important;

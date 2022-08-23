@@ -10,13 +10,21 @@ function printEvents($lst){
   asort($aux);
   foreach ($aux as $h){
     foreach ($aux2[$h] as $item){
-    $ecogrf = '';
-    $indiba = '';
+    $equip = '';
     if (isset($item['ecogr']) && $item['ecogr']){
-      $ecogrf = '<img src="/img/ecog.png" class="ecogrf"  title="ecógrafo" alt="ecógrafo">';
+      $equip .= '<img src="/img/ecog.png" class="ecogrf"  title="ecógrafo" alt="ecógrafo">';
     }
     if (isset($item['indiba']) && $item['indiba']){
-      $indiba = '<img src="/img/indiba.png" class="ecogrf" title="indiba" alt="indiba">';
+      $equip .= '<img src="/img/indiba.png" class="ecogrf" title="indiba" alt="indiba">';
+    }
+    if (isset($item['equip_a']) && $item['equip_a']){
+      $equip .= '<img src="/img/maq-estetica-a.png" class="equipment">';
+    }
+    if (isset($item['equip_b']) && $item['equip_b']){
+      $equip .= '<img src="/img/maq-estetica-b.png" class="equipment">';
+    }
+    if (isset($item['equip_c']) && $item['equip_c']){
+      $equip .= '<img src="/img/maq-estetica-c.png" class="equipment">';
     }
     $motive = '';
     if (isset($item['mtv']) && $item['mtv']){
@@ -35,7 +43,7 @@ function printEvents($lst){
         echo '<div '
           . 'data-id="'.$item['id'].'" data-name="" '
           . 'class="eventType_'.$item['coach'].' events group">'
-          .$item['h'].'<cust>  GRUPO '.$ecogrf.$indiba.'</cust><toltip/>'
+          .$item['h'].'<cust>  GRUPO '.$equip.'</cust><toltip/>'
           . '</div>';
         break;
       default :
@@ -45,7 +53,7 @@ function printEvents($lst){
         . 'data-id="'.$item['id'].'" '
         . 'data-name="'. strtolower($item['name']).'" '
         . 'class="eventType_'.$item['coach'].' events">'
-          .$hour.'<cust>'.str_limit($item['name'],10).$ecogrf.$indiba.'</cust>'
+          .$hour.'<cust>'.str_limit($item['name'],10).$equip.'</cust>'
             .'<toltip/>'
         . '</div>';
        break;

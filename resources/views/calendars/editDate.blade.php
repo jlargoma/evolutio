@@ -131,6 +131,26 @@
       </div>
     </div>
     @endif
+
+    @if($id>0 && $date_type == 'esthetic')
+    <div class="block-icons">
+      <div class="equipment <?php echo (isset($equip_a) && $equip_a == 1) ? "active" : ''; ?>" data-id="{{$id}}" data-equipment="equip_a" >
+        <img src="/img/maq-estetica-a-gris.png" class="grey"  alt="Sin">
+        <img src="/img/maq-estetica-a.png" class="blue" >
+      </div>
+      <div class="equipment <?php echo (isset($equip_b) && $equip_b == 1) ? "active" : ''; ?>" data-id="{{$id}}" data-equipment="equip_b" >
+        <img src="/img/maq-estetica-b-gris.png" class="grey"  alt="Sin">
+        <img src="/img/maq-estetica-b.png" class="blue" >
+      </div>
+      <div class="equipment <?php echo (isset($equip_b) && $equip_b == 1) ? "active" : ''; ?>" data-id="{{$id}}" data-equipment="equip_c" >
+        <img src="/img/maq-estetica-c-gris.png" class="grey"  alt="Sin">
+        <img src="/img/maq-estetica-c.png" class="blue" >
+      </div>
+    </div>
+    @endif
+
+
+    
     @endif
     
     </div>  

@@ -47,6 +47,14 @@ class CitasService {
       $indiba = $oDate->getMetaContent('indiba');
       $motive = $oDate->getMetaContent('motive');
 
+      $equip_a = $equip_b = $equip_c = null;
+      if ($oDate->date_type == 'esthetic'){
+        $equip_a = $oDate->getMetaContent('equip_a');
+        $equip_b = $oDate->getMetaContent('equip_b');
+        $equip_c = $oDate->getMetaContent('equip_c');
+      }
+
+
       $coachs = User::whereCoachs($oDate->date_type)->where('status', 1)->get();
       $tColors = [];
       if ($coachs) {
@@ -83,6 +91,9 @@ class CitasService {
           'urlBack' => self::get_urlBack($oDate->date_type, $date[0]),
           'ecogr' => $ecogr,
           'indiba' => $indiba,
+          'equip_a' => $equip_a,
+          'equip_b' => $equip_b,
+          'equip_c' => $equip_c,
           'motive' => $motive,
           'tColors' => $tColors
       ];
@@ -170,24 +181,43 @@ class CitasService {
           $times = [];
       }
     }
+   
+    $sql2 = $sql->clone();
+    $sql3 = $sql->clone();
     $oLst = $sql->get();
-    $oLst_IDs = $sql->pluck('id');
-
     /*  ---------------------------  */
-    $ecogrs = \DB::table('appointment_meta')
-                    ->where('meta_value', 1)
-                    ->where('meta_key', 'ecogr')
-                    ->whereIn('appoin_id', $oLst_IDs)
-                    ->pluck('appoin_id')->toArray();
-    $indiba = \DB::table('appointment_meta')
-                    ->where('meta_value', 1)
-                    ->where('meta_key', 'indiba')
-                    ->whereIn('appoin_id', $oLst_IDs)
-                    ->pluck('appoin_id')->toArray();
-    $motives = \DB::table('appointment_meta')
-                    ->where('meta_key', 'motive')
-                    ->whereIn('appoin_id', $oLst_IDs)
-                    ->pluck('meta_value', 'appoin_id')->toArray();
+    $ecogrs = $indiba = $equip_a = $equip_b = $equip_c = [];
+    $oEqup = $sql2->leftJoin('appointment_meta', function ($join) {
+      $join->on('appointment.id', '=', 'appointment_meta.appoin_id');
+    }) ->where('meta_value', 1)->whereIn('meta_key', ['ecogr', 'indiba', 'equip_a', 'equip_b', 'equip_c'])->get();
+
+    if ($oEqup){
+      foreach ($oEqup as $item){
+        switch($item->meta_key){
+          case 'ecogr':
+            $ecogrs[] = $item->appoin_id;
+            break;
+          case 'indiba':
+            $indiba[] = $item->appoin_id;
+            break;
+          case 'equip_a':
+            $equip_a[] = $item->appoin_id;
+            break;
+          case 'equip_b':
+            $equip_b[] = $item->appoin_id;
+            break;
+          case 'equip_c':
+            $equip_c[] = $item->appoin_id;
+            break;
+        }
+      }
+    }
+
+
+    $oMotives = $sql3->leftJoin('appointment_meta', function ($join) {
+      $join->on('appointment.id', '=', 'appointment_meta.appoin_id');
+    })->where('meta_key', 'motive')->pluck('meta_value', 'appoin_id')->toArray();
+
     /*  ---------------------------  */
 
     $detail = [];
@@ -276,6 +306,9 @@ class CitasService {
             'h' => $hTime,
             'ecogr' => (in_array($item->id, $ecogrs)),
             'indiba' => (in_array($item->id, $indiba)),
+            'equip_a' => (in_array($item->id, $equip_a)),
+            'equip_b' => (in_array($item->id, $equip_b)),
+            'equip_c' => (in_array($item->id, $equip_c)),
             'mtv' => ''
         ];
         $detail[$item->id] = [

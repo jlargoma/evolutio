@@ -288,6 +288,19 @@ class FisioController extends Controller {
       $ecogr = $oDate->getMetaContent('ecogr');
       if ($ecogr && $ecogr == 1) $ecogr = 0;
       else $ecogr = 1;
+
+      if($ecogr == 1){
+        $inUse = Dates::Join('appointment_meta', function ($join) {
+            $join->on('appointment.id', '=', 'appointment_meta.appoin_id');
+            }) ->where('date', $oDate->date)
+            ->where('appointment.id', '!=', $oDate->id)
+            ->where('meta_value', 1)->where('meta_key', 'ecogr')->count();
+        if($inUse>0){
+            return 'Equipamiento en uso';
+        }
+
+      }
+
       
       $oDate->setMetaContent('ecogr',$ecogr);
       
@@ -304,6 +317,19 @@ class FisioController extends Controller {
       $indiba = $oDate->getMetaContent('indiba');
       if ($indiba && $indiba == 1) $indiba = 0;
       else $indiba = 1;
+
+      if($indiba == 1){
+        $inUse = Dates::Join('appointment_meta', function ($join) {
+            $join->on('appointment.id', '=', 'appointment_meta.appoin_id');
+            }) ->where('date', $oDate->date)
+            ->where('appointment.id', '!=', $oDate->id)
+            ->where('meta_value', 1)->where('meta_key', 'indiba')->count();
+        if($inUse>0){
+            return 'Equipamiento en uso';
+        }
+
+      }
+
       
       $oDate->setMetaContent('indiba',$indiba);
       

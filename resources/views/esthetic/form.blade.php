@@ -143,16 +143,18 @@ jQuery(function () {
         //    
         });
         
-        $('.ecografo').click(function (e) {
+        $('.equipment').click(function (e) {
           e.preventDefault();
           var that = $(this);
           var id = that.data('id');
+          var equipment = that.data('equipment');
           
           var data = {
               id: id,
+              equipment: equipment,
               _token: '{{csrf_token()}}'
             };
-            var posting = $.post( '/admin/toggleEcogr', data ).done(function( data ) {
+            var posting = $.post( '/admin/toggle/esthetic', data ).done(function( data ) {
                 if (data == 'OK'){
                   if (that.hasClass('active')) that.removeClass('active');
                   else that.addClass('active');
@@ -162,26 +164,6 @@ jQuery(function () {
             });
           }
         );
-        $('.indiba').click(function (e) {
-          e.preventDefault();
-          var that = $(this);
-          var id = that.data('id');
-          
-          var data = {
-              id: id,
-              _token: '{{csrf_token()}}'
-            };
-            var posting = $.post( '/admin/toggleIndiba', data ).done(function( data ) {
-                if (data == 'OK'){
-                  if (that.hasClass('active')) that.removeClass('active');
-                  else that.addClass('active');
-                } else {
-                    alert(data);
-                }
-            });
-          }
-        );
-        
       
         
         @if($id<1)
@@ -273,10 +255,10 @@ jQuery(function () {
       display: none;
     }
     .block-icons{
-      width: 100px;
+      width: 170px;
       margin: 0 auto;
     }
-    .ecografo,.indiba {
+    .ecografo,.indiba,.equipment  {
       border: 1px solid;
       padding: 8px;
       margin: 12px 3px 0;
@@ -284,14 +266,21 @@ jQuery(function () {
       cursor: pointer;
       float: left;
     }
-    .ecografo.active,.indiba.active {
+    .equipment {
+        padding: 4px;
+        min-height: 25px;
+    }
+    .equipment img{
+      width: 100%;
+    }
+    .ecografo.active,.indiba.active,.equipment.active {
         box-shadow: 1px 1px 5px 0px #768fea;
     }
 
-    .ecografo .grey,.indiba .grey{display: block;}
-    .ecografo .blue,.indiba .blue{display: none;}
-    .ecografo.active .grey,.indiba.active .grey{display: none;}
-    .ecografo.active .blue,.indiba.active .blue{display: block;}
+    .ecografo .grey,.indiba .grey,.equipment .grey{display: block;}
+    .ecografo .blue,.indiba .blue,.equipment .blue{display: none;}
+    .ecografo.active .grey,.indiba.active .grey,.equipment.active .grey{display: none;}
+    .ecografo.active .blue,.indiba.active .blue,.equipment.active .blue{display: block;}
 
     
     .cColors{

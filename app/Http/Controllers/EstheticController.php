@@ -278,38 +278,35 @@ class EstheticController extends Controller {
         }
     }
     
-    public function toggleEcogr(Request $request) {
+    public function toggleEquipment(Request $request) {
 
       $id =  $request->input('id');
+      $equipment =  $request->input('equipment');
 
       $oDate = Dates::find($id);
       if (!$oDate) return 'Cita no encontrada';
       
-      $ecogr = $oDate->getMetaContent('ecogr');
-      if ($ecogr && $ecogr == 1) $ecogr = 0;
-      else $ecogr = 1;
+      $obj = $oDate->getMetaContent($equipment);
+      if ($obj && $obj == 1) $obj = 0;
+      else $obj = 1;
       
-      $oDate->setMetaContent('ecogr',$ecogr);
+      if($obj == 1){
+        $inUse = Dates::Join('appointment_meta', function ($join) {
+            $join->on('appointment.id', '=', 'appointment_meta.appoin_id');
+            }) ->where('date', $oDate->date)
+            ->where('appointment.id', '!=', $oDate->id)
+            ->where('meta_value', 1)->where('meta_key', $equipment)->count();
+        if($inUse>0){
+            return 'Equipamiento en uso';
+        }
+
+      }
+      $oDate->setMetaContent($equipment,$obj);
       
       return 'OK';
       
     }
-    public function toggleIndiba(Request $request) {
-
-      $id =  $request->input('id');
-
-      $oDate = Dates::find($id);
-      if (!$oDate) return 'Cita no encontrada';
-      
-      $indiba = $oDate->getMetaContent('indiba');
-      if ($indiba && $indiba == 1) $indiba = 0;
-      else $indiba = 1;
-      
-      $oDate->setMetaContent('indiba',$indiba);
-      
-      return 'OK';
-      
-    }
+   
     
     private function changeColors($tColors){
       $tColors[1716] = '#9b59ff';
