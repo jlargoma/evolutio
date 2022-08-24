@@ -543,6 +543,22 @@ class UsersController extends Controller {
           }
         }
         break;
+      case 'leform':
+          $tit = 'CUESTIONARIO CONSENTIMIENTO INFORMADO';
+          $subject = 'Firma de CUESTIONARIO CONSENTIMIENTO INFORMADO';
+          break;
+      case 'esthetic':
+          $tit = 'CONSENTIMIENTO INFORMADO';
+          $subject = 'Firma de CONSENTIMIENTO INFORMADO';
+          break;
+      case 'peeling':
+            $tit = 'CONSENTIMIENTO PEELING QUÍMICO';
+            $subject = 'Firma de CONSENTIMIENTO PEELING QUÍMICO';
+          break;
+      case 'presoterapia':
+            $tit = 'CONSENTIMIENTO PRESOTERAPIA';
+            $subject = 'Firma de CONSENTIMIENTO PRESOTERAPIA';
+          break;
       default:
         $tit = '';
         $doc = '';

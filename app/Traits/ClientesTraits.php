@@ -333,30 +333,6 @@ trait ClientesTraits {
     $aCoachs = User::whereCoachs('teach')->orderBy('name')->pluck('name', 'id')->toArray();
     $allCoachs = User::getCoachs()->pluck('name', 'id');
     //----------------------//
-    // CONSENTIMIENTOS
-    
-    $fileName = $user->getMetaContent('sign_fisioIndiba');
-    $fisioIndiba = false;
-    if ($fileName){
-      $path = storage_path('/app/' . $fileName);
-      $fisioIndiba = File::exists($path);
-    }
-    
-    $fileName = $user->getMetaContent('sign_sueloPelvico');
-    $sueloPelvico = false;
-    if ($fileName){
-      $path = storage_path('/app/' . $fileName);
-      $sueloPelvico = File::exists($path);
-    }
-
-    $fileName = $user->getMetaContent('contrato_autorizacion');
-    $autoInfantil = false;
-    if ($fileName){
-      $path = storage_path('/app/' . $fileName);
-      $autoInfantil = File::exists($path);
-    }
-    
-    //----------------------//
     // TARIFAS FIDELITY
     $uPlan = $user->getPlan();
     // Already Signed  -------------------------------------------
@@ -431,9 +407,13 @@ trait ClientesTraits {
         'oDates' => $oDates,
         'oNotes' => $oNotes,
         'tab' => $tab,
-        'fisioIndiba' => $fisioIndiba,
-        'sueloPelvico' => $sueloPelvico,
-        'autoInfantil' => $autoInfantil,
+        'fisioIndiba' => $this->getFileSigned($user,'sign_fisioIndiba'),
+        'sueloPelvico' => $this->getFileSigned($user,'sign_sueloPelvico'),
+        'autoInfantil' => $this->getFileSigned($user,'contrato_autorizacion'),
+        'esthetic_esthetic' => $this->getFileSigned($user,'contrato_autorizacion_esthetic'),
+        'esthetic_leform' => $this->getFileSigned($user,'contrato_autorizacion_leform'),
+        'esthetic_peeling' => $this->getFileSigned($user,'contrato_autorizacion_peeling'),
+        'esthetic_presoterapia' => $this->getFileSigned($user,'contrato_autorizacion_presoterapia'),
         'invoices' => $invoices,
         'totalInvoice' => $totalInvoice,
         'invoiceModal' => $invoiceModal,
@@ -449,6 +429,16 @@ trait ClientesTraits {
         'seeClinicalHistorySP'=>$seeClinicalHistorySP,
         'photo'=>$photo
     ]);
+  }
+
+  private function getFileSigned($user,$file){
+    $fileName = $user->getMetaContent($file);
+    $already = false;
+    if ($fileName){
+      $path = storage_path('/app/' . $fileName);
+      $already = File::exists($path);
+    }
+    return $already;
   }
 
   public function addSubscr(Request $request) {
@@ -661,14 +651,16 @@ trait ClientesTraits {
         
   }
 
-  function downlAutorizacion($uid) {
+  function downlAutorizacion($uid,$type='') {
 
     $oUser = User::find($uid);
     if (!$oUser){
       abort(404);
       exit();
     }
-    $fileName = $oUser->getMetaContent('contrato_autorizacion');
+    if ($type == 'autoInfantil')  $fileName = $oUser->getMetaContent('contrato_autorizacion');
+    else $fileName = $oUser->getMetaContent('contrato_autorizacion_'.$type);
+
     if ($fileName){
       $path = storage_path('/app/' . $fileName);
       if(File::exists($path)){

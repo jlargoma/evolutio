@@ -382,3 +382,19 @@ function getIP(){
 
   return $_SERVER['REMOTE_ADDR'];
 }
+
+
+function hQblock($data, $qID, $type = 'f1', $placeholder = ''){
+  $val = isset($data[$qID]) ? $data[$qID] : '';
+?>
+  <span class="inline_<?= $type ?>">
+    <input type="text" id="<?= $qID ?>" name="<?= $qID ?>" value="<?= $val?>" required="" placeholder="<?= $placeholder ?>">
+  </span>
+<?php
+}
+
+function hQDate($data, $qID){
+?>
+  <input size="10" maxlength="11" onKeyUp="this.value = window.inputDate(this.value);" placeholder="DD-MM-YYYY" id="<?= $qID ?>" name="<?= $qID ?>" required="" value="<?= date('d-m-Y');?>">
+<?php
+}

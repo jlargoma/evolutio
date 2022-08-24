@@ -37,7 +37,7 @@ function btn_downlConsent($uID,$sign,$type){
 
 function btn_seeAutoriz($uID,$sign,$type){
   if($sign): ?>
-    <a href="/admin/autorizacion/{{$uID}}" title="Ver documento" class="btn btn-info" target="_black">
+    <a href="/admin/autorizacion/{{$uID}}/{{$type}}" title="Ver documento" class="btn btn-info" target="_black">
       <i class="fa fa-eye"></i>
     </a>
   <?php else: ?>
@@ -46,60 +46,48 @@ function btn_seeAutoriz($uID,$sign,$type){
   </button>
   <?php endif;
 }
-
+function printItem($userID,$firmado,$name,$type='contrat'){
+  ?>
+  <td class="btnCel">
+      <button type="button" title="Firmar" class="btn btn-default goContracts">
+        <i class="fa fa-pencil-square"></i> Firmar
+      </button>
+    </td>
+    <td class="btnCel">
+      @if($firmado)
+      <button type="button" title="Firmado" class="btn btn-success">
+        <i class="fa fa-check"></i> Firmado
+      </button>
+      @else
+      <button type="button" title="Firmado" class="btn btn-danger">
+        <i class="fa fa-close"></i> No firmado
+      </button>
+      @endif
+    </td>
+    <td class="btnCel">
+      <button type="button" title="Enviar / Re-enviar mail de consentimiento" class="btn btn-info sendConsent">
+        <i class="fa fa-envelope"></i> Enviar
+      </button>
+    </td>
+    <?php if($type == 'contrat'): ?>
+      <td class="btnCel"  colspan="2"><?php echo btn_seeConsent($userID,$firmado,$name); ?></td>
+    <?php endif; ?>
+    <?php if($type == 'autoriz'): ?>
+      <td class="btnCel"  colspan="2"><?php echo btn_seeAutoriz($userID,$firmado,$name); ?></td>
+    <?php endif; ?>
+    <?php
+}
 ?>
 <h3 class="text-left">CONSENTIMIENTOS</h3>
 <div class="table-responsive">
 <table class="table">
   <tr data-id="fisioIndiba">
     <th>CONSENTIMIENTO FISIOTERAPIA CON INDIBA</th>
-    <td class="btnCel">
-      <button type="button" title="Firmar" class="btn btn-default goContracts">
-        <i class="fa fa-pencil-square"></i> Firmar
-      </button>
-    </td>
-    <td class="btnCel">
-      @if($fisioIndiba)
-      <button type="button" title="Firmado" class="btn btn-success">
-        <i class="fa fa-check"></i> Firmado
-      </button>
-      @else
-      <button type="button" title="Firmado" class="btn btn-danger">
-        <i class="fa fa-close"></i> No firmado
-      </button>
-      @endif
-    </td>
-    <td class="btnCel">
-      <button type="button" title="Enviar / Re-enviar mail de consentimiento" class="btn btn-info sendConsent">
-        <i class="fa fa-envelope"></i> Enviar
-      </button>
-    </td>
-    <td class="btnCel"  colspan="2"><?php echo btn_seeConsent($user->id,$fisioIndiba,'fisioIndiba'); ?></td>
+    <?php printItem($user->id,$fisioIndiba,'fisioIndiba'); ?>
   </tr>
   <tr data-id="sueloPelvico">
     <th>CONSENTIMIENTO SUELO PELVICO</th>
-    <td class="btnCel">
-      <button type="button" title="Firmar" class="btn btn-default goContracts">
-        <i class="fa fa-pencil-square"></i> Firmar
-      </button>
-    </td>
-    <td class="btnCel">
-      @if($sueloPelvico)
-      <button type="button" title="Firmado" class="btn btn-success">
-        <i class="fa fa-check"></i> Firmado
-      </button>
-      @else
-      <button type="button" title="Firmado" class="btn btn-danger">
-        <i class="fa fa-close"></i> No firmado
-      </button>
-      @endif
-    </td>
-    <td class="btnCel">
-      <button type="button" title="Enviar / Re-enviar mail de consentimiento" class="btn btn-info sendConsent">
-        <i class="fa fa-envelope"></i> Enviar
-      </button>
-    </td>
-    <td class="btnCel" colspan="2"><?php echo btn_seeConsent($user->id,$sueloPelvico,'sueloPelvico'); ?></td>
+    <?php printItem($user->id,$sueloPelvico,'sueloPelvico'); ?>
   </tr>
   @if($uPlan == 'basic' || $uPlan == 'fidelity')
   <tr data-id="contrato">
@@ -133,28 +121,23 @@ function btn_seeAutoriz($uID,$sign,$type){
   @endif
   <tr data-id="autorizacion">
     <th>AUTORIZACIÓN INFANTIL</th>
-    <td class="btnCel">
-      <button type="button" title="Firmar" class="btn btn-default goContracts">
-        <i class="fa fa-pencil-square"></i> Firmar
-      </button>
-    </td>
-    <td class="btnCel">
-      @if($autoInfantil)
-      <button type="button" title="Firmado" class="btn btn-success">
-        <i class="fa fa-check"></i> Firmado
-      </button>
-      @else
-      <button type="button" title="Firmado" class="btn btn-danger">
-        <i class="fa fa-close"></i> No firmado
-      </button>
-      @endif
-    </td>
-    <td class="btnCel">
-      <button type="button" title="Enviar / Re-enviar mail de autorización Infantil" class="btn btn-info sendConsent">
-        <i class="fa fa-envelope"></i> Enviar
-      </button>
-    </td>
-    <td class="btnCel" ><?php echo btn_seeAutoriz($user->id,$autoInfantil,'autoInfantil'); ?></td>
+    <?php printItem($user->id,$autoInfantil,'autoInfantil','autoriz'); ?>
+  </tr>
+  <tr data-id="esthetic">
+    <th>CONSENTIMIENTO INFORMADO SHR</th>
+    <?php printItem($user->id,$esthetic_esthetic,'esthetic','autoriz'); ?>
+  </tr>
+  <tr data-id="leform">
+    <th>LEFORM CONSENTIMIENTO  GET FIT VILLAVICIOSA</th>
+    <?php printItem($user->id,$esthetic_leform,'leform','autoriz'); ?>
+  </tr>
+  <tr data-id="peeling">
+    <th>PEELING QUIMICO CONSENTIMIENTO GET FIT VILLAVICIOSA</th>
+    <?php printItem($user->id,$esthetic_peeling,'peeling','autoriz'); ?>
+  </tr>
+  <tr data-id="presoterapia">
+    <th>PRESOTERAPIA CONSENTIMIENTO GET FIT VILLAVICIOSA</th>
+    <?php printItem($user->id,$esthetic_presoterapia,'presoterapia','autoriz'); ?>
   </tr>
 </table>
   </div>

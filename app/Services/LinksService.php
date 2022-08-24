@@ -59,6 +59,13 @@ class LinksService {
         $code = 4004;
         $link = URL::to('/autorizacion/') . '/';
         break;
+      case 'esthetic':
+      case 'leform':
+      case 'peeling':
+      case 'presoterapia':
+        $code = 5005;
+        $link = URL::to('/autorizacion-'.$type.'/') . '/';
+        break;
       default :
         return null;
     }

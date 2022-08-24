@@ -673,4 +673,128 @@ return [
     $storage->put($fileName, $output);
     return redirect('/resultado')->with(['success' => 'Firma Guardada']);
   }
+
+  /* ------------------------------------------------------*/
+  function formEsthetic($type, $code, $control) {
+      $aCode = explode('-', $code);
+      if (count($aCode) != 3)  abort(404);
+      if ($control != getKeyControl($code))  abort(404);
+      $uid = desencriptID($aCode[0]);
+      $oUser = User::find($uid);
+      if (!$oUser) {
+        abort(404);
+        exit();
+      }
+
+      $fields = [];
+      switch($type){
+        case 'esthetic':
+          $fields = ['Esthetic_esthetic_name','Esthetic_esthetic_dni','Esthetic_esthetic_tut_name','Esthetic_esthetic_tut_dni','Esthetic_esthetic_date','Esthetic_esthetic_time'];
+          break;
+        case 'leform':
+          $fields = ['Esthetic_leform_name','Esthetic_leform_dni','Esthetic_leform_tut_name','Esthetic_leform_tut_dni','Esthetic_leform_date'];
+          break;
+        case 'peeling':
+          $fields = ['Esthetic_peeling_name','Esthetic_peeling_dni','Esthetic_peeling_date'];
+          break;
+        case 'presoterapia':
+          $fields = ['Esthetic_presoterapia_name','Esthetic_presoterapia_dni','Esthetic_presoterapia_date'];
+          break;
+        default:
+          abort(404);
+          exit();
+        break;
+      }
+      $data = $oUser->getMetaContentGroups($fields);
+      foreach ($fields as $f)
+        if (!isset($data[$f]))
+          $data[$f] = null;
+  
+      return view('customers.Esthetic.'.$type.'.form',[
+        'fields' => $fields,
+        'data' => $data,
+        'user' => $oUser,
+        'code' => $code,
+        'control' => $control,
+        'type' => $type,
+    ]);
+    }
+    
+    public function signEsthetic($type, Request $req) {
+  
+      
+      $code = $req->input('_code');
+      $control = $req->input('_control');
+      $data = \App\Services\LinksService::getLinkData($code,$control);
+      if (!$data){
+        abort(404);
+        exit();
+      }
+      $oUser = User::find($data[0]);
+      if (!$oUser){
+        abort(404);
+        exit();
+      }
+  
+      $sign = $req->input('sign');
+      $signMain = explode(",", $sign)[1];
+      // $signMain = base64_decode($signMain);
+  
+      $signTutor = null;
+      $sign = $req->input('sign2');
+      if ($sign)  $signTutor = explode(",", $sign)[1];
+      // $signTutor = base64_decode($signTutor);
+      
+      $fields = [];
+      switch($type){
+        case 'esthetic':
+          $fields = ['Esthetic_esthetic_name','Esthetic_esthetic_dni','Esthetic_esthetic_tut_name','Esthetic_esthetic_tut_dni','Esthetic_esthetic_date','Esthetic_esthetic_time'];
+          break;
+        case 'leform':
+          $fields = ['Esthetic_leform_name','Esthetic_leform_dni','Esthetic_leform_tut_name','Esthetic_leform_tut_dni','Esthetic_leform_date'];
+          break;
+        case 'peeling':
+          $fields = ['Esthetic_peeling_name','Esthetic_peeling_dni','Esthetic_peeling_date'];
+          break;
+        case 'presoterapia':
+          $fields = ['Esthetic_presoterapia_name','Esthetic_presoterapia_dni','Esthetic_presoterapia_date'];
+          break;
+        default:
+          abort(404);
+          exit();
+        break;
+      }
+      $fData=[];
+      foreach($fields as $f){
+        $fData[$f] = $req->input($f);
+      }
+      
+      $data = ['signMain'=>$signMain,'signTutor'=>$signTutor,'data'=>$fData];
+    //  dd($data);
+      
+      //PDF -------------------------------------------
+      $pdf = \App::make('dompdf.wrapper');
+      $pdf->getDomPDF()->set_option("enable_php", true)->setHttpContext(
+          stream_context_create([
+              'ssl' => [
+                  'allow_self_signed'=> TRUE,
+                  'verify_peer' => FALSE,
+                  'verify_peer_name' => FALSE,
+              ]
+          ])
+      );
+      
+      // return view('customers.Esthetic.'.$type.'.print',$data);
+      $pdf->loadView('customers.Esthetic.'.$type.'.print',$data);
+      $output = $pdf->output();
+      //return $pdf->stream();
+          
+      $fileName = 'contracts/Autorizacion-'. $type .'-'. $oUser->id .'-'.time().'.pdf';
+      $path = storage_path('/app/' . $fileName);
+          
+      $oUser->setMetaContent('contrato_autorizacion_'. $type,$fileName);
+      $storage = \Illuminate\Support\Facades\Storage::disk('local');
+      $storage->put($fileName, $output);
+      return redirect('/resultado')->with(['success' => 'Firma Guardada']);
+    }
 }

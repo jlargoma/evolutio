@@ -38,6 +38,8 @@ Route::get('/autorizacion/{token}/{control}', 'CustomerController@formAutInfanti
 Route::post('/autorizacion', 'CustomerController@signAutInfantil');
 
 
+Route::get('/autorizacion-{type}/{token}/{control}', 'CustomerController@formEsthetic');
+Route::post('/autorizacion-{type}', 'CustomerController@signEsthetic');
 
 
 
