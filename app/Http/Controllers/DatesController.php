@@ -321,6 +321,16 @@ class DatesController extends Controller {
       MailController::sendEmailPayDateByStripe($oObj, $oUser, $oRate, $coach, $pStripe, $importe, $subjet, $calFile, $type);
       /* -------------------------------------------------------------------- */
 
+      $roomID = $request->input('id_room');
+      $oObj->setMetaContent('room', $roomID);
+      
+      $equipments = ['ecogr', 'indiba', 'equip_a', 'equip_b', 'equip_c' ];
+      foreach($equipments as $eq){ $oObj->setMetaContent($eq, 0); }
+      
+      $equipments = $request->input('equipments',[]);
+      foreach($equipments as $eq){$oObj->setMetaContent($eq, 1); }
+      /* -------------------------------------------------------------------- */
+
       if ($type == 'nutri')
         return redirect('/admin/citas-nutricion/edit/' . $oObj->id);
       if ($type == 'fisio')
@@ -646,6 +656,7 @@ class DatesController extends Controller {
     $date = $req->input('date');
     $time = $req->input('time');
     $type = $req->input('type');
+    $dateID = $req->input('id');
 
     // $date = '20-07-2022';
     // $time = '10';
@@ -706,6 +717,31 @@ class DatesController extends Controller {
       }
     }
 
-    return $aCoachs;
+
+
+    
+    $equipments = ['ecogr', 'indiba', 'equip_a', 'equip_b', 'equip_c' ];
+    $data = ['room'=>[],'ecogr'=>0, 'indiba'=>0, 'equip_a'=>0, 'equip_b'=>0, 'equip_c'=>0 ];
+    
+    $inUse = Dates::select('meta_key','appointment.id','meta_value')->LeftJoin('appointment_meta', function ($join) {
+          $join->on('appointment.id', '=', 'appointment_meta.appoin_id');
+          }) ->where('date', $dateCompl)
+          ->where('appointment.id', '!=', $dateID)
+          ->where('meta_value', 1)->whereIn('meta_key', $equipments)->get();
+    if ($inUse){
+      foreach($inUse as $i){
+        if (isset($data[$i->meta_key])){
+          $data[$i->meta_key]++;
+        }
+      }
+    }
+
+    $data['room'] = Dates::LeftJoin('appointment_meta', function ($join) {
+      $join->on('appointment.id', '=', 'appointment_meta.appoin_id');
+      })->where('date', $dateCompl)->where('appointment.id', '!=', $dateID)->where('meta_key', 'room')->pluck('meta_value');
+
+    $data['aCoachs'] = $aCoachs;
+
+    return $data;
   }
 }

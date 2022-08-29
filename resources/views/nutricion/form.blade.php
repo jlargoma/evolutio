@@ -183,44 +183,14 @@ jQuery(function () {
         //    
         });
 
-
-        @if($id<1)
-        $('body').on('change','#date,#hour',function(){
-          checkAvail();
-        });
-
-        availCoach = [];
-        function checkAvail(){
-          var data = {
-            id: {{$id}},
-            date: $('#date').val(),
-            time: $('#hour').val(),
-            type: 'nutri',
-            _token: '{{csrf_token()}}',
-          };
-          $.post('/admin/citas/checkDispCoaches',data, function(resp) {
-            for(cID in resp){
-              if (resp[cID] == 0 || resp[cID] == 1){
-                availCoach[cID] = '';
-              } else {
-                availCoach[cID] = 's_disable';
-              }
-            }
-          });
-        }
-        checkAvail();
-        @endif
-
-       
-
         function formatCoach (coach) {
           // console.log(coach);
           if (!coach.id) {
             return coach.text;
           }
           var class_css = 's_avail_' + coach.id + ' ';
-          if (typeof availCoach != 'undefined' && typeof availCoach[coach.id] != 'undefined') 
-            class_css += availCoach[coach.id];
+          if (typeof window.availCoach != 'undefined' && typeof window.availCoach[coach.id] != 'undefined') 
+            class_css += window.availCoach[coach.id];
             
           var $coach = $(
             '<span class="' + class_css  + '"><b class="cColors coach_' + coach.id + '" /> ' + coach.text + '</span>'

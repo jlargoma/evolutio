@@ -30,7 +30,12 @@ function printEvents($lst){
     if (isset($item['mtv']) && $item['mtv']){
       $motive = str_limit($item['mtv'],10);
     }
-    
+
+    $room = '';
+    if (isset($item['room']) && !empty($item['room'])){
+      $room = ' <b>'.$item['room'].'</b>';
+    }
+
     switch ($item['charged']){
       case 2:
         echo '<div '
@@ -43,7 +48,7 @@ function printEvents($lst){
         echo '<div '
           . 'data-id="'.$item['id'].'" data-name="" '
           . 'class="eventType_'.$item['coach'].' events group">'
-          .$item['h'].'<cust>  GRUPO '.$equip.'</cust><toltip/>'
+          .$item['h'].'<cust>  GRUPO '.$equip.$room.'</cust><toltip/>'
           . '</div>';
         break;
       default :
@@ -52,8 +57,9 @@ function printEvents($lst){
         echo '<div '
         . 'data-id="'.$item['id'].'" '
         . 'data-name="'. strtolower($item['name']).'" '
+        . 'data-room="'. $item['room'].'" '
         . 'class="eventType_'.$item['coach'].' events">'
-          .$hour.'<cust>'.str_limit($item['name'],10).$equip.'</cust>'
+          .$hour.'<cust>'.str_limit($item['name'],10).$equip.$room.'</cust>'
             .'<toltip/>'
         . '</div>';
        break;

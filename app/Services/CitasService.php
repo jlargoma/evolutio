@@ -46,6 +46,7 @@ class CitasService {
       $ecogr = $oDate->getMetaContent('ecogr');
       $indiba = $oDate->getMetaContent('indiba');
       $motive = $oDate->getMetaContent('motive');
+      $id_room = $oDate->getMetaContent('room');
 
       $equip_a = $equip_b = $equip_c = null;
       if ($oDate->date_type == 'esthetic'){
@@ -95,7 +96,8 @@ class CitasService {
           'equip_b' => $equip_b,
           'equip_c' => $equip_c,
           'motive' => $motive,
-          'tColors' => $tColors
+          'tColors' => $tColors,
+          'id_room' => $id_room,
       ];
     }
     return null;
@@ -184,9 +186,10 @@ class CitasService {
    
     $sql2 = $sql->clone();
     $sql3 = $sql->clone();
+    $sql4 = $sql->clone();
     $oLst = $sql->get();
     /*  ---------------------------  */
-    $ecogrs = $indiba = $equip_a = $equip_b = $equip_c = [];
+    $ecogrs = $indiba = $equip_a = $equip_b = $equip_c = $rooms = [];
     $oEqup = $sql2->leftJoin('appointment_meta', function ($join) {
       $join->on('appointment.id', '=', 'appointment_meta.appoin_id');
     }) ->where('meta_value', 1)->whereIn('meta_key', ['ecogr', 'indiba', 'equip_a', 'equip_b', 'equip_c'])->get();
@@ -217,6 +220,10 @@ class CitasService {
     $motives = $sql3->leftJoin('appointment_meta', function ($join) {
       $join->on('appointment.id', '=', 'appointment_meta.appoin_id');
     })->where('meta_key', 'motive')->pluck('meta_value', 'appoin_id')->toArray();
+
+    $rooms = $sql4->leftJoin('appointment_meta', function ($join) {
+      $join->on('appointment.id', '=', 'appointment_meta.appoin_id');
+    })->where('meta_key', 'room')->pluck('meta_value', 'appoin_id')->toArray();
 
     /*  ---------------------------  */
 
@@ -260,7 +267,8 @@ class CitasService {
               'h' => $hTime,
               'name' => ($item->is_group) ? 'grupo' : 'bloqueo',
               'ecogr' => false,
-              'mtv' => $mtv
+              'mtv' => $mtv,
+              'room' => ''
           ];
           $detail[$item->id] = [
               'n' => ($item->is_group) ? 'Cita Grupal' : 'bloqueo',
@@ -271,6 +279,7 @@ class CitasService {
               'mc' => '', //Metodo pago
               'dc' => '', // fecha pago
               'd' => $dTime, // fecha 
+              'room' => ''
           ];
           if (($item->is_group)) {
             self::countByCoah($item->id_coach, $month);
@@ -309,7 +318,8 @@ class CitasService {
             'equip_a' => (in_array($item->id, $equip_a)),
             'equip_b' => (in_array($item->id, $equip_b)),
             'equip_c' => (in_array($item->id, $equip_c)),
-            'mtv' => ''
+            'mtv' => '',
+            'room' => isset($rooms[$item->id]) ? $rooms[$item->id] : ''
         ];
         $detail[$item->id] = [
             'n' => $u_name,
@@ -320,6 +330,7 @@ class CitasService {
             'dc' => '', // fecha pago
             'd' => $dTime, // fecha 
             'mtv' => isset($motives[$item->id]) ? $motives[$item->id] : '',
+            'room' => isset($rooms[$item->id]) ? $rooms[$item->id] : ''
         ];
 
         if ($charge) {

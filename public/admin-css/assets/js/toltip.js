@@ -5,6 +5,9 @@ $(document).ready(function () {
     if (data.d) html += '<p>' + data.d + '</p>';
     if (data.cn) html += '<p>' + data.cn + '</p>';
     html += '<p>' + data.p + '</p>';
+    if (data.room)
+      html += '<p>Sala: ' + data.room + '</p>';
+      
     html += '<h4>' + data.s + '</h4>';
     if (data.dc)
       html += '<p>' + data.dc + ' / ' + data.mc + '</p>';
@@ -12,6 +15,7 @@ $(document).ready(function () {
       html += '<p>Cita: ' + data.date + '</p>';
     if (data.mtv)
       html += '<p>Motivo: ' + data.mtv + '</p>';
+    
 
     obj.html(html);
     if (screen.width < 768) {
