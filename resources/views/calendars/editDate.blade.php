@@ -245,6 +245,10 @@
     max-height: 100%;
   }
 
+  .block-icons-form div.active{
+    border: 3px solid #5c90d2;
+  }
+
   .block-icons-form .disable {
     background-color: #f9a6a6;
   }
