@@ -18,6 +18,7 @@ use App\Models\UserRates;
 use App\Models\Charges;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\UsersExport;
+use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 
 trait ClientesTraits {
 
@@ -33,6 +34,7 @@ trait ClientesTraits {
     $detail = [];
     $payments = $noPay = 0;
     $status = isset($request->status) ? $request->status : 1;
+    $fRate = isset($request->fRate) ? $request->fRate : null;
     if ($status == 'all') {
       $sqlUsers = User::where('role', 'user');
     } else {
@@ -52,12 +54,25 @@ trait ClientesTraits {
       }
     }
     $sqlUsers->with('userCoach');
+
+    if ($fRate){
+      $sqlUsers->join('users_rates', function ($join) {
+        $join->on('users.id', '=', 'users_rates.id_user');
+        
+      })->where('users_rates.id_rate',$fRate)
+      ->where('users_rates.rate_year',$year)
+      ->where('users_rates.rate_month',$month)
+      ->select('users.*');
+
+
+    }
+
     $users = $sqlUsers->orderBy('name', 'asc')->get();
-    $userIDs = $sqlUsers->pluck('id');
+    $userIDs = $sqlUsers->pluck('users.id');
     //---------------------------------------------//
     $aRates = [];
     $typeRates = TypesRate::pluck('name','id');
-    $oRates = Rates::all();
+    $oRates = Rates::orderBy('type','desc')->orderBy('name','desc')->get();
 //    $oRates = Rates::whereIn('type', $typeRates)->get();
     $rPrices = $rNames = [];
     if ($oRates) {
@@ -117,6 +132,12 @@ trait ClientesTraits {
     $uPlanPenal =  $sql->pluck('user_id')->toArray();
 //    dd($uPlanPenal);
     /**/
+
+    $aRatesIds = UserRates::where('rate_year', $year)
+            ->where('rate_month', $month)
+            ->select('id_rate', DB::raw('count(*) as total'))
+            ->groupBy('id_rate')->pluck('total','id_rate')->toArray();
+    /**/
     return view('/admin/usuarios/clientes/index', [
         'users' => $users,
         'month' => $month,
@@ -130,6 +151,9 @@ trait ClientesTraits {
         'aCoachs' => $aCoachs,
         'uPlan' => $uPlan,
         'uPlanPenal' => $uPlanPenal,
+        'rNames' => $rNames,
+        'fRate' => $fRate,
+        'aRatesIds' => $aRatesIds,
         'total_pending' => array_sum($arrayPaymentMonthByUser),
     ]);
   }

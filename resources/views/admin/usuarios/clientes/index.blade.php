@@ -88,6 +88,17 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
           EXPORT EXCEL
         </button>
       </a>
+      <select id="filterByRate" class="form-control mt-1" data-url="{{url('/admin/clientes/'.$month)}}">
+        <option value="">Filtrar Por Servicio</option>
+      <?php 
+      
+      foreach ($rNames as $rID => $rName): 
+        $cant = isset($aRatesIds[$rID]) ? $aRatesIds[$rID] : 0;
+      ?>
+      <option value="<?= $rID ?>" <?= ($fRate == $rID) ? 'selected' : '' ?>><?php echo str_replace('<br>', ': ',$rName)." ($cant)";?></option>
+        <?php
+        endforeach;?>
+      </select>
     </div> 
     <div class="col-xs-8 col-md-2 pull-right">
       @if ($noPay > 0)
@@ -126,6 +137,17 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
 @section('scripts')
   <script type="text/javascript">
     var dataTableClient = 1
+    $(document).ready(function () {
+      $('#filterByRate').on('change',function(){
+        var url = $(this).data('url');
+        var val = $(this).val();
+        if (val>0 && val != ''){
+          window.location.href = url+'?fRate='+val;
+
+        }
+      });
+    });
+    
   </script>
     
   <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
