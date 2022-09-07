@@ -62,6 +62,7 @@ trait ClientesTraits {
       })->where('users_rates.id_rate',$fRate)
       ->where('users_rates.rate_year',$year)
       ->where('users_rates.rate_month',$month)
+      ->whereNull('users_rates.deleted_at')
       ->select('users.*');
 
 
