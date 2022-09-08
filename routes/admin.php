@@ -11,6 +11,7 @@ Route::post('/changeActiveYear', 'HomeController@changeActiveYear')->name('years
 Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
 
   /* Clientes */
+  Route::get('/clientes/lstByBonos', 'UsersController@lstByBonos');
   Route::get('/clientes/generar-cobro/{rate}', 'UsersController@clienteRateCharge');
   Route::get('/clientes/{month?}', 'UsersController@clientes');
   Route::post('/clientes/update', 'UsersController@updateCli');

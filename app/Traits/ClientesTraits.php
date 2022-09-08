@@ -18,6 +18,7 @@ use App\Models\UserRates;
 use App\Models\Charges;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\UsersExport;
+use App\Models\UserBonos;
 use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 
 trait ClientesTraits {
@@ -65,7 +66,7 @@ trait ClientesTraits {
       ->whereNull('users_rates.deleted_at')
       ->select('users.*');
 
-
+        
     }
 
     $users = $sqlUsers->orderBy('name', 'asc')->get();
@@ -760,4 +761,87 @@ trait ClientesTraits {
     return $response;
   }
 
+
+  function lstByBonos(Request $req) {
+
+    $rate_type = null;
+    $rate_subf = null;
+    $status = isset($req->status) ? $req->status : 1;
+    if ($status == 'all') {
+      $sqlUsers = User::where('role', 'user');
+    } else {
+        $sqlUsers = User::where('role', 'user')
+              ->where('status', $status);
+    }
+
+    $oUsers = $sqlUsers->orderBy('name', 'asc')->get();
+
+    $today = date('Y-m-d');
+    $uBonos = [];
+    $uBonoRate = [];
+    $cantByRate = [];
+    if ($oUsers){
+      foreach($oUsers as $k=>$u){
+        $sqlBonos = UserBonos::where('user_id',$u->id);
+        if ($rate_type) $sqlBonos->where('rate_type',$rate_type);
+        if ($rate_subf) $sqlBonos->where('rate_subf',$rate_subf);
+        $oBonos = $sqlBonos->get();
+        if ($oBonos){
+          $aux = $aux2 = [];
+          foreach ($oBonos as $b){
+            if ($b->qty<1) continue;
+            
+            $lastPurch =  DB::select('SELECT DATEDIFF("'.$today.'", created_at) AS DateDiff FROM users_bonos_logs where user_bonos_id = '. $b->id.' and incr > 0 ORDER BY created_at DESC LIMIT 1;');
+            if ($lastPurch && isset($lastPurch[0])) $lastPurch = $lastPurch[0]->DateDiff;
+            else $lastPurch = 0;
+            $aux[] = ['q'=>$b->qty,'rtype'=>$b->rate_type,'rsubf'=>$b->rate_subf,'last'=>$lastPurch];
+            if ($b->rate_type){
+              $aux2[] = $b->rate_type;
+              if (isset($cantByRate[$b->rate_type])) $cantByRate[$b->rate_type]++;
+              else $cantByRate[$b->rate_type] = 1;
+            } 
+            if ($b->rate_subf){
+              $aux2[] = $b->rate_subf;
+              if (isset($cantByRate[$b->rate_subf])) $cantByRate[$b->rate_subf]++;
+              else $cantByRate[$b->rate_subf] = 1;
+            } 
+          }
+          $uBonos[$u->id] = $aux;
+          $uBonoRate[$u->id] = array_unique($aux2);
+        } else {
+          unset($oUsers[$k]);
+        }
+      }
+    }
+      //---------------------------------------------//
+  
+    $oUser = new User();
+    $sql = DB::table('user_meta')
+    ->where('meta_key','plan')
+    ->where('meta_value','basic')
+    ->where('created_at','>=',date('Y-m-d', strtotime('-12 months')));
+
+$uPlanPenal =  $sql->pluck('user_id')->toArray();
+
+    //---------------------------------------------//
+    $aRatesIds = [];
+    $typeRates = TypesRate::pluck('name','id');
+
+    $oTRates = TypesRate::getWithsubfamily();
+    $oFamily = TypesRate::subfamily();
+    return view('/admin/usuarios/clientes/lstByBonos', [
+        'users' => $oUsers,
+        'uBonoRate' => $uBonoRate,
+        'uBonos' => $uBonos,
+        'aRatesIds' => $aRatesIds,
+        'typeRates' => $typeRates,
+        'cantByRate' => $cantByRate,
+        'oTRates' => $oTRates,
+        'oFamily' => $oFamily,
+        'status' => $status,
+        'uPlanPenal' => $uPlanPenal,
+        'uPlan' => $oUser->getMetaUserID_byKey('plan','fidelity'),
+       
+    ]);
+  }
 }

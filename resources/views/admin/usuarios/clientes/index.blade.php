@@ -88,6 +88,11 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
           EXPORT EXCEL
         </button>
       </a>
+      <a href="{{url('/admin/clientes/lstByBonos')}}" class="inline">
+        <button class="btn btn-md">
+          Listado x Bonos
+        </button>
+      </a>
       <select id="filterByRate" class="form-control mt-1" data-url="{{url('/admin/clientes/'.$month)}}">
         <option value="">Filtrar Por Servicio</option>
       <?php 
