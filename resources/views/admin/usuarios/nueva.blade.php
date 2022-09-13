@@ -52,9 +52,14 @@
                     <div class="form-material">
                         <label for="role">Role</label>
                         <select class="js-select2 form-control" id="role" name="role" style="width: 100%;" data-placeholder="Seleccione una role" required>
+                            <option value="user" >Usuario/Cliente</option>
+                            <option value="admin" >Administrador</option>
                             <option value="teach">Entrenador</option>
+                            <option value="fisio">Fisioterapia</option>
                             <option value="nutri">Nutricionista</option>
-                            <option value="fisio">Fisioterapeuta</option>
+                            <option value="teach_nutri">Entrenador / Nutricionista</option>
+                            <option value="teach_fisio">Entrenador / Fisioterapia</option>
+                            <option value="empl">Empleado</option>
                             <option value="esthetic">Estética</option>
                         </select>
                     </div>
