@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\CoachTimes;
 use App\Models\Rates;
+use App\Models\Settings;
 
 trait EntrenadoresTraits {
 
@@ -40,6 +41,10 @@ trait EntrenadoresTraits {
         $data['aLiqTotal'][$item->to_user] += $item->import;
       }
     }
+    $aColores = json_decode(Settings::getContent('usr_colors'),true);
+    if (!$aColores) $aColores = [];
+    $data['aColores'] = $aColores;
+
     return view('/admin/usuarios/entrenadores/index', $data);
   }
 
@@ -172,4 +177,27 @@ trait EntrenadoresTraits {
     return redirect()->back()->with(['success' => 'Horario actualizado']);
   }
 
+
+  function updateColor(Request $req){
+
+    $oColors = Settings::findOrCreate('usr_colors');
+
+    $aColors = json_decode($oColors->content);
+    if (!$aColors || !is_array($aColors))
+    $aColors = [];
+
+    $oCachs = User::whereCoachs()->pluck('id');
+   
+    foreach($oCachs as $cid){
+      $color = $req->input('color_'.$cid, null);
+      if ($color){
+        $aColors[$cid] = $color;
+      }
+    }
+    $oColors->name = 'Colores de Usuarios';
+    $oColors->content = json_encode($aColors);
+    $oColors->save();
+    return redirect()->back()->with(['success' => 'Colores actualizados']);
+  
+  }
 }

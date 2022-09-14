@@ -34,6 +34,7 @@ class NutriController extends Controller {
         $rslt = CitasService::get_calendars($start,$finish,$serv,$coach,'nutri',$calendar['days']);
         $rslt['calendar'] = $calendar['days'];
         $rslt['month'] = $month;
+        $rslt['tColors'] = $this->changeColors($rslt['tColors']);
         /*******************************************/
         return view('nutricion.index', $rslt);
     }
@@ -60,6 +61,7 @@ class NutriController extends Controller {
         $rslt['calendar'] = $calendar['days'];
         $rslt['week'] = $week;
         $rslt['time'] = $time;
+        $rslt['tColors'] = $this->changeColors($rslt['tColors']);
         /*******************************************/
         return view('nutricion.indexWeek', $rslt);
     }
@@ -71,6 +73,8 @@ class NutriController extends Controller {
      */
     public function create($date = null, $time = null) {
       $data = CitasService::get_create($date,$time,'nutri');
+      $data['tColors'] = $this->changeColors($data['tColors']);
+
       return view('nutricion.form', $data);
     }
 
@@ -92,6 +96,7 @@ class NutriController extends Controller {
           $data['btnEncuesta'] = $code.'/'.getKeyControl($code);
         }
         /**************************************************** */
+        $data['tColors'] = $this->changeColors($data['tColors']);
         return view('nutricion.form',$data);
       } else {
         return $this->create();
@@ -171,7 +176,7 @@ class NutriController extends Controller {
             }
         }
 
-
+        $tColors = $this->changeColors($tColors);
 
         $rslt = [
             'type' => $type,
@@ -260,5 +265,10 @@ class NutriController extends Controller {
             return redirect()->action('NutriController@index');
         }
     }
+
+
+    private function changeColors($tColors){
+        return User::changeColors($tColors);
+      }
 
 }

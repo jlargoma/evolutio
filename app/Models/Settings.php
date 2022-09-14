@@ -51,6 +51,8 @@ class Settings extends Model {
 
     $obj = new static;
     $obj->key = $key;
+    $obj->name = $key;
+    $obj->value = '';
     $obj->save();
     return $obj;
   }

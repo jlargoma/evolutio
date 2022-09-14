@@ -37,6 +37,10 @@
       <a class="btn btn-info  <?php if ($type == 'desactivados') echo 'active' ?>" href="/admin/entrenadores/desactivados">
         Entrenadores No Activos
       </a>
+      <button class="btn btn-success" data-toggle="modal" data-target="#modalColors" >
+        <i class="fa fa-palete"></i> Colores
+      </button>
+      
     </div>
     </div>
     <div class="table-responsive t-entrenadores">
@@ -192,6 +196,46 @@
           </ul>
         </div>
         <div><iframe id="ifrModal"></iframe></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal  fade in" id="modalColors" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="block block-themed block-transparent remove-margin-b">
+        <div class="block-header bg-primary-dark">
+          <ul class="block-options">
+            <li>
+              <button data-dismiss="modal" type="button" class="reload"><i class="si si-close "> Cerrar y refrescar</i></button>
+            </li>
+          </ul>
+        </div>
+        <div style="padding: 1em; width: 500px; margin: 1em auto;">
+          <form class="form-horizontal" action="{{ url('/admin/usuarios/updateColor') }}" method="post">
+              <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+              <div class="table-responsive t-entrenadores">
+                <table class="table table-bordered table-striped table-header-bg js-table-checkable">
+                  <thead>
+                    <tr>
+                      <th class="text-center">Nombre</th>
+                      <th class="text-center">Tipo</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <?php foreach ($users as $key => $user): ?>
+                      <tr>
+                        <td class="text-left"><b><?php echo ($user->name) ? $user->name : '--'; ?></b></td>
+                        <td class="text-left"><input type="color" name="color_{{$user->id}}" value="<?php echo isset($aColores[$user->id]) ? $aColores[$user->id] : ''?>"> </td>
+                      </tr>
+                      <?php endforeach;?>
+                  </tbody>
+                </table>
+              </div>
+              <button class="btn btn-success">Guardar</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>

@@ -36,6 +36,7 @@ class PTController extends Controller {
         $rslt = CitasService::get_calendars($start,$finish,$serv,$coach,'pt',$calendar['days']);
         $rslt['calendar'] = $calendar['days'];
         $rslt['month'] = $month;
+        $rslt['tColors'] = $this->changeColors($rslt['tColors']);
         /*******************************************/
         return view('citasPT.index', $rslt);
     }
@@ -63,6 +64,7 @@ class PTController extends Controller {
         $rslt['calendar'] = $calendar['days'];
         $rslt['week'] = $week;
         $rslt['time'] = $time;
+        $rslt['tColors'] = $this->changeColors($rslt['tColors']);
         /*******************************************/
         return view('citasPT.indexWeek', $rslt);
     }
@@ -74,6 +76,7 @@ class PTController extends Controller {
      */
     public function create($date = null, $time = null) {
       $data = CitasService::get_create($date,$time,'pt');
+      $data['tColors'] = $this->changeColors($data['tColors']);
       return view('citasPT.form', $data);
     }
 
@@ -108,6 +111,7 @@ class PTController extends Controller {
       if ($data){
         $sValora = new \App\Services\ValoracionService();
         $data['is_valora'] = $sValora->isRate($data['id_serv']);
+        $data['tColors'] = $this->changeColors($data['tColors']);
         return view('citasPT.form',$data);
       } else {
         return $this->create();
@@ -186,7 +190,7 @@ class PTController extends Controller {
                 $i++;
             }
         }
-
+        $tColors = $this->changeColors($tColors);
 
 
         $rslt = [
@@ -275,6 +279,10 @@ class PTController extends Controller {
         } else {
             return redirect()->action('FisioController@index');
         }
+    }
+
+    private function changeColors($tColors){
+        return User::changeColors($tColors);
     }
 
 }

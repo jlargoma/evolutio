@@ -237,6 +237,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function () {
   Route::any('/usuarios/delete/{id}', 'UsersController@delete');
   Route::get('/usuarios/actualizarUsuario/{id}', 'UsersController@actualizarUsuario');
   Route::post('/usuarios/update', 'UsersController@update');
+  Route::post('/usuarios/updateColor', 'UsersController@updateColor');
   Route::post('usuarios/newInforme', 'UsersController@newInforme');
 
   /* Facturacion */

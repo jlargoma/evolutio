@@ -211,4 +211,16 @@ class User extends Authenticatable
   public function getPlan() {
     return $this->getMetaContent('plan');
   }
+
+  static function changeColors($colors){
+    if (!$colors || count($colors)<1) return $colors;
+    $aColores = json_decode(Settings::getContent('usr_colors'),true);
+    if (!$aColores) $aColores = [];
+    foreach($colors as $k=>$v){
+      if (isset($aColores[$k]) && $aColores[$k] != '#000000'){
+        $colors[$k] = $aColores[$k];
+      }
+    }
+    return $colors;
+  }
 }

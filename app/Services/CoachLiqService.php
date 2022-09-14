@@ -36,7 +36,7 @@ class CoachLiqService {
       foreach ($oLiquidations as $liq) {
         if (!isset($aLiq[$liq->id_coach])) {
           $aLiq[$liq->id_coach] = $aux;
-          echo ($liq->id_coach).' -- ';
+        //  echo ($liq->id_coach).' -- ';
         }
         $aux2 = intval(substr($liq->date_liquidation, 5, 2));
         $aLiq[$liq->id_coach][$aux2] += ($liq->commision + $liq->salary);

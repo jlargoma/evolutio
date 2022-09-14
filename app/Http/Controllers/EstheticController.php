@@ -313,7 +313,7 @@ class EstheticController extends Controller {
       $tColors[1971] = '#295d9b';
       $tColors[2347] = '#ffa116';
       $tColors[2504] = '#10cfbd';
-      return $tColors;
+      return User::changeColors($tColors);
     }
 
 }
