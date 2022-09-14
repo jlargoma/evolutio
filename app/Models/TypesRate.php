@@ -28,6 +28,9 @@ class TypesRate extends Model
         'v01'=>'VALORACIÓN INICIAL',
         'e01'=>'FACIAL',
         'e02'=>'CORPORAL',
+        'p01'=>'prod. FISIOTERAPIA',
+        'p02'=>'prod. ESTETICA',
+        'p03'=>'prod. NUTRICIÓN',
       ];
       
           
