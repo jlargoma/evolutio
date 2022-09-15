@@ -651,6 +651,9 @@ trait ClientesTraits {
         case 'fisio':
           $urlBack = '/fisio';
           break;
+        case 'esthetic':
+            $urlBack = '/esthetic';
+            break;
         default :
           $urlBack = '/notes';
           break;
