@@ -450,6 +450,7 @@ trait ClientesTraits {
         'encNutr'=>$sEncNutri->get_enc($user),
         'filesNutri'=>$this->getFileLst($user->id, 'nutri'),
         'filesFisio'=>$this->getFileLst($user->id, 'fisio'),
+        'filesEsthetic'=>$this->getFileLst($user->id, 'esthetic'),
         'filesPT'=>$this->getFileLst($user->id, 'pt'),
         'seeClinicalHistory'=>$seeClinicalHistory,
         'seeClinicalHistorySP'=>$seeClinicalHistorySP,
@@ -625,6 +626,9 @@ trait ClientesTraits {
           break;
         case 'fisio':
           $urlBack = '/fisio';
+          break;
+        case 'esthetic':
+          $urlBack = '/esthetic';
           break;
         default :
           $urlBack = '/notes';
