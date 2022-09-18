@@ -44,6 +44,10 @@ $disableType = ($charge->type_payment == "card" || $charge->type_payment == "bon
           Actualizar
         </button>
       </div>
+      <div class="col-md-12">
+        <label>Nota</label>
+        <input  type="text"  name="note" class="form-control" value="{{ $charge->note}}" />
+      </div>
     </div>
     
   </div>
@@ -118,6 +122,10 @@ $disableType = ($charge->type_payment == "card" || $charge->type_payment == "bon
     </div>
   </div>
   <div class="row mt-2">
+        <label>Nota</label>
+        <input  type="text"  name="note" class="form-control" value="{{ $charge->note}}" />
+      </div>
+  <div class="row mt-2">
     <div class="col-md-4 col-xs-4 text-center">
       <button class="btn btn-info btn-lg " id="open_invoice" type="button" data-id="{{$charge->id}}" title="Factura">
         <i class="fa fa-files-o"></i> Factura
@@ -134,6 +142,7 @@ $disableType = ($charge->type_payment == "card" || $charge->type_payment == "bon
       </button>
     </div>
   </div>
+
 </div>
 </form>
 <div class="text-center mt-1em">

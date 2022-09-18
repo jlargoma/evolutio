@@ -62,12 +62,18 @@
     <?php if($uPlan == 'basic') echo '<i class="fa fa-heart text-danger"></i>'; ?>
   </div>
   <div class="col-md-2 col-xs-6 mt-1">
+    <select name="visa" class="form-control">
+      <option value="0" <?php if($user->visa != 1) echo "selected"; ?>>Sin tarj</option>
+      <option value="1" <?php if($user->visa == 1) echo "selected"; ?>>Con tarj</option>
+    </select>
+  </div>
+  <div class="col-md-1 col-xs-6 mt-1">
     <select name="status" class="form-control">
       <option value="1" <?php if($user->status == 1) echo "selected"; ?>>Activo</option>
       <option value="0" <?php if($user->status != 1) echo "selected"; ?>>No Activo</option>
     </select>
   </div>
-  <div class="col-md-2 mt-1">
+  <div class="col-md-1 col-xs-6 mt-1">
     <button class="btn btn-success" type="submit">
       <i class="fa fa-floppy-o" aria-hidden="true"></i> Actualizar
     </button>

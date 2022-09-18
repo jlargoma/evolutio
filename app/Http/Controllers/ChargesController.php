@@ -82,6 +82,7 @@ class ChargesController extends Controller {
           $charge->import = $request->input('importe');
           if ($request->input('type_payment')) $charge->type_payment = $request->input('type_payment');
           if ($request->input('discount'))  $charge->discount = $request->input('discount');
+          $charge->note = $request->input('note');
           $charge->save();
           
           if (!$charge->bono_id || $charge->bono_id<1){

@@ -211,6 +211,7 @@ class UsersController extends Controller {
     $userToUpdate->dni = $request->input('dni');
     $userToUpdate->address = $request->input('address');
     $userToUpdate->status = $request->input('status');
+    $userToUpdate->visa = $request->input('visa');
       
     if ($request->input('password'))
       $userToUpdate->password = bcrypt($request->input('password'));
