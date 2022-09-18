@@ -43,8 +43,14 @@ class DatesController extends Controller {
         if ($uRate) {
           /* Buscar y elimnar cobro */
           $charge = $uRate->charges;
-          if ($charge)
-            $charge->delete();
+          if ($charge){
+
+            $sBonos = new \App\Services\BonoService();
+            //devuelvo el bono
+            $sBonos->restoreBonoCharge($charge->id);
+
+          }
+          $charge->delete();
           $uRate->delete();
         }
       }
