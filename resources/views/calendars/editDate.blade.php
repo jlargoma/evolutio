@@ -8,8 +8,7 @@
 
   <div class="row">
     <div class="col-xs-12 col-md-4 push-20">
-      @if($id<1) 
-      <label for="id_user" id="tit_user">
+      @if($id<1) <label for="id_user" id="tit_user">
         <i class="fa fa-plus" id="newUser"></i>Cliente
         <span><input type="checkbox" id="is_group" name="is_group">Es un Grupo</span>
         </label>
@@ -102,7 +101,7 @@
   <div class="row">
     <div class="col-xs-4 col-md-2  push-20">
       <label for="id_type_rate">Sala</label>
-      <select class="form-control" id="id_room" name="id_room"  data-placeholder="Seleccione una sala" required>
+      <select class="form-control" id="id_room" name="id_room" data-placeholder="Seleccione una sala" required>
         <option>Sin Sala</option>
         <?php for ($i = 1; $i < 7; $i++) : ?>
           <option value="<?php echo $i; ?>" <?php if (isset($id_room) && $id_room == $i) echo 'selected' ?>>
@@ -112,9 +111,9 @@
       </select>
     </div>
 
-    <div class="col-xs-8 col-md-8  push-20 block-icons-form">
+    <div class="col-xs-8 col-md-7  push-20 block-icons-form">
 
-      @if($date_type=='fisio' ) 
+      @if($date_type=='fisio' )
       <div class=" checkbox_ecogr <?php echo (isset($ecogr) && $ecogr == 1) ? "active" : ''; ?>">
         <input type="checkbox" id="equipments[]" name="equipments[]" value="ecogr" <?php echo (isset($ecogr) && $ecogr == 1) ? "checked" : ''; ?>>
         <img src="/img/ecog-gris.png" class="grey" alt="ecografo">
@@ -125,22 +124,52 @@
       </div>
       @endif
 
-      @if($date_type=='esthetic' ) 
+      @if($date_type=='esthetic' )
       <div class=" checkbox_equip_a  <?php echo (isset($equip_a) && $equip_a == 1) ? "active" : ''; ?>">
-        <input type="checkbox" id="equipments[]" name="equipments[]" value="equip_a"  <?php echo (isset($equip_a) && $equip_a == 1) ? "checked" : ''; ?>>
+        <input type="checkbox" id="equipments[]" name="equipments[]" value="equip_a" <?php echo (isset($equip_a) && $equip_a == 1) ? "checked" : ''; ?>>
         <img src="/img/maq-estetica-a-gris.png" class="grey" alt="">
       </div>
       <div class=" checkbox_equip_b  <?php echo (isset($equip_b) && $equip_b == 1) ? "active" : ''; ?>">
-        <input type="checkbox" id="equipments[]" name="equipments[]" value="equip_b"  <?php echo (isset($equip_b) && $equip_b == 1) ? "checked" : ''; ?>>
+        <input type="checkbox" id="equipments[]" name="equipments[]" value="equip_b" <?php echo (isset($equip_b) && $equip_b == 1) ? "checked" : ''; ?>>
         <img src="/img/maq-estetica-b-gris.png" class="grey" alt="">
       </div>
       <div class=" checkbox_equip_c  <?php echo (isset($equip_c) && $equip_c == 1) ? "active" : ''; ?>">
-        <input type="checkbox" id="equipments[]" name="equipments[]" value="equip_c"  <?php echo (isset($equip_c) && $equip_c == 1) ? "checked" : ''; ?>>
+        <input type="checkbox" id="equipments[]" name="equipments[]" value="equip_c" <?php echo (isset($equip_c) && $equip_c == 1) ? "checked" : ''; ?>>
         <img src="/img/maq-estetica-c-gris.png" class="grey" alt="">
       </div>
       @endif
+    </div>
+    <div class="col-xs-12 col-md-3  push-20 ">
+      <label for="id_type_rate" class="btnExtr">+ Servicios <i class="fa fa-pencil"></i></label>
+      <input type="hidden" name="extrIDs" id="extrIDs" value="<?= $extrs?>">
+      <ul class="lstextr"></ul>
+    </div>
   </div>
-
+  <div class="table-responsive tableExtrs" style="display:none">
+    <table class="table">
+      <thead>
+        <tr>
+          <th colspan="3" class="text-center">Editar Servicios Extras</th>
+        </tr>
+      </thead>
+    <?php 
+      $extrIDs = explode(',',$extrs);
+      foreach ($services as $key => $service): 
+        $extrAsign = in_array($service->id,$extrIDs);
+      ?>
+      <tr>
+        <td><?php echo $service->name; ?></td>
+        <td><?php echo moneda($service->price); ?></td>
+        <td>
+          <button type="button" 
+          class="btn btn-<?= $extrAsign ? 'danger' : 'success'?> editExtrs" 
+          data-k="<?= $service->id;?>"
+          data-price="<?= $service->price;?>"
+          data-name="<?= $service->name;?>"
+          ><?= $extrAsign ? 'X' : '+'?></button></td>
+      </tr>
+      <?php endforeach ?>
+    </table>
   </div>
 </form>
 
@@ -162,7 +191,7 @@
       Duplicar
     </a>
 
-   
+
 
 
 
@@ -245,7 +274,7 @@
     max-height: 100%;
   }
 
-  .block-icons-form div.active{
+  .block-icons-form div.active {
     border: 3px solid #5c90d2;
   }
 
@@ -258,22 +287,44 @@
   select:invalid {
     color: #ff9898;
     font-weight: bold;
+  }
+  label.btnExtr {
+  cursor: pointer;
+  background-color: #46c37b;
+    display: block;
+    padding: 5px;
+    color: #FFF;
+}
+label.btnExtr:hover {
+  background-color: #128944;
+}
+.table-responsive.tableExtrs {
+  max-width: 500px;
+  margin: 1em auto;
+  box-shadow: 1px 1px 4px #000;
+}
+ul.lstextr{
+  padding: 0px;
+}
+ul.lstextr li {
+  font-weight: 800;
+  list-style: "+ ";
 }
 </style>
 
 <script type="text/javascript">
   jQuery(function() {
 
-    $('body').on('change','#date,#hour',function(){
-          window.checkAvail();
-        });
+    $('body').on('change', '#date,#hour', function() {
+      window.checkAvail();
+    });
 
 
     window.availCoach = [];
 
     window.checkAvail = function() {
       var data = {
-        id: {{$id}},
+        id: <?= $id ?>,
         date: $('#date').val(),
         time: $('#hour').val(),
         type: $('#date_type').val(),
@@ -292,14 +343,14 @@
         const aRooms = resp.room;
         $('#id_room option').attr("disabled", false);
         for (rID in aRooms) {
-          $('#id_room option[value="'+aRooms[rID]+'"]').attr("disabled", true);
+          $('#id_room option[value="' + aRooms[rID] + '"]').attr("disabled", true);
         }
 
 
-        const equip = ['ecogr', 'indiba', 'equip_a', 'equip_b', 'equip_c' ];
-        for(i in equip){
-          if (resp[equip[i]]>0) $('.checkbox_'+equip[i]).addClass('disable');
-          else  $('.checkbox_'+equip[i]).removeClass('disable');
+        const equip = ['ecogr', 'indiba', 'equip_a', 'equip_b', 'equip_c'];
+        for (i in equip) {
+          if (resp[equip[i]] > 0) $('.checkbox_' + equip[i]).addClass('disable');
+          else $('.checkbox_' + equip[i]).removeClass('disable');
         }
 
 
@@ -307,5 +358,46 @@
       });
     }
     window.checkAvail();
+
+
+
+    var lstextr = function(){
+      let items = '';
+      let ids = [];
+      $('.editExtrs').each(function(){
+        if ($(this).hasClass('btn-danger')){
+          items += '<li>'+$(this).data('name')+'</li>';
+          ids.push($(this).data('k'));
+        }
+      });
+
+      $('#extrIDs').val(ids.join(','));
+      $('.lstextr').html(items);
+    }
+    
+    lstextr();
+    $('.btnExtr').on('click', function(){
+       $('.tableExtrs').toggle();
+    });
+    $('.editExtrs').on('click', function(){
+      let importeFinal = parseInt($('#importeFinal').val());
+      if ($(this).hasClass('btn-danger')){
+        importeFinal = importeFinal - parseInt($(this).data('price'));
+        $(this).removeClass('btn-danger').addClass('btn-success');
+      } else {
+        importeFinal = importeFinal + parseInt($(this).data('price'));
+        $(this).removeClass('btn-success').addClass('btn-danger');
+      }
+      $('#importeFinal').val(importeFinal);
+      lstextr();
+    });
+
+    $("#id_rate").change(function () {
+      $('#extrIDs').val('');
+      $('.lstextr').html('');
+      $('.editExtrs.btn-danger').removeClass('btn-danger').addClass('btn-success');
+    });
+    
+
   });
 </script>

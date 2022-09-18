@@ -258,6 +258,9 @@ class DatesController extends Controller {
       $coach = User::find($oObj->id_coach);
       $oRate = Rates::find($oObj->id_rate);
 
+      /* ------- BEGIN: extrIDs ------------- */
+      
+      $oObj->setMetaContent('extrs',$request->input('extrIDs'));
       /* ------- BEGIN: prepare iCAL ------------- */
       $uID = str_pad($oObj->id, 7, "0", STR_PAD_LEFT);
       $invite = new \App\Services\InviteICal($uID);
@@ -395,13 +398,16 @@ class DatesController extends Controller {
       $cStripe = $resp[2];
     }//END CARD
     //--- COBRAR POR BONO ---------------------------------------//
+    $bono_qty = 1;
     if ($payType == 'bono') {
       $bonoID = $req->input('id_bono', 0);
       $UserBonos = \App\Models\UserBonos::find($bonoID);
       if (!$UserBonos)
         return redirect()->back()->withErrors(['Bono no encontrado'])->withInput();
 
-      $resp = $UserBonos->check($oUser->id);
+      $extrs = explode(',',$oDates->getMetaContent('extrs'));
+      $bono_qty = 1 + count($extrs); // con servicios extras
+      $resp = $UserBonos->check($oUser->id,$bono_qty);
       if ($resp != 'OK')
         return redirect()->back()
                         ->withErrors([$resp])
@@ -412,7 +418,7 @@ class DatesController extends Controller {
     //---------------------------------//
     //Save payment
     $ChargesDate = new \App\Services\ChargesDateService();
-    $ChargesDate->generatePayment($oDates, $payType, $value, $idStripe, $cStripe, $UserBonos);
+    $ChargesDate->generatePayment($oDates, $payType, $value, $idStripe, $cStripe, $UserBonos,$bono_qty);
     return redirect()->back()->with(['success' => 'Cobro guadado']);
   }
 

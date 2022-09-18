@@ -23,19 +23,20 @@ class UserBonos extends Model
         return $this->hasOne('\App\Models\UserBonosLogs');
     }
 
-    function check($uID){
+    function check($uID, $qty = 1){
       
       if (!$this->id || $this->id<1)
         return 'Debe seleccionar almenos un Bono';
       if($this->user_id != $uID) return 'Bono inválido';
       if ($this->qty<1) return 'Bono no disponible';
+      if ($this->qty<$qty) return 'Bonos insuficientes';
       return 'OK';
     }
     
-    function usar($cID,$date_type,$date){
-      $this->qty = $this->qty-1;
+    function usar($cID,$date_type,$date, $qty = 1){
+      $this->qty = $this->qty-$qty;
       $this->save();
-      $this->saveLogDecr($cID,$date_type, $date);
+      $this->saveLogDecr($cID,$date_type, $date,$qty );
       return 'OK';
     }
     
@@ -55,7 +56,7 @@ class UserBonos extends Model
       
     }
     
-    function saveLogDecr($cID,$date_type, $date){
+    function saveLogDecr($cID,$date_type, $date,$qty=1){
       $total = UserBonosLogs::getTotal($this->id);
       //-----------------------------------//
       $text = 'Cita ';
@@ -74,8 +75,8 @@ class UserBonos extends Model
       $obj = new UserBonosLogs();
       $obj->user_bonos_id = $this->id;
       $obj->charge_id = $cID;
-      $obj->decr = 1;
-      $obj->total = $total-1;
+      $obj->decr = $qty ;
+      $obj->total = $total-$qty ;
       $obj->text = $text;
       $obj->save();
       

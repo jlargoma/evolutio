@@ -15,7 +15,7 @@ class ChargesDateService {
     return $this->generatePayment($oDate, 'card', null,$pID, $cID);
   }
   
-  function generatePayment($oDate, $tpay, $value, $idStripe = null, $cStripe = null, $UserBonos = null) {
+  function generatePayment($oDate, $tpay, $value, $idStripe = null, $cStripe = null, $UserBonos = null, $bono_qty = 1) {
     $uRate = $oDate->uRates;
     $oUser = $uRate->user;
     $oRate = $uRate->rate;
@@ -40,7 +40,7 @@ class ChargesDateService {
     $oCobro->save();
 
     if ($tpay == 'bono' && $UserBonos) {
-      $resp = $UserBonos->usar($oCobro->id, $oDate->date_type, $oDate->date);
+      $resp = $UserBonos->usar($oCobro->id, $oDate->date_type, $oDate->date,$bono_qty);
       if ($resp != 'OK') {
         $oCobro->delete();
         return ['error',$resp];

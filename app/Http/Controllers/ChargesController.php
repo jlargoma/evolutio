@@ -155,7 +155,9 @@ class ChargesController extends Controller {
         $UserBonos = UserBonos::find($bonoID);
         if (!$UserBonos) return back()->withErrors(['Bono no encontrado'])->withInput();
 
-        $resp = $UserBonos->check($uID);
+        $extrs = explode(',',$oDates->getMetaContent('extrs'));
+        $bono_qty = 1 + count($extrs); // con servicios extras
+        $resp = $UserBonos->check($uID,$bono_qty);
         if ($resp != 'OK') 
             return back()->withErrors([$resp])->withInput();
 
@@ -172,7 +174,7 @@ class ChargesController extends Controller {
       }
       if ($tpay == 'bono'){
 
-        $UserBonos->usar($resp[2],$oDates->date_type,$oDates->date);
+        $UserBonos->usar($resp[2],$oDates->date_type,$oDates->date,$bono_qty);
       }
 
       return redirect('/admin/update/cobro/'.$resp[2])->with('success', $resp[1]);

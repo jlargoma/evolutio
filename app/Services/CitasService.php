@@ -68,7 +68,7 @@ class CitasService {
               $i++;
           }
       }
-
+      $extrs = $oDate->getMetaContent('extrs');
       return [
           'date' => date('d-m-Y', strtotime($date[0])),
           'time' => intval($date[1]),
@@ -98,6 +98,7 @@ class CitasService {
           'motive' => $motive,
           'tColors' => $tColors,
           'id_room' => $id_room,
+          'extrs' => $extrs,
       ];
     }
     return null;
@@ -142,7 +143,8 @@ class CitasService {
         'coachs' => self::getCoachs($type),
         'blocked' => false,
         'urlBack' => self::get_urlBack($type, date('Y-m-d', $date)),
-        'tColors' => $tColors
+        'tColors' => $tColors,
+        'extrs'   => []
     ];
   }
 
