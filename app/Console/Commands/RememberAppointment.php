@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\UserRates;
+use App\Models\Rates;
 use App\Models\Dates;
 use Illuminate\Support\Facades\Mail;
 use Log;
@@ -52,6 +53,7 @@ class RememberAppointment extends Command {
       $day = $tomorrow->format('d').' de '.getMonthSpanish($tomorrow->format('n'),false);
       $lst = Dates::whereNull('blocked')
               ->whereDate('date',$date)->get();
+
       if (count($lst)>0){
         foreach ($lst as $item){
           $uRate = $item->uRates;
@@ -83,11 +85,24 @@ class RememberAppointment extends Command {
               $subj = 'Recordatorio de su Cita de Evolutio';
               
               
+              $rateLst = [$oRate->name];
+              $extrs = explode(',',$oDate->getMetaContent('extrs'));
+              if (count($extrs)>0){
+                $rNames = Rates::whereIn('id',$extrs)->pluck('name');
+                if ($rNames){
+                  foreach($rNames as $n){
+                    $rateLst[] = $n;
+                  }
+                }
+  
+              }
+
               
               $mailData = [
                       'user'    => $oUser,
                       'obj'     => $oDate,
                       'rate'    => $oRate,
+                      'rateLst'    => $rateLst,
                       'importe' => $importe,
                       'oCoach'  => $oCoach,
                       'hour'    => $hour,

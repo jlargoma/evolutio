@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests;
+use App\Models\Rates;
 use Illuminate\Support\Facades\Mail;
 use \Carbon\Carbon;
 
@@ -109,10 +110,22 @@ class MailController extends Controller
             $day = date('d',$dateTime).' de '.getMonthSpanish(date('n',$dateTime),false);
             $hour = $oDate->getHour();
             
+            $rateLst = [$oRate->name];
+            $extrs = explode(',',$oDate->getMetaContent('extrs'));
+            if (count($extrs)>0){
+              $rNames = Rates::whereIn('id',$extrs)->pluck('name');
+              if ($rNames){
+                foreach($rNames as $n){
+                  $rateLst[] = $n;
+                }
+              }
+
+            }
             $mailData = [
                       'user'    => $oUser,
                       'obj'     => $oDate,
                       'rate'    => $oRate,
+                      'rateLst' => $rateLst,
                       'importe' => $importe,
                       'oCoach'  => $oCoach,
                       'pStripe' => $pStripe,

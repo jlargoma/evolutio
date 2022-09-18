@@ -19,7 +19,7 @@ $tit = 'Su cita en Evolutio';
   if ($obj->date_type == 'pt')
     echo '- Entrenador: ' . $oCoach->name . '<br>';
   ?>
-  - Servicio: <?php echo $rate->name ?><br>
+  - Servicio: <?php echo implode(', ',$rateLst) ?><br>
   - Fecha: <?php echo $day; ?><br>
   - Hora: <?php echo $hour; ?><br>
   @if($importe)

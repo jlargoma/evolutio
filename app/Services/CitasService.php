@@ -144,7 +144,7 @@ class CitasService {
         'blocked' => false,
         'urlBack' => self::get_urlBack($type, date('Y-m-d', $date)),
         'tColors' => $tColors,
-        'extrs'   => []
+        'extrs'   => ''
     ];
   }
 

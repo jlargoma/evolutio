@@ -18,7 +18,7 @@ $tit = 'Su cita en Evolutio';
     if ($obj->date_type == 'fisio')
       echo '- Fisioterapeuta: '.$oCoach->name.'<br>';  
     ?>
-    - Servicio: <?php echo $rate->name ?><br>
+    - Servicio: <?php echo implode(', ',$rateLst) ?><br>
     - Fecha: <?php echo $day; ?><br>
     - Hora: <?php echo $hour; ?><br>
     - Importe: <?php echo moneda($importe,true,2) ?><br>

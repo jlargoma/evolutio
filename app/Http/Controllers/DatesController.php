@@ -49,8 +49,8 @@ class DatesController extends Controller {
             //devuelvo el bono
             $sBonos->restoreBonoCharge($charge->id);
 
+            $charge->delete();
           }
-          $charge->delete();
           $uRate->delete();
         }
       }

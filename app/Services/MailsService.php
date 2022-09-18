@@ -35,6 +35,7 @@ class MailsService {
     $date = self::convertDateToShow_text($data['fecha_pago']);
     $typePayment = $data['type_payment'];
     $importe = $data['importe'];
+    $rateLst = isset($data['rateLst']) ? implode(', ',$data['rateLst']) : null;
     $email = $oUser->email;
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL))
@@ -44,6 +45,7 @@ class MailsService {
                   'user' => $oUser,
                   'date' => $date,
                   'rate' => $oRate,
+                  'rateLst' => $rateLst,
                   'importe' => $importe,
                   'typePayment' => $typePayment
                       ], function ($message) use ($email) {

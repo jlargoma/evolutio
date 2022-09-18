@@ -11,7 +11,7 @@ Hola! <?php echo $user->name ?><br><br><br>
 
 <p style="color: black;font-size: 18px;">
     - Nombre: <?php echo $user->name ?><br><br>
-    - Tarifa: <?php echo $rate->name ?><br><br>
+    - Tarifa: <?php echo $rateLst ? $rateLst : $rate->name ?><br><br>
     - Fecha : <?php echo $date; ?><br><br>
     - Importe: <?php echo round($importe) ?> €<br><br>
     - Método: <?php 

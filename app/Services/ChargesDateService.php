@@ -67,6 +67,21 @@ class ChargesDateService {
         'type_payment' => $tpay,
         'importe' => $value,
     ];
+
+    $rateLst = [$oRate->name];
+    $extrs = explode(',',$oDate->getMetaContent('extrs'));
+    if (count($extrs)>0){
+      $rNames = Rates::whereIn('id',$extrs)->pluck('name');
+      if ($rNames){
+        foreach($rNames as $n){
+          $rateLst[] = $n;
+        }
+      }
+
+    }
+    $dataMail['rateLst'] = $rateLst;
+
+
     MailsService::sendEmailPayRate($dataMail, $oUser, $oRate);
     return ['OK'];
   }
