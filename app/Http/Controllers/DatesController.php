@@ -405,8 +405,12 @@ class DatesController extends Controller {
       if (!$UserBonos)
         return redirect()->back()->withErrors(['Bono no encontrado'])->withInput();
 
-      $extrs = explode(',',$oDates->getMetaContent('extrs'));
-      $bono_qty = 1 + count($extrs); // con servicios extras
+      $bono_qty = 1;
+      $extrs = $oDates->getMetaContent('extrs');
+      if ($extrs && trim($extrs) != ''){
+        $extrs = explode(',',$extrs);
+        $bono_qty = 1 + count($extrs); // con servicios extras
+      }
       $resp = $UserBonos->check($oUser->id,$bono_qty);
       if ($resp != 'OK')
         return redirect()->back()

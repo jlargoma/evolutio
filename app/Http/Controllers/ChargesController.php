@@ -156,8 +156,13 @@ class ChargesController extends Controller {
         $UserBonos = UserBonos::find($bonoID);
         if (!$UserBonos) return back()->withErrors(['Bono no encontrado'])->withInput();
 
-        $extrs = explode(',',$oDates->getMetaContent('extrs'));
-        $bono_qty = 1 + count($extrs); // con servicios extras
+        $bono_qty = 1;
+        $extrs = $oDates->getMetaContent('extrs');
+        if ($extrs && trim($extrs) != ''){
+          $extrs = explode(',',$extrs);
+          $bono_qty = 1 + count($extrs); // con servicios extras
+        }
+        
         $resp = $UserBonos->check($uID,$bono_qty);
         if ($resp != 'OK') 
             return back()->withErrors([$resp])->withInput();
