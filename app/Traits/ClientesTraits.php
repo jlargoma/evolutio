@@ -801,7 +801,7 @@ trait ClientesTraits {
             $lastPurch =  DB::select('SELECT DATEDIFF("'.$today.'", created_at) AS DateDiff FROM users_bonos_logs where user_bonos_id = '. $b->id.' and incr > 0 ORDER BY created_at DESC LIMIT 1;');
             if ($lastPurch && isset($lastPurch[0])) $lastPurch = $lastPurch[0]->DateDiff;
             else $lastPurch = 0;
-            $aux[] = ['q'=>$b->qty,'rtype'=>$b->rate_type,'rsubf'=>$b->rate_subf,'last'=>$lastPurch];
+            $aux[] = ['q'=>$b->qty,'rtype'=>$b->rate_type,'rsubf'=>$b->rate_subf,'last'=>$lastPurch, 'bu_id'=>$b->id];
             if ($b->rate_type){
               $aux2[] = $b->rate_type;
               if (isset($cantByRate[$b->rate_type])) $cantByRate[$b->rate_type]++;

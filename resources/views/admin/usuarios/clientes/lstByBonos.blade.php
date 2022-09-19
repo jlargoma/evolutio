@@ -180,14 +180,13 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
                     if (isset($typeRates[$b['rtype']])) $name .= $typeRates[$b['rtype']] . ' ';
                     if (isset($oFamily[$b['rsubf']])) $name .= $oFamily[$b['rsubf']] . ' ';
                     $name .= $b['q'] . ' ';
-
                     if ($b['last'] > 180) {
-                      echo '<span class="red">' . $name . '</span> ';
+                      echo '<span class="red lstBonoDetail" data-id="'.$b['bu_id'].'">' . $name . '</span> ';
                     } else {
                       if ($b['last'] > 89) {
-                        echo '<span class="yelow">' . $name . '</span> ';
+                        echo '<span class="yelow lstBonoDetail" data-id="'.$b['bu_id'].'">' . $name . '</span> ';
                       } else {
-                        echo '<span>' . $name . '</span>';
+                        echo '<span class="lstBonoDetail" data-id="'.$b['bu_id'].'">' . $name . '</span>';
                       }
                     }
                   }
@@ -223,6 +222,9 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
   .last span.yelow {
     background-color: #ffc931;
     border-color: #c79300;
+  }
+  .lstBonoDetail{
+    cursor: pointer;
   }
 </style>
 <script type="text/javascript">
@@ -273,6 +275,17 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
       $('#ifrCliente').attr('src','/admin/usuarios/informe/' + id);
       $('#modalCliente').modal('show');
     });
+
+
+    $('.lstBonoDetail').on('click',function(){
+        // $('.lstBonoDetail').removeClass('selected');
+        // $(this).addClass('selected');
+
+        $('#ifrCliente').attr('src','/admin/bonologs/' + $(this).data('id') + '?iframe=1');
+        $('#modalCliente').modal('show');
+
+      })
+
   });
 </script>
 

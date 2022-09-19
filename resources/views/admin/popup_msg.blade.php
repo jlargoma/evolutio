@@ -3,4 +3,7 @@
 @if(isset($msg))
 <p class="alert alert-info tex-center">{{$msg}}</p>
 @endif
+@if(isset($html))
+<?php echo $html;?>
+@endif
 @endsection

@@ -211,6 +211,22 @@ class BonosController extends Controller {
   function printBonologs($id){
     $logs = \App\Models\UserBonosLogs::getLst($id);
     if ($logs){
+      if(isset($_GET['iframe'])){
+        ob_start();
+        include_once app_path().'/Blocks/bonosLogs.php';
+        $html = ob_get_clean();
+        ob_end_clean();
+
+        $html =  '<div id="bonoLog">'.$html.'</div>
+                  <style> #bonoLog{
+                    max-width: 780px;
+                    margin: 1em auto;
+                  }
+                  #bonoLog thead th{
+                    background-color: #d1eadc;
+                  }</style>';
+        return view('admin.popup_msg', ['html' => $html]);
+      }
       include_once app_path().'/Blocks/bonosLogs.php';
     }
   }
