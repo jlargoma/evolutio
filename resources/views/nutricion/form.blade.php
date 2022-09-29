@@ -28,10 +28,7 @@ $date_type = 'nutri'
     <div class="modal-content">
       <div class="block block-themed block-transparent remove-margin-b">
         <div class="block-header bg-primary-dark">
-          <ul class="block-options">
-          <li>
-              <button data-dismiss="modal" type="button" ><i class="si si-close "> Cerrar</i></button>
-            </li>
+          <ul class="block-options">s
             <li>
               <button data-dismiss="modal" type="button" class="reload"><i class="si si-close "> Cerrar y refrescar</i></button>
             </li>
