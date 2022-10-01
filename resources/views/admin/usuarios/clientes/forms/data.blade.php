@@ -34,7 +34,12 @@
     </div>
   </div>
   <div class="col-md-3 box-photo">
-    <img src="/img/camera.webp"  class=" showImg photo" alt="Mostrat foto" style="cursor: pointer;">
+
+  <?php
+    if ($hasPhoto) echo '<img src="/img/camera.webp"  class=" showImg photo" alt="Mostrat foto" style="cursor: pointer;">';
+    else echo '<img src="/img/userIcondefault.png"  class="photo" >';
+  ?>
+    
     <div class="">
       <label class="custom-file-upload">
         <input type="file" name="f_photo">

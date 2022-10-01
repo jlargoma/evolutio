@@ -413,6 +413,13 @@ trait ClientesTraits {
     
     /*-------------------------------------*/
     $photo = $user->getMetaContent('photo');
+    $hasPhoto = false;
+    if ($photo){
+      $path = storage_path('/app/photos/' . $photo);
+      if (File::exists($path)) {
+        $hasPhoto = true;
+      }
+    }
     /********************************/
     return view('/admin/usuarios/clientes/informe', [
         'aRates' => $aRates,
@@ -454,7 +461,8 @@ trait ClientesTraits {
         'filesPT'=>$this->getFileLst($user->id, 'pt'),
         'seeClinicalHistory'=>$seeClinicalHistory,
         'seeClinicalHistorySP'=>$seeClinicalHistorySP,
-        'photo'=>$photo
+        'photo'=>$photo,
+        'hasPhoto'=>$hasPhoto,
     ]);
   }
 
