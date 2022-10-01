@@ -168,7 +168,7 @@ trait ClientesFilesTraits {
 
   function getPhoto($uID) {
 
-    return '';
+    
     $oUser = User::find($uID);
     if (!$oUser) return 'Usuario no encontrado';
     

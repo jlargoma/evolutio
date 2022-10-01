@@ -34,7 +34,7 @@
     </div>
   </div>
   <div class="col-md-3 box-photo">
-    <img src="/admin/photo/{{$user->id}}"  class="photo">
+    <img src="/img/camera.webp"  class=" showImg photo" alt="Mostrat foto" style="cursor: pointer;">
     <div class="">
       <label class="custom-file-upload">
         <input type="file" name="f_photo">
