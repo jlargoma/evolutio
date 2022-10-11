@@ -37,6 +37,7 @@ if(isset($page)){
         @foreach($gType as $k=>$v)
         <option value="{{$k}}">{{$v}}</option>
         @endforeach
+        <option value="distribucion">DISTRIBUCION DE BENEFICIOS</option>
       </select>
     </div>
     <div class="col-lg-2 col-md-3 col-xs-12 mb-1em">

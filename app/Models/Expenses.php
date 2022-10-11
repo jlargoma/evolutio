@@ -32,8 +32,8 @@ class Expenses extends Model
         'servicios_prof' => 'SERVICIOS PROF INDEPENDIENTES',
         'software' => 'SOFTWARE',
         'suministros' => 'SUMINISTROS',
-        'varios' => 'VARIOS',
-        'distribucion' => 'DISTRIBUCION DE BENEFICIOS',
+        'varios' => 'VARIOS'
+        
     ];
   }        
   static function getTypesGroup(){
@@ -47,8 +47,7 @@ class Expenses extends Model
               'suministros' => 'SUMINISTROS',
               'gasto_material' => 'GASTO MATERIAL',
               'marketing_y_publicidad' => 'MARKETING Y PUBLICIDAD',
-              'otros' => 'RESTO DE GASTOS',
-              'distribucion' => 'DISTRIBUCION DE BENEFICIOS',
+              'otros' => 'RESTO DE GASTOS'
             ],
             'groups' => [
                 'alquiler_nave_y_comunidad' => 'alquileres',
@@ -73,8 +72,7 @@ class Expenses extends Model
                 'suministros' => 'suministros',
                 'limpieza' => 'suministros',
                 'impuestos' => 'impuestos',
-                'varios' => 'otros',
-                'distribucion' => 'distribucion',
+                'varios' => 'otros'
             ]];
         
   }

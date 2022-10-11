@@ -47,7 +47,7 @@ class ExpensesController extends Controller {
         $year => $months_empty,
     ];
 
-    $gastos = Expenses::whereYear('date', '=', $year)->get();
+    $gastos = Expenses::whereYear('date', '=', $year)->where('type','!=','distribucion')->get();
     $gType = Expenses::getTypes();
     $gTypeGroup = Expenses::getTypesGroup();
     $gTypeGroup_g = $gTypeGroup['groups'];
@@ -87,7 +87,7 @@ class ExpensesController extends Controller {
       }
     }
     $auxYear = ($year) - 2;
-    $gastos = Expenses::whereYear('date', '=', $auxYear)->get();
+    $gastos = Expenses::whereYear('date', '=', $auxYear)->where('type','!=','distribucion')->get();
     if ($gastos) {
       foreach ($gastos as $g) {
         $month = date('n', strtotime($g->date));
@@ -95,7 +95,7 @@ class ExpensesController extends Controller {
       }
     }
     $auxYear = ($year) - 1;
-    $gastos = Expenses::whereYear('date', '=', $auxYear)->get();
+    $gastos = Expenses::whereYear('date', '=', $auxYear)->where('type','!=','distribucion')->get();
     if ($gastos) {
       foreach ($gastos as $g) {
         $month = date('n', strtotime($g->date));
@@ -250,7 +250,7 @@ class ExpensesController extends Controller {
       return response()->json(['status' => 'wrong']);
     }
 
-    $qry = Expenses::whereYear('date', '=', $year);
+    $qry = Expenses::whereYear('date', '=', $year)->where('type','!=','distribucion');
     if ($month && $month > 0)
       $qry->whereMonth('date', '=', $month);
 
@@ -320,7 +320,7 @@ class ExpensesController extends Controller {
       }
       $payType = Expenses::getTypeCobro();
 
-      $items = Expenses::whereYear('date', '=', $year)
+      $items = Expenses::whereYear('date', '=', $year)->where('type','!=','distribucion')
               ->whereIn('type',$auxTypes)->orderBy('date')->get();
       if (count($items)== 0){
         echo  '<p class="alert alert-warning">Sin Registros</p>';

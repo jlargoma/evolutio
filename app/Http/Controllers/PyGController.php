@@ -143,21 +143,36 @@ class PyGController extends Controller {
     /********************************************************** */
     for ($i = 2; $i > 0; $i--) {
       $yAux = $year - $i;
-      $expensesYear[$yAux] = Expenses::whereYear('date', '=', $yAux)->sum('import');
+      $expensesYear[$yAux] = Expenses::whereYear('date', '=', $yAux)->where('type','!=','distribucion')->sum('import');
+      $repartoYear[$yAux] = Expenses::whereYear('date', '=', $yAux)->where('type','=','distribucion')->sum('import');
     }
-    
-    $oExpenses = Expenses::whereYear('date', '=', $year)->get();
+    /******************* */
+    $oRepartos = Expenses::whereYear('date', '=', $year)->where('type','=','distribucion')->get();
+    $aux = $months_empty;
+    $repartoYear[$year] = 0;
+    if ($oRepartos) {
+      foreach ($oRepartos as $e) {
+        $m = intval(substr($e->date, 5, 2));
+     
+        $aux[$m] += $e->import;
+        $aux[0] += $e->import;
+        $repartoYear[$year] += $e->import;
+      }
+    }
+    $currentY['Repartos'] = $aux;
+
+    /******************* */
+
+    $oExpenses = Expenses::whereYear('date', '=', $year)->where('type','!=','distribucion')->get();
     $aux = $months_empty;
     $expensesYear[$year] = 0;
-    $repartoYear[$year] = 0;
     if ($oExpenses) {
       foreach ($oExpenses as $e) {
         $m = intval(substr($e->date, 5, 2));
      
         $aux[$m] += $e->import;
         $aux[0] += $e->import;
-        if ($e->type == 'distribucion') $repartoYear[$year] += $e->import;
-        else $expensesYear[$year] += $e->import;
+        $expensesYear[$year] += $e->import;
         
         $g = isset($gTypeGroup_g[$e->type]) ? $gTypeGroup_g[$e->type] : 'otros';
         if (isset($ggMonth[$g])){
