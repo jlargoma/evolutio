@@ -273,6 +273,7 @@ class BonosController extends Controller {
     $rate_subf = \App\Models\TypesRate::subfamily();
     $aUB = [];
     $totals = ['i'=>0,'d'=>0,'t'=>0,'p'=>0];
+    $byFamily = [];
     foreach ($oUsrBonos as $ub){
       if (!isset($aUB[$ub->user_id]))
         $aUB[$ub->user_id] = [];
@@ -284,6 +285,8 @@ class BonosController extends Controller {
         if ($l->incr) $data['i'] += $l->incr;
         if ($l->decr) $data['d'] += $l->decr;
         $data['p'] += $l->price;
+        if (!isset($byFamily[$t])) $byFamily[$t] = 0;
+        $byFamily[$t] +=  $l->price;
       }
       
       $totals['i'] += $data['i'];
@@ -293,12 +296,27 @@ class BonosController extends Controller {
       
       $aUB[$ub->user_id][$ub->id] = $data;
     }
-    
+
+    foreach($byFamily as $k=>$v){
+      if (is_integer($k)) continue;
+      $subF = substr($k,0,1);
+      $aux_rateType = 3;
+      switch($subF){
+        case 'f': $aux_rateType = 8; break;
+        case 'v': $aux_rateType = 11; break;
+        case 'e': $aux_rateType = 12; break;
+        case 'p': $aux_rateType = 13; break;
+      }
+      if (!isset($byFamily[$aux_rateType])) $byFamily[$aux_rateType] = $v;
+      $byFamily[$aux_rateType] += $v;
+      unset($byFamily[$k]);
+    }
+
     
     $aUsers = \App\Models\User::whereIN('id',array_keys($aUB))->pluck('name','id')->toArray();
     $aRates = \App\Models\TypesRate::all()->pluck('name','id')->toArray();
     $rateFilter = \App\Models\TypesRate::getWithsubfamily();
-    return view('admin.contabilidad.bonos.by_customer', compact('aUB','aUsers','aRates','rate_subf','rateFilter','filter','totals'));
+    return view('admin.contabilidad.bonos.by_customer', compact('aUB','aUsers','aRates','rate_subf','rateFilter','filter','totals','byFamily'));
   }
   
   function sharedBono_save(Request $req) {

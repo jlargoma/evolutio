@@ -12,12 +12,13 @@ $items = [
     'ingresos'=>'Ingresos',
     'gastos'=>'Gastos',
     'perdidas-ganancias'=>'CTA P&G',
-    'bonos-clientes'=>'Bonos'
+    'bonos-clientes'=>'Bonos',
+    'distr-beneficios'=>'DISTR. DE BENEFICIO'
 ];
 ?>
 <div class="col-md-12 col-xs-12 push-20">
 @foreach($items as $k=>$v)
-  <div class="col-md-1 col-xs-4 push-10" style="padding: 5px;">
+  <div class=" <?= ($k == 'distr-beneficios') ? 'col-md-3' : 'col-md-2'?> col-xs-4 push-10" style="padding: 5px;">
     <?php if ($url == $k): ?>
       <button class="btn btn-md" style="width: 100%; background-color: #6600ff;pointer-events: none" disabled>
         <a class="text-white" >{{$v}}</a>

@@ -148,6 +148,7 @@ class ExpensesController extends Controller {
         'total_year_amount' => $totalYearAmount,
         'yearMonths' => $yearMonths,
         'tYear' => $yearMonths[$year],
+        'concepts' => Expenses::getConcepts(),
         'typePayment' => Expenses::getTypeCobro(),
         'oCoachs' => User::getCoachs(),
         'lstUsr'  => User::getCoachs()->pluck('name','id')->toArray()
@@ -182,6 +183,7 @@ class ExpensesController extends Controller {
     $gasto->typePayment = $request->input('type_payment');
     $gasto->type = $request->input('type');
     $gasto->to_user = $request->input('to_user');
+    $gasto->to_concept = $request->input('to_concept');
     $gasto->comment = $comment ? $comment : '';
     if ($gasto->save()) {
       return 'ok';
@@ -299,7 +301,11 @@ class ExpensesController extends Controller {
   
   function byType($type){
     $year = getYearActive();
-    if ($type != 'pt'){
+    if ($type == 'pt' || $type == 'sueldos_y_salarios'){
+      $sCoachLiq = new \App\Services\CoachLiqService();
+      $data = $sCoachLiq->liqByCoachMonths($year);
+      include_once app_path().'/Blocks/PyG_Coachs.php';
+    } else {
       $gTypeGroup = Expenses::getTypesGroup();
       $aTypeLst = Expenses::getTypes();
       if (!isset($gTypeGroup['names'][$type])){
@@ -322,10 +328,6 @@ class ExpensesController extends Controller {
       }
 //      dd($gTypeGroup);
       include_once app_path().'/Blocks/PyG_Expenses.php';
-    } else {
-      $sCoachLiq = new \App\Services\CoachLiqService();
-      $data = $sCoachLiq->liqByCoachMonths($year);
-      include_once app_path().'/Blocks/PyG_Coachs.php';
     }
   }
 
@@ -445,6 +447,25 @@ class ExpensesController extends Controller {
     return back()->with(['success'=>$countInsert . ' Registros inportados']);
    
    
+  }
+
+  function distrBeneficios(){
+    $year = getYearActive();
+    $gastos = Expenses::whereYear('date', '=', $year)->where('type','distribucion')->get();
+    $listResume = array();
+    if ($gastos) {
+      foreach ($gastos as $g) {
+        if (!isset($listResume[$g->to_concept])) $listResume[$g->to_concept] = 0;
+        $listResume[$g->to_concept] += $g->import;
+      }
+    }
+    return view('admin.contabilidad.expenses.distr-beneficios', [
+        'year' => $year,
+        'lst' => $gastos,
+        'listResume' => $listResume,
+        'concepts' => Expenses::getConcepts(),
+        
+    ]);
   }
   
 }

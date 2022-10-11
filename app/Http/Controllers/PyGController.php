@@ -149,13 +149,16 @@ class PyGController extends Controller {
     $oExpenses = Expenses::whereYear('date', '=', $year)->get();
     $aux = $months_empty;
     $expensesYear[$year] = 0;
+    $repartoYear[$year] = 0;
     if ($oExpenses) {
       foreach ($oExpenses as $e) {
         $m = intval(substr($e->date, 5, 2));
      
         $aux[$m] += $e->import;
         $aux[0] += $e->import;
-        $expensesYear[$year] += $e->import;
+        if ($e->type == 'distribucion') $repartoYear[$year] += $e->import;
+        else $expensesYear[$year] += $e->import;
+        
         $g = isset($gTypeGroup_g[$e->type]) ? $gTypeGroup_g[$e->type] : 'otros';
         if (isset($ggMonth[$g])){
           $ggMonth[$g][$m] += $e->import;
@@ -206,6 +209,7 @@ class PyGController extends Controller {
         'currentY'=>$currentY,
         'incomesYear'=>$incomesYear,
         'expensesYear'=>$expensesYear,
+        'repartoYear'=>$repartoYear,
         'subscs'=>$subscs,
         'uActivs'=>$uActivs,
         'ggMonth'=>$ggMonth,

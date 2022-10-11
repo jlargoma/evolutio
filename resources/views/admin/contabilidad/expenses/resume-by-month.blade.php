@@ -17,7 +17,7 @@
 
       @foreach($listGasto_g as $k=>$item)
       <tr>
-        <td class="static">{{$gTypeGroup[$k] ?? $k}}</td>
+        <td class="static detail" data-id="{{$k}}">{{$gTypeGroup[$k] ?? $k}} <i class="fa fa-eye"></i></td>
         <td class="static-2">{{moneda($item[0],false)}}</td>
         <td class="first-col-2"></td>
         @foreach($lstMonths as $k_month=>$month)

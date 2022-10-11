@@ -28,14 +28,17 @@ function sumMonthValue($m){
     </div>
   </div>
     <div class="row">
-    <div class="col-md-4 col-xs-6">
+    <div class="col-md-3 col-xs-6">
       <div class="box"><h2>Ingresos {{$year}}</h2><span>{{moneda($incomesYear[$year])}}</span></div>
     </div>
-    <div class="col-md-4 col-xs-6">
+    <div class="col-md-3 col-xs-6">
       <div class="box"><h2>Gastos {{$year}}</h2><span>{{moneda($expensesYear[$year])}}</span></div>
     </div>
-    <div class="col-md-4 col-xs-12">
-      <?php $result = $incomesYear[$year]-$expensesYear[$year]; ?>
+    <div class="col-md-3 col-xs-6">
+      <div class="box"><h2>Repar. de Benef. {{$year}}</h2><span>{{moneda($repartoYear[$year])}}</span></div>
+    </div>
+    <div class="col-md-3 col-xs-12">
+      <?php $result = $incomesYear[$year]-$expensesYear[$year]-$repartoYear[$year]; ?>
       <div class="box">
         <h2>Resultado {{$year}}</h2>
         <span>{{moneda($result)}}

@@ -207,6 +207,9 @@ Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function () {
 
   Route::get('/perdidas-ganancias', 'PyGController@index');
 
+  /* distr-beneficios */
+  Route::get('/distr-beneficios', 'ExpensesController@distrBeneficios');
+
   /* Gastos */
   Route::get('/gastos', 'ExpensesController@index');
   Route::post('/gastos/import/csv/', 'ExpensesController@importCsv');

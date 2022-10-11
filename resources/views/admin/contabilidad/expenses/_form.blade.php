@@ -7,7 +7,7 @@ if(isset($page)){
 <form action="{{ url('/admin/gastos/create') }}" method="post"  id="formNewExpense" data-ajax="1">
   <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
   <div class="row">
-    <div class="col-lg-2 col-md-3 col-xs-12 mb-1em">
+    <div class="col-lg-2 col-md-3 col-xs-12 mb-1em" style="max-height: 30px;">
       <label for="date">Fecha</label>
       <div id="datepicker-component" class="input-group date col-xs-12">
           <input type="text" class="js-datepicker  form-control" name="fecha" id="fecha" value="<?php echo date('d-m-Y') ?>" style="font-size: 12px" data-date-format="dd-mm-yyyy" placeholder="dd-mm-yyyy"  style="cursor: pointer;" required="">
@@ -47,13 +47,24 @@ if(isset($page)){
         @endforeach
       </select>
     </div>
-     <div class="col-lg-4  col-md-6 col-xs-12 my-1">
-      <button class="btn btn-success" type="submit">Añadir</button>
-      <button class="btn btn-secondary" type="button" id="reload">Refrescar Pantalla</button>
+     <div class="col-lg-4  col-md-6 col-xs-12 mb-1em ">
+      <div class="to_concept">
+        <label for="pay_for">Imputado a</label>
+        <select class="form-control" id="to_concept" name="to_concept" style="width: 100%;" data-placeholder="Seleccione una" required>
+          <option value="">--</option>
+          @foreach($concepts as $k=>$v)
+          <option value="{{$k}}">{{$v}}</option>
+          @endforeach
+        </select>
+      </div>
     </div>
     <div class="col-lg-8  col-md-6 col-xs-12 mb-1em">
       <label for="comment">Observaciones</label>
       <textarea class="form-control" name="comment" id="comment"></textarea>
+    </div>
+    <div class="col-lg-4  col-md-6 col-xs-12 my-1">
+      <button class="btn btn-success" type="submit">Añadir</button>
+      <button class="btn btn-secondary" type="button" id="reload">Refrescar Pantalla</button>
     </div>
   </div>
 </form>

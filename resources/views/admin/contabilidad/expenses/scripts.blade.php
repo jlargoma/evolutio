@@ -353,7 +353,23 @@ foreach ($lstUsr as $k => $v) {
           }
       });
       
-            
+      
+      $('.detail').on('click',function(){
+        var k = $(this).data('id');
+          $.get('/admin/gastos-by-byType/'+k, function (data) {
+            $('#contentModalInfo').html(data);
+            $('#modalInfo').modal('show');
+          });
+      });
+      $('#type').on('change',function(){
+        if($(this).val() == 'distribucion'){
+          $('.to_concept').show();
+        } else {
+          $('.to_concept').hide();
+        }
+      });
+      $('.to_concept').hide();
+
   });
   jQuery(function () {
     App.initHelpers(['datepicker']);

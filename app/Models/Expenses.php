@@ -26,12 +26,14 @@ class Expenses extends Model
         'mensajeria' => 'MENSAJERIA',
         'otros' => 'OTROS',
         'renting_fisioterapia' => 'RENTING FISIOTERAPIA',
+        'renting_estetica' => 'RENTING ESTETICA',
         'seguros' => 'SEGUROS',
         'seguros_soc' => 'SEGUROS SOCIALES',
         'servicios_prof' => 'SERVICIOS PROF INDEPENDIENTES',
         'software' => 'SOFTWARE',
         'suministros' => 'SUMINISTROS',
         'varios' => 'VARIOS',
+        'distribucion' => 'DISTRIBUCION DE BENEFICIOS',
     ];
   }        
   static function getTypesGroup(){
@@ -46,6 +48,7 @@ class Expenses extends Model
               'gasto_material' => 'GASTO MATERIAL',
               'marketing_y_publicidad' => 'MARKETING Y PUBLICIDAD',
               'otros' => 'RESTO DE GASTOS',
+              'distribucion' => 'DISTRIBUCION DE BENEFICIOS',
             ],
             'groups' => [
                 'alquiler_nave_y_comunidad' => 'alquileres',
@@ -62,6 +65,7 @@ class Expenses extends Model
                 'mensajeria' => 'otros',
                 'otros' => 'otros',
                 'renting_fisioterapia' => 'renting',
+                'renting_estetica' => 'renting',
                 'seguros' => 'otros',
                 'software' => 'software',
                 'seguros_soc' => 'software',
@@ -70,6 +74,7 @@ class Expenses extends Model
                 'limpieza' => 'suministros',
                 'impuestos' => 'impuestos',
                 'varios' => 'otros',
+                'distribucion' => 'distribucion',
             ]];
         
   }
@@ -135,4 +140,13 @@ class Expenses extends Model
     die;
   }
     
+
+  static function getConcepts(){
+    return [
+        'inver_evolutio' => 'INVERSION EVOLUTIO',
+        'repart_carlos' => 'REPART BENEF CARLOS',
+        'repart_jorge' => 'REPART BENEF JORGE',
+        'repart_wiwi' => 'REPART BENEF WIWI',
+    ];
+  }        
 }

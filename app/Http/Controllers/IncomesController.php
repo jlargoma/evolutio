@@ -56,6 +56,10 @@ class IncomesController extends Controller {
                   $rateType = 8;
           if(str_contains($v->rate_subf,'v'))
                   $rateType = 11;
+          if(str_contains($v->rate_subf,'e'))
+                  $rateType = 12;
+          if(str_contains($v->rate_subf,'p'))
+            $rateType = 13;
         }
       }
       if ($rateType && isset($lst[$rateType])){
@@ -67,12 +71,11 @@ class IncomesController extends Controller {
           $lst[$rateType]['lst'][$v->id]['name'] = '*'.$v->name;
         }
       } else {
-          //Es del item Bonos cuando no se le puede asignar a otro
+        //Es del item Bonos cuando no se le puede asignar a otro
         $lst['bonos']['lst'][$v->id] = $lstBonos[$v->id];
         $lst['bonos']['lst'][$v->id]['name'] = $v->name;
       }
     }
-    
     //calcular totals
     $bonosTotal = [];
     foreach ($lst as $k=>$v){

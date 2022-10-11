@@ -13,11 +13,27 @@ function sumMonthValue($m){
 @section('content')
 @include('admin.contabilidad._button-contabiliad')
 <div class="content">
-  <h2>Bonos</h2>
   <div class="row">
-    <div class=""></div>
+    <div class="col-12 col-md-4">
+      <h2>Bonos</h2>
+    </div>
+    <div class="col-12 col-md-8 table-responsive">
+      <table class="table t_resume">
+        <tr>
+          <td><h4>Total</h4> <?= moneda(array_sum($byFamily));?></td>
+          @foreach($byFamily as $k=>$v)
+          <td><h4><?php echo isset($aRates[$k]) ? $aRates[$k] : '' ?></h4> <?= moneda($v);?></td>
+          @endforeach
+        </tr>
+      </table>
+    </div>
   </div>
   
+
+
+  
+
+
   
   <div class="table-responsive ">
     <div class="date-filter">
@@ -98,4 +114,18 @@ function sumMonthValue($m){
 
 @section('scripts')
 @include('admin.contabilidad.bonos.script')
+<style>
+  .t_resume td {
+    min-width: 100px;
+    border: 1px solid #2c343f;
+    text-align: center;
+    padding: 14px 10px !important;
+  }
+  .t_resume h4 {
+    white-space: nowrap;
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 4px;
+}
+  </style>
 @endsection
