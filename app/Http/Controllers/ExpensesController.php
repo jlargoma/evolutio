@@ -47,7 +47,7 @@ class ExpensesController extends Controller {
         $year => $months_empty,
     ];
 
-    $gastos = Expenses::whereYear('date', '=', $year)->where('type','!=','distribucion')->get();
+    $gastos = Expenses::whereYear('date', '=', $year)->get();
     $gType = Expenses::getTypes();
     $gTypeGroup = Expenses::getTypesGroup();
     $gTypeGroup_g = $gTypeGroup['groups'];
@@ -87,7 +87,7 @@ class ExpensesController extends Controller {
       }
     }
     $auxYear = ($year) - 2;
-    $gastos = Expenses::whereYear('date', '=', $auxYear)->where('type','!=','distribucion')->get();
+    $gastos = Expenses::whereYear('date', '=', $auxYear)->get();
     if ($gastos) {
       foreach ($gastos as $g) {
         $month = date('n', strtotime($g->date));
@@ -95,7 +95,7 @@ class ExpensesController extends Controller {
       }
     }
     $auxYear = ($year) - 1;
-    $gastos = Expenses::whereYear('date', '=', $auxYear)->where('type','!=','distribucion')->get();
+    $gastos = Expenses::whereYear('date', '=', $auxYear)->get();
     if ($gastos) {
       foreach ($gastos as $g) {
         $month = date('n', strtotime($g->date));
@@ -148,7 +148,6 @@ class ExpensesController extends Controller {
         'total_year_amount' => $totalYearAmount,
         'yearMonths' => $yearMonths,
         'tYear' => $yearMonths[$year],
-        'concepts' => Expenses::getConcepts(),
         'typePayment' => Expenses::getTypeCobro(),
         'oCoachs' => User::getCoachs(),
         'lstUsr'  => User::getCoachs()->pluck('name','id')->toArray()
@@ -250,7 +249,7 @@ class ExpensesController extends Controller {
       return response()->json(['status' => 'wrong']);
     }
 
-    $qry = Expenses::whereYear('date', '=', $year)->where('type','!=','distribucion');
+    $qry = Expenses::whereYear('date', '=', $year);
     if ($month && $month > 0)
       $qry->whereMonth('date', '=', $month);
 
@@ -320,7 +319,7 @@ class ExpensesController extends Controller {
       }
       $payType = Expenses::getTypeCobro();
 
-      $items = Expenses::whereYear('date', '=', $year)->where('type','!=','distribucion')
+      $items = Expenses::whereYear('date', '=', $year)
               ->whereIn('type',$auxTypes)->orderBy('date')->get();
       if (count($items)== 0){
         echo  '<p class="alert alert-warning">Sin Registros</p>';
@@ -449,23 +448,6 @@ class ExpensesController extends Controller {
    
   }
 
-  function distrBeneficios(){
-    $year = getYearActive();
-    $gastos = Expenses::whereYear('date', '=', $year)->where('type','distribucion')->get();
-    $listResume = array();
-    if ($gastos) {
-      foreach ($gastos as $g) {
-        if (!isset($listResume[$g->to_concept])) $listResume[$g->to_concept] = 0;
-        $listResume[$g->to_concept] += $g->import;
-      }
-    }
-    return view('admin.contabilidad.expenses.distr-beneficios', [
-        'year' => $year,
-        'lst' => $gastos,
-        'listResume' => $listResume,
-        'concepts' => Expenses::getConcepts(),
-        
-    ]);
-  }
+  
   
 }

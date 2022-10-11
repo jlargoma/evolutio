@@ -241,13 +241,13 @@ class DatesController extends Controller {
       $oObj->save();
 
       if ($type == 'pt')
-        return redirect('/admin/citas-pt/edit/' . $oObj->id);
+        return redirect('/admin/citas-pt/edit/' . $oObj->id)->with(['success'=>'Registro guardado']);
       if ($type == 'nutri')
-        return redirect('/admin/citas-nutricion/edit/' . $oObj->id);
+        return redirect('/admin/citas-nutricion/edit/' . $oObj->id)->with(['success'=>'Registro guardado']);
       if ($type == 'fisio')
-        return redirect('/admin/citas-fisioterapia/edit/' . $oObj->id);
+        return redirect('/admin/citas-fisioterapia/edit/' . $oObj->id)->with(['success'=>'Registro guardado']);
       if ($type == 'esthetic')
-        return redirect('/admin/citas-estetica/edit/' . $oObj->id);
+        return redirect('/admin/citas-estetica/edit/' . $oObj->id)->with(['success'=>'Registro guardado']);
     }
 
 
@@ -308,7 +308,7 @@ class DatesController extends Controller {
           $subjet = 'Actualización de su cita';
 
         MailController::sendEmailPayDateByStripe($oObj, $oUser, $oRate, $coach,null, $importe, $subjet, $calFile);
-        return redirect('/admin/citas-pt/edit/' . $oObj->id);
+        return redirect('/admin/citas-pt/edit/' . $oObj->id)->with(['success'=>'Registro guardado']);
       }
       /* -------------------------------------------------------------------- */
       //crear el pago
@@ -341,11 +341,11 @@ class DatesController extends Controller {
       /* -------------------------------------------------------------------- */
 
       if ($type == 'nutri')
-        return redirect('/admin/citas-nutricion/edit/' . $oObj->id);
+        return redirect('/admin/citas-nutricion/edit/' . $oObj->id)->with(['success'=>'Registro guardado']);
       if ($type == 'fisio')
-        return redirect('/admin/citas-fisioterapia/edit/' . $oObj->id);
+        return redirect('/admin/citas-fisioterapia/edit/' . $oObj->id)->with(['success'=>'Registro guardado']);
       if ($type == 'esthetic')
-        return redirect('/admin/citas-estetica/edit/' . $oObj->id);
+        return redirect('/admin/citas-estetica/edit/' . $oObj->id)->with(['success'=>'Registro guardado']);
     }
   }
 

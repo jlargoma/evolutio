@@ -138,13 +138,4 @@ class Expenses extends Model
     die;
   }
     
-
-  static function getConcepts(){
-    return [
-        'inver_evolutio' => 'INVERSION EVOLUTIO',
-        'repart_carlos' => 'REPART BENEF CARLOS',
-        'repart_jorge' => 'REPART BENEF JORGE',
-        'repart_wiwi' => 'REPART BENEF WIWI',
-    ];
-  }        
 }

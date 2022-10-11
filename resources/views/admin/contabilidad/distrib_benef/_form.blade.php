@@ -4,8 +4,9 @@ if(isset($page)){
   $s_pt = 2;
 }
 ?>
-<form action="{{ url('/admin/gastos/create') }}" method="post"  id="formNewExpense" data-ajax="1">
+<form action="{{ url('/admin/distr-beneficios/create') }}" method="post"  id="formNewExpense" data-ajax="1">
   <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+  <input type="hidden" name="type" id="type" value="distribucion">
   <div class="row">
     <div class="col-lg-2 col-md-3 col-xs-12 mb-1em" style="max-height: 30px;">
       <label for="date">Fecha</label>
@@ -18,27 +19,9 @@ if(isset($page)){
       <label for="concept">Concepto</label>
       <input  type="text" class="form-control" name="concept" id="concept" />
     </div>
-    <div class="col-lg-4 col-md-3 col-xs-12 mb-1em">
-      <label for="user">Coach / Fisio / Nutri</label>
-      <select class="form-control" id="to_user" name="to_user" style="width: 100%;">
-        <option value="-1">--</option>
-         @foreach($oCoachs as $u)
-        <option value="{{$u->id}}">{{$u->name}}</option>
-        @endforeach
-      </select>
-    </div>
     <div class="col-lg-2 col-md-3 col-xs-12 mb-1em">
       <label for="import">Importe</label>
       <input  type="number" step="0.01" name="import" id="import" class="form-control" required />
-    </div>
-    <div class="col-lg-4 col-md-6 col-xs-12 mb-1em">
-      <label for="type">T. Gasto</label>
-        <select class="form-control" id="type" name="type"  data-placeholder="Seleccione un tipo" required >
-        @foreach($gType as $k=>$v)
-        <option value="{{$k}}">{{$v}}</option>
-        @endforeach
-        <option value="distribucion">DISTRIBUCION DE BENEFICIOS</option>
-      </select>
     </div>
     <div class="col-lg-2 col-md-3 col-xs-12 mb-1em">
       <label for="pay_for">Met de pago</label>
@@ -49,6 +32,15 @@ if(isset($page)){
       </select>
     </div>
      <div class="col-lg-4  col-md-6 col-xs-12 mb-1em ">
+      <div class="to_concept">
+        <label for="pay_for">Imputado a</label>
+        <select class="form-control" id="to_concept" name="to_concept" style="width: 100%;" data-placeholder="Seleccione una" required>
+          <option value="">--</option>
+          @foreach($concepts as $k=>$v)
+          <option value="{{$k}}">{{$v}}</option>
+          @endforeach
+        </select>
+      </div>
     </div>
     <div class="col-lg-8  col-md-6 col-xs-12 mb-1em">
       <label for="comment">Observaciones</label>

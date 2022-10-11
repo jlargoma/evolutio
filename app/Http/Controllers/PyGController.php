@@ -10,6 +10,7 @@ use App\Models\Charges;
 use App\Services\CoachLiqService;
 use App\Models\User;
 use App\Models\UserRates;
+use App\Models\DistribBenef;
 
 class PyGController extends Controller {
 
@@ -144,10 +145,10 @@ class PyGController extends Controller {
     for ($i = 2; $i > 0; $i--) {
       $yAux = $year - $i;
       $expensesYear[$yAux] = Expenses::whereYear('date', '=', $yAux)->where('type','!=','distribucion')->sum('import');
-      $repartoYear[$yAux] = Expenses::whereYear('date', '=', $yAux)->where('type','=','distribucion')->sum('import');
+      $repartoYear[$yAux] = DistribBenef::whereYear('date', '=', $yAux)->where('type','=','distribucion')->sum('import');
     }
     /******************* */
-    $oRepartos = Expenses::whereYear('date', '=', $year)->where('type','=','distribucion')->get();
+    $oRepartos = DistribBenef::whereYear('date', '=', $year)->where('type','=','distribucion')->get();
     $aux = $months_empty;
     $repartoYear[$year] = 0;
     if ($oRepartos) {
@@ -243,4 +244,69 @@ class PyGController extends Controller {
   ]);
   }
 
+
+  function distrBeneficios(){
+    $year = getYearActive();
+    $lst = DistribBenef::whereYear('date', '=', $year)->get();
+    $listResume = array();
+    if ($lst) {
+      foreach ($lst as $g) {
+        if (!isset($listResume[$g->to_concept])) $listResume[$g->to_concept] = 0;
+        $listResume[$g->to_concept] += $g->import;
+      }
+    }
+    return view('admin.contabilidad.distrib_benef.index', [
+        'year' => $year,
+        'lst' => $lst,
+        'listResume' => $listResume,
+        'typePayment' => DistribBenef::getTypeCobro(),
+        'concepts' =>DistribBenef::getConcepto(),
+        
+    ]);
+  }
+
+  function distrBeneficiosStore(Request $request) {
+
+    $messages = [
+        'concept.required' => 'El Concepto es requerido.',
+        'import.required' => 'El Importe es requerido.',
+        'fecha.required' => 'La Fecha es requerida.',
+        'import.min' => 'El Importe debe ser mayor de :min.',
+        'import.max' => 'El Importe no debe ser mayor de :max.',
+    ];
+
+    $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+                'concept' => 'required|min:3',
+                'import' => 'required|min:1|max:3000',
+                'fecha' => 'required',
+                    ], $messages);
+
+    if ($validator->fails()) {
+      return $validator->errors()->first();
+    }
+    $comment = $request->input('comment','');
+
+    $oObject = new DistribBenef();
+    $oObject->concept = $request->input('concept');
+    $oObject->date = Carbon::createFromFormat('d-m-Y', $request->input('fecha'))->format('Y-m-d');
+    $oObject->import = $request->input('import');
+    $oObject->type_payment = $request->input('type_payment');
+    $oObject->type = $request->input('type');
+    $oObject->to_user = $request->input('to_user');
+    $oObject->to_concept = $request->input('to_concept');
+    $oObject->comment = $comment ? $comment : '';
+    if ($oObject->save()) {
+      return 'ok';
+    }
+
+ 
+
+    return 'error';
+  }
+
+  public function distrBeneficiosDelete(Request $request) {
+    $id = $request->input('idToDelete');
+    DistribBenef::where('id', $id)->delete();
+    return back()->with(['success'=>'Registro eliminado']);
+  }
 }

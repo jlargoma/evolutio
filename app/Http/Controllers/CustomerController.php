@@ -50,6 +50,7 @@ class CustomerController extends Controller {
           break;
         case 'nutri': //$dID,$oUser->id,$importe*100,$oRate->id;
         case 'fisio': //$dID,$oUser->id,$importe*100,$oRate->id;
+        case 'esthetic': //$dID,$oUser->id,$importe*100,$oRate->id;
           $oDate = \App\Models\Dates::find($data[0]);
           if (!$oDate){
             die('Cita eliminada');
@@ -77,6 +78,10 @@ class CustomerController extends Controller {
           if ($oDate->date_type == 'nutri') {
             $name .= ' Nutrición ';
             $items[] = '<b>Nutricionista:</b> ' . $oCoach->name;
+          }
+          if ($oDate->date_type == 'esthetic') {
+            $name .= ' Estética ';
+            $items[] = '<b>Profesional:</b> ' . $oCoach->name;
           }
           if ($oDate->date_type == 'fisio') {
             $name .= ' Fisioterapia ';
@@ -116,6 +121,7 @@ class CustomerController extends Controller {
               );
               break;
             case 'nutri':
+            case 'esthetic':
             case 'fisio':
               \App\Models\Stripe3DS::addNew($oUser->id,$iStripe,$cStripe,'cita',['dID'=>$oDate->id]);
               break;

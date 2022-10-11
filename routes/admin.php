@@ -208,7 +208,9 @@ Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function () {
   Route::get('/perdidas-ganancias', 'PyGController@index');
 
   /* distr-beneficios */
-  Route::get('/distr-beneficios', 'ExpensesController@distrBeneficios');
+  Route::get('/distr-beneficios', 'PyGController@distrBeneficios');
+  Route::post('/distr-beneficios/create', 'PyGController@distrBeneficiosStore');
+  Route::post('/distr-beneficios/delete', 'PyGController@distrBeneficiosDelete');
 
   /* Gastos */
   Route::get('/gastos', 'ExpensesController@index');
