@@ -285,8 +285,6 @@ class BonosController extends Controller {
         if ($l->incr) $data['i'] += $l->incr;
         if ($l->decr) $data['d'] += $l->decr;
         $data['p'] += $l->price;
-        if (!isset($byFamily[$t])) $byFamily[$t] = 0;
-        $byFamily[$t] +=  $l->price;
       }
       
       $totals['i'] += $data['i'];
@@ -296,6 +294,17 @@ class BonosController extends Controller {
       
       $aUB[$ub->user_id][$ub->id] = $data;
     }
+
+
+    $oUsrBonos = UserBonos::all();
+    foreach ($oUsrBonos as $ub){
+      $t = $ub->rate_type ? $ub->rate_type : $ub->rate_subf;
+      $price = $ub->logs()->sum('price');
+      if (!isset($byFamily[$t])) $byFamily[$t] = $price;
+      else  $byFamily[$t] +=  $price;
+    }
+
+
 
     foreach($byFamily as $k=>$v){
       if (is_integer($k)) continue;
@@ -308,7 +317,7 @@ class BonosController extends Controller {
         case 'p': $aux_rateType = 13; break;
       }
       if (!isset($byFamily[$aux_rateType])) $byFamily[$aux_rateType] = $v;
-      $byFamily[$aux_rateType] += $v;
+      else $byFamily[$aux_rateType] += $v;
       unset($byFamily[$k]);
     }
 
