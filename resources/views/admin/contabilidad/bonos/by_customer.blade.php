@@ -43,10 +43,14 @@ function sumMonthValue($m){
         foreach ($rateFilter as $k=>$v):
           $s = ($k == $filter)? 'selected' : '';
           echo '<option value="'.$k.'" '.$s.' class="b">'.$v['n'].'</option>';
-          foreach ($v['l'] as $k2=>$v2):
-            $s = ($k2 == $filter)? 'selected' : '';
-            echo '<option value="'.$k2.'" '.$s.'>&nbsp; - '.$v2.'</option>';
-          endforeach;
+          if (count($v['l'])>0):
+            foreach ($v['l'] as $k2=>$v2):
+              $s = ($k2 == $filter)? 'selected' : '';
+              echo '<option value="'.$k2.'" '.$s.'>&nbsp; - '.$v2.'</option>';
+            endforeach;
+            $all_s = ('all_'.$k == $filter)? 'selected' : '';
+            echo '<option value="all_'.$k.'" '.$all_s.'>&nbsp; - Todos</option>';
+          endif;
         endforeach; 
         ?>
       </select>

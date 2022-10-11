@@ -58,4 +58,18 @@ class TypesRate extends Model
       }
       return $result;
     }
+
+    static function getsubfamilyArray($id=null) {
+      $obj = self::find($id);
+      $subfs = self::subfamily();
+      $result = [];
+      $subtipes = $obj->subtipes;
+      if ($subtipes){
+        foreach ($subfs as $k=>$v){
+          if (substr($k,0,1) == $subtipes)
+              $result[]=$k;    
+        }
+      }
+      return $result;
+    }
 }

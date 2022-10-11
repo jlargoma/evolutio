@@ -8,6 +8,7 @@ use \Carbon\Carbon;
 use Stripe;
 use App\Models\Bonos;
 use App\Models\UserBonos;
+use App\Models\TypesRate;
 
 class BonosController extends Controller {
 
@@ -15,7 +16,7 @@ class BonosController extends Controller {
     return view('/admin/bonos/index', [
         'objs' => Bonos::where('status', 1)->orderBy('name', 'asc')->get(),
         'old' => Bonos::where('status', 0)->orderBy('name', 'asc')->get(),
-        'rateFilter'=> \App\Models\TypesRate::getWithsubfamily()
+        'rateFilter'=> TypesRate::getWithsubfamily()
     ]);
   }
   
@@ -197,8 +198,8 @@ class BonosController extends Controller {
         'oBonos' => Bonos::where('status', 1)->where('purcharse', 1)->orderBy('name', 'asc')->get(),
         'type'=>$t,
         'id_back'=>$id,
-        'typesRate'=> \App\Models\TypesRate::pluck('name','id')->toArray(),
-        'rate_subf'=> \App\Models\TypesRate::subfamily(),
+        'typesRate'=> TypesRate::pluck('name','id')->toArray(),
+        'rate_subf'=> TypesRate::subfamily(),
         'allCoachs'=> \App\Models\User::getCoachs()->pluck('name', 'id'),
         'u_current'=> \Illuminate\Support\Facades\Auth::user()->id,
         'uPlan'=>$uPlan
@@ -263,14 +264,21 @@ class BonosController extends Controller {
   //----  INFORMES                  ---------------------------------------//
   //----------------------------------------------------------------------//
   function getByUsers(Request $req) {
+    $rate_subf = TypesRate::subfamily();
+
     $filter = $req->input('f', null);
     if ($filter){
-      if (is_numeric($filter)) $oUsrBonos = UserBonos::where('rate_type',$filter)->get();
-      else    $oUsrBonos = UserBonos::where('rate_subf',$filter)->get();
+      if(str_contains($filter,'all_')){
+        $filter = substr($filter,4);
+        $oUsrBonos = UserBonos::where('rate_type',$filter)->orWhereIn('rate_subf',TypesRate::getsubfamilyArray($filter))->get();
+      } else {
+        if (is_numeric($filter)) $oUsrBonos = UserBonos::where('rate_type',$filter)->get();
+        else    $oUsrBonos = UserBonos::where('rate_subf',$filter)->get();
+      }
       
     } else $oUsrBonos = UserBonos::all();
     // dd($oUsrBonos);
-    $rate_subf = \App\Models\TypesRate::subfamily();
+   
     $aUB = [];
     $totals = ['i'=>0,'d'=>0,'t'=>0,'p'=>0];
     $byFamily = [];
@@ -304,8 +312,6 @@ class BonosController extends Controller {
       else  $byFamily[$t] +=  $price;
     }
 
-
-
     foreach($byFamily as $k=>$v){
       if (is_integer($k)) continue;
       $subF = substr($k,0,1);
@@ -323,8 +329,8 @@ class BonosController extends Controller {
 
     
     $aUsers = \App\Models\User::whereIN('id',array_keys($aUB))->pluck('name','id')->toArray();
-    $aRates = \App\Models\TypesRate::all()->pluck('name','id')->toArray();
-    $rateFilter = \App\Models\TypesRate::getWithsubfamily();
+    $aRates = TypesRate::all()->pluck('name','id')->toArray();
+    $rateFilter = TypesRate::getWithsubfamily();
     return view('admin.contabilidad.bonos.by_customer', compact('aUB','aUsers','aRates','rate_subf','rateFilter','filter','totals','byFamily'));
   }
   
