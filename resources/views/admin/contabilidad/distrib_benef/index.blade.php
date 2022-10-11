@@ -111,7 +111,7 @@ i.fa.fa-trash.delItem {
             $('#import').val('');
             $('#concept').val('');
             $('#comment').val('');
-            alert('Gasto Agregado');
+            alert('Distribucion de Beneficio Agregada');
           } else
             alert(response);
         }

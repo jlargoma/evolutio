@@ -43,7 +43,7 @@
     <div class="">
       <label class="custom-file-upload">
         <input type="file" name="f_photo">
-        <i class="fa fa-cloud-upload"></i> Buscar Foto
+        <i class="fa fa-cloud-upload"></i> Cargar Foto
       </label>
       <label class="custom-file-upload show_mobile">
         <input type="file" name="f_photoMobil" accept="image/*" capture="user">
