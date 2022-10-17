@@ -1,6 +1,10 @@
 <?php
 
-use \Carbon\Carbon; ?>
+use \Carbon\Carbon; 
+if (!$filt_rate && $month>0)
+$filt_month = intVal($month);
+
+?>
 <?php setlocale(LC_TIME, "ES"); ?>
 <?php setlocale(LC_TIME, "es_ES"); ?>
 @extends('layouts.admin-master')
@@ -91,6 +95,10 @@ use \Carbon\Carbon; ?>
         ?>
       </select>
     </div>
+    <div class="col-md-2 col-xs-6" style="margin-top: 1.7em;">
+      <button type="button" id="filter_cliMonths" class="btn btn-success">Filtrar</button>
+    </div>
+    
   </div>
   <div class="row" id="content-table-inform">
     <div class="table-responsive">
@@ -106,7 +114,7 @@ use \Carbon\Carbon; ?>
 @endsection
 @section('scripts')
 <script type="text/javascript">
-  $('#date, #month,#f_rate,#f_method,#f_coach').change(function (event) {
+  $('#filter_cliMonths').on('click',function (event) {
 
       var year = $('#date').val();
       var f_month = $('#f_month').val();
