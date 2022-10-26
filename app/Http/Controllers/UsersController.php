@@ -10,6 +10,7 @@ use \Carbon\Carbon;
 use Mail;
 use URL;
 use Cache;
+use Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\User;
 use App\Models\UserRates;
@@ -341,9 +342,13 @@ class UsersController extends Controller {
   public function disable($id) {
     $usuario = User::find($id);
     $usuario->status = 0;
-    if ($usuario->save()) die('OK');
+    if ($usuario->save()){
+      $usuario->newMetaContent('disable',Auth::user()->id);
+      die('OK');
+    } 
     else die('ERROR');
     if ($usuario->save()) {
+      $usuario->newMetaContent('disable',Auth::user()->id);
       if ($usuario->role == 'admin') {
         return redirect('/admin/usuarios');
       } elseif ($usuario->role == 'teach' || $usuario->role == 'teacher') {
@@ -357,7 +362,10 @@ class UsersController extends Controller {
   public function activate($id) {
     $usuario = User::find($id);
     $usuario->status = 1;
-    if ($usuario->save()) die('OK');
+    if ($usuario->save()){
+      $usuario->newMetaContent('activate',Auth::user()->id);
+       die('OK');
+    }
     else die('ERROR');
   }
 

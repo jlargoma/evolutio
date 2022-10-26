@@ -95,3 +95,10 @@ th{white-space: nowrap;}
     font-style: italic;
     font-size: 10px;
 }
+
+.tit-primary {
+  color: #5c90d2;
+  /* background-color: #5c90d2; */
+  border-bottom: 2px solid #3675c5;
+  padding: 3px 1px;
+}

@@ -56,7 +56,7 @@ th label.text-danger{display: block}
 @endsection
 
 <?php 
-$b_aux = ['btn-primary','btn-primary','btn-primary','all'=>'btn-primary'];
+$b_aux = ['btn-primary','btn-primary','btn-primary','all'=>'btn-primary','new'=>'btn-primary','unsubscribeds'=>'btn-primary'];
 if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
 ?>
 @section('content')
@@ -93,6 +93,16 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
           Listado x Bonos
         </button>
       </a>
+      <a href="{{url('/admin/clientes/'.$month)}}?status=new" class="inline">
+        <button class="btn btn-md {{$b_aux['new']}}">
+          Nuevos ({{$newUsers}})
+        </button>
+      </a>
+      <a href="{{url('/admin/clientes/'.$month)}}?status=unsubscribeds" class="inline">
+        <button class="btn btn-md {{$b_aux['unsubscribeds']}}">
+          De Baja ({{$unsubscribeds}})
+        </button>
+      </a>
       <select id="filterByRate" class="form-control mt-1" data-url="{{url('/admin/clientes/'.$month)}}">
         <option value="">Filtrar Por Servicio</option>
       <?php 
@@ -125,7 +135,7 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
       </select>
     </div>
   </div>
-
+<h1 class="tit-primary">{{$tit}}</h1>
   <div class="row mt-1">
     <div class="loading text-center" style="padding: 150px 0;">
       <i class="fa fa-5x fa-circle-o-notch fa-spin"></i><br><span class="font-s36">CARGANDO</span>

@@ -127,6 +127,12 @@ class User extends Authenticatable
   }
   /**********************************************************************/
   /////////  user_meta //////////////
+  public function newMetaContent($key,$content) {
+    
+      DB::table('user_meta')->insert(
+            ['user_id' => $this->id, 'meta_key' => $key,'meta_value' => $content]
+        );
+  }
   public function setMetaContent($key,$content) {
     
        

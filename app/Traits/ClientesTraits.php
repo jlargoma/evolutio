@@ -36,10 +36,29 @@ trait ClientesTraits {
     $payments = $noPay = 0;
     $status = isset($request->status) ? $request->status : 1;
     $fRate = isset($request->fRate) ? $request->fRate : null;
-    if ($status == 'all') {
-      $sqlUsers = User::where('role', 'user');
-    } else {
-      if ($status == 2){
+    $tit = '';
+    switch($status){
+      case 'all':
+        $sqlUsers = User::where('role', 'user');
+        $tit ='Todos los usuarios';
+        break;
+      case 'new':
+        $tit ='Nuevos usuarios '.$month.'/'.$year;
+          $sqlUsers = User::where('role', 'user')->whereYear('created_at',$year)
+          ->whereMonth('created_at',$month);
+          break;
+      case 'unsubscribeds':
+        $tit ='Usuarios dados de baja '.$month.'/'.$year;
+        $unsubscIDs = User::join('user_meta', function ($join) {
+          $join->on('users.id', '=', 'user_meta.user_id');
+        })->where('status',0)->where('meta_key','disable')
+        ->whereYear('user_meta.created_at',$year)->whereMonth('user_meta.created_at',$month)->groupBy('users.id')->pluck('users.id');
+          
+        $sqlUsers = User::where('role', 'user')->whereIn('users.id', $unsubscIDs);
+        
+        break;
+      case 2:
+        $tit ='Usuarios fidelity';
         $uPlan = DB::table('user_meta')
                 ->where('meta_key','plan')
                 ->where('meta_value','fidelity')
@@ -48,12 +67,16 @@ trait ClientesTraits {
         $sqlUsers = User::select('users.*')->where('role', 'user')
               ->where('status', 1)
               ->whereIn('id',$uPlan);
-                
-      } else {
+        break;
+      default:
+      if ($status == 0) $tit ='Usuarios Inactivos';
+      if ($status == 1) $tit ='Usuarios Activos';
         $sqlUsers = User::where('role', 'user')
               ->where('status', $status);
-      }
+        break;
+
     }
+   
     $sqlUsers->with('userCoach');
 
     if ($fRate){
@@ -140,6 +163,17 @@ trait ClientesTraits {
             ->select('id_rate', DB::raw('count(*) as total'))
             ->groupBy('id_rate')->pluck('total','id_rate')->toArray();
     /**/
+    /*new users*/
+    $newUsers = User::whereYear('created_at',$year)
+    ->whereMonth('created_at',$month)->count();
+    /*unsubscribed  users*/
+    $unsubscribeds = User::join('user_meta', function ($join) {
+      $join->on('users.id', '=', 'user_meta.user_id');
+    })->where('status',0)->where('meta_key','disable')
+    ->whereYear('user_meta.created_at',$year)->whereMonth('user_meta.created_at',$month)->groupBy('users.id')->pluck('users.id');
+    $unsubscribeds = count($unsubscribeds);
+
+
     return view('/admin/usuarios/clientes/index', [
         'users' => $users,
         'month' => $month,
@@ -156,6 +190,9 @@ trait ClientesTraits {
         'rNames' => $rNames,
         'fRate' => $fRate,
         'aRatesIds' => $aRatesIds,
+        'newUsers' => $newUsers,
+        'unsubscribeds' => $unsubscribeds,
+        'tit' => $tit,
         'total_pending' => array_sum($arrayPaymentMonthByUser),
     ]);
   }
