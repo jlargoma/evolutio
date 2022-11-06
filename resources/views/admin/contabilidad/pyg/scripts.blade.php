@@ -42,7 +42,7 @@ if ($crLst) {
 
 <script type="text/javascript">
 $(document).ready(function () {
-
+if ($('#chart_1').lenght>0){
   var chart_1 = {
         labels: [<?php echo implode(',',$labels_1)?>],
         datasets: [
@@ -54,6 +54,7 @@ $(document).ready(function () {
       }
     
   getPieChart('chart_1',chart_1);
+  }
     
   new Chart(document.getElementById("chartTotalByMonth"), {
     type: 'line',

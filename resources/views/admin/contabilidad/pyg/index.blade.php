@@ -1,15 +1,17 @@
 @extends('layouts.admin-master')
 @section('title') P&G- EVOLUTIO  @endsection
-<?php 
-function sumMonthValue($m){
-  $t=0;
-  foreach ($m as $k=>$v){
-    if (is_numeric($k)){
+<?php
+
+function sumMonthValue($m) {
+  $t = 0;
+  foreach ($m as $k => $v) {
+    if (is_numeric($k)) {
       $t += $v;
     }
   }
   return ($t);
-}?>
+}
+?>
 @section('content')
 @include('admin.contabilidad._button-contabiliad')
 <div class="content">
@@ -27,18 +29,16 @@ function sumMonthValue($m){
       <canvas id="chartTotalByMonth" style="width: 100%; height: 250px;"></canvas>
     </div>
   </div>
-    <div class="row">
+  <div class="row">
     <div class="col-md-3 col-xs-6">
       <div class="box"><h2>Ingresos {{$year}}</h2><span>{{moneda($incomesYear[$year])}}</span></div>
     </div>
     <div class="col-md-3 col-xs-6">
       <div class="box"><h2>Gastos {{$year}}</h2><span>{{moneda($expensesYear[$year])}}</span></div>
     </div>
-    <div class="col-md-3 col-xs-6">
-      <div class="box"><h2>Repar. de Benef. {{$year}}</h2><span>{{moneda($repartoYear[$year])}}</span></div>
-    </div>
+
     <div class="col-md-3 col-xs-12">
-      <?php $result = $incomesYear[$year]-$expensesYear[$year]; ?>
+<?php $result = $incomesYear[$year] - $expensesYear[$year]; ?>
       <div class="box">
         <h2>Resultado {{$year}}</h2>
         <span>{{moneda($result)}}
@@ -49,6 +49,9 @@ function sumMonthValue($m){
           @endif
         </span></div>
     </div>
+    <div class="col-md-3 col-xs-6">
+      <div class="box"><h2>Repar. de Benef. {{$year}}</h2><span>{{moneda($repartoYear[$year])}}</span></div>
+    </div>
     <div class="col-lg-4 col-md-6 col-xs-12 col-smal">
       <div class="box">
         <h2>Suscripciones activas</h2><span>{{$subscs}}</span>
@@ -58,17 +61,17 @@ function sumMonthValue($m){
             <th colspan="2">Plan Básico</th>
             <th colspan="2">Sin Plan</th>
           </tr>
-          <?php 
-            $subscsFidelityPerc = ($subscs>0) ? round($subscsFidelity/$subscs*100):0;
-            $subscsFidelityBasic = ($subscs>0) ? round($subscsBasic/$subscs*100):0;
+          <?php
+          $subscsFidelityPerc = ($subscs > 0) ? round($subscsFidelity / $subscs * 100) : 0;
+          $subscsFidelityBasic = ($subscs > 0) ? round($subscsBasic / $subscs * 100) : 0;
           ?>
           <tr>
-          <td> {{$subscsFidelity}}</td>
-          <td class="text-danger">{{$subscsFidelityPerc}}%</td>
-          <td> {{$subscsBasic}}</td>
-          <td class="text-danger">{{$subscsFidelityBasic}}%</td>
-          <td> {{$subscs-$subscsFidelity-$subscsBasic}}</td>
-          <td class="text-danger"> {{100-$subscsFidelityPerc-$subscsFidelityBasic}}%</td>
+            <td> {{$subscsFidelity}}</td>
+            <td class="text-danger">{{$subscsFidelityPerc}}%</td>
+            <td> {{$subscsBasic}}</td>
+            <td class="text-danger">{{$subscsFidelityBasic}}%</td>
+            <td> {{$subscs-$subscsFidelity-$subscsBasic}}</td>
+            <td class="text-danger"> {{100-$subscsFidelityPerc-$subscsFidelityBasic}}%</td>
           </tr>
         </table>
       </div>
@@ -80,58 +83,58 @@ function sumMonthValue($m){
             <th colspan="2">Plan Básico</th>
             <th colspan="2">Sin Plan</th>
           </tr>
-          <?php 
-            $uActivsFidelityPerc = ($uActivs>0) ? round($uActivsFidelity/$uActivs*100):0;
-            $uActivsFidelityBasic = ($uActivs>0) ? round($uActivsBasic/$uActivs*100):0;
+          <?php
+          $uActivsFidelityPerc = ($uActivs > 0) ? round($uActivsFidelity / $uActivs * 100) : 0;
+          $uActivsFidelityBasic = ($uActivs > 0) ? round($uActivsBasic / $uActivs * 100) : 0;
           ?>
           <tr>
-          <td> {{$uActivsFidelity}}</td>
-          <td class="text-danger">{{$uActivsFidelityPerc}}%</td>
-          <td> {{$uActivsBasic}}</td>
-          <td class="text-danger">{{$uActivsFidelityBasic}}%</td>
-          <td> {{$uActivs-$uActivsFidelity-$uActivsBasic}}</td>
-          <td class="text-danger"> {{100-$uActivsFidelityPerc-$uActivsFidelityBasic}}%</td>
+            <td> {{$uActivsFidelity}}</td>
+            <td class="text-danger">{{$uActivsFidelityPerc}}%</td>
+            <td> {{$uActivsBasic}}</td>
+            <td class="text-danger">{{$uActivsFidelityBasic}}%</td>
+            <td> {{$uActivs-$uActivsFidelity-$uActivsBasic}}</td>
+            <td class="text-danger"> {{100-$uActivsFidelityPerc-$uActivsFidelityBasic}}%</td>
           </tr>
         </table>
       </div>
     </div>
     <div class="col-lg-8 col-sm-12 col-xs-12 ">
       <div class="col-lg-5 col-sm-6 col-xs-12 chart_1">
-      <canvas id="chart_1" width="50" height="50"></canvas>
+        <canvas id="chart_1" width="50" height="50"></canvas>
       </div>
       <div class="col-lg-7 col-sm-6 col-xs-12">
         <table class="table">
-        <tr>
-          <th>Total</th>
-          <th>{{moneda($tPay)}}</th>
-        </tr>
-        <tr>
-          <td class="square" ><span style="background-color: rgba(52,162,99,1);"></span>METALICO</td>
-          <td>{{moneda(array_sum($pay_method['c']))}}</td>
-        </tr>
-        <tr>
-          <td class="square" ><span style="background-color: #5c90d2;"></span>BANCO</td>
-          <td>{{moneda(array_sum($pay_method['b']))}}</td>
-        </tr>
-        <tr>
-          <td class="square" ><span style="background-color: #d25c93;"></span>VISA</td>
-          <td>{{moneda(array_sum($pay_method['v']))}}</td>
-        </tr>
-        <tfoot>
-        <tr>
-          <td class="square" ><span style="background-color: #b2bd06;"></span>No Pay</td>
-          <td>{{moneda(array_sum($pay_method['np']))}}</td>
-        </tr>
-        </tfoot>
-      </table>
+          <tr>
+            <th>Total</th>
+            <th>{{moneda($tPay)}}</th>
+          </tr>
+          <tr>
+            <td class="square" ><span style="background-color: rgba(52,162,99,1);"></span>METALICO</td>
+            <td>{{moneda(array_sum($pay_method['c']))}}</td>
+          </tr>
+          <tr>
+            <td class="square" ><span style="background-color: #5c90d2;"></span>BANCO</td>
+            <td>{{moneda(array_sum($pay_method['b']))}}</td>
+          </tr>
+          <tr>
+            <td class="square" ><span style="background-color: #d25c93;"></span>VISA</td>
+            <td>{{moneda(array_sum($pay_method['v']))}}</td>
+          </tr>
+          <tfoot>
+            <tr>
+              <td class="square" ><span style="background-color: #b2bd06;"></span>No Pay</td>
+              <td>{{moneda(array_sum($pay_method['np']))}}</td>
+            </tr>
+          </tfoot>
+        </table>
       </div>
       <div class="col-lg-12 col-sm-12 col-xs-12 chart_2">
         <canvas id="myChart" width="400" height="130"></canvas>
       </div>
     </div>
     <div class="col-xs-12">
-@include('admin.contabilidad.pyg.table')
-@include('admin.contabilidad.pyg.table2')
+      @include('admin.contabilidad.pyg.table')
+      @include('admin.contabilidad.pyg.table2')
     </div>
   </div>
 </div>
@@ -158,7 +161,7 @@ function sumMonthValue($m){
 @endsection
 
 @section('scripts')
-  @include('admin.contabilidad.pyg.scripts')
+@include('admin.contabilidad.pyg.scripts')
 
 <style>
   .box {
@@ -167,56 +170,64 @@ function sumMonthValue($m){
     padding: 1em;
     text-align: center;
     border-radius: 29px;
-}
-.box span {
+  }
+  .box span {
     font-size: 31px;
-}
-tr.subtotal td {
+  }
+  tr.subtotal td {
     background-color: #d6d6d6;
     font-weight: 700;
-}
-tfoot tr td {
+  }
+  tfoot tr td {
     background-color: #5c90d2;
     font-weight: bold;
     color: #FFF;
     font-size: 1.3em;
-}
-.square{
-  text-align: left;
-}
-.square span{
-  height: 1em;
-  width: 1em;
-  display: inline-block;
-  margin-right: 4px;
-  margin-bottom: -2px;
-}
-.tFidelity {
-  font-size: 21px;
-  font-weight: 600;
-}
-.tFidelity th {
+  }
+  .square{
+    text-align: left;
+  }
+  .square span{
+    height: 1em;
+    width: 1em;
+    display: inline-block;
+    margin-right: 4px;
+    margin-bottom: -2px;
+  }
+  .tFidelity {
+    font-size: 21px;
+    font-weight: 600;
+  }
+  .tFidelity th {
     background-color: #cfe4f3;
     color: #000;
     text-align: center;
-}
-@media(min-width:430px) {
-  .chart_1{
-    margin-top: -55px;
   }
-}
-@media(max-width:480px) {
-  .chart_1{width: 100%;}
-  .col-smal{width: 100%;}
-  .col-smal .box{width: 94%; float: left;margin: 2%;}
-  .box {
-    padding: 1em 0px;
-    margin: 1em auto;
-    min-height: 9em;
+  @media(min-width:430px) {
+    .chart_1{
+      margin-top: -55px;
+    }
   }
-  .box h2{
-    font-size: 14px;
+  @media(max-width:480px) {
+    .chart_1{
+      width: 100%;
+    }
+    .col-smal{
+      width: 100%;
+    }
+    .col-smal .box{
+      width: 94%;
+      float: left;
+      margin: 2%;
+    }
+    .box {
+      padding: 1em 0px;
+      margin: 1em auto;
+      min-height: 9em;
+    }
+    .box h2{
+      font-size: 14px;
+    }
   }
-}
 </style>
 @endsection

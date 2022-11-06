@@ -71,6 +71,17 @@ $uRole = Auth::user()->role;
   </li>
 
   @endif
+  
+  @if($uRole == "administrativo")
+  
+  <li class="{{ $path == 'contabilidad' ? 'active' : '' }}">
+    <a href="{{url('/departamento/contabilidad')}}" class="font-w600"><i class="fa fa-line-chart"></i> <span class="sidebar-mini-hide font-w600">Contabilidad</span></a>
+  </li>
+  <li class="{{ $path == 'informes-cliente' ? 'active' : '' }}">
+    <a href="{{url('/departamento/informes-cliente')}}" class="font-w600"><i class="fa fa-line-chart"></i> <span class="sidebar-mini-hide font-w600">Clientes del mes</span></a>
+  </li>
+
+  @endif
   <li style="margin-left: 17px;">
     <form action="{{ url('/logout') }}" method="POST">
       @csrf

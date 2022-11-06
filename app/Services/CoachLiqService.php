@@ -9,7 +9,7 @@ use App\Models\Dates;
 
 class CoachLiqService {
 
-  function liqByMonths($year, $type = null) {
+  function liqByMonths($year, $type = null,$role=null) {
 
     $aLiq = $CommLst = $liqLst = $aLiqTotal = [];
     $months = lstMonthsSpanish();
@@ -19,6 +19,9 @@ class CoachLiqService {
       $sql->where('status', 1);
     if ($type == 'desactivados')
       $sql->where('status', 0);
+    if ($role)
+      $sql->where('role',$role);
+      
 
     $users = $sql->orderBy('status', 'DESC')->get();
 
@@ -26,12 +29,16 @@ class CoachLiqService {
     for ($i = 1; $i < 13; $i++)
       $aux[$i] = 0;
 
+    $uLstID = [];
     foreach ($users as $u) {
       $aLiq[$u->id] = $aux;
+      $uLstID[] = $u->id;
     }
     //---------------------------------------------------------------//
     // Get Saved liquidations
-    $oLiquidations = CoachLiquidation::whereYear('date_liquidation', '=', $year)->get();
+    $sqlLiq = CoachLiquidation::whereYear('date_liquidation', '=', $year);
+    if ($role)  $sqlLiq->whereIn('id_coach',$uLstID);
+    $oLiquidations = $sqlLiq->get();
     if ($oLiquidations) {
       foreach ($oLiquidations as $liq) {
         if (!isset($aLiq[$liq->id_coach])) {
