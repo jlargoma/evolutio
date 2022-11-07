@@ -255,15 +255,31 @@ class DptoController extends Controller {
     ]);
   }
 
-  public function informeClienteMes(Request $request, $month = null, $f_month = null, $f_rate = null, $f_method = null, $f_coach = null) {
+  public function informeClienteMes(Request $request, $f_month = null, $f_rate = null, $f_method = null, $f_coach = null) {
 
+        //---------------------------------------------------------//
+        $dpto = $this->getDepto();
+        $coachRole = $dpto[1];
+        $rType = $dpto[2];
+        $rIDs = $dpto[3];
+        $bIDs = $dpto[4];
+        //---------------------------------------------------------//
+        
     $year = getYearActive();
-    if (!$month)
-      $month = date('m');
-
+    if (!$f_month)
+      $f_month = date('m');
     $day = 'all';
 
-    $data = $this->getCharges($year, $month, $day, null, $f_method, $f_rate, $f_coach, $f_month);
+    if ($f_rate) {
+      if ($f_rate == 'all') {
+        $f_rate = $rType[0];
+      } else {
+        $filerRate = explode('-', $f_rate);
+        if (!in_array($filerRate[0],$rType))
+          $f_rate = $rType[0];
+      }
+    } else $f_rate = $rType[0];
+    $data = $this->getCharges($year, $f_month, $day, null, $f_method, $f_rate, $f_coach, $f_month);
     $lstMonthsSpanish = lstMonthsSpanish();
     unset($lstMonthsSpanish[0]);
     $data['months'] = $lstMonthsSpanish;
@@ -272,14 +288,14 @@ class DptoController extends Controller {
     foreach ($data['charges'] as $c) {
       $chargesIDs[] = $c->id;
     }
-    $data['aURates'] = \App\Models\UserRates::whereIn('id_charges', $chargesIDs)
+    $data['aURates'] = \App\Models\UserRates::whereIn('id_charges', $chargesIDs)->whereIn('id_rate',$rIDs)
                     ->pluck('rate_month', 'id_charges')->toArray();
 
     /*     * ************************************************************** */
     $rateFilter = [];
-    $oTypes = \App\Models\TypesRate::all();
+    $oTypes = \App\Models\TypesRate::whereIn('id',$rType)->get();
     foreach ($oTypes as $item) {
-      $aux = \App\Models\Rates::where('type', $item->id)->get();
+      $aux = \App\Models\Rates::whereIn('id', $rIDs)->where('type', $item->id)->get();
       $aux2 = [];
       foreach ($aux as $a) {
         $aux2[$a->id] = $a->name;
@@ -293,8 +309,8 @@ class DptoController extends Controller {
     /*     * ************************************************************** */
     $data['f_coach'] = $f_coach;
     $data['aTRates'] = \App\Models\Rates::getRatesTypeRates();
-    $data['aCoachs'] = User::getCoachs()->pluck('name', 'id');
-    return view('admin.informes.informeClientesMes', $data);
+    $data['aCoachs'] = User::getCoachs()->where('role',$coachRole)->pluck('name', 'id');
+    return view('admin.informes.informeClientesMes_dpto', $data);
   }
 
 
@@ -335,5 +351,101 @@ class DptoController extends Controller {
     }
   }
 
+  private function getCharges($year, $month, $day, $search = null, $type_payment = null, $rate = null, $f_coach = null,$f_month = null) {
+    $sql_charges = Charges::where('import', '!=', 0);
+    if ($search) {
+      $search = trim($search);
+      $cliIDs = User::where('name', 'LIKE', "%" . $search . "%")->pluck('id');
+      $sql_charges->whereIn('id_user', $cliIDs);
+    }
+
+    if ($day == "all") {
+      $starDate = "$year-$month-01";
+      $endDate = date("Y-m-t", strtotime($starDate));
+      $sql_charges->where('date_payment', '>=', $starDate)->where('date_payment', '<=', $endDate);
+    } else {
+      $starDate = "$year-$month-$day";
+      $sql_charges->where('date_payment', '=', $starDate);
+    }
+
+    if ($type_payment && $type_payment != 'all') {
+      $sql_charges->where('type_payment', $type_payment);
+    }
+
+    if ($rate) {
+      if ($rate != 'all') {
+        $filerRate = explode('-', $rate);
+        if (count($filerRate) == 2) {
+          $sql_charges->where('id_rate', $filerRate[1]);
+        } else {
+          $sql_charges->where('type_rate', $filerRate[0]);
+        }
+      }
+    }
+    //------------------------------------------------------------//
+    $sqlURate = \App\Models\UserRates::where('id','>',0);
+    if ($f_coach) $sqlURate->where('coach_id', $f_coach);
+    if ($f_month) $sqlURate->where('rate_month', $f_month);
+    if ($f_coach || $f_month){
+      $sql_charges->whereIn('id', $sqlURate->pluck('id_charges'));
+    }
+    
+    //------------------------------------------------------------//
+    $charges = $sql_charges->orderBy('date_payment')->get();
+    //------------------------------------------------------------//
+    $CoachsService = new \App\Services\CoachsService();
+    $aCargesCoachs = $CoachsService->getCoachsCharge($sql_charges->pluck('id'));
+    //------------------------------------------------------------//
+
+    $bank = 0;
+    $cash = 0;
+    $card = 0;
+    $clients = [];
+    $rates = $bonos = [];
+    foreach ($charges as $charge) {
+      $clients[] = $charge->id_user;
+      if ($charge->id_rate > 0)
+        $rates[] = $charge->id_rate;
+      if ($charge->bono_id > 0)
+        $bonos[] = $charge->bono_id;
+      switch ($charge->type_payment) {
+        case 'banco':
+          $bank += $charge->import;
+          break;
+        case 'cash':
+          $cash += $charge->import;
+          break;
+        case 'card':
+          $card += $charge->import;
+          break;
+      }
+    }
+
+    $endDay = date("t", strtotime($starDate));
+    $aUsers = User::whereIn('id', $clients)->get()
+                    ->pluck('name', 'id')->toArray();
+    $aRates = \App\Models\Rates::whereIn('id', $rates)->get()
+                    ->pluck('name', 'id')->toArray();
+
+    $aBonos = \App\Models\Bonos::whereIn('id', $bonos)->get()
+                    ->pluck('name', 'id')->toArray();
+
+    return [
+        'charges' => $charges,
+        'aCargesCoachs' => $aCargesCoachs,
+        'cash' => $cash,
+        'card' => $card,
+        'bank' => $bank,
+        'clients' => $clients,
+        'rates' => $rates,
+        'year' => $year,
+        'month' => $month,
+        'day' => $day,
+        'endDay' => $endDay,
+        'aUsers' => $aUsers,
+        'aRates' => $aRates,
+        'aBonos' => $aBonos,
+    ];
+  }
 
 }

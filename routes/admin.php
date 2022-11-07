@@ -278,7 +278,7 @@ Route::group(['middleware' => 'superAdmin'], function () {
 });
 
 Route::group(['middleware' => ['Administrativo'], 'prefix' => 'departamento'], function () {
-  Route::get('informes-cliente/{month?}/{month2?}/{f_rate?}/{f_method?}/{f_coach?}', 'DptoController@informeClienteMes'); //'InformesController@informeClienteMes');
+  Route::get('informes-cliente/{month?}/{f_rate?}/{f_method?}/{f_coach?}', 'DptoController@informeClienteMes'); //'InformesController@informeClienteMes');
   Route::get('/contabilidad', 'DptoController@perdidas_ganacias'); // 'PyGController@index');
   Route::get('/gastos-by-byType/{typeID}', 'DptoController@ExpensesbyType');
 });
