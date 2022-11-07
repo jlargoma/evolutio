@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests;
+use App\Models\Bonos;
 use \Carbon\Carbon;
 use DB;
 use App\Models\Expenses;
@@ -14,6 +15,25 @@ use App\Models\UserRates;
 use App\Models\DistribBenef;
 
 class DptoController extends Controller {
+
+  private function getDepto(){
+    $expensesLst = [];
+    $coachRole = '-';
+    $rType = [];
+    $bIDs = [];
+    $rIDs = [];
+
+    $uID = Auth()->id();
+    if ($uID == 2844 || $uID == 2801){ //estetica
+      $expensesLst = ['gto_mat_esthetic','renting_estetica'];
+      $coachRole = 'esthetic';
+      $rType = [12];
+
+      $rIDs = \App\Models\Rates::whereIn('type',$rType)->orderBy('name')->pluck('id'); 
+      $bIDs = Bonos::whereIn('rate_type',$rType)->orWhereIn('rate_id',$rIDs)->orWhere('rate_subf', 'LIKE', "%e%")->pluck('id');
+    }
+    return [ $expensesLst,$coachRole,$rType,$rIDs,$bIDs];
+  }
 
   public function perdidas_ganacias() {
     //---------------------------------------------------------//
@@ -26,31 +46,42 @@ class DptoController extends Controller {
 
 
     //---------------------------------------------------------//
-    $expensesLst = [];
-    $coachRole = '-';
-    
-    $uID = Auth()->id();
-    if ($uID == 2843){ //estetica
-      $coachRole = 'esthetic';
-      $expensesLst = ['gto_mat_esthetic','renting_estetica'];
-    }
+    $dpto = $this->getDepto();
+    $expensesLst = $dpto[0];
+    $coachRole = $dpto[1];
+    $rType = $dpto[2];
+    $rIDs = $dpto[3];
+    $bIDs = $dpto[4];
     //---------------------------------------------------------//
-    
-
 
     $gType = Expenses::getTypes();
     $gTypeGroup = Expenses::getTypesGroup();
     $gTypeGroup_g = $gTypeGroup['groups'];
+
+    foreach ($gTypeGroup_g as $k => $v){
+      if (!in_array($k,$expensesLst)){
+        unset($gTypeGroup_g[$k]);
+      }
+    }
+    foreach ($gTypeGroup['names'] as $k => $v){
+      if (!in_array($k,$gTypeGroup_g)){
+        unset($gTypeGroup['names'][$k]);
+      }
+    }
+    $gTypeGroup['names']['otros'] = 'RESTO DE GASTOS';
+
+
     $ggMonth = [];
     $crLst = [];
     foreach ($gTypeGroup_g as $k => $v)
       $ggMonth[$v] = $months_empty;
     $ggMonth['otros'] = $months_empty;
     //---------------------------------------------------------//
-    $oRateTypes = \App\Models\TypesRate::orderBy('name')->pluck('name', 'id')->toArray();
-    $aRates = \App\Models\Rates::orderBy('name')->pluck('type', 'id')->toArray();
-    foreach ($oRateTypes as $k => $v)
+    $oRateTypes = \App\Models\TypesRate::whereIn('id',$rType)->orderBy('name')->pluck('name', 'id')->toArray();
+    $aRates = \App\Models\Rates::whereIn('id',$rIDs)->orderBy('name')->pluck('type', 'id')->toArray(); 
+    foreach ($oRateTypes as $k => $v){
       $crLst[$k] = $months_empty;
+    } 
     //---------------------------------------------------------//
     $incomesYear = $expensesYear = [];
     $currentY = [];
@@ -58,10 +89,10 @@ class DptoController extends Controller {
     for ($i = 2; $i >= 0; $i--) {
       $yAux = $year - $i;
 //      $incomesYear[$yAux] = Charges::getSumYear($yAux);
-      $incomesYear[$yAux] = UserRates::getSumYear($yAux);
+      $incomesYear[$yAux] = UserRates::getSumYear($yAux,$rIDs,$bIDs);
     }
     //----------------------------------------------------------//
-    $uRates = UserRates::where('rate_year', $year)->get();
+    $uRates = UserRates::whereIn('id_rate',$rIDs)->where('rate_year', $year)->get();
 
     $aux = $months_empty;
     $pay_method = ['c' => $months_empty, 'b' => $months_empty, 'v' => $months_empty, 'np' => $months_empty];
@@ -91,25 +122,9 @@ class DptoController extends Controller {
       }
     }
     //--------------------------------------------------------------------//
-    $aBonos = \App\Models\Bonos::orderBy('name')->get();
-    $lstBonos = [];
-    foreach ($aBonos as $k => $v) {
-      $rateType = null;
-      if ($v->rate_subf) {
-        if (str_contains($v->rate_subf, 'f'))
-          $rateType = 8;
-        else {
-          if (str_contains($v->rate_subf, 'v'))
-            $rateType = 11;
-        }
-      } else {
-        $rateType = $v->rate_type;
-      }
-      $lstBonos[$v->id] = $rateType;
-    }
+    $lstBonos = \App\Models\Bonos::listBonos();
     //--------------------------------------------------------------------//
-    $oBonos = Charges::whereYear('date_payment', '=', $year)
-                    ->where('bono_id', '>', 0)->get();
+    $oBonos = Charges::whereYear('date_payment', '=', $year)->whereIn('bono_id',$bIDs)->get();
     $oRateTypes['bono'] = 'BONOS SUELTOS';
     $crLst['bono'] = $months_empty;
     foreach ($oBonos as $c) {
@@ -206,14 +221,12 @@ class DptoController extends Controller {
 
     //---------------------------------------------------------//
     $oUser = new User();
-    $subscs = \App\Models\UsersSuscriptions::count();
+    $subscs = 0;
     $uActivs = User::where('status', 1)->count();
-    $uPlan = $oUser->getMetaUserID_byKey('plan', 'fidelity');
-    $uPlanBasic = $oUser->getMetaUserID_byKey('plan', 'basic');
-    $subscsFidelity = \App\Models\UsersSuscriptions::where('tarifa', 'fidelity')->count();
-    $uActivsFidelity = \App\Models\User::where('status', 1)->whereIn('id', $uPlan)->count();
-    $subscsBasic = \App\Models\UsersSuscriptions::where('tarifa', 'basic')->count();
-    $uActivsBasic = \App\Models\User::where('status', 1)->whereIn('id', $uPlanBasic)->count();
+    $subscsFidelity = 0;
+    $uActivsFidelity = 0;
+    $subscsBasic = 0;
+    $uActivsBasic =  0;
     //---------------------------------------------------------//
     $aux_i = $aux_e = $months_empty;
     //---------------------------------------------------------//
@@ -238,6 +251,7 @@ class DptoController extends Controller {
         'uActivsFidelity' => $uActivsFidelity,
         'subscsBasic' => $subscsBasic,
         'uActivsBasic' => $uActivsBasic,
+        'tExpenType'=>'e2'
     ]);
   }
 
@@ -282,5 +296,44 @@ class DptoController extends Controller {
     $data['aCoachs'] = User::getCoachs()->pluck('name', 'id');
     return view('admin.informes.informeClientesMes', $data);
   }
+
+
+  function ExpensesbyType($type){
+    $year = getYearActive();
+    $dpto = $this->getDepto();
+    $expensesLst = $dpto[0];
+    $coachRole = $dpto[1];
+
+
+    if ($type == 'pt' || $type == 'sueldos_y_salarios'){
+      $sCoachLiq = new \App\Services\CoachLiqService();
+      $data = $sCoachLiq->liqByCoachMonths($year,$coachRole);
+      include_once app_path().'/Blocks/PyG_Coachs.php';
+    } else {
+      $gTypeGroup = Expenses::getTypesGroup();
+      $aTypeLst = Expenses::getTypes();
+      if (!isset($gTypeGroup['names'][$type])){
+        echo  '<p class="alert alert-warning">Sin Registros</p>';
+        return '';
+      }
+      $gTypesNames = $gTypeGroup['names'];
+      $gTypeGroup = $gTypeGroup['groups'];
+      $auxTypes = [];
+      foreach ($gTypeGroup as $k=>$v){
+        if ($v == $type && in_array($k,$expensesLst)) $auxTypes[] = $k;
+      }
+      $payType = Expenses::getTypeCobro();
+
+      $items = Expenses::whereYear('date', '=', $year)
+              ->whereIn('type',$auxTypes)->orderBy('date')->get();
+      if (count($items)== 0){
+        echo  '<p class="alert alert-warning">Sin Registros</p>';
+        return '';
+      }
+//      dd($gTypeGroup);
+      include_once app_path().'/Blocks/PyG_Expenses.php';
+    }
+  }
+
 
 }

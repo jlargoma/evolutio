@@ -78,19 +78,7 @@ class PyGController extends Controller {
     }
     //--------------------------------------------------------------------//
     $aBonos = \App\Models\Bonos::orderBy('name')->get();
-    $lstBonos = [];
-    foreach ($aBonos as $k=>$v){
-      $rateType = null;
-      if ($v->rate_subf){
-        if(str_contains($v->rate_subf,'f')) $rateType = 8;
-        else {
-          if(str_contains($v->rate_subf,'v')) $rateType = 11;
-        }
-      } else {
-        $rateType = $v->rate_type;
-      }
-      $lstBonos[$v->id] = $rateType;
-    }
+    $lstBonos = \App\Models\Bonos::listBonos();
     //--------------------------------------------------------------------//
     $oBonos = Charges::whereYear('date_payment', '=', $year)
               ->where('bono_id','>',0)->get();
@@ -241,6 +229,7 @@ class PyGController extends Controller {
         'uActivsFidelity'=>$uActivsFidelity,
         'subscsBasic'=>$subscsBasic,
         'uActivsBasic'=>$uActivsBasic,
+        'tExpenType'=>'e'
   ]);
   }
 

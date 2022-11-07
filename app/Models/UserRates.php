@@ -23,8 +23,11 @@ class UserRates extends Model {
     return $this->hasOne('\App\Models\Charges', 'id', 'id_charges');
   }
 
-  static function getSumYear($year) {
-    $uRates = UserRates::where('rate_year', $year)->get();
+  static function getSumYear($year,$rIDs=null,$bIDs=null) {
+    $sqlRates = UserRates::where('rate_year', $year);
+    if ($rIDs !== null) $sqlRates->whereIn('id_rate',$rIDs);
+
+    $uRates = $sqlRates->get();
     $total = 0;
     foreach ($uRates as $item) {
       $c = $item->charges;
@@ -35,7 +38,9 @@ class UserRates extends Model {
       }
     }
 
-    $oBonos = Charges::whereYear('date_payment', '=', $year)->where('bono_id', '>', 0)->sum('import');
+    $sql = Charges::whereYear('date_payment', '=', $year)->where('bono_id', '>', 0);
+    if ($bIDs !== null) $sql->whereIn('bono_id',$rIDs);
+    $oBonos = $sql->sum('import');
     if ($oBonos) {
       $total += $oBonos;
     }

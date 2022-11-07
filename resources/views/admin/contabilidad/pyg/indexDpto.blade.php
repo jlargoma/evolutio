@@ -45,8 +45,8 @@ function sumMonthValue($m){
           @endif
         </span></div>
     </div>
-    <div class="col-lg-8 col-sm-12 col-xs-12 ">
-      <div class="col-lg-7 col-sm-6 col-xs-12">
+    <div class="col-12 ">
+      <div class="col-lg-5 col-sm-6 col-xs-12">
         <table class="table">
         <tr>
           <th>Total</th>
@@ -72,7 +72,7 @@ function sumMonthValue($m){
         </tfoot>
       </table>
       </div>
-      <div class="col-lg-12 col-sm-12 col-xs-12 chart_2">
+      <div class="col-lg-7 col-sm-12 col-xs-12 chart_2">
         <canvas id="myChart" width="400" height="130"></canvas>
       </div>
     </div>

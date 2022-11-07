@@ -27,4 +27,22 @@ class Bonos extends Model
     return null;
   }
 
+  static function listBonos(){
+    $aBonos =  Bonos::orderBy('name')->get();
+    $lstBonos = [];
+    foreach ($aBonos as $k=>$v){
+      $rateType = null;
+      if ($v->rate_subf){
+        if(str_contains($v->rate_subf,'f')) $rateType = 8;
+        if(str_contains($v->rate_subf,'v')) $rateType = 11;
+        if(str_contains($v->rate_subf,'e')) $rateType = 12;
+        if(str_contains($v->rate_subf,'p')) $rateType = 13;
+      } else {
+        $rateType = $v->rate_type;
+      }
+      $lstBonos[$v->id] = $rateType;
+    }
+
+    return $lstBonos;
+  }
 }

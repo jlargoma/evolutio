@@ -190,6 +190,12 @@ var myChart = new Chart(ctx, {
         $('#modalInfo').modal('show');
       });
     }
+    if($(this).data('t') == 'e2'){
+      $.get('/departamento/gastos-by-byType/'+k, function (data) {
+        $('#contentModalInfo').html(data);
+        $('#modalInfo').modal('show');
+      });
+    }
   });
 
 

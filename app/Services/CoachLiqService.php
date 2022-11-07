@@ -208,14 +208,21 @@ class CoachLiqService {
 
     
 //---------------------------------------------------------------//
-  function liqByCoachMonths($year) {
+  function liqByCoachMonths($year,$role=null) {
 
     $aux = ['username'=>'Usuario no encontrado','role'=>''];
     for ($i = 1; $i < 13; $i++)  $aux[$i] = 0;
     $aLiq = [];
     //---------------------------------------------------------------//
     // Get Saved liquidations
-    $oLiquidations = CoachLiquidation::whereYear('date_liquidation', '=', $year)->get();
+    $sql = CoachLiquidation::whereYear('date_liquidation', '=', $year);
+
+    if ($role){
+      $uIDs = User::whereCoachs()->where('role',$role)->pluck('id');
+      $sql->whereIn('id_coach',$uIDs);
+    }
+      
+    $oLiquidations = $sql->get(); 
     if ($oLiquidations) {
       foreach ($oLiquidations as $liq) {
         if (!isset($aLiq[$liq->id_coach])) {
