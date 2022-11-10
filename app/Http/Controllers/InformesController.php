@@ -61,20 +61,24 @@ class InformesController extends Controller {
       }
     }
     //------------------------------------------------------------//
-    $sqlURate = \App\Models\UserRates::where('id','>',0);
-    if ($f_coach) $sqlURate->where('coach_id', $f_coach);
-    if ($f_month) $sqlURate->where('rate_month', $f_month);
-    if ($f_coach || $f_month){
-      $sql_charges->whereIn('id', $sqlURate->pluck('id_charges'));
+    // $sqlURate = \App\Models\UserRates::where('id','>',0);
+    // if ($f_coach) $sqlURate->where('coach_id', $f_coach);
+    // if ($f_month) $sqlURate->where('rate_month', $f_month);
+    // if ($f_coach || $f_month){
+    //   $sql_charges->whereIn('id', $sqlURate->pluck('id_charges'));
+    // }
+    if ($f_coach){
+      $sql_charges->join('users_rates', 'users_rates.id_charges', '=', 'charges.id');
+      $sql_charges->where('users_rates.coach_id', $f_coach);
     }
     
     //------------------------------------------------------------//
 
 
-    $charges = $sql_charges->orderBy('date_payment')->get();
+    $charges = $sql_charges->select('charges.*')->orderBy('date_payment')->get();
     //------------------------------------------------------------//
     $CoachsService = new \App\Services\CoachsService();
-    $aCargesCoachs = $CoachsService->getCoachsCharge($sql_charges->pluck('id'));
+    $aCargesCoachs = $CoachsService->getCoachsCharge($sql_charges->pluck('charges.id'));
     //------------------------------------------------------------//
 
     $bank = 0;
@@ -100,6 +104,9 @@ class InformesController extends Controller {
           break;
       }
     }
+    $rates = array_unique($rates);
+    $bonos = array_unique($bonos);
+    $clients = array_unique($clients);
 
     $endDay = date("t", strtotime($starDate));
     $aUsers = User::whereIn('id', $clients)->get()
@@ -228,6 +235,7 @@ class InformesController extends Controller {
     $data['f_coach'] = $f_coach;
     $data['aTRates'] = \App\Models\Rates::getRatesTypeRates();
     $data['aCoachs'] = User::getCoachs()->pluck('name', 'id');
+  //  dd($data);
     return view('admin.informes.informeClientesMes', $data);
   }
 

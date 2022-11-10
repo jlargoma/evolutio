@@ -24,13 +24,20 @@ class DptoController extends Controller {
     $rIDs = [];
 
     $uID = Auth()->id();
-    if ($uID == 2844 || $uID == 2801){ //estetica
+    if ($uID == 2844 ){ //estetica
       $expensesLst = ['gto_mat_esthetic','renting_estetica'];
       $coachRole = 'esthetic';
       $rType = [12];
 
       $rIDs = \App\Models\Rates::whereIn('type',$rType)->orderBy('name')->pluck('id'); 
       $bIDs = Bonos::whereIn('rate_type',$rType)->orWhereIn('rate_id',$rIDs)->orWhere('rate_subf', 'LIKE', "%e%")->pluck('id');
+    }
+    if ($uID == 2858){ // fisio
+      $expensesLst = ['gto_mat._fisio','renting_fisioterapia'];
+      $coachRole = 'fisio';
+      $rType = [8];
+      $rIDs = \App\Models\Rates::whereIn('type',$rType)->orderBy('name')->pluck('id'); 
+      $bIDs = Bonos::whereIn('rate_type',$rType)->orWhereIn('rate_id',$rIDs)->orWhere('rate_subf', 'LIKE', "%f%")->pluck('id');
     }
     return [ $expensesLst,$coachRole,$rType,$rIDs,$bIDs];
   }
@@ -123,7 +130,6 @@ class DptoController extends Controller {
     }
     //--------------------------------------------------------------------//
     $lstBonos = \App\Models\Bonos::listBonos();
-    //--------------------------------------------------------------------//
     $oBonos = Charges::whereYear('date_payment', '=', $year)->whereIn('bono_id',$bIDs)->get();
     $oRateTypes['bono'] = 'BONOS SUELTOS';
     $crLst['bono'] = $months_empty;
@@ -310,6 +316,23 @@ class DptoController extends Controller {
     $data['f_coach'] = $f_coach;
     $data['aTRates'] = \App\Models\Rates::getRatesTypeRates();
     $data['aCoachs'] = User::getCoachs()->where('role',$coachRole)->pluck('name', 'id');
+
+
+    //--------------------------------------------------------------------//
+    $aBonos = \App\Models\Bonos::all()->pluck('name','id');
+    $oLstBonos = Charges::select('charges.*', 'users.name as username')
+    ->join('users', 'users.id', '=', 'charges.id_user')
+    ->whereYear('date_payment', '=', $year)
+    ->whereMonth('date_payment', '=', $f_month)
+    ->whereIn('bono_id',$bIDs)->get();
+    $cTotalBonos = ['cash'=>0,'card'=>0,'banco'=>0];
+    foreach ($oLstBonos as $c) {
+      $cTotalBonos[$c->type_payment]  += $c->import;
+    }
+    $data['oLstBonos'] = $oLstBonos;
+    $data['aBonos'] = $aBonos;
+    $data['cTotalBonos'] = $cTotalBonos;
+    //--------------------------------------------------------------------//
     return view('admin.informes.informeClientesMes_dpto', $data);
   }
 
@@ -357,6 +380,7 @@ class DptoController extends Controller {
       $search = trim($search);
       $cliIDs = User::where('name', 'LIKE', "%" . $search . "%")->pluck('id');
       $sql_charges->whereIn('id_user', $cliIDs);
+      //$sql_charges->join('Users', 'Users.id', '=', 'charges.id_user')->where('name', 'LIKE', "%" . $search . "%");
     }
 
     if ($day == "all") {
@@ -383,18 +407,16 @@ class DptoController extends Controller {
       }
     }
     //------------------------------------------------------------//
-    $sqlURate = \App\Models\UserRates::where('id','>',0);
-    if ($f_coach) $sqlURate->where('coach_id', $f_coach);
-    if ($f_month) $sqlURate->where('rate_month', $f_month);
-    if ($f_coach || $f_month){
-      $sql_charges->whereIn('id', $sqlURate->pluck('id_charges'));
+    if ($f_coach){
+      $sql_charges->join('users_rates', 'users_rates.id_charges', '=', 'charges.id');
+      if ($f_coach) $sql_charges->where('users_rates.coach_id', $f_coach);
     }
     
     //------------------------------------------------------------//
-    $charges = $sql_charges->orderBy('date_payment')->get();
+    $charges = $sql_charges->select('charges.*')->orderBy('date_payment')->get();
     //------------------------------------------------------------//
     $CoachsService = new \App\Services\CoachsService();
-    $aCargesCoachs = $CoachsService->getCoachsCharge($sql_charges->pluck('id'));
+    $aCargesCoachs = $CoachsService->getCoachsCharge($sql_charges->pluck('charges.id'));
     //------------------------------------------------------------//
 
     $bank = 0;
@@ -420,7 +442,6 @@ class DptoController extends Controller {
           break;
       }
     }
-
     $endDay = date("t", strtotime($starDate));
     $aUsers = User::whereIn('id', $clients)->get()
                     ->pluck('name', 'id')->toArray();
@@ -429,7 +450,6 @@ class DptoController extends Controller {
 
     $aBonos = \App\Models\Bonos::whereIn('id', $bonos)->get()
                     ->pluck('name', 'id')->toArray();
-
     return [
         'charges' => $charges,
         'aCargesCoachs' => $aCargesCoachs,

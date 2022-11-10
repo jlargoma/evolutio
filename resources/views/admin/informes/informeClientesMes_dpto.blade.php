@@ -110,6 +110,15 @@ $filt_month = intVal($month);
     @include('admin.informes._table_informes')
       </div>
     </div>
+    
+<h2>Bonos Vendidos</h2>
+    <div class="table-responsive">
+    @include('admin.informes._table_sumary_bonos')
+    </div>
+    <div class="table-responsive">
+    @include('admin.informes._table_informes_bonos')
+      </div>
+    </div>
   </div>
 </div>
 
