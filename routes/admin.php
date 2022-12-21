@@ -221,6 +221,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function () {
   Route::get('/informes/cuotas-mes/{month?}/{day?}', 'InformesController@informeCuotaMes');
   Route::get('/informes/cobros-mes/{month?}/{day?}', 'InformesController@informeCobrosMes');
   Route::get('informes/cliente-mes/{month?}/{month2?}/{f_rate?}/{f_method?}/{f_coach?}', 'InformesController@informeClienteMes');
+  Route::get('informes/servicios-mes/{f_month?}/{f_rate?}/{f_method?}/{f_coach?}', 'InformesController@informeServiciosMes');
   Route::post('/informes/search/{month?}', 'InformesController@searchClientInform');
   Route::get('/informes/cierre-diario/{month?}/{day?}', 'InformesController@informeCierreDiario');
 

@@ -8,6 +8,8 @@ use Carbon\Carbon;
 use DB;
 use \App\Models\User;
 use App\Models\Charges;
+use App\Models\Rates;
+use App\Models\UserBonosLogs;
 
 class InformesController extends Controller {
 
@@ -624,6 +626,140 @@ class InformesController extends Controller {
     /*     * ************************************************************ */
     $data['showFilter'] = false;
     return view('admin.informes.informeCajaMes', $data);
+  }
+
+
+
+
+  public function informeServiciosMes(Request $request, $f_month = null, $f_rate = null, $f_method = null, $f_coach = null) {
+
+    $year = getYearActive();
+    if (!$f_month)
+      $f_month = date('m');
+
+
+      $sqlURates = \App\Models\UserRates::where('rate_month', $f_month)->where('rate_year', $year);
+      if ($f_coach) $sqlURates->where('coach_id', $f_coach);
+
+      if ($f_rate) {
+        if ($f_rate != 'all') {
+          $filerRate = explode('-', $f_rate);
+          if (count($filerRate) == 2) {
+            $sqlURates->where('id_rate', $filerRate[1]);
+          } else {
+            $sqlURates->whereIn('id_rate', Rates::where('type',$filerRate[0])->pluck('id'));
+          }
+        }
+      }
+
+      $uRates = $sqlURates->orderBy('created_at')->get();
+
+
+      $aCoachs = User::getCoachs()->pluck('name', 'id');
+
+
+      $bank = 0;
+      $cash = 0;
+      $card = 0;
+      $bono = 0;
+      $charges = [];
+      $uCount = [];
+      foreach ($uRates as $item) {
+        $charge = $item->charges;
+        $uCount[] =  $item->id_user;
+        if ($charge) {
+          $type_payment = '';
+          switch ($charge->type_payment) {
+            case 'banco':
+            $bank += $charge->import;
+            $type_payment = 'BANCO';
+            break;
+            case 'cash':
+            $cash += $charge->import;
+            $type_payment = 'METALICO';
+            break;
+            case 'card':
+            $card += $charge->import;
+            $type_payment = 'TARJETA';
+            break;
+            case 'bono':
+            $bono += $charge->import;
+            $type_payment = 'BONO';
+            break;
+          }
+          $charges[$item->id] = [
+            'id'=> $charge->id,
+            'date'=> dateMin($charge->date_payment),
+            'import'=> moneda($charge->import,true,1),
+            'type_payment'=> $type_payment,
+          ];
+          
+        }
+      }
+  
+      $aCustomers = User::pluck('name', 'id')->toArray();
+
+      $aRates = \App\Models\Rates::pluck('name', 'id')->toArray();
+
+      $data = [
+        'uRates' => $uRates,
+        'bank' => $bank,
+        'cash' => $cash,
+        'card' => $card,
+        'bono' => $bono,
+        'chargesData' => $charges,
+        'aCustomers' => $aCustomers,
+        'aRates' => $aRates,
+        'tCustomer' => count(array_unique($uCount)),
+      ];
+      $lstMonthsSpanish = lstMonthsSpanish();
+    unset($lstMonthsSpanish[0]);
+    $data['months'] = $lstMonthsSpanish;
+
+    /*     * ************************************************************** */
+    $rateFilter = [];
+    $oTypes = \App\Models\TypesRate::all();
+    foreach ($oTypes as $item) {
+      $aux = \App\Models\Rates::where('type', $item->id)->get();
+      $aux2 = [];
+      foreach ($aux as $a) {
+        $aux2[$a->id] = $a->name;
+      }
+      $rateFilter[$item->id] = ['n' => $item->name, 'l' => $aux2];
+    }
+    $data['rateFilter'] = $rateFilter;
+    $data['filt_rate'] = $f_rate;
+    $data['filt_method'] = $f_method;
+    $data['filt_month'] = $f_month;
+    $data['year'] = $year;
+    /*     * ************************************************************** */
+    $data['f_coach'] = $f_coach;
+    $data['aTRates'] = \App\Models\Rates::getRatesTypeRates();
+    $data['aCoachs'] = $aCoachs;
+
+
+
+
+
+
+    //--------------------------------------------------------------------//
+    $aBonos = \App\Models\Bonos::all()->pluck('name','id');
+    $oLstBonos = Charges::select('charges.*', 'users.name as username')
+    ->join('users', 'users.id', '=', 'charges.id_user')
+    ->whereYear('date_payment', '=', $year)
+    ->whereMonth('date_payment', '=', $f_month)
+    ->where('bono_id','>',0)->get();
+    $cTotalBonos = ['cash'=>0,'card'=>0,'banco'=>0,'bono'=>0];
+    $chargesID = [];
+    foreach ($oLstBonos as $c) {
+      $cTotalBonos[$c->type_payment]  += $c->import;
+      $chargesID[]  = $c->id;
+    }
+    $data['oLstBonos'] = $oLstBonos;
+    $data['aBonos'] = $aBonos;
+    $data['cTotalBonos'] = $cTotalBonos;
+    $data['aCargesCoachs'] =  UserBonosLogs::whereIn('charge_id',(array_unique($chargesID)))->pluck('coach_id','charge_id')->toArray();
+    return view('admin.informes.informeServiciosMes', $data);
   }
 
 }

@@ -82,6 +82,11 @@
                         </a>
                     </li>
                     <li class="text-center">
+                        <a href="{{ url('admin/informes/servicios-mes') }}" class="btn btn-success btn-home">
+                          Servicios Clientes
+                        </a>
+                    </li>
+                    <li class="text-center">
                         <a href="{{ url('admin/informes/cuotas-mes') }}" class="btn btn-success btn-home">
                             Inf. Cuotas Mes
                         </a>
