@@ -187,6 +187,7 @@ class CashBoxsController extends Controller {
         }
         $lstMonthsSpanish = lstMonthsSpanish();
         $MailsService = new MailsService();
+        $month = intval($month);
         $MailsService->sendEmail_CashBoxs($day,$lstMonthsSpanish[$month].' '.$year,$tableMail);
         /** Send Mail */
         
