@@ -37,6 +37,20 @@
                 font-weight: bold;
                 font-size: 22px;
             }
+            .table{
+                border: 1px solid;
+                width: 100%;
+            }
+            .table th {
+                padding: 4px;
+                background-color: #e0f5e9;
+            }
+            .table td {
+                padding: 4px; 
+            }
+            .nowrap{
+                white-space: nowrap;
+            }
             <?php $style; ?>
         </style>
     </head>

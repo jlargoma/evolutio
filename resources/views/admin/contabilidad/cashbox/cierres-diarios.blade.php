@@ -85,10 +85,10 @@ use \Carbon\Carbon; ?>
                         </thead>
                         <tbody>
                             <?php foreach ($lstItems as $item) : ?>
-                                <tr >
+                                <tr>
                                     @if($is_admin)<th class="text-center">{{ $item['id'] }}</th>@endif
                                     <td>{{ $item['concept'] }}</td>
-                                    <td class="backgr {{$item['css']}}" >{{ $item['type'] }}</td>
+                                    <td class="backgr {{$item['css']}}">{{ $item['type'] }}</td>
                                     <td class="text-center"><b>{{ moneda($item['import']) }}</b></td>
                                     <td class="text-center">{{ $item['user'] }}</td>
                                 </tr>
@@ -98,25 +98,76 @@ use \Carbon\Carbon; ?>
                 </div>
         </section>
     </div>
-<div class="text-center mt-2">
-    <button type="button" class="btn btn-success" id="addNew_ingr" type="button" data-toggle="modal" data-target="#modalAddNew"><i class="fa fa-plus-circle"></i> Añadir Gastos</button>
-</div>
-
-</div>
-
-<div class="modal fade" id="modalAddNew" tabindex="-1" role="dialog"  aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <strong class="modal-title" id="modalChangeBookTit" style="font-size: 1.4em;">Añadir Gasto</strong>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">@include('admin.contabilidad.expenses._form')</div>
-      </div>
+    <div class="text-center mt-2">
+    @if($closedBy)
+        <p class="alert alert-info">Caja cerrada por <b>{{$closedBy}}</b></p>
+    @else
+        <button type="button" class="btn btn-success" id="addNew_ingr" type="button" data-toggle="modal" data-target="#modalAddNew"><i class="fa fa-plus-circle"></i> Añadir Gastos</button>
+        <button type="button" class="btn btn-success" type="button" data-toggle="modal" data-target="#modalCloseCashBox">CERRAR CAJA</button>
+    @endif
     </div>
-  </div>
+
+</div>
+
+<div class="modal fade" id="modalAddNew" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <strong class="modal-title" id="modalChangeBookTit" style="font-size: 1.4em;">Añadir Gasto</strong>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">@include('admin.contabilidad.expenses._form')</div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalCloseCashBox" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <strong class="modal-title" id="modalChangeBookTit" style="font-size: 1.4em;">Añadir Gasto</strong>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url('/admin/caja-diaria-cierre') }}" method="post">
+                    <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+                    <input type="hidden" name="date" value="{{$dateQry}}">
+                    <input type="hidden" name="tCashBox" value="{{$tCashBox}}">
+                    <div class="row">
+                        <div class="col-lg-2 col-md-3 col-xs-12 mb-1em">
+                            <label for="import">Ajuste Caja </label>
+                            <input type="number" step="0.01" name="import" id="import" class="form-control" required />
+                            <small>Para decrementos use <b>-</b></small>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-xs-12 mb-1em">
+                            <label for="concept">Concepto</label>
+                            <input type="text" class="form-control" name="concept" id="concept" />
+                        </div>
+                        <div class="col-lg-4 col-md-3 col-xs-12 mb-1em">
+                            <label for="user">Cierre por:</label>
+                            <select class="form-control" id="to_user" name="to_user" style="width: 100%;">
+                                <option value="-1">--</option>
+                                @foreach($oCoachs as $u)
+                                <option value="{{$u->id}}">{{$u->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-xs-12 mb-1em">
+                            <label for="comment">Observaciones</label>
+                            <textarea class="form-control" name="comment" id="comment"></textarea>
+                        </div>
+                        <div class="text-center col-xs-12 mb-1em">
+                            <button class="btn btn-success" type="submit">Cerrar CAJA</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 @section('scripts')
 <script src="{{ asset('admin-css/assets/js/plugins/datatables/jquery.dataTables.min.js')}}"></script>
@@ -133,27 +184,27 @@ use \Carbon\Carbon; ?>
             window.location.replace("/admin/caja-diaria/" + month + '/' + day);
         });
 
-        $('#modalAddNew').on('submit', '#formNewExpense', function (e) {
+        $('#modalAddNew').on('submit', '#formNewExpense', function(e) {
             e.preventDefault();
             $.ajax({
                 url: $(this).attr('action'),
                 type: 'POST',
                 data: $(this).serializeArray(),
-                success: function (response) {
-                if (response == 'ok') {
-                    $('#import').val('');
-                    $('#concept').val('');
-                    $('#comment').val('');
-                    alert('Gasto Agregado');
-                } else
-                    alert(response);
+                success: function(response) {
+                    if (response == 'ok') {
+                        $('#import').val('');
+                        $('#concept').val('');
+                        $('#comment').val('');
+                        alert('Gasto Agregado');
+                    } else
+                        alert(response);
                 }
             });
-            });
-            
-            $('#modalAddNew').on('click', '#reload', function (e) {
+        });
+
+        $('#modalAddNew').on('click', '#reload', function(e) {
             location.reload();
-            });
+        });
 
     });
 </script>

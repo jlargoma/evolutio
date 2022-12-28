@@ -182,6 +182,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   
   /* CAJA */
   Route::get('/caja-diaria/{month?}/{day?}', 'CashBoxsController@getToUser');
+  Route::post('/caja-diaria-cierre', 'CashBoxsController@close');
   Route::post('/gastos/create', 'ExpensesController@create');
 
   Route::get('', function () {

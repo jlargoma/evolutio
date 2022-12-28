@@ -7,7 +7,10 @@ use App\Models\Charges;
 use App\Models\Expenses;
 use App\Models\Rates;
 use App\Models\User;
+use App\Models\CashBoxs;
+use App\Services\MailsService;
 use Illuminate\Support\Facades\Auth;
+use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 
 class CashBoxsController extends Controller {
 
@@ -18,20 +21,40 @@ class CashBoxsController extends Controller {
         if (!$day) $day = date('d');
 
         
-
+        $closedBy = null;
         $dateQry = $year.'-'.$month.'-'.$day;
         $tCashCharges = $tCashBox = 0;
+        $lstItems = [];
+        $userIDs = $rateIDs = [];
+        $lstUsr = $lstRates = [];
+        
+        $aCoachs = User::getCoachs()->pluck('name', 'id');
+        $oCoachs = User::getCoachs();
+        
+        /** Saldos */
+        $cashbox = CashBoxs::where('date','<', $dateQry)->orderBy('date','DESC')->first();
+        if ($cashbox){
+            $lstItems[] = [
+                'id' => $cashbox->id,
+                'import' => $cashbox->saldo,
+                'concept' => 'Saldo caja anterior - ' . ($cashbox->concept),
+                'type' => 'Saldo',
+                'css' => 'grey',
+                'user' => isset($aCoachs[$cashbox->user_id]) ? $aCoachs[$cashbox->user_id] : ''
+            ];
+            $tCashBox += $cashbox->saldo;
+        }
+        $cashbox = CashBoxs::where('date','=', $dateQry)->first();
+        if ($cashbox){
+            $closedBy = isset($aCoachs[$cashbox->user_id]) ? $aCoachs[$cashbox->user_id] : ' - ';
+        }
+        
+
+        /** Charges */
         $lstCharges = Charges::join('users_rates','users_rates.id_charges','charges.id')
                 ->where('import', '!=', 0)
                 ->where('date_payment', '=', $dateQry)
                 ->where('type_payment', 'cash')->get();
-
-          
-        $aCoachs = User::getCoachs()->pluck('name', 'id');
-        $oCoachs = User::getCoachs();
-        $lstItems = [];
-        $userIDs = $rateIDs = [];
-        $lstUsr = $lstRates = [];
         if($lstCharges){
             foreach($lstCharges as $ch){
                 $userIDs[] = $ch->id_user;
@@ -58,6 +81,7 @@ class CashBoxsController extends Controller {
             }
         }
 
+        /** Expenses */
         $Expenses = Expenses::where('date',$dateQry)->where('typePayment',2)->get();
         $gType = Expenses::getTypes();
         if($Expenses){
@@ -77,7 +101,7 @@ class CashBoxsController extends Controller {
             }
         }
 
-
+        /** Dates */
         $auxTime = $year . '-' . str_pad($month, 2, "0", STR_PAD_LEFT) . '-';
         if ($day == 'all') {
             $auxTime .= '01';
@@ -94,8 +118,10 @@ class CashBoxsController extends Controller {
         unset($lstMonthsSpanish[0]);
         $months = $lstMonthsSpanish;
 
+        /** view */
         return view('admin.contabilidad.cashbox.cierres-diarios', [
                     'is_admin' => (Auth::user()->role == "admin"),
+                    'closedBy' => $closedBy,
                     'totalCash' => $tCashCharges,
                     'tCashBox' => $tCashBox,
                     'lstItems' => $lstItems,
@@ -111,21 +137,61 @@ class CashBoxsController extends Controller {
                     'oCoachs' => $oCoachs,
                     'gType' => $gType,
                     'datePayment' =>  $day .'-'.$month.'-'.$year,
+                    'dateQry' => $dateQry,
                     'typePayment' => [2=>'CASH']
                 ]);
     }
-    function setToUser(Request $req){
-        $date = date('Y-m-d');
-        $charges = Charges::where('import', '!=', 0)
-                ->where('date_payment', '=', $date)
-                ->where('type_payment', 'cash')
-                ->sum('import');
+
+
+
+    function close(Request $req){
 
         
-        return view('admin.informes.caja.user', [
-                    'totalCash' => $charges,
-                    'date' => $date
-                ]);
+        $date = $req->input('date');
+        $cashbox = CashBoxs::where('date', $date)->get();
+        if (count($cashbox) > 0){
+            return back()->withErrors('La caja ya está cerrada');
+        }
+
+        $cashbox = new CashBoxs();
+        $cashbox->date = $date;
+        $cashbox->saldo = $req->input('tCashBox')+$req->input('import');
+        $cashbox->ajuste = $req->input('import');
+        $cashbox->concept = $req->input('concept');
+        $cashbox->comment = $req->input('comment');
+        $cashbox->user_id = $req->input('to_user');
+        $cashbox->save();
+
+        /** Send Mail */
+        $year = date('Y', strtotime($date));
+        $month = date('m', strtotime($date));
+        $day = date('d', strtotime($date));
+        $aCoachs = User::getCoachs()->pluck('name', 'id');
+        $lstCashbox = CashBoxs::whereYear('date', $year)
+        ->whereMonth('date', $month)->orderBy('date')->get();
+        $tableMail = '';
+        if ($lstCashbox){
+            $tableMail = '<table class="table"><tr><th>Día</th><th>Saldo</th><th>Ajuste</th><th>Concepto</th><th>Observ</th><th>Cierre por</th></tr>';
+            
+            foreach($lstCashbox as $c){
+                $tableMail .= '<tr>';
+                $tableMail .= '<td class="nowrap">'.$c->date.'</td>';
+                $tableMail .= '<td class="nowrap">'.moneda($c->saldo).'</td>';
+                $tableMail .= '<td class="nowrap">'.moneda($c->ajuste).'</td>';
+                $tableMail .= '<td>'.$c->concept.'</td>';
+                $tableMail .= '<td>'.$c->comment.'</td>';
+                $tableMail .= '<td>'. ( isset($aCoachs[$c->user_id]) ? $aCoachs[$c->user_id] : ' - ' ).'</td>';
+                $tableMail .= '</tr>';
+            }
+            $tableMail .= '</table>';
+        }
+        $lstMonthsSpanish = lstMonthsSpanish();
+        $MailsService = new MailsService();
+        $MailsService->sendEmail_CashBoxs($day,$lstMonthsSpanish[$month].' '.$year,$tableMail);
+        /** Send Mail */
+        
+        
+        return back()->with([ 'success' => 'La caja ya está cerrada']);
     }
 
 }

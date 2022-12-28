@@ -178,4 +178,28 @@ class MailsService {
               
 	}
 
+
+     /**
+     * enviar cierre de caja
+     */
+    public function sendEmail_CashBoxs($day,$dateText,$mailClientContent)
+    {
+      $subject = 'Cierre de caja: '.$day.' '.$dateText;
+
+      $mailClientContent = '<p>Cierre de caja del mes '.$dateText.'</p>'.$mailClientContent;
+        $sended = Mail::send('emails.base', [
+            'mailContent' => $mailClientContent,
+            'tit'       => $subject
+        ], function ($message) use ($subject) {
+            $message->from(config('mail.from.address'), config('mail.from.name'));
+            $message->to('wiwiarbona@gmail.com');
+            $message->to('jlargoma@gmail.com');
+            $message->to('carlosbiosca24@gmail.com');
+            $message->subject($subject);
+            $message->replyTo(config('mail.from.address'));
+        });
+        return $sended;
+    }
+
+
 }
