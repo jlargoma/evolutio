@@ -177,8 +177,12 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::get('/informes/cajaDiaria', 'InformesController@informeCajaDiaria');
   
   /* Entrenadores */
-    Route::get('/horariosEntrenador/{id?}', 'UsersController@horarios');
+  Route::get('/horariosEntrenador/{id?}', 'UsersController@horarios');
   Route::post('/horariosEntrenador', 'UsersController@updHorarios');
+  
+  /* CAJA */
+  Route::get('/caja-diaria/{month?}/{day?}', 'CashBoxsController@getToUser');
+  Route::post('/gastos/create', 'ExpensesController@create');
 
   Route::get('', function () {
     return redirect('admin/clientes');
@@ -195,7 +199,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function () {
   Route::get('/ingresos', 'IncomesController@index');
 
   /* Gastos  rutas basicas */
-  Route::post('/gastos/create', 'ExpensesController@create');
+
   Route::post('/gastos/importar', 'ExpensesController@gastos_import');
   Route::post('/gastos/gastosLst', 'ExpensesController@getTableGastos');
   Route::post('/gastos/update', 'ExpensesController@updateGasto');

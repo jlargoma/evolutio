@@ -508,11 +508,12 @@ class InformesController extends Controller {
         $totalBank += $i->import;
       }
     }
-    foreach ($data['extrasCharges'] as $i) {
-      $j = date('j', strtotime($i->date));
-      $arrayDays[$j]['cash'] += $i->import;
-      $totalCash += $i->import;
-    }
+    if (isset($data['extrasCharges']))
+      foreach ($data['extrasCharges'] as $i) {
+        $j = date('j', strtotime($i->date));
+        $arrayDays[$j]['cash'] += $i->import;
+        $totalCash += $i->import;
+      }
 
     $auxTime = $year . '-' . str_pad($month, 2, "0", STR_PAD_LEFT) . '-';
     if ($day == 'all') {

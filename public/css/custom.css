@@ -372,6 +372,22 @@ option.b {
 .modal-dialog.modal-lg {
     width: 98%;
 }
+
+td.backgr {
+    font-weight: bold;
+    padding: 10px !important;
+    text-align: center;
+    letter-spacing: 2px;
+}
+td.backgr.green {
+    background-color: #37b327;
+    color: #FFF;
+}
+td.backgr.red {
+    background-color: #f76767;
+    color: #FFF;
+}
+
 /*-----------------------------------*/
 @media(max-width:991px) {
     .table-fixed th.static{

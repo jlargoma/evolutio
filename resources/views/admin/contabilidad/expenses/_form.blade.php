@@ -3,6 +3,9 @@ $s_pt = 3;
 if(isset($page)){
   $s_pt = 2;
 }
+if (!isset($datePayment)){
+  $datePayment = date('d-m-Y');
+}
 ?>
 <form action="{{ url('/admin/gastos/create') }}" method="post"  id="formNewExpense" data-ajax="1">
   <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
@@ -10,7 +13,7 @@ if(isset($page)){
     <div class="col-lg-2 col-md-3 col-xs-12 mb-1em" style="max-height: 30px;">
       <label for="date">Fecha</label>
       <div id="datepicker-component" class="input-group date col-xs-12">
-          <input type="text" class="js-datepicker  form-control" name="fecha" id="fecha" value="<?php echo date('d-m-Y') ?>" style="font-size: 12px" data-date-format="dd-mm-yyyy" placeholder="dd-mm-yyyy"  style="cursor: pointer;" required="">
+          <input type="text" class="js-datepicker  form-control" name="fecha" id="fecha" value="{{$datePayment}}" style="font-size: 12px" data-date-format="dd-mm-yyyy" placeholder="dd-mm-yyyy"  style="cursor: pointer;" required="">
           <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
         </div>
     </div>

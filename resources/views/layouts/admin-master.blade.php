@@ -92,7 +92,7 @@
                         </a>
                     </li>
                     <li class="text-center">
-                        <a href="{{ url('admin/informes/caja') }}" class="btn btn-success btn-home">
+                        <a href="{{ url('admin/caja-diaria') }}" class="btn btn-success btn-home">
                             Caja
                         </a>
                     </li>
@@ -106,7 +106,7 @@
                         <!-- <button id="button-checkCash" class="btn btn-success btn-home" data-toggle="modal" data-target="#checkCash">
                             Caja
                         </button> -->
-                        <a href="{{ url('admin/informes/cajaDiaria') }}" class="btn btn-success btn-home">
+                        <a href="{{ url('admin/caja-diaria') }}" class="btn btn-success btn-home">
                             Caja
                         </a>
                     </li>
