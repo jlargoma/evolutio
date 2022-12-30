@@ -23,7 +23,7 @@ class CashBoxsController extends Controller {
         
         $closedBy = null;
         $dateQry = $year.'-'.$month.'-'.$day;
-        $tCashCharges = $tCashBox = 0;
+        $tSaldo = $tIngr = $tExpen = $tCashBox = 0;
         $lstItems = [];
         $userIDs = $rateIDs = [];
         $lstUsr = $lstRates = [];
@@ -43,8 +43,9 @@ class CashBoxsController extends Controller {
                 'user' => isset($aCoachs[$cashbox->user_id]) ? $aCoachs[$cashbox->user_id] : ''
             ];
             $tCashBox += $cashbox->saldo;
+            $tSaldo += $cashbox->saldo;
         }
-        $cashbox = CashBoxs::where('date','=', $dateQry)->first();
+        $oCashbox = CashBoxs::where('date','=', $dateQry)->first();
         if ($cashbox){
             $closedBy = isset($aCoachs[$cashbox->user_id]) ? $aCoachs[$cashbox->user_id] : ' - ';
         }
@@ -77,7 +78,9 @@ class CashBoxsController extends Controller {
                     'css' => 'green',
                     'user' => isset($aCoachs[$ch->coach_id]) ? $aCoachs[$ch->coach_id] : ''
                 ];
+                
                 $tCashBox += $ch->import;
+                $tIngr += $ch->import;
             }
         }
 
@@ -98,6 +101,7 @@ class CashBoxsController extends Controller {
                     'user' => isset($aCoachs[$item->to_user]) ? $aCoachs[$item->to_user] : ''
                 ];
                 $tCashBox -= $item->import;
+                $tExpen += $item->import;
             }
         }
 
@@ -122,7 +126,9 @@ class CashBoxsController extends Controller {
         return view('admin.contabilidad.cashbox.cierres-diarios', [
                     'is_admin' => (Auth::user()->role == "admin"),
                     'closedBy' => $closedBy,
-                    'totalCash' => $tCashCharges,
+                    'tSaldo' => $tSaldo,
+                    'tIngr' => $tIngr,
+                    'tExpen' => $tExpen,
                     'tCashBox' => $tCashBox,
                     'lstItems' => $lstItems,
                     'lstUsr' => $lstUsr,
@@ -135,6 +141,7 @@ class CashBoxsController extends Controller {
                     'month' => $month,
                     'day' => $day,
                     'oCoachs' => $oCoachs,
+                    'oCashbox' => $oCashbox,
                     'gType' => $gType,
                     'datePayment' =>  $day .'-'.$month.'-'.$year,
                     'dateQry' => $dateQry,
@@ -153,10 +160,11 @@ class CashBoxsController extends Controller {
             return back()->withErrors('La caja ya está cerrada');
         }
 
+        $arqueo = $req->input('import');
         $cashbox = new CashBoxs();
         $cashbox->date = $date;
         $cashbox->saldo = $req->input('tCashBox')+$req->input('import');
-        $cashbox->ajuste = $req->input('import');
+        $cashbox->ajuste = $arqueo;
         $cashbox->concept = $req->input('concept');
         $cashbox->comment = $req->input('comment');
         $cashbox->user_id = $req->input('to_user');
@@ -167,22 +175,20 @@ class CashBoxsController extends Controller {
         $month = date('m', strtotime($date));
         $day = date('d', strtotime($date));
         $aCoachs = User::getCoachs()->pluck('name', 'id');
-        $lstCashbox = CashBoxs::whereYear('date', $year)
-        ->whereMonth('date', $month)->orderBy('date')->get();
+        $lstCashbox = CashBoxs::whereYear('date', $year)->whereMonth('date', $month)->orderBy('date')->get();
         $tableMail = '';
         if ($lstCashbox){
-            $tableMail = '<table class="table"><tr><th>Día</th><th>Saldo</th><th>Ajuste</th><th>Concepto</th><th>Observ</th><th>Cierre por</th></tr>';
-            
-            foreach($lstCashbox as $c){
-                $tableMail .= '<tr>';
-                $tableMail .= '<td class="nowrap">'.$c->date.'</td>';
-                $tableMail .= '<td class="nowrap">'.moneda($c->saldo).'</td>';
-                $tableMail .= '<td class="nowrap">'.moneda($c->ajuste).'</td>';
-                $tableMail .= '<td>'.$c->concept.'</td>';
-                $tableMail .= '<td>'.$c->comment.'</td>';
-                $tableMail .= '<td>'. ( isset($aCoachs[$c->user_id]) ? $aCoachs[$c->user_id] : ' - ' ).'</td>';
-                $tableMail .= '</tr>';
-            }
+            $tableMail = '<table class="table">';
+            $tableMail .= '<tr><td>Saldo Anterior</td><td class="tVal">'.moneda($req->input('tSaldo')).'</td></tr>';
+            $tableMail .= '<tr><td>Ingresos del día</td><td class="tVal">'.moneda($req->input('tIngr')).'</td></tr>';
+            $tableMail .= '<tr><td>Salidas del día</td><td class="tVal">-'.moneda($req->input('tExpen')).'</td></tr>';
+
+            if ($arqueo || $arqueo == 0)
+            $tableMail .= '<tr><td>Arqueo: <small>'.$req->input('concept').'</small></td><td class="tVal">'.moneda($arqueo).'</td></tr>';
+
+
+            $tableMail .= '<tr><td>Resultado</td><td class="tVal"><b>'.moneda($req->input('tSaldo')+$req->input('tIngr')-$req->input('tExpen')+$arqueo).'</b></td></tr>';
+            $tableMail .= '<tr><td colspan="2" class="tCenter">Cerrada por: <b>'.( isset($aCoachs[$cashbox->user_id]) ? $aCoachs[$cashbox->user_id] : ' - ' ).'</b></td></tr>';
             $tableMail .= '</table>';
         }
         $lstMonthsSpanish = lstMonthsSpanish();
@@ -190,9 +196,6 @@ class CashBoxsController extends Controller {
         $month = intval($month);
         $MailsService->sendEmail_CashBoxs($day,$lstMonthsSpanish[$month].' '.$year,$tableMail);
         /** Send Mail */
-        
-        
         return back()->with([ 'success' => 'La caja ya está cerrada']);
     }
-
 }

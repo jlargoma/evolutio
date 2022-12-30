@@ -51,6 +51,19 @@
             .nowrap{
                 white-space: nowrap;
             }
+            .tCenter{
+                text-align: center;
+            }
+            .tLeft{
+                text-align: left;
+            }
+            .tRight{
+                text-align: right;
+            }
+            .tVal{
+                text-align: right;
+                width: 70px;
+            }
             <?php $style; ?>
         </style>
     </head>

@@ -19,6 +19,13 @@ use \Carbon\Carbon; ?>
     .header-navbar-fixed #main-container {
         padding-top: 0px;
     }
+    #sendClose {
+        border: 1px solid #c3c3c3;
+        padding: 15px;
+    }
+    span.balanceDay {
+        font-size: 1.4em;
+    }
 </style>
 <div class="content content-boxed bg-gray-lighter">
     <div class="bg-white">
@@ -99,8 +106,10 @@ use \Carbon\Carbon; ?>
         </section>
     </div>
     <div class="text-center mt-2">
-    @if($closedBy)
+    @if($closedBy && $oCashbox)
         <p class="alert alert-info">Caja cerrada por <b>{{$closedBy}}</b></p>
+
+        <div>{{$oCashbox->concept}}: {{moneda($oCashbox->ajuste)}}</div>
     @else
         <button type="button" class="btn btn-success" id="addNew_ingr" type="button" data-toggle="modal" data-target="#modalAddNew"><i class="fa fa-plus-circle"></i> Añadir Gastos</button>
         <button type="button" class="btn btn-success" type="button" data-toggle="modal" data-target="#modalCloseCashBox">CERRAR CAJA</button>
@@ -126,21 +135,44 @@ use \Carbon\Carbon; ?>
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <strong class="modal-title" id="modalChangeBookTit" style="font-size: 1.4em;">Añadir Gasto</strong>
+               
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <form action="{{ url('/admin/caja-diaria-cierre') }}" method="post">
+            <div class="modal-body row">
+                <div class="col-md-3">
+                    <table class="table" style="background-color: #c5c5c5;">
+                        <tr>
+                            <th>Saldo</th>
+                            <td with="50px">{{moneda($tSaldo)}}</td>
+                        </tr>
+                        <tr>
+                            <th>Ingresos del día</th>
+                            <td with="50px">{{moneda($tIngr)}}</td>
+                        </tr>
+                        <tr>
+                            <th>Salidas del día</th>
+                            <td with="50px">{{moneda($tExpen)}}</td>
+                        </tr>
+                        <tr>
+                            <th>Balance</th>
+                            <td with="50px"><span class="balanceDay">{{$tSaldo+$tIngr-$tExpen}}</span>€</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-9">
+                <form action="{{ url('/admin/caja-diaria-cierre') }}" method="post" id="sendClose">
                     <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
                     <input type="hidden" name="date" value="{{$dateQry}}">
                     <input type="hidden" name="tCashBox" value="{{$tCashBox}}">
+                    <input type="hidden" name="tSaldo" value="{{$tSaldo}}">
+                    <input type="hidden" name="tIngr" value="{{$tIngr}}">
+                    <input type="hidden" name="tExpen" value="{{$tExpen}}">
                     <div class="row">
                         <div class="col-lg-2 col-md-3 col-xs-12 mb-1em">
-                            <label for="import">Ajuste Caja </label>
-                            <input type="number" step="0.01" name="import" id="import" class="form-control" required />
-                            <small>Para decrementos use <b>-</b></small>
+                            <label for="import">Arqueo</label>
+                            <input type="number" step="1" name="import" id="importClose" class="form-control" required />
                         </div>
                         <div class="col-lg-6 col-md-6 col-xs-12 mb-1em">
                             <label for="concept">Concepto</label>
@@ -148,22 +180,21 @@ use \Carbon\Carbon; ?>
                         </div>
                         <div class="col-lg-4 col-md-3 col-xs-12 mb-1em">
                             <label for="user">Cierre por:</label>
-                            <select class="form-control" id="to_user" name="to_user" style="width: 100%;">
+                            <select class="form-control" name="to_user" style="width: 100%;">
                                 <option value="-1">--</option>
                                 @foreach($oCoachs as $u)
                                 <option value="{{$u->id}}">{{$u->name}}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-xs-12 mb-1em">
-                            <label for="comment">Observaciones</label>
-                            <textarea class="form-control" name="comment" id="comment"></textarea>
-                        </div>
                         <div class="text-center col-xs-12 mb-1em">
+                            <div class="mb-1em"><b>Balance del día: <span class="balanceDay">{{$tIngr-$tExpen}}</span>€</b></div>
                             <button class="btn btn-success" type="submit">Cerrar CAJA</button>
                         </div>
+                        
                     </div>
                 </form>
+                </div>
             </div>
         </div>
     </div>
@@ -177,6 +208,11 @@ use \Carbon\Carbon; ?>
         $('#month').change(function() {
             var month = $('#month').val();
             window.location.replace("/admin/caja-diaria/" + month + '/01');
+        });
+        $('#importClose').change(function() {
+            var value = $(this).val();
+            var oldValue = parseInt({{ceil($tSaldo+$tIngr-$tExpen)}});
+            $('.balanceDay').text(oldValue+parseInt(value));
         });
         $('#day').change(function() {
             var month = $('#month').val();

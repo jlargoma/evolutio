@@ -186,7 +186,6 @@ class MailsService {
     {
       $subject = 'Cierre de caja: '.$day.' '.$dateText;
 
-      $mailClientContent = '<p>Cierre de caja del mes '.$dateText.'</p>'.$mailClientContent;
         $sended = Mail::send('emails.base', [
             'mailContent' => $mailClientContent,
             'tit'       => $subject
