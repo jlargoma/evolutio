@@ -85,3 +85,17 @@
     </div>
 
 </section>
+
+<style>
+    .container {
+        position: absolute;
+        width: 100% !important;
+        text-align: center;
+    }
+    label {
+        font-size: 16px;
+        font-weight: 800;
+        margin-top: 1em;
+    }
+</style>
+@endsection

@@ -68,11 +68,3 @@
     </div>
 </div>
 @endsection
-
-@section('javascript')
-<style>
-  .form-group.has-error.row {
-    color: red;
-}
-</style>
-@endsection
