@@ -5,23 +5,34 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use \Carbon\Carbon;
+use Stripe;
 use App\Models\Rates;
-use App\Models\RateTypes;
+use App\Models\TypesRate;
+use App\Models\UserRates;
 
 class RatesController extends Controller {
 
   public function index() {
-    return view('backend.rates.index', [
-        'rates' => Rates::where('status', 1)->orderBy('order', 'asc')->orderBy('name', 'asc')->get(),
-        'services' => RateTypes::all(),
-        'lstCodes' => rates_codes()
+      
+    $types = TypesRate::orderBy('t_orden')->pluck('name','id');
+    $serv=[];
+    foreach ($types as $k=>$v){
+        $serv[$k] = Rates::where('status', 1)->where('type',$k)->orderBy('name')->get();
+    }
+//      dd($serv,$types);
+    return view('/admin/rates/index', [
+        'types' => $types,
+        'services' => $serv,
+        'subfamily' => TypesRate::subfamily(),
+        'oldRates' => Rates::where('status', 0)->orderBy('order', 'asc')->orderBy('name', 'asc')->get(),
     ]);
   }
 
   public function newRate() {
-    return view('backend.rates.new', [
+    return view('/admin/rates/new', [
         'taxes' => Rates::all(),
-        'typesRate' => \App\RateTypes::all(),
+        'typesRate' => TypesRate::all(),
+        'subtype' => TypesRate::subfamily(),
     ]);
   }
 
@@ -33,62 +44,74 @@ class RatesController extends Controller {
     $rates->type = $request->input('type');
     $rates->price = $request->input('price');
     $rates->mode = $request->input('mode');
-    $rates->status = $request->input('status');
-    $rates->cost = $request->input('cost');
+    $rates->status = 1;
+    $rates->cost = 0; //$request->input('cost');
     $rates->tarifa = $request->input('tarifa');
-
-    if ($rates->save()) {
-      return redirect()->back()->with('success','Tarifa creada.');
-    }
-    
-    return redirect()->back()->with('warning','Tarifa no creada.');
+    $rates->subfamily = $request->input('subfamily');
+    $rates->order = 99;
+    $rates->save();
+    return redirect()->back()->with(['success'=>'Servicio agregado']);
   }
 
   public function actualizar($id) {
 
-    return view('backend.rates.update', [
+    return view('/admin/rates/update', [
         'rate' => Rates::find($id),
-        'typesRate' => \App\RateTypes::all(),
+        'typesRate' => TypesRate::all(),
     ]);
   }
 
+  public function upd_fidelity(Request $request) {
+    $id = $request->input('id');
+    $oRates = Rates::find($id);
+    $oRates->tarifa = $request->input('val');
+    if ($oRates->save()) return 'OK';
+    return 'ERROR';
+  }
   public function update(Request $request) {
 
     $id = $request->input('id');
-    $rateUpadate = Rates::find($id);
-    $rateUpadate->name = $request->input('name');
-    $rateUpadate->max_pax = $request->input('max_pax');
-    $rateUpadate->type = $request->input('type');
-    $rateUpadate->price = $request->input('price');
-    $rateUpadate->mode = $request->input('mode');
-    $rateUpadate->order = $request->input('order');
-    $rateUpadate->cost = $request->input('cost');
-    $rateUpadate->tarifa = $request->input('tarifa');
-    if ($rateUpadate->save()) {
-      return 'ok';
+    $oRates = Rates::find($id);
+    $oRates->name = $request->input('name');
+    $oRates->max_pax = $request->input('max_pax');
+    $oRates->type = $request->input('type');
+    $oRates->price = $request->input('price');
+    $oRates->mode = $request->input('mode');
+    $oRates->cost = $request->input('cost');
+    $oRates->subfamily = $request->input('subfamily');
+//    $oRates->planStripe = $request->input('plan');
+    if ($oRates->save()) {
+      echo "Cambiada!!";
     }
-      return 'error';
   }
 
-  public function destroy($id) {
+  public function delete($id) {
     $rate = Rates::find($id);
-    if ($rate->delete()) {
-     return redirect()->back()->with('success','Tarifa eliminada.');
-    }
 
-    return redirect()->back()->with('warning','Tarifa no eliminada.');
+//    $stripe = new Stripe;
+//    $stripe = Stripe::make(HomeController::$stripe['key']);
+//    $plan = $stripe->plans()->delete($rate->planStripe);
+    $rate->status = 0;
+    if ($rate->save()) {
+        return redirect()->back()->with(['success'=>'Servicio eliminado']);
+    }
   }
 
-  public function unassignedRate($idUser, $idRate, $date) {
-    $month = Carbon::createFromFormat('Y-m-d', $date);
-    $userRate = \App\UserRates::where('id_user', $idUser)
-                    ->where('id_rate', $idRate)
-                    ->whereYear('created_at', '=', $month->copy()->format('Y'))
-                    ->whereMonth('created_at', '=', $month->copy()->format('m'))
-                    ->orderBy('created_at', 'DESC')->first();
-
+  public function unassignedRate($idUserRate) {
+    $userRate = UserRates::find($idUserRate);
+    if (!$userRate){
+        return redirect()->back()->withErrors(['Tarifa no encontrada']);
+    }
+    if ($userRate->charges){
+      return redirect()->back()->withErrors(['Tarifa cobrada.']);
+    }
+    $appointment = \App\Models\Dates::where('id_user_rates',$userRate->id)->first();
+    if ($appointment){
+      return redirect()->back()->withErrors(['Tarifa asociada a una cita.']);
+    }
+    $date = getMonthSpanish($userRate->rate_month).' '.$userRate->rate_year;
     if ($userRate->delete()) {
-      return redirect()->action('UsersController@clientes');
+      return redirect()->back()->with('success','Servicio removido para el perdiodo '.$date);
     }
   }
 

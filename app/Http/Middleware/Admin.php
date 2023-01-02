@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Support\Facades\Auth;
 
 class Admin
 {
@@ -11,14 +12,18 @@ class Admin
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
+     * @param  string|null  $guard
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
-        $roles = explode(',', $request->user()->menuroles);
-        if ( ! in_array('admin', $roles) ) {
-            return abort( 401 );
+        if (!Auth::guest()) {
+            if (Auth::user()->role == "admin") {
+                return $next($request);
+            } else {
+                return response('Unauthorized.', 401);
+            }
         }
-        return $next($request);
+        return redirect()->guest('login');
     }
 }

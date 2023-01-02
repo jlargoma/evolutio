@@ -1,57 +1,39 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
 /*
-|--------------------------------------------------------------------------
+  |--------------------------------------------------------------------------
 | Web Routes
-|--------------------------------------------------------------------------
-|
+  |--------------------------------------------------------------------------
+  |
 | Here is where you can register web routes for your application. These
 | routes are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
-|
-*/
+  |
+ */
 
-Route::group(['middleware' => ['auth','role:admin|limpieza|subadmin|recepcionista']], function () {
-  Route::get('/', 'HomeController@index')->name('home');
-  
-  /**
- * USER 
- */
-  Route::group(['prefix' => 'user'], function () {
-    Route::get('/edit/{id}', 'UsersController@edit')->name('user.edit');
-    Route::get('/new/', 'UsersController@new_user')->name('user.new');
-    Route::post('/store/', 'UsersController@store')->name('user.store');
-    Route::post('/update/{id}', 'UsersController@update')->name('user.update');
-    Route::DELETE('/destroy/{id}', 'UsersController@destroy')->name('users.destroy');
-    Route::get('/', 'UsersController@index')->name('users.index');
+include_once 'admin.php';
+include_once 'customer.php';
+include_once 'api.php';
+
+Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
+  Route::get('/import/{tipe}', function($tipe){
+    $oServc = new \App\Services\temps\ImportCustomers();
+    $oServc->import($tipe);
   });
-  /**
- * CONTABILIDAD 
- */
-  Route::group(['prefix' => 'contabilidad'], function () {
-    Route::get('/ingresos', 'ContableController@sales')->name('contabl.ingresos');
-    Route::get('/salarios', 'ContableController@salarios')->name('contabl.salarios');
-    Route::get('/', 'ContableController@index')->name('contabl');
-  });
-  /**
- * TARIFAS 
- */
-  Route::group(['prefix' => 'tarifas'], function () {
-    Route::post('/create', 'RatesController@create')->name('tarifas.nueva');
-    Route::post('/upd', 'RatesController@update')->name('tarifas.upd');
-    Route::delete('/del/{id}', 'RatesController@destroy')->name('tarifas.del');
-    Route::get('/', 'RatesController@index')->name('tarifas');
+
+  Route::get('/getTypesOrderned', function(){
+    \App\Models\Expenses::getTypesOrderned();
   });
   
-  //YEARS
-  Route::post('/years/change', 'YearsController@changeActiveYear')->name('years.change');
-  
-  /* CSV */
-  Route::get('/importar', 'DocumentImportsController@index');
-  Route::post('/importar/clientes', 'DocumentImportsController@inportSales');
-  Route::post('/importar/instructor', 'DocumentImportsController@inportInstructor');
+  Route::get('/getByTypes', function(){
+    \App\Models\Expenses::getByTypes();
+  });
   
 });
-Auth::routes();
-Route::get('/no-allowed','AppController@no_allowed');
-Route::get('403','AppController@no_allowed');
+
+
+Route::post('/stripe-events/Ij8TwDPIlaJjDoZLSnfD','StripeController@processEvent');
+Route::get('test-text/{key?}', 'SettingsController@testText');
+

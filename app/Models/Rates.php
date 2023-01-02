@@ -6,54 +6,58 @@ use Illuminate\Database\Eloquent\Model;
 
 class Rates extends Model
 {
+  const $noShow = [38,41,37,36];
     public function users()
     {
-        return $this->hasMany('\App\UserRates','id', 'id_rate');
+        return $this->hasMany('\App\Models\UserRates','id', 'id_rate');
     }
 
     public function typeRate()
     {
-        return $this->hasOne('\App\Models\RateTypes','id', 'type');
+        return $this->hasOne('\App\Models\TypesRate','id', 'type');
+    }
+        
+    static function getByTypeRate($type){
+        return self::select('rates.*')
+                ->join('types_rate','rates.type','=','types_rate.id')
+                ->where('status',1)
+                ->whereNotIn('rates.id',self::noShow)
+                ->where('types_rate.type',$type)->get();
+    }
+    static function getByTypeRateID($id){
+        return self::select('rates.*')
+                ->join('types_rate','rates.type','=','types_rate.id')
+                ->where('types_rate.id',$id)->get();
+    }
+    static function getRatesTypeRates(){
+        return self::join('types_rate','rates.type','=','types_rate.id')
+                ->pluck('types_rate.name','rates.id')->toArray();
     }
     
-    
-    static function getRatesBy_name() {
-      $rates = self::all();
-      $rateLst = [];
-      foreach ($rates as $i){
-        $rateLst[$i->name] = [$i->id,$i->cost];
-      }
+    /**
+     * Get Rates group by Type
+     * 
+     * @param type $name => just name and ID
+     * @return type
+     */
+    static function getTypeRatesGroups($name=true){
       
-      return $rateLst;
-    }
-    
-    static function getRatesNameBy_id() {
-      $rates = self::all();
-      $rateLst = [];
-      foreach ($rates as $i){
-        $rateLst[$i->id] = $i->name;
+      $rateFilter = [];
+      $oTypes = \App\Models\TypesRate::orderBy('name', 'asc')->get();
+      foreach ($oTypes as $item){
+        $aux  = Rates::where('type',$item->id)
+                ->whereNotIn('id',self::noShow)
+                ->orderBy('name', 'asc')->get();
+        if ($name){
+          $aux2 = [];
+          foreach ($aux as $a){
+            $aux2[$a->id] = $a->name;
+          }
+          $rateFilter[$item->id] = ['n' => $item->name,'l'=>$aux2];
+        } else {
+          $rateFilter[$item->id] = ['n' => $item->name,'l'=>$aux];
+        }
       }
-      
-      return $rateLst;
-    }
-    static function getRatesNameBy_type() {
-      $rates = self::all();
-      $rateLst = [];
-      foreach ($rates as $i){
-        if (!isset($rateLst[$i->type])) $rateLst[$i->type] = [];
-        $rateLst[$i->type][$i->id] = $i->name;
-      }
-      
-      return $rateLst;
-    }
-    
-    static function getRatestypeBy_id() {
-      $rates = self::all();
-      $rateLst = [];
-      foreach ($rates as $i){
-        $rateLst[$i->id] = $i->type;
-      }
-      
-      return $rateLst;
+      return $rateFilter;
     }
 }

@@ -1,29 +1,46 @@
-@extends('dashboard.errorBase')
+<!DOCTYPE html>
+<html class="no-focus" lang="en"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
 
-@section('content')
+        <title>Error 500</title>
+        <meta name="robots" content="noindex, nofollow">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-md-6">
-          <div class="clearfix">
-            <h1 class="float-left display-3 mr-4">500</h1>
-            <h4 class="pt-3">Houston, we have a problem!</h4>
-            <p class="text-muted">The page you are looking for is temporarily unavailable.</p>
-          </div>
-          <div class="input-prepend input-group">
-            <div class="input-group-prepend"><span class="input-group-text">
-                <svg class="c-icon">
-                  <use xlink:href="assets/icons/coreui/free-symbol-defs.svg#cui-magnifying-glass"></use>
-                </svg></span></div>
-            <input class="form-control" id="prependedInput" size="16" type="text" placeholder="What are you looking for?"><span class="input-group-append">
-              <button class="btn btn-info" type="button">Search</button></span>
-          </div>
+        <!-- Stylesheets -->
+        <!-- Web fonts -->
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400italic,600,700%7COpen+Sans:300,400,400italic,600,700">
+
+        <link rel="stylesheet" href="{{ asset('/admin-css/assets/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" id="css-main" href="{{ asset('/admin-css/assets/css/oneui.css') }}">
+    </head>
+    <body>
+        <!-- Error Content -->
+        <div class="content bg-white text-center pulldown overflow-hidden">
+            <div class="row">
+                <div class="col-sm-6 col-sm-offset-3">
+                    <!-- Error Titles -->
+                    <h1 class="font-s128 font-w300 text-modern animated zoomInDown">500</h1>
+                    <h2 class="h3 font-w300 push-50 animated fadeInUp">Uuppss!! Tenemos un problemilla con nuestro servidor...</h2>
+                    <!-- END Error Titles -->
+                    <pre>
+                        <?php echo $exception->getMessage()?>
+                    </pre>
+                    
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
+        <!-- END Error Content -->
 
-@endsection
-
-@section('javascript')
-
-@endsection
+        <!-- OneUI Core JS: jQuery, Bootstrap, slimScroll, scrollLock, Appear, CountTo, Placeholder, Cookie and App.js -->
+        <script src="{{ asset('admin-css/assets/js/core/jquery.min.js')}}"></script>
+        <script src="{{ asset('admin-css/assets/js/core/bootstrap.min.js')}}"></script>
+        <script src="{{ asset('admin-css/assets/js/core/jquery.slimscroll.min.js')}}"></script>
+        <script src="{{ asset('admin-css/assets/js/core/jquery.scrollLock.min.js')}}"></script>
+        <script src="{{ asset('admin-css/assets/js/core/jquery.appear.min.js')}}"></script>
+        <script src="{{ asset('admin-css/assets/js/core/jquery.countTo.min.js')}}"></script>
+        <script src="{{ asset('admin-css/assets/js/core/jquery.placeholder.min.js')}}"></script>
+        <script src="{{ asset('admin-css/assets/js/core/js.cookie.min.js')}}"></script>
+        <script src="{{ asset('admin-css/assets/js/app.js')}}"></script>
+    </body>
+</html>
