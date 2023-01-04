@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests;
+use App\Models\Bonos;
 use Carbon\Carbon;
 use DB;
 use \App\Models\User;
@@ -116,7 +117,7 @@ class InformesController extends Controller {
     $aRates = \App\Models\Rates::whereIn('id', $rates)->get()
                     ->pluck('name', 'id')->toArray();
 
-    $aBonos = \App\Models\Bonos::whereIn('id', $bonos)->get()
+    $aBonos = Bonos::whereIn('id', $bonos)->get()
                     ->pluck('name', 'id')->toArray();
 
     return [
@@ -285,7 +286,7 @@ class InformesController extends Controller {
     //----------------------------------------------------------//
     //----  BEGIN: BONOS        --------------------------------//
     $byBono = [];
-    $aBonos = \App\Models\Bonos::all()->pluck('name', 'id')->toArray();
+    $aBonos = Bonos::all()->pluck('name', 'id')->toArray();
     $oCharges = Charges::where('bono_id', '>', 0)
                     ->whereYear('date_payment', '=', $year)
                     ->whereMonth('date_payment', '=', $month)->get();
@@ -744,7 +745,7 @@ class InformesController extends Controller {
 
 
     //--------------------------------------------------------------------//
-    $aBonos = \App\Models\Bonos::all()->pluck('name','id');
+    $aBonos = Bonos::all()->pluck('name','id');
     $oLstBonos = Charges::select('charges.*', 'users.name as username')
     ->join('users', 'users.id', '=', 'charges.id_user')
     ->whereYear('date_payment', '=', $year)

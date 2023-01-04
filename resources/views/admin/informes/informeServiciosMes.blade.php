@@ -102,6 +102,7 @@ $filt_month = intVal($filt_month);
   </div>
   <div class="row" id="content-table-inform">
     <div class="table-responsive">
+    @include('admin.informes._table_sumary_global')
     @include('admin.informes.servicios._table_sumary')
     </div>
     <div class="table-responsive">
