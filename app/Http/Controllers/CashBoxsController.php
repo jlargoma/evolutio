@@ -40,23 +40,20 @@ class CashBoxsController extends Controller {
         $oCoachs = User::getCoachs();
         
         /** Saldos */
-        $cashbox = CashBoxs::where('date','<', $dateQry)->orderBy('date','DESC')->first();
-        if ($cashbox){
-            $lstItems[] = [
-                'id' => $cashbox->id,
-                'import' => $cashbox->saldo,
-                'concept' => 'Saldo caja anterior - ' . ($cashbox->concept),
-                'type' => 'Saldo',
-                'css' => 'grey',
-                'user' => isset($aCoachs[$cashbox->user_id]) ? $aCoachs[$cashbox->user_id] : ''
-            ];
-            $tCashBox += $cashbox->saldo;
-            $tSaldo += $cashbox->saldo;
-        }
-        $oCashbox = CashBoxs::where('date','=', $dateQry)->first();
-        if ($oCashbox){
-            $closedBy = isset($aCoachs[$oCashbox->user_id]) ? $aCoachs[$oCashbox->user_id] : ' - ';
-        }
+        // $cashbox = CashBoxs::where('date','<', $dateQry)->orderBy('date','DESC')->first();
+        // if ($cashbox){
+        //     // $lstItems[] = [
+        //     //     'id' => $cashbox->id,
+        //     //     'import' => $cashbox->saldo,
+        //     //     'concept' => 'Saldo caja anterior - ' . ($cashbox->concept),
+        //     //     'type' => 'Saldo',
+        //     //     'css' => 'grey',
+        //     //     'user' => isset($aCoachs[$cashbox->user_id]) ? $aCoachs[$cashbox->user_id] : ''
+        //     // ];
+        //     // $tCashBox += $cashbox->saldo;
+        //     //$tSaldo += $cashbox->saldo;
+        // }
+       
         
 
         /** Charges */
@@ -158,6 +155,24 @@ class CashBoxsController extends Controller {
             }
         }
 
+        /** arqueo */
+        $oCashbox = CashBoxs::where('date','=', $dateQry)->first();
+        if ($oCashbox){
+            $closedBy = isset($aCoachs[$oCashbox->user_id]) ? $aCoachs[$oCashbox->user_id] : ' - ';
+            if ($oCashbox->ajuste>0){
+             $lstItems[] = [
+                'id' => $oCashbox->id,
+                'import' => $oCashbox->ajuste,
+                'concept' => ($oCashbox->concept),
+                'type' => 'Arqueo',
+                'css' => 'grey',
+                'user' => isset($aCoachs[$oCashbox->user_id]) ? $aCoachs[$oCashbox->user_id] : ''
+            ];
+            $tCashBox += $oCashbox->ajuste;
+            $tSaldo += $oCashbox->ajuste;
+            }
+
+        }
 
 
         /** view */

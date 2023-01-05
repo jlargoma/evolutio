@@ -123,8 +123,6 @@ use \Carbon\Carbon; ?>
     <div class="text-center mt-2">
     @if($closedBy && $oCashbox)
         <p class="alert alert-info">Caja cerrada por <b>{{$closedBy}}</b></p>
-
-        <div>{{$oCashbox->concept}}: {{moneda($oCashbox->ajuste)}}</div>
     @else
         <button type="button" class="btn btn-success" id="addNew_ingr" type="button" data-toggle="modal" data-target="#modalAddNew"><i class="fa fa-plus-circle"></i> Añadir Gastos</button>
         <button type="button" class="btn btn-warnnig" type="button" data-toggle="modal" data-target="#modalCloseCashBox">CERRAR CAJA</button>
@@ -178,10 +176,6 @@ use \Carbon\Carbon; ?>
             <div class="modal-body row">
                 <div class="col-md-3">
                     <table class="table" style="background-color: #c5c5c5;">
-                        <tr>
-                            <th>Saldo</th>
-                            <td with="50px">{{moneda($tSaldo)}}</td>
-                        </tr>
                         <tr>
                             <th>Ingresos del día</th>
                             <td with="50px">{{moneda($tIngr)}}</td>
