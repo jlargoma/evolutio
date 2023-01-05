@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bonos;
 use Illuminate\Http\Request;
 use App\Models\Charges;
 use App\Models\Expenses;
@@ -25,8 +26,15 @@ class CashBoxsController extends Controller {
         $dateQry = $year.'-'.$month.'-'.$day;
         $tSaldo = $tIngr = $tExpen = $tCashBox = 0;
         $lstItems = [];
-        $userIDs = $rateIDs = [];
+        $userIDs = $rateIDs = $bonoIDs =[];
         $lstUsr = $lstRates = [];
+        $is_admin = (Auth::user()->role == "admin");
+
+        if(!$is_admin){
+            $day = date('d');
+            $month = date('m');
+        }
+
         
         $aCoachs = User::getCoachs()->pluck('name', 'id');
         $oCoachs = User::getCoachs();
@@ -46,13 +54,13 @@ class CashBoxsController extends Controller {
             $tSaldo += $cashbox->saldo;
         }
         $oCashbox = CashBoxs::where('date','=', $dateQry)->first();
-        if ($cashbox){
-            $closedBy = isset($aCoachs[$cashbox->user_id]) ? $aCoachs[$cashbox->user_id] : ' - ';
+        if ($oCashbox){
+            $closedBy = isset($aCoachs[$oCashbox->user_id]) ? $aCoachs[$oCashbox->user_id] : ' - ';
         }
         
 
         /** Charges */
-        $lstCharges = Charges::join('users_rates','users_rates.id_charges','charges.id')
+        $lstCharges = Charges::select('charges.*','users_rates.id_rate','users_rates.rate_month','users_rates.rate_year')->leftjoin('users_rates','users_rates.id_charges','charges.id')
                 ->where('import', '!=', 0)
                 ->where('date_payment', '=', $dateQry)
                 ->where('type_payment', 'cash')->get();
@@ -60,18 +68,22 @@ class CashBoxsController extends Controller {
             foreach($lstCharges as $ch){
                 $userIDs[] = $ch->id_user;
                 $rateIDs[] = $ch->id_rate;
+                $bonoIDs[] = $ch->bono_id;
             }
-
             $lstUsr = User::whereIn('id',array_unique($userIDs))->pluck('name','id')->toArray();
             $lstRates = Rates::whereIn('id',array_unique($rateIDs))->pluck('name','id')->toArray();
+            $lstBonos = Bonos::whereIn('id',array_unique($bonoIDs))->pluck('name','id')->toArray();
 
             foreach($lstCharges as $ch){
-
                 $concept = isset($lstUsr[$ch->id_user]) ? $lstUsr[$ch->id_user] : '';
-                $concept .= ' - '.(isset($lstRates[$ch->id_rate]) ? $lstRates[$ch->id_rate] : 'Pago ');
-                $concept .= ' ('.$ch->rate_month.'/'.$ch->rate_year.')';
+                if ($ch->id_rate){
+                    $concept .= ' - '.(isset($lstRates[$ch->id_rate]) ? $lstRates[$ch->id_rate] : 'Pago ');
+                    $concept .= ' ('.$ch->rate_month.'/'.$ch->rate_year.')';
+                }
+                if ($ch->bono_id)   $concept .= ' - Bono '.(isset($lstBonos[$ch->bono_id]) ? $lstBonos[$ch->bono_id] : 'Bonos ');
+                
                 $lstItems[] = [
-                    'id' => $ch->id_charges,
+                    'id' => $ch->id,
                     'import' => $ch->import,
                     'concept' => $concept,
                     'type' => 'Cobro',
@@ -122,9 +134,35 @@ class CashBoxsController extends Controller {
         unset($lstMonthsSpanish[0]);
         $months = $lstMonthsSpanish;
 
+
+        
+        /** Monthly */
+        $tableMonthly = '';
+        if ($is_admin){
+            $lstCashboxMonth = CashBoxs::whereYear('date', $year)->whereMonth('date', $month)->orderBy('date')->get();
+            if ($lstCashboxMonth){
+                $tableMonthly = '<table class="table"><tr><th>Día</th><th>Saldo</th><th>Ajuste</th><th>Concepto</th><th>Cierre por</th></tr>';
+                $totalArqueo = 0;
+                foreach($lstCashboxMonth as $c){
+                    $tableMonthly .= '<tr>';
+                    $tableMonthly .= '<td class="nowrap">'.$c->date.'</td>';
+                    $tableMonthly .= '<td class="nowrap">'.moneda($c->saldo).'</td>';
+                    $tableMonthly .= '<td class="nowrap">'.moneda($c->ajuste).'</td>';
+                    $tableMonthly .= '<td>'.$c->concept.'</td>';
+                    $tableMonthly .= '<td>'. ( isset($aCoachs[$c->user_id]) ? $aCoachs[$c->user_id] : ' - ' ).'</td>';
+                    $tableMonthly .= '</tr>';
+                    $totalArqueo += $c->ajuste;
+                }
+                $tableMonthly .= '</table>';
+                $tableMonthly .= '<p  style="text-align: center;background-color: #e9e9e9;padding: 7px;"><b>Total Arqueos:</b> '.moneda($totalArqueo).'</p>';
+            }
+        }
+
+
+
         /** view */
         return view('admin.contabilidad.cashbox.cierres-diarios', [
-                    'is_admin' => (Auth::user()->role == "admin"),
+                    'is_admin' => $is_admin,
                     'closedBy' => $closedBy,
                     'tSaldo' => $tSaldo,
                     'tIngr' => $tIngr,
@@ -145,6 +183,7 @@ class CashBoxsController extends Controller {
                     'gType' => $gType,
                     'datePayment' =>  $day .'-'.$month.'-'.$year,
                     'dateQry' => $dateQry,
+                    'tableMonthly' => $tableMonthly,
                     'typePayment' => [2=>'CASH']
                 ]);
     }

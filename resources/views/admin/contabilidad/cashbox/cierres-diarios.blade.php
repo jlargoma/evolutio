@@ -26,13 +26,23 @@ use \Carbon\Carbon; ?>
     span.balanceDay {
         font-size: 1.4em;
     }
+    @media (min-width: 740px){
+        .btn-monthly{
+            float: right;
+            margin-top: -48px;
+        }
+    }
 </style>
 <div class="content content-boxed bg-gray-lighter">
     <div class="bg-white">
         <section class="content content-full">
             <div class="row">
-                <div class="col-md-12 col-xs-12 push-20">
+            @if($is_admin)
+                <div class="col-md-12 col-xs-12 push-20 text-center">
                     <h2 class="text-center">INFORME DE CIERRES DIARIOS</h2>
+                    
+                    <button type="button" class="btn btn-success btn-monthly" type="button" data-toggle="modal" data-target="#modalAllMonthCashBox">CAJA MENSUAL</button>
+                   
                 </div>
                 <div class="col-md-12 col-xs-12 push-20">
                     <div class="col-md-4 col-xs-1 text-right">
@@ -71,6 +81,11 @@ use \Carbon\Carbon; ?>
                         <a href="/admin/caja-diaria/{{$tomorrow}}"><i class="fa fa-arrow-right"></i></a>
                     </div>
                 </div>
+                @else
+                    <div class="col-md-12 col-xs-12 push-20 text-center">
+                        <h2 class="text-center">INFORME DE CIERRES DIARIOS <b>{{$day}} {{$months[intval($month)]}} {{$year}}</b></h2>
+                    </div>
+                @endif
                 <div class="row">
                     <div class="col-xs-12 col-md-11">
                         <h2 class="text-center font-w300">
@@ -112,7 +127,7 @@ use \Carbon\Carbon; ?>
         <div>{{$oCashbox->concept}}: {{moneda($oCashbox->ajuste)}}</div>
     @else
         <button type="button" class="btn btn-success" id="addNew_ingr" type="button" data-toggle="modal" data-target="#modalAddNew"><i class="fa fa-plus-circle"></i> Añadir Gastos</button>
-        <button type="button" class="btn btn-success" type="button" data-toggle="modal" data-target="#modalCloseCashBox">CERRAR CAJA</button>
+        <button type="button" class="btn btn-warnnig" type="button" data-toggle="modal" data-target="#modalCloseCashBox">CERRAR CAJA</button>
     @endif
     </div>
 
@@ -131,6 +146,26 @@ use \Carbon\Carbon; ?>
         </div>
     </div>
 </div>
+
+@if($is_admin)
+<div class="modal fade" id="modalAllMonthCashBox" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <strong class="modal-title" id="modalChangeBookTit" style="font-size: 1.4em;">CAJA MENSUAL</strong>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <?php echo $tableMonthly; ?>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
+
 <div class="modal fade" id="modalCloseCashBox" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -188,7 +223,7 @@ use \Carbon\Carbon; ?>
                             </select>
                         </div>
                         <div class="text-center col-xs-12 mb-1em">
-                            <div class="mb-1em"><b>Balance del día: <span class="balanceDay">{{$tIngr-$tExpen}}</span>€</b></div>
+                            <div class="mb-1em"><b>Balance del día: <span class="balanceDay">{{$tSaldo+$tIngr-$tExpen}}</span>€</b></div>
                             <button class="btn btn-success" type="submit">Cerrar CAJA</button>
                         </div>
                         

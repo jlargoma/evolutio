@@ -46,26 +46,27 @@ class SendCashBox extends Command {
   public function handle() {
     $this->sLog = new LogsService('schedule','CashBoxs');
     try {
-       $year = getYearActive();
+       $year = date('Y');
        /** Send Mail */
        $month = date('m');
        $aCoachs = User::getCoachs()->pluck('name', 'id');
        $lstCashbox = CashBoxs::whereYear('date', $year)->whereMonth('date', $month)->orderBy('date')->get();
        $tableMail = '';
        if ($lstCashbox){
-           $tableMail = '<table class="table"><tr><th>Día</th><th>Saldo</th><th>Ajuste</th><th>Concepto</th><th>Observ</th><th>Cierre por</th></tr>';
-           
+           $tableMail = '<table class="table"><tr><th>Día</th><th>Saldo</th><th>Ajuste</th><th>Concepto</th><th>Cierre por</th></tr>';
+           $totalArqueo = 0;
            foreach($lstCashbox as $c){
                $tableMail .= '<tr>';
                $tableMail .= '<td class="nowrap">'.$c->date.'</td>';
                $tableMail .= '<td class="nowrap">'.moneda($c->saldo).'</td>';
                $tableMail .= '<td class="nowrap">'.moneda($c->ajuste).'</td>';
                $tableMail .= '<td>'.$c->concept.'</td>';
-               $tableMail .= '<td>'.$c->comment.'</td>';
                $tableMail .= '<td>'. ( isset($aCoachs[$c->user_id]) ? $aCoachs[$c->user_id] : ' - ' ).'</td>';
                $tableMail .= '</tr>';
+               $totalArqueo += $c->ajuste;
            }
            $tableMail .= '</table>';
+           $tableMail .= '<p style="text-align: center;background-color: #e9e9e9;padding: 7px;"><b>Total Arqueos:</b> '.moneda($totalArqueo).'</p>';
        }
        $lstMonthsSpanish = lstMonthsSpanish();
        $MailsService = new MailsService();
