@@ -60,7 +60,7 @@ class CashBoxsController extends Controller {
         
 
         /** Charges */
-        $lstCharges = Charges::select('charges.*','users_rates.id_rate','users_rates.rate_month','users_rates.rate_year')->leftjoin('users_rates','users_rates.id_charges','charges.id')
+        $lstCharges = Charges::select('charges.*','users_rates.id_rate','users_rates.rate_month','users_rates.rate_year','users_rates.coach_id')->leftjoin('users_rates','users_rates.id_charges','charges.id')
                 ->where('import', '!=', 0)
                 ->where('date_payment', '=', $dateQry)
                 ->where('type_payment', 'cash')->get();
