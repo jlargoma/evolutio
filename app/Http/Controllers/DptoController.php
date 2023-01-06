@@ -99,29 +99,28 @@ class DptoController extends Controller {
       $incomesYear[$yAux] = UserRates::getSumYear($yAux,$rIDs,$bIDs);
     }
     //----------------------------------------------------------//
-    $uRates = UserRates::whereIn('id_rate',$rIDs)->where('rate_year', $year)->get();
+    $uRates = UserRates::withCharges()->whereIn('users_rates.id_rate',$rIDs)->where('rate_year', $year)->get();
 
     $aux = $months_empty;
     $pay_method = ['c' => $months_empty, 'b' => $months_empty, 'v' => $months_empty, 'np' => $months_empty];
     $tPay = 0;
     foreach ($uRates as $item) {
-      $c = $item->charges;
       $m = $item->rate_month;
-      if ($c) {
-        switch ($c->type_payment) {
+
+      if ($item->ch_id){
+        switch ($item->ch_type_payment){
           case 'cash':
-            $pay_method['c'][$m] += $c->import;
-            break;
+            $pay_method['c'][$m] += $item->ch_import;
           case 'card':
-            $pay_method['v'][$m] += $c->import;
+            $pay_method['v'][$m] += $item->ch_import;
             break;
           case 'banco':
-            $pay_method['b'][$m] += $c->import;
+            $pay_method['b'][$m] += $item->ch_import;
             break;
         }
-        $rateGr = isset($aRates[$c->id_rate]) ? $aRates[$c->id_rate] : 3;
-        $crLst[$rateGr][$m] += $c->import;
-        $tPay += $c->import;
+        $rateGr = isset($aRates[$item->ch_id_rate]) ? $aRates[$item->ch_id_rate] : 3;
+        $crLst[$rateGr][$m] += $item->ch_import;
+        $tPay += $item->ch_import;
       } else {
         $rateGr = isset($aRates[$item->id_rate]) ? $aRates[$item->id_rate] : 3;
         $crLst[$rateGr][$m] += $item->price;

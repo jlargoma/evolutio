@@ -22,17 +22,21 @@ class UserRates extends Model {
   public function charges() {
     return $this->hasOne('\App\Models\Charges', 'id', 'id_charges');
   }
+  static function withCharges() {
+
+    return UserRates::select('users_rates.*', 'charges.id as ch_id', 'charges.import as ch_import', 'charges.type_payment as ch_type_payment', 'charges.id_rate as ch_id_rate')
+    ->leftjoin('charges', 'users_rates.id_charges', '=', 'charges.id');
+  }
 
   static function getSumYear($year,$rIDs=null,$bIDs=null) {
-    $sqlRates = UserRates::where('rate_year', $year);
-    if ($rIDs !== null) $sqlRates->whereIn('id_rate',$rIDs);
+    $sqlRates = UserRates::withCharges()->where('rate_year', $year);
+    if ($rIDs !== null) $sqlRates->whereIn('users_rates.id_rate',$rIDs);
 
     $uRates = $sqlRates->get();
     $total = 0;
     foreach ($uRates as $item) {
-      $c = $item->charges;
-      if ($c) {
-        $total += $c->import;
+      if ($item->ch_id) {
+        $total += $item->ch_import;
       } else {
         $total += $item->price;
       }

@@ -11,6 +11,10 @@ use App\Services\CoachLiqService;
 use App\Models\User;
 use App\Models\UserRates;
 use App\Models\DistribBenef;
+use App\Models\Rates;
+use App\Models\Bonos;
+use App\Models\TypesRate;
+use App\Models\UsersSuscriptions;
 
 class PyGController extends Controller {
 
@@ -24,8 +28,8 @@ class PyGController extends Controller {
 
     
     //---------------------------------------------------------//
-    $gastos = Expenses::whereYear('date', '=', $year)->get();
-    $gType = Expenses::getTypes();
+    // $gastos = Expenses::whereYear('date', '=', $year)->get();
+    // $gType = Expenses::getTypes();
     $gTypeGroup = Expenses::getTypesGroup();
     $gTypeGroup_g = $gTypeGroup['groups'];
     $ggMonth = [];
@@ -33,9 +37,10 @@ class PyGController extends Controller {
     foreach ($gTypeGroup_g as $k=>$v) $ggMonth[$v] = $months_empty;
     $ggMonth['otros'] = $months_empty;
     //---------------------------------------------------------//
-    $oRateTypes = \App\Models\TypesRate::orderBy('name')->pluck('name','id')->toArray();
-    $aRates = \App\Models\Rates::orderBy('name')->pluck('type','id')->toArray();
+    $oRateTypes = TypesRate::orderBy('name')->pluck('name','id')->toArray();
+    $aRates = Rates::orderBy('name')->pluck('type','id')->toArray();
     foreach ($oRateTypes as $k=>$v) $crLst[$k] = $months_empty;
+   
     //---------------------------------------------------------//
     $incomesYear = $expensesYear = [];
     $currentY = [];
@@ -47,29 +52,38 @@ class PyGController extends Controller {
       
     }
     //----------------------------------------------------------//
-    $uRates = UserRates::where('rate_year',$year)->get();
+    $uRates = UserRates::withCharges()->where('rate_year',$year)->get();
       
     $aux = $months_empty;
     $pay_method = ['c'=>$months_empty,'b'=>$months_empty,'v'=>$months_empty,'np'=>$months_empty];
+
+    $cashDepto = ['esthetic'=>$months_empty,'fisio'=>$months_empty,'other'=>$months_empty];
+    $rIDsEsth = Rates::where('type',12)->orderBy('name')->pluck('id')->toArray();
+    $bIDsEsth = Bonos::where('rate_type',12)->orWhereIn('rate_id',$rIDsEsth)->orWhere('rate_subf', 'LIKE', "%e%")->pluck('id')->toArray();
+    $rIDsFisio = Rates::where('type',8)->orderBy('name')->pluck('id')->toArray();
+    $bIDsFisio = Bonos::where('rate_type',8)->orWhereIn('rate_id',$rIDsFisio)->orWhere('rate_subf', 'LIKE', "%f%")->pluck('id')->toArray();
+
     $tPay = 0;
     foreach ($uRates as $item){
-      $c = $item->charges;
       $m = $item->rate_month;
-      if ($c){
-        switch ($c->type_payment){
+      if ($item->ch_id){
+        switch ($item->ch_type_payment){
           case 'cash':
-            $pay_method['c'][$m] += $c->import;
+            $pay_method['c'][$m] += $item->ch_import;
+            if(in_array($item->ch_id_rate,$rIDsEsth)) $cashDepto['esthetic'][$m] += $item->ch_import;
+              else if(in_array($item->ch_id_rate,$rIDsFisio)) $cashDepto['fisio'][$m] += $item->ch_import;
+                else $cashDepto['other'][$m] += $item->ch_import;
             break;
           case 'card':
-            $pay_method['v'][$m] += $c->import;
+            $pay_method['v'][$m] += $item->ch_import;
             break;
           case 'banco':
-            $pay_method['b'][$m] += $c->import;
+            $pay_method['b'][$m] += $item->ch_import;
             break;
         }
-        $rateGr = isset($aRates[$c->id_rate]) ? $aRates[$c->id_rate] : 3;
-        $crLst[$rateGr][$m] += $c->import;
-        $tPay += $c->import;
+        $rateGr = isset($aRates[$item->ch_id_rate]) ? $aRates[$item->ch_id_rate] : 3;
+        $crLst[$rateGr][$m] += $item->ch_import;
+        $tPay += $item->ch_import;
       } else {
         $rateGr = isset($aRates[$item->id_rate]) ? $aRates[$item->id_rate] : 3;
         $crLst[$rateGr][$m] += $item->price;
@@ -77,8 +91,7 @@ class PyGController extends Controller {
       }
     }
     //--------------------------------------------------------------------//
-    $aBonos = \App\Models\Bonos::orderBy('name')->get();
-    $lstBonos = \App\Models\Bonos::listBonos();
+    $lstBonos = Bonos::listBonos();
     //--------------------------------------------------------------------//
     $oBonos = Charges::whereYear('date_payment', '=', $year)
               ->where('bono_id','>',0)->get();
@@ -97,6 +110,9 @@ class PyGController extends Controller {
       switch ($c->type_payment){
         case 'cash':
           $pay_method['c'][$m] += $c->import;
+          if(in_array($c->bono_id,$bIDsEsth)) $cashDepto['esthetic'][$m] += $c->import;
+            else if(in_array($c->bono_id,$bIDsFisio)) $cashDepto['fisio'][$m] += $c->import;
+              else $cashDepto['other'][$m] += $c->import;
           break;
         case 'card':
           $pay_method['v'][$m] += $c->import;
@@ -194,17 +210,13 @@ class PyGController extends Controller {
     $currentY['Gastos'] = $aux;
     
     /***************************************/
-    $oUser = new User();
-    $subscs = \App\Models\UsersSuscriptions::count();
+    $subscs = UsersSuscriptions::count();
     $uActivs = User::where('status',1)->count();
-    $uPlan = $oUser->getMetaUserID_byKey('plan','fidelity');
-    $uPlanBasic = $oUser->getMetaUserID_byKey('plan','basic');
-    $subscsFidelity = \App\Models\UsersSuscriptions::where('tarifa','fidelity')->count();
-    $uActivsFidelity = \App\Models\User::where('status',1)->whereIn('id',$uPlan)->count();
-    $subscsBasic = \App\Models\UsersSuscriptions::where('tarifa','basic')->count();
-    $uActivsBasic = \App\Models\User::where('status',1)->whereIn('id',$uPlanBasic)->count();
+    $subscsFidelity = UsersSuscriptions::where('tarifa','fidelity')->count();
+    $uActivsFidelity = UsersSuscriptions::getCountBySuscipt("fidelity");
+    $subscsBasic = UsersSuscriptions::where('tarifa','basic')->count();
+    $uActivsBasic = UsersSuscriptions::getCountBySuscipt("basic");
     /***************************************/
-        
     $aux_i = $aux_e = $months_empty; 
     /***************************************/
     return view('admin.contabilidad.pyg.index',[
@@ -229,6 +241,7 @@ class PyGController extends Controller {
         'uActivsFidelity'=>$uActivsFidelity,
         'subscsBasic'=>$subscsBasic,
         'uActivsBasic'=>$uActivsBasic,
+        'cashDepto'=>$cashDepto,
         'tExpenType'=>'e'
   ]);
   }
