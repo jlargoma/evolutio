@@ -24,10 +24,17 @@ use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 trait ClientesTraits {
 
   public function clientes(Request $request, $month = false) {
+
+    $year = getYearActive();
+    if (str_contains($month, '-')){
+      $aux = explode('-',$month);
+      $year = $aux[0];
+      $month = $aux[1];
+    }
     if (!$month)
       $month = date('n');
 
-    $year = getYearActive();
+    
     $months = lstMonthsSpanish(false);
     unset($months[0]);
 
@@ -173,11 +180,13 @@ trait ClientesTraits {
     ->whereYear('user_meta.created_at',$year)->whereMonth('user_meta.created_at',$month)->groupBy('users.id')->pluck('users.id');
     $unsubscribeds = count($unsubscribeds);
 
-
+    $selectYear = $year;
+    $year = getYearActive();
     return view('/admin/usuarios/clientes/index', [
         'users' => $users,
         'month' => $month,
         'year' => $year,
+        'selectYear' => $selectYear,
         'status' => $status,
         'toPay' => $toPay,
         'noPay' => $noPay,

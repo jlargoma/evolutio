@@ -70,7 +70,7 @@
           <h4>PAGAR AHORA</h4>
           <div class="col-xs-12">
             <div class="col-xs-9 likeOption">
-                <?php $old = old('type_payment', 'card'); ?>
+                <?php $old = old('type_payment', ''); ?>
                 <input type="hidden" name="type_payment" id="type_payment" value="<?php echo $old; ?>">
                 <button  data-v="card"  type="button" <?php if ($old == 'card') echo 'class="active"'; ?>>Tarjeta</button>
                 <button  data-v="cash"  type="button" <?php if ($old == 'cash') echo 'class="active"'; ?>>Efectivo</button>
@@ -122,6 +122,13 @@ $(document).ready(function () {
           $('#stripeBox').find('.disabled').show();
         }
   });
+  $('#submitFormPayment').on('click', function(e){
+    if($('#type_payment').val() == ''){
+        e.preventDefault();
+        alert('Forma de pago requerida');
+    }
+  })
+
 <?php if ($card): ?>
     $('#card-element').hide();
     $('#changeCreditCard').on('click', function () {

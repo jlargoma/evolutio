@@ -76,8 +76,8 @@ $oBonoLst = $oBonoLst[1];
           <div class="row">
             
             <div class="col-md-9 likeOption">
-              <input type="hidden" name="type_payment" id="type_payment" value="card">
-              <button  data-v="card" class="active" type="button">Tarjeta</button>
+              <input type="hidden" name="type_payment" id="type_payment" value="">
+              <button  data-v="card" type="button">Tarjeta</button>
               <button  data-v="cash"  type="button">Efectivo</button>
               <button  data-v="banco"  type="button">Banco</button>
               @if($tBonos>0)
@@ -140,6 +140,13 @@ $(document).ready(function () {
     $('#importeFinal').val(importe - (importe * percent));
 
   });
+
+    $('#submitFormPayment').on('click', function(e){
+      if($('#type_payment').val() == ''){
+          e.preventDefault();
+          alert('Forma de pago requerida');
+      }
+    })
 
     $('.likeOption').on('click','button',function (e) {
       $('.likeOption').find('button').removeClass('active');

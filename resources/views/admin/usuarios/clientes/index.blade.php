@@ -125,8 +125,18 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
     <div class="col-xs-4 col-md-1 pull-right">
       <select id="date" class="form-control">
         <?php
+        $oldYear = $year-1;
+        if ( $month < 3 || $selectYear==$oldYear){
+          
+          $selected = ($month == '10' && $selectYear == $oldYear) ? "selected" : "";
+          echo '<option value="'.$oldYear.'-10" '.$selected.'>Oct '.$oldYear.'</option>';
+          $selected = ($month == '11' && $selectYear == $oldYear) ? "selected" : "";
+          echo '<option value="'.$oldYear.'-11" '.$selected.'>Nov '.$oldYear.'</option>';
+          $selected = ($month == '12' && $selectYear == $oldYear) ? "selected" : "";
+          echo '<option value="'.$oldYear.'-12" '.$selected.'>Dic '.$oldYear.'</option>';
+        }
         foreach ($months as $k => $v):
-          $selected = ($k == $month) ? "selected" : "";
+          $selected = ($k == $month && $selectYear != $oldYear) ? "selected" : "";
           ?>
           <option value="<?php echo $k; ?>" <?php echo $selected ?>>
             <?php echo $v . ' ' . $year; ?>

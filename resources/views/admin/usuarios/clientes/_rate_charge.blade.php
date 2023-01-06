@@ -123,14 +123,14 @@
             <h4>PAGAR AHORA</h4>
             <div class="row">
               <div class="col-xs-9 likeOption">
-                <?php $old = old('type_payment', 'card'); ?>
+                <?php $old = old('type_payment', ''); ?>
                 <input type="hidden" name="type_payment" id="type_payment" value="<?php echo $old; ?>">
                 <button  data-v="card"  type="button" <?php if ($old == 'card') echo 'class="active"'; ?>>Tarjeta</button>
                 <button  data-v="cash"  type="button" <?php if ($old == 'cash') echo 'class="active"'; ?>>Efectivo</button>
                 <button  data-v="banco"  type="button" <?php if ($old == 'banco') echo 'class="active"'; ?>>Banco</button>
               </div>
               <div class="col-xs-3">
-                <button class="btn btn-lg btn-success" type="submit" id="submitFormPayment" style="margin-left: -1em;">
+                <button class="btn btn-lg btn-success" id="submitFormPayment" style="margin-left: -1em;">
                   Cobrar
                 </button>
               </div>
@@ -210,6 +210,13 @@ $(document).ready(function () {
         }
   });
     
+  $('#submitFormPayment').on('click', function(e){
+    if($('#type_payment').val() == ''){
+        e.preventDefault();
+        alert('Forma de pago requerida');
+    }
+  })
+  
   $('.btnStripe').on('click', function () {
     var type = $(this).data('t');
     var posting = $.post('/admin/cobros/cobrar-usuario', {
