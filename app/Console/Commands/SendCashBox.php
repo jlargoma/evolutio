@@ -55,6 +55,7 @@ class SendCashBox extends Command {
        if ($lstCashbox){
            $tableMail = '<table class="table"><tr><th>Día</th><th>Saldo</th><th>Ajuste</th><th>Concepto</th><th>Cierre por</th></tr>';
            $totalArqueo = 0;
+           $totalSaldo = 0;
            foreach($lstCashbox as $c){
                $tableMail .= '<tr>';
                $tableMail .= '<td class="nowrap">'.$c->date.'</td>';
@@ -64,8 +65,10 @@ class SendCashBox extends Command {
                $tableMail .= '<td>'. ( isset($aCoachs[$c->user_id]) ? $aCoachs[$c->user_id] : ' - ' ).'</td>';
                $tableMail .= '</tr>';
                $totalArqueo += $c->ajuste;
+               $totalSaldo += $c->saldo;
            }
            $tableMail .= '</table>';
+           $tableMail .= '<p style="text-align: center;background-color: #e9e9e9;padding: 7px;"><b>Total Saldo:</b> '.moneda($totalSaldo).'</p>';
            $tableMail .= '<p style="text-align: center;background-color: #e9e9e9;padding: 7px;"><b>Total Arqueos:</b> '.moneda($totalArqueo).'</p>';
        }
        $lstMonthsSpanish = lstMonthsSpanish();

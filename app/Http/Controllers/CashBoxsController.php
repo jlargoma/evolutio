@@ -140,6 +140,7 @@ class CashBoxsController extends Controller {
             if ($lstCashboxMonth){
                 $tableMonthly = '<table class="table"><tr><th>Día</th><th>Saldo</th><th>Ajuste</th><th>Concepto</th><th>Cierre por</th></tr>';
                 $totalArqueo = 0;
+                $totalSaldo = 0;
                 foreach($lstCashboxMonth as $c){
                     $tableMonthly .= '<tr>';
                     $tableMonthly .= '<td class="nowrap">'.$c->date.'</td>';
@@ -149,8 +150,10 @@ class CashBoxsController extends Controller {
                     $tableMonthly .= '<td>'. ( isset($aCoachs[$c->user_id]) ? $aCoachs[$c->user_id] : ' - ' ).'</td>';
                     $tableMonthly .= '</tr>';
                     $totalArqueo += $c->ajuste;
+                    $totalSaldo += $c->saldo;
                 }
                 $tableMonthly .= '</table>';
+                $tableMonthly .= '<p  style="text-align: center;background-color: #e9e9e9;padding: 7px;"><b>Total Saldo:</b> '.moneda($totalSaldo).'</p>';
                 $tableMonthly .= '<p  style="text-align: center;background-color: #e9e9e9;padding: 7px;"><b>Total Arqueos:</b> '.moneda($totalArqueo).'</p>';
             }
         }

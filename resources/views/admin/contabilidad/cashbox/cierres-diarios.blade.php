@@ -205,7 +205,7 @@ use \Carbon\Carbon; ?>
                         </div>
                         <div class="col-lg-6 col-md-6 col-xs-12 mb-1em">
                             <label for="concept">Concepto</label>
-                            <input type="text" class="form-control" name="concept" id="concept" />
+                            <input type="text" class="form-control" name="concept" id="concept" value="CIERRE DE CAJA"/>
                         </div>
                         <div class="col-lg-4 col-md-3 col-xs-12 mb-1em">
                             <label for="user">Cierre por:</label>
