@@ -63,6 +63,14 @@
             @endforeach
           </select>
         </th>
+        <th class="text-center bg-complete text-white col-md-1">
+          <select id="s_payment">
+            <option value="-1">Departamento</option>
+            @foreach($dptos as $k=>$v)
+            <option value="{{$k}}">{{$v}}</option>
+            @endforeach
+          </select>
+        </th>
         <th class="text-center bg-complete text-white col-md-2">Importe</th>
         <th class="text-center bg-complete text-white">#</th>
         <th class="text-center bg-complete text-white col-md-2">Comentario</th>

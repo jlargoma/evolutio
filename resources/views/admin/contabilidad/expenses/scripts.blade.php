@@ -24,6 +24,7 @@
                   row += '<td class="editable" data-type="concept">' + val.concept + '</td>';
                   row += '<td class="editable selects stype" data-type="type" data-current="' + val.type_v + '" >' + val.type + '</td>';
                   row += '<td class="editable selects spayment" data-type="payment" data-current="' + val.typePayment_v + '" >' + val.typePayment + '</td>';
+                  row += '<td class="editable selects sdpto" data-type="dpto" data-current="' + val.dpto + '" >' + val.dptoText + '</td>';
                   row += '<td class="editable" data-type="price">' + val.import + '</td>';
                   row += '<td><button data-id="' + val.id + '" type="button" class="del_expense btn btn-danger btn-xs"><i class="fa fa-trash"></i></button>';
                   row += '<td class="editable" data-type="comm">' + val.comment + '</td>';
@@ -101,6 +102,21 @@ foreach ($gType as $k => $v) {
           select.data('t', 'payment');
 <?php
 foreach ($typePayment as $k => $v) {
+  echo "var option = $('<option></option>');
+                            option.attr('value', '$k');
+                            option.text('$v');
+                            select.append(option);";
+}
+?>
+          currentElement.data('value', currentElement.html());
+          select.val(currentElement.data('current'));
+          currentElement.html(select);
+          break;
+        case 'dpto':
+          var select = $('<select>', {class: ' form-control'});
+          select.data('t', 'dpto');
+<?php
+foreach ($dptos as $k => $v) {
   echo "var option = $('<option></option>');
                             option.attr('value', '$k');
                             option.text('$v');
@@ -214,6 +230,14 @@ foreach ($lstUsr as $k => $v) {
 //filter by type payment
           if (filters.paym != -1) {
             var cell = $(this).find('.spayment');
+            if (cell.data('current') != filters.paym) {
+              cell.closest('tr').hide();
+              return;
+            }
+          }
+//filter by type dpto
+          if (filters.paym != -1) {
+            var cell = $(this).find('.dpto');
             if (cell.data('current') != filters.paym) {
               cell.closest('tr').hide();
               return;

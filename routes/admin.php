@@ -263,6 +263,9 @@ Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function () {
   Route::post('/settings_msgs/{key?}', 'SettingsController@messages_upd')->name('settings.msgs.upd');
 
   Route::get('/importarRegistro', 'FunctionalControler@importarRegistro');
+
+  /* departamento */
+  Route::get('/dpto/contabilidad/{dpto?}', 'DptoController@perdidas_ganacias'); // 'PyGController@index');
   
 });
 
@@ -280,7 +283,9 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   
 Route::group(['middleware' => 'superAdmin'], function () {
   Route::get('/control-contabilidad', 'ControlsControler@contabilidad');
-  
+});
+Route::group(['middleware' => 'admin'], function () {
+  Route::get('/departamento/gastos-by-byType/{typeID}', 'DptoController@ExpensesbyType');
 });
 
 Route::group(['middleware' => ['Administrativo'], 'prefix' => 'departamento'], function () {

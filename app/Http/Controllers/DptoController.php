@@ -13,36 +13,42 @@ use App\Services\CoachLiqService;
 use App\Models\User;
 use App\Models\UserRates;
 use App\Models\DistribBenef;
+use Illuminate\Support\Facades\Auth;
 
 class DptoController extends Controller {
 
-  private function getDepto(){
+  private function getDepto($dpto=null){
     $expensesLst = [];
     $coachRole = '-';
     $rType = [];
     $bIDs = [];
     $rIDs = [];
+    $type = '';
 
     $uID = Auth()->id();
-    if ($uID == 2844 ){ //estetica
+    if (Auth::user()->role !== "admin" ){ //admin
+      $dpto = null;
+    }
+    if ($uID == 2844 || $dpto == 'estetica'){ //estetica
       $expensesLst = ['gto_mat_esthetic','renting_estetica'];
       $coachRole = 'esthetic';
       $rType = [12];
-
+      $type = ' Estética';
       $rIDs = \App\Models\Rates::whereIn('type',$rType)->orderBy('name')->pluck('id'); 
       $bIDs = Bonos::whereIn('rate_type',$rType)->orWhereIn('rate_id',$rIDs)->orWhere('rate_subf', 'LIKE', "%e%")->pluck('id');
     }
-    if ($uID == 2858){ // fisio
+    if ($uID == 2858 || $dpto == 'fisio'){ // fisio
       $expensesLst = ['gto_mat._fisio','renting_fisioterapia'];
       $coachRole = 'fisio';
       $rType = [8];
       $rIDs = \App\Models\Rates::whereIn('type',$rType)->orderBy('name')->pluck('id'); 
       $bIDs = Bonos::whereIn('rate_type',$rType)->orWhereIn('rate_id',$rIDs)->orWhere('rate_subf', 'LIKE', "%f%")->pluck('id');
+      $type = ' Fisioterapia';
     }
-    return [ $expensesLst,$coachRole,$rType,$rIDs,$bIDs];
+    return [ $expensesLst,$coachRole,$rType,$rIDs,$bIDs,$type];
   }
 
-  public function perdidas_ganacias() {
+  public function perdidas_ganacias($dpto = null) {
     //---------------------------------------------------------//
     $year = getYearActive();
     $lstMonths = lstMonthsSpanish(false);
@@ -53,12 +59,13 @@ class DptoController extends Controller {
 
 
     //---------------------------------------------------------//
-    $dpto = $this->getDepto();
+    $dpto = $this->getDepto($dpto);
     $expensesLst = $dpto[0];
     $coachRole = $dpto[1];
     $rType = $dpto[2];
     $rIDs = $dpto[3];
     $bIDs = $dpto[4];
+    $typeTit = $dpto[5];
     //---------------------------------------------------------//
 
     $gType = Expenses::getTypes();
@@ -181,9 +188,14 @@ class DptoController extends Controller {
     
     for ($i = 2; $i > 0; $i--) {
       $yAux = $year - $i;
-      $expensesYear[$yAux] = Expenses::whereYear('date', '=', $yAux)->whereIn('type', $expensesLst)->sum('import');
+      $expensesYear[$yAux] = Expenses::whereYear('date', '=', $yAux)
+                            ->where(function($query) use ($expensesLst, $coachRole) {
+                                $query->whereIn('type', $expensesLst)->orWhere('dpto',$coachRole);
+                            })->sum('import');
     }
-    $oExpenses = Expenses::whereYear('date', '=', $year)->whereIn('type', $expensesLst)->get();
+    $oExpenses = Expenses::whereYear('date', '=', $year)->where(function($query) use ($expensesLst, $coachRole) {
+                      $query->whereIn('type', $expensesLst)->orWhere('dpto',$coachRole);
+                  })->get();
     $aux = $months_empty;
     $expensesYear[$year] = 0;
     if ($oExpenses) {
@@ -256,7 +268,8 @@ class DptoController extends Controller {
         'uActivsFidelity' => $uActivsFidelity,
         'subscsBasic' => $subscsBasic,
         'uActivsBasic' => $uActivsBasic,
-        'tExpenType'=>'e2'
+        'tExpenType'=>'e2',
+        'typeTit'=>$typeTit,
     ]);
   }
 
@@ -336,9 +349,9 @@ class DptoController extends Controller {
   }
 
 
-  function ExpensesbyType($type){
+  function ExpensesbyType($type,$dpto=null){
     $year = getYearActive();
-    $dpto = $this->getDepto();
+    $dpto = $this->getDepto($dpto);
     $expensesLst = $dpto[0];
     $coachRole = $dpto[1];
 
@@ -362,8 +375,10 @@ class DptoController extends Controller {
       }
       $payType = Expenses::getTypeCobro();
 
-      $items = Expenses::whereYear('date', '=', $year)
-              ->whereIn('type',$auxTypes)->orderBy('date')->get();
+
+      $items = Expenses::whereYear('date', '=', $year)->where(function($query) use ($auxTypes, $coachRole) {
+          $query->whereIn('type', $auxTypes)->orWhere('dpto',$coachRole);
+      })->get();
       if (count($items)== 0){
         echo  '<p class="alert alert-warning">Sin Registros</p>';
         return '';

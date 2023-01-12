@@ -57,7 +57,7 @@ $filt_month = intVal($month);
       </select>
     </div>
     <div class="col-md-3 col-xs-6">
-      <label>Servicio</label>{{$filt_rate}}
+      <label>Servicio</label>
       <select id="f_rate" class="form-control">
         <option value="all">Todos</option>
         <?php

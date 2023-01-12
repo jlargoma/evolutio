@@ -91,6 +91,19 @@ class Expenses extends Model
     
     return $array;
   }
+  
+
+  static function getDpto() {
+    return [
+      ''=>'GENERICO',
+      'fisio'=>'FISIOTERAPIA',
+      'esthetic'=>'ESTETICA',
+      'pt'=>'ENTRENAMIENTO',
+      'nutri'=>'NUTRICIÓN',
+      'podol'=>'PODOLOGIA',
+    ];
+
+  }
     
     
   static function getTypesOrderned(){

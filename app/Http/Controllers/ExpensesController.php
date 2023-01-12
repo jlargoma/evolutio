@@ -150,6 +150,7 @@ class ExpensesController extends Controller {
         'tYear' => $yearMonths[$year],
         'typePayment' => Expenses::getTypeCobro(),
         'oCoachs' => User::getCoachs(),
+        'dptos' => Expenses::getDpto(),
         'lstUsr'  => User::getCoachs()->pluck('name','id')->toArray()
     ]);
   }
@@ -183,6 +184,7 @@ class ExpensesController extends Controller {
     $gasto->type = $request->input('type');
     $gasto->to_user = $request->input('to_user');
     $gasto->to_concept = $request->input('to_concept');
+    $gasto->dpto = $request->input('dpto');
     $gasto->comment = $comment ? $comment : '';
     if ($gasto->save()) {
       return 'ok';
@@ -224,6 +226,10 @@ class ExpensesController extends Controller {
           $gasto->to_user = $val;
           $save = true;
           break;
+        case 'dpto':
+          $gasto->dpto = $val;
+          $save = true;
+          break;
       }
       if ($save) {
         if ($gasto->save()) {
@@ -261,7 +267,7 @@ class ExpensesController extends Controller {
     ];
     $totalMounth = 0;
     $typePayment = Expenses::getTypeCobro();
-    
+    $dptos = Expenses::getDpto();
     $lstUsr = User::getCoachs()->pluck('name','id')->toArray();
     if ($gastos) {
       $respo_list = array();
@@ -278,6 +284,8 @@ class ExpensesController extends Controller {
             'import' => $item->import,
             'to_user' => $item->to_user,
             'usr' => isset($lstUsr[$item->to_user]) ? $lstUsr[$item->to_user] : '--',
+            'dpto' => $item->dpto,
+            'dptoText' => isset($dptos[$item->dpto]) ? $dptos[$item->dpto] : 'GENERICO',
         ];
         $totalMounth += $item->import;
       }
