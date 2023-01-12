@@ -200,6 +200,7 @@ class ChargesController extends Controller {
         $value = $req->input('importe', 0);
         $disc = $req->input('discount', 0);
         $oUser = User::find($uID);
+        if ($id_coach == 'null') $id_coach = null;
         /************************************************************/
         $resp = ['error','Error al procesar su cobro'];
         if ($operation == 'all' || !$operation){

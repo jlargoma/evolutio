@@ -47,6 +47,8 @@ class Expenses extends Model
               'suministros' => 'SUMINISTROS',
               'gasto_material' => 'GASTO MATERIAL',
               'marketing_y_publicidad' => 'MARKETING Y PUBLICIDAD',
+              'seg_social' => 'SEGUROS SOCIALES',
+              'bancarios' => 'BANCARIOS',
               'otros' => 'RESTO DE GASTOS'
             ],
             'groups' => [
@@ -55,7 +57,7 @@ class Expenses extends Model
                 'decoracion' => 'otros',
                 'gastos_representacion' => 'otros',
                 'gestorÍa' => 'otros',
-                'gto_bancarios' => 'otros',
+                'gto_bancarios' => 'bancarios',
                 'gto_mat_deportivo' => 'gasto_material',
                 'gto_mat._fisio' => 'gasto_material',
                 'gto_mat_esthetic' => 'gasto_material',
@@ -67,7 +69,7 @@ class Expenses extends Model
                 'renting_estetica' => 'renting',
                 'seguros' => 'otros',
                 'software' => 'software',
-                'seguros_soc' => 'software',
+                'seguros_soc' => 'seg_social',
                 'servicios_prof' => 'software',
                 'suministros' => 'suministros',
                 'limpieza' => 'suministros',
