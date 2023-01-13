@@ -201,7 +201,7 @@ use \Carbon\Carbon; ?>
                     <div class="row">
                         <div class="col-lg-2 col-md-3 col-xs-12 mb-1em">
                             <label for="import">Arqueo</label>
-                            <input type="number" step="1" name="import" id="importClose" class="form-control" required />
+                            <input type="number" step="1" name="import" id="importClose" class="form-control"  />
                         </div>
                         <div class="col-lg-6 col-md-6 col-xs-12 mb-1em">
                             <label for="concept">Concepto</label>
@@ -209,8 +209,8 @@ use \Carbon\Carbon; ?>
                         </div>
                         <div class="col-lg-4 col-md-3 col-xs-12 mb-1em">
                             <label for="user">Cierre por:</label>
-                            <select class="form-control" name="to_user" style="width: 100%;">
-                                <option value="-1">--</option>
+                            <select class="form-control" name="to_user" style="width: 100%;" required>
+                                <option value="">--</option>
                                 @foreach($oCoachs as $u)
                                 <option value="{{$u->id}}">{{$u->name}}</option>
                                 @endforeach

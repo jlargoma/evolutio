@@ -202,7 +202,8 @@ class CashBoxsController extends Controller {
                     'datePayment' =>  $day .'-'.$month.'-'.$year,
                     'dateQry' => $dateQry,
                     'tableMonthly' => $tableMonthly,
-                    'typePayment' => [2=>'CASH']
+                    'typePayment' => [2=>'CASH'],
+                    'dptos' => Expenses::getDpto(),
                 ]);
     }
 
