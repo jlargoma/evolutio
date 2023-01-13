@@ -143,6 +143,9 @@
       <button class="btn btn-success" id="sendLiquid">
               <i class="fa fa-envelope"></i> enviar
           </button>
+          <button class="btn btn-success" id="printLiquid">
+              <i class="fa fa-file-pdf-o"></i> Imprimir
+          </button>
     </div>
     <div class="block col-md-12 bg-white">
         <div id="blockLiquid"></div>
@@ -188,14 +191,30 @@ $(document).ready(function () {
     $('#sendLiquid').on('click',function (event) {
         var id_coach = {{$user->id}};
         var date = $('#selectMonth .active').data('v');
+        if (typeof date == undefined || typeof date == 'undefined' ){
+            alert('Seleccione un mes');
+        } else {
+            var dateText = $('#selectMonth  .active').text();
+            var that = $(this);
+            $.get('/admin/enviar-liquidacion-Entrenador/'+id_coach+'/'+date).done(function (resp) {
+            if (resp == 'OK'){
+                alert('Liquidación '+dateText+' enviada');
+                that.attr("disabled", true);
+            } else alert(resp);
+            });
+        }
+      });  
+
+    $('#printLiquid').on('click',function (event) {
+        var id_coach = {{$user->id}};
+        var date = $('#selectMonth .active').data('v');
         var dateText = $('#selectMonth  .active').text();
-        var that = $(this);
-        $.get('/admin/enviar-liquidacion-Entrenador/'+id_coach+'/'+date).done(function (resp) {
-          if (resp == 'OK'){
-              alert('Liquidación '+dateText+' enviada');
-              that.attr("disabled", true);
-          } else alert(resp);
-        });
+        if (typeof date == undefined || typeof date == 'undefined' ){
+            alert('Seleccione un mes');
+        } else {
+            var url = '/admin/imprimir-liquidacion-Entrenador/'+id_coach+'/'+date;
+            window.open(url, '_blank').focus();
+        }
       });  
       
 });

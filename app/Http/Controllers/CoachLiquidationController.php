@@ -217,4 +217,45 @@ class CoachLiquidationController extends Controller
 
             
     }
+    public function printEmailLiquidacion($id, $date = null){
+        
+                 
+      if (!$date) $date = date('Y-m');
+      $aux = explode('-', $date);
+      if (count($aux) == 2){
+          $year  = $aux[0];
+          $month = $aux[1];
+      } else {
+          $year = getYearActive();
+          $month = date('m');
+      }
+      $sCoachLiq = new \App\Services\CoachLiqService();
+
+
+      $date = $year.'-'.$month . '-01';
+      $oCalendar = new \App\Services\CalendarService($date);
+      $calendar = $oCalendar->getCalendarWeeks();
+
+
+
+      $aData = $sCoachLiq->liquMensual($id,$year,$month);
+      $user = User::find($id);
+      $CoachRates = \App\Models\CoachRates::where('id_user', $id)->first();
+      $aData['salary'] = 0;
+      if ($CoachRates) {
+        $aData['salary'] = $CoachRates->salary ;
+      }
+      
+
+      $aData['user'] = $user;
+      $aData['calendar'] = $calendar;
+      $aData['tPriceClass'] = array_sum($aData['totalClase']);
+      $aData['mes'] = getMonthSpanish($month,false).' '.$year;
+      $fileName = str_replace(' ','-','liquidacion '.$aData['mes'].' '. strtoupper($user->name));
+      $routePdf = storage_path('/app/liquidaciones/'. urlencode($fileName).'.pdf');
+      $pdf = PDF::loadView('pdfs.liquidacionCalendar', $aData);
+      return $pdf->stream('Liquidación-'.$user->name.'-'.$aData['mes'].'.pdf');
+          
+  }
+    
 }

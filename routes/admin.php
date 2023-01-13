@@ -236,6 +236,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function () {
   Route::get('/paymentsEntrenador/{id}', 'CoachLiquidationController@paymentsEntrenador');
   Route::get('/liquidacion-Entrenador/{id}/{date?}', 'CoachLiquidationController@liquidEntrenador');
   Route::get('/enviar-liquidacion-Entrenador/{id}/{date?}', 'CoachLiquidationController@enviarEmailLiquidacion');
+  Route::get('/imprimir-liquidacion-Entrenador/{id}/{date?}', 'CoachLiquidationController@printEmailLiquidacion');
   Route::post('/payment-Entrenador/', 'CoachLiquidationController@store');
   Route::get('/entrenadores/liquidacion-entrenador/', 'CoachLiquidationController@coachLiquidation');
   Route::get('/entrenadores/{type?}', 'UsersController@entrenadores');

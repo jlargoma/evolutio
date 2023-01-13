@@ -103,8 +103,9 @@ class CoachLiqService {
 
     $totalClase = array();
     $pagosClase = array();
+    $claseDay = array();
     $classLst = [];
-
+    $totalClaseSimple = $totalClaseGrupal = 0;
     if ($oTurnos) {
       foreach ($oTurnos as $item) {
         $key = $item->service->id;
@@ -122,7 +123,7 @@ class CoachLiqService {
         }
 
         $totalClase[$key] += $import * $comm;
-
+        $totalClaseSimple++;
         if ($item->service->type == $typePT) {
           /* precio de entrenamiento personal */
           $totalClase[$key] += $pppt;
@@ -135,6 +136,7 @@ class CoachLiqService {
         $className .= ' a las ' . date('h a', $time);
         $className .= ' (cliente : ' . $item->user->name . ')';
         $pagosClase[$key][] = $className;
+        $claseDay[strtotime(date('Y-m-d', $time))][] = $item->user->name;
       }
     }
     
@@ -160,11 +162,13 @@ class CoachLiqService {
         }
         
         $totalClase[$key] += $ppcg;
+        $totalClaseGrupal++;
         $time = strtotime($item->date);
         $className = date('d', $time) . ' de ' . $lstMonts[date('n', $time)];
         $className .= ' a las ' . date('h a', $time);
         $className .= ' (Cita Grupal)';
         $pagosClase[$key][] = $className;
+        $claseDay[strtotime(date('Y-m-d', $time))][] = 'Grupal';
       }
     }
         
@@ -172,10 +176,7 @@ class CoachLiqService {
      * END: Citas grupales
      */
     
-    
-    
-    
-    return compact('pagosClase', 'totalClase', 'classLst', 'ppc', 'salary','commision');
+    return compact('pagosClase', 'totalClase', 'classLst', 'ppc', 'salary','commision','claseDay','totalClaseSimple','totalClaseGrupal');
   }
 
   function liquMensual($id, $year, $month) {
