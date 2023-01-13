@@ -84,16 +84,19 @@
         }
         td.name{
             min-width: 300px;
+            width: 300px;
         }
         td.name b{
             font-size: 21px;
         }
         td.total1{
             min-width: 180px;
+            width: 180px;
             text-align: center;
         }
         td.total2{
             min-width: 200px;
+            width: 200px;
             text-align: right;
         }
         td.total2 .subline{
