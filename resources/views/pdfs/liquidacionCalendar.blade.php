@@ -129,26 +129,28 @@
 <br>
 
     @foreach($calendar['days'] as $k=>$days)
-    <table class="table table-calendar">
-        <thead>
-            <tr>
-                @foreach($days as $d)
-                <th>{{$d['day'].' '.$d['date']}}</th>
-                @endforeach
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                @foreach($days as $d)
-                <td class="small">
-                    <?php
-                    if (isset($claseDay[$d['time']])) echo implode('<br>', $claseDay[$d['time']]);
-                    ?>
-                </td>
-                @endforeach
-            </tr>
-        </tbody>
-    </table>
+        @if(count($days)>0)
+        <table class="table table-calendar">
+            <thead>
+                <tr>
+                    @foreach($days as $d)
+                    <th>{{$d['day'].' '.$d['date']}}</th>
+                    @endforeach
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    @foreach($days as $d)
+                    <td class="small">
+                        <?php
+                        if (isset($claseDay[$d['time']])) echo implode('<br>', $claseDay[$d['time']]);
+                        ?>
+                    </td>
+                    @endforeach
+                </tr>
+            </tbody>
+        </table>
+        @endif
     @endforeach
     <div class="text-center">
         <small>Evolutio <?php echo date('Y'); ?></small>
