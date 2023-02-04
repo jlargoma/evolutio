@@ -53,7 +53,7 @@ if (!isset($datePayment)){
     </div>
      <div class="col-lg-4  col-md-6 col-xs-12 mb-1em ">
       <label for="type">Departamento</label>
-        <select class="form-control" id="dpto" name="dpto"  data-placeholder="Seleccione un Departamento" required >
+        <select class="form-control" id="dpto" name="dpto"  data-placeholder="Seleccione un Departamento" >
         @foreach($dptos as $k=>$v)
         <option value="{{$k}}">{{$v}}</option>
         @endforeach
