@@ -120,9 +120,9 @@
             </td>
             <td class="total2">
                 <div>Salario Base: {{moneda($salary)}}</div>
-                <div>Comisiones: {{moneda($tPriceClass)}}</div>
+                <div>Comisiones: {{moneda($commision)}}</div>
                 <div class="subline"></div>
-                <div>Total: {{moneda($salary+$tPriceClass)}}</div>
+                <div>Total: {{moneda($salary+$commision)}}</div>
             </td>
         </tr>
     </table>

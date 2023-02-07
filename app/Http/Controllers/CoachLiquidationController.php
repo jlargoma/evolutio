@@ -86,6 +86,10 @@ class CoachLiquidationController extends Controller
               'totalExtr' => $aLiq['totalExtr'],
               'salary' => $aLiq['salary'],
               'classLst' => $aLiq['classLst'],
+              'totalClaseSimple' => $aLiq['totalClaseSimple'],
+              'totalClaseGrupal' => $aLiq['totalClaseGrupal'],
+              'commision' => $aLiq['commision'],
+              'mes' => getMonthSpanish($month,false).' '.$year
               ]);
        
             
@@ -240,12 +244,6 @@ class CoachLiquidationController extends Controller
 
       $aData = $sCoachLiq->liquMensual($id,$year,$month);
       $user = User::find($id);
-      $CoachRates = \App\Models\CoachRates::where('id_user', $id)->first();
-      $aData['salary'] = 0;
-      if ($CoachRates) {
-        $aData['salary'] = $CoachRates->salary ;
-      }
-      
 
       $aData['user'] = $user;
       $aData['calendar'] = $calendar;
