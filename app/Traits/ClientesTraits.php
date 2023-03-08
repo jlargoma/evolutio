@@ -51,18 +51,23 @@ trait ClientesTraits {
         break;
       case 'new':
         $tit ='Nuevos usuarios '.$month.'/'.$year;
-          $sqlUsers = User::where('role', 'user')->whereYear('created_at',$year)
-          ->whereMonth('created_at',$month);
+        $sqlUsers =  User::select('users.*')->where('role', 'user')->leftjoin('user_meta', function ($join) {
+          $join->on('users.id', '=', 'user_meta.user_id');
+        })->where('status',1)->where('meta_key','activate')->whereYear('user_meta.created_at',$year)->whereMonth('user_meta.created_at',$month)
+        ->orWhere(function($query) use ($year, $month) {
+          $query->whereYear('users.created_at',$year)->whereMonth('users.created_at',$month);
+        });
           break;
       case 'unsubscribeds':
         $tit ='Usuarios dados de baja '.$month.'/'.$year;
-        $unsubscIDs = User::join('user_meta', function ($join) {
+        $sqlUsers =  User::select('users.*')->where('role', 'user')->leftjoin('user_meta', function ($join) {
           $join->on('users.id', '=', 'user_meta.user_id');
-        })->where('status',0)->where('meta_key','disable')
-        ->whereYear('user_meta.created_at',$year)->whereMonth('user_meta.created_at',$month)->groupBy('users.id')->pluck('users.id');
-          
-        $sqlUsers = User::where('role', 'user')->whereIn('users.id', $unsubscIDs);
+        })->where('status',0)->where('meta_key','disable')->whereYear('user_meta.created_at',$year)->whereMonth('user_meta.created_at',$month);
         
+        break;
+      case 'new_unsubscribeds':
+        $tit ='Usuarios Nuevos ó Dados de Baja '.$month.'/'.$year;
+        $sqlUsers = User::altaBajas($year,$month);
         break;
       case 2:
         $tit ='Usuarios fidelity';
@@ -171,14 +176,8 @@ trait ClientesTraits {
             ->groupBy('id_rate')->pluck('total','id_rate')->toArray();
     /**/
     /*new users*/
-    $newUsers = User::whereYear('created_at',$year)
-    ->whereMonth('created_at',$month)->count();
-    /*unsubscribed  users*/
-    $unsubscribeds = User::join('user_meta', function ($join) {
-      $join->on('users.id', '=', 'user_meta.user_id');
-    })->where('status',0)->where('meta_key','disable')
-    ->whereYear('user_meta.created_at',$year)->whereMonth('user_meta.created_at',$month)->groupBy('users.id')->pluck('users.id');
-    $unsubscribeds = count($unsubscribeds);
+    $newUsers = User::altaBajas($year,$month)->count();
+    $unsubscribeds = 0;
 
     $selectYear = $year;
     $year = getYearActive();
@@ -904,5 +903,18 @@ $uPlanPenal =  $sql->pluck('user_id')->toArray();
         'uPlan' => $oUser->getMetaUserID_byKey('plan','fidelity'),
        
     ]);
+  }
+
+
+  function getAltasBajas($year,$month){
+
+    $lstUsers = User::altaBajas($year,$month)->get();
+//     P.T
+// Grupos
+// Fisioterapia  (tood menos suelo pelvico)
+// Suelo pelvico
+// nutricion
+// Estetica
+
   }
 }

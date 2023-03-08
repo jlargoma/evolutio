@@ -93,27 +93,33 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
           Listado x Bonos
         </button>
       </a>
-      <a href="{{url('/admin/clientes/'.$month)}}?status=new" class="inline">
-        <button class="btn btn-md {{$b_aux['new']}}">
-          Nuevos ({{$newUsers}})
+      <a href="{{url('/admin/clientes/'.$month)}}?status=new_unsubscribeds" class="inline">
+        <button class="btn btn-md btn-primary">
+        alta/bajas ({{$newUsers}})
         </button>
       </a>
-      <a href="{{url('/admin/clientes/'.$month)}}?status=unsubscribeds" class="inline">
-        <button class="btn btn-md {{$b_aux['unsubscribeds']}}">
-          De Baja ({{$unsubscribeds}})
-        </button>
-      </a>
-      <select id="filterByRate" class="form-control mt-1" data-url="{{url('/admin/clientes/'.$month)}}">
-        <option value="">Filtrar Por Servicio</option>
-      <?php 
-      
-      foreach ($rNames as $rID => $rName): 
-        $cant = isset($aRatesIds[$rID]) ? $aRatesIds[$rID] : 0;
-      ?>
-      <option value="<?= $rID ?>" <?= ($fRate == $rID) ? 'selected' : '' ?>><?php echo str_replace('<br>', ': ',$rName)." ($cant)";?></option>
-        <?php
-        endforeach;?>
-      </select>
+      <div class="row">
+        <div class="col-md-6">
+          <select id="filterByStatus" class="form-control mt-1">
+            <option value="alta_bajas" <?php if($status == 'alta_bajas') echo 'selected' ?> >Alta/Bajas del Mes</option>
+            <option value="new" <?php if($status == 'new') echo 'selected' ?> >Altas del Mes</option>
+            <option value="unsuscr" <?php if($status == 'unsubscribeds') echo 'selected' ?> >Bajas del Mes</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <select id="filterByRate" class="form-control mt-1" data-url="{{url('/admin/clientes/'.$month)}}">
+            <option value="">Filtrar Por Servicio</option>
+          <?php 
+          
+          foreach ($rNames as $rID => $rName): 
+            $cant = isset($aRatesIds[$rID]) ? $aRatesIds[$rID] : 0;
+          ?>
+          <option value="<?= $rID ?>" <?= ($fRate == $rID) ? 'selected' : '' ?>><?php echo str_replace('<br>', ': ',$rName)." ($cant)";?></option>
+            <?php
+            endforeach;?>
+          </select>
+        </div>
+      </div>
     </div> 
     <div class="col-xs-8 col-md-2 pull-right">
       @if ($noPay > 0)
@@ -171,6 +177,16 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
 
         }
       });
+
+
+      $('#filterByStatus').on('change',function(){
+        var val = $(this).val();
+        var url = "{{url('/admin/clientes/'.$month)}}?status=new_unsubscribeds";
+        if(val == 'new') url = "{{url('/admin/clientes/'.$month)}}?status=new";
+        if(val == 'unsuscr') url = "{{url('/admin/clientes/'.$month)}}?status=unsubscribeds";
+        window.location.href = url;
+      });
+
     });
     
   </script>

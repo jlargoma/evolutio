@@ -229,4 +229,21 @@ class User extends Authenticatable
     }
     return $colors;
   }
+
+
+  static function altaBajas($year,$month){
+    $sqlUsers_A = User::select('users.*')->where('role', 'user')->leftjoin('user_meta', function ($join) {
+      $join->on('users.id', '=', 'user_meta.user_id');
+    })->where('status',0)->where('meta_key','disable')->whereYear('user_meta.created_at',$year)->whereMonth('user_meta.created_at',$month);
+
+
+    return User::select('users.*')->where('role', 'user')->leftjoin('user_meta', function ($join) {
+      $join->on('users.id', '=', 'user_meta.user_id');
+    })->where('status',1)->where('meta_key','activate')->whereYear('user_meta.created_at',$year)->whereMonth('user_meta.created_at',$month)
+    ->orWhere(function($query) use ($year, $month) {
+      $query->whereYear('users.created_at',$year)->whereMonth('users.created_at',$month);
+    })->union($sqlUsers_A);
+
+  }
+
 }
