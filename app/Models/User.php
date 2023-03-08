@@ -242,7 +242,7 @@ class User extends Authenticatable
     })->where('status',1)->where('meta_key','activate')->whereYear('user_meta.created_at',$year)->whereMonth('user_meta.created_at',$month)
     ->orWhere(function($query) use ($year, $month) {
       $query->whereYear('users.created_at',$year)->whereMonth('users.created_at',$month);
-    })->union($sqlUsers_A);
+    })->union($sqlUsers_A)->distinct();
 
   }
 

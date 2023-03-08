@@ -56,13 +56,13 @@ trait ClientesTraits {
         })->where('status',1)->where('meta_key','activate')->whereYear('user_meta.created_at',$year)->whereMonth('user_meta.created_at',$month)
         ->orWhere(function($query) use ($year, $month) {
           $query->whereYear('users.created_at',$year)->whereMonth('users.created_at',$month);
-        });
+        })->distinct();
           break;
       case 'unsubscribeds':
         $tit ='Usuarios dados de baja '.$month.'/'.$year;
         $sqlUsers =  User::select('users.*')->where('role', 'user')->leftjoin('user_meta', function ($join) {
           $join->on('users.id', '=', 'user_meta.user_id');
-        })->where('status',0)->where('meta_key','disable')->whereYear('user_meta.created_at',$year)->whereMonth('user_meta.created_at',$month);
+        })->where('status',0)->where('meta_key','disable')->whereYear('user_meta.created_at',$year)->whereMonth('user_meta.created_at',$month)->distinct();
         
         break;
       case 'new_unsubscribeds':

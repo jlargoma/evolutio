@@ -99,6 +99,7 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
         </button>
       </a>
       <div class="row">
+        @if($status == 'new_unsubscribeds' || $status == 'new' || $status == 'unsubscribeds')
         <div class="col-md-6">
           <select id="filterByStatus" class="form-control mt-1">
             <option value="alta_bajas" <?php if($status == 'alta_bajas') echo 'selected' ?> >Alta/Bajas del Mes</option>
@@ -106,6 +107,7 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
             <option value="unsuscr" <?php if($status == 'unsubscribeds') echo 'selected' ?> >Bajas del Mes</option>
           </select>
         </div>
+        @endif
         <div class="col-md-6">
           <select id="filterByRate" class="form-control mt-1" data-url="{{url('/admin/clientes/'.$month)}}">
             <option value="">Filtrar Por Servicio</option>
