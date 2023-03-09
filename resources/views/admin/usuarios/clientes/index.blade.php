@@ -100,15 +100,16 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
       </a>
       <div class="row">
         @if($status == 'new_unsubscribeds' || $status == 'new' || $status == 'unsubscribeds')
-        <div class="col-md-6">
+        <div class="col-md-4">
           <select id="filterByStatus" class="form-control mt-1">
             <option value="alta_bajas" <?php if($status == 'alta_bajas') echo 'selected' ?> >Alta/Bajas del Mes</option>
             <option value="new" <?php if($status == 'new') echo 'selected' ?> >Altas del Mes</option>
             <option value="unsuscr" <?php if($status == 'unsubscribeds') echo 'selected' ?> >Bajas del Mes</option>
           </select>
         </div>
+        <button class="btn btn-success show_alta_bajas col-md-2 mt-1" role="button">Mostrar por tarifas</button>
         @endif
-        <div class="col-md-6">
+        <div class="col-md-5">
           <select id="filterByRate" class="form-control mt-1" data-url="{{url('/admin/clientes/'.$month)}}">
             <option value="">Filtrar Por Servicio</option>
           <?php 
@@ -180,6 +181,11 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
         }
       });
 
+
+      $('.show_alta_bajas').on('click',function(){
+        $('#modal-alta_bajas').modal();
+        $('#modal-alta_bajas').find('.data_content').html('Cargando...').load('/admin/usuarios/getAltasBajasTarifas/{{$month}}');
+      });
 
       $('#filterByStatus').on('change',function(){
         var val = $(this).val();

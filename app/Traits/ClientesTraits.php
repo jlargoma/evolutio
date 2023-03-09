@@ -906,15 +906,65 @@ $uPlanPenal =  $sql->pluck('user_id')->toArray();
   }
 
 
-  function getAltasBajas($year,$month){
-
+  function getAltasBajas($month){
+    $year = getYearActive();
     $lstUsers = User::altaBajas($year,$month)->get();
-//     P.T
-// Grupos
-// Fisioterapia  (tood menos suelo pelvico)
-// Suelo pelvico
-// nutricion
-// Estetica
+    if($lstUsers){
 
+
+      $lstRates  = Rates::all();
+      $sueloPelvico  = Rates::where('name', 'like', '%pelvico%')->pluck('id')->toArray();
+      $rType = [
+        2=>[],//pt
+        8=>[],// Fisioterapia  (tood menos suelo pelvico)
+        10=>[],// nutricion
+        12=>[],// Estetica
+      ];
+      foreach($lstRates as $r){
+        if( isset($rType[$r->type]) && !in_array($r->id,$sueloPelvico)){
+          $rType[$r->type][] = $r->id;
+        }
+      }
+      $rType[0] = $sueloPelvico;
+      $rUsersAlt = $rUsersBaja = $rUsers =  [
+        2=>0,//pt
+        8=>0,// Fisioterapia  (tood menos suelo pelvico)
+        0=>0,
+        10=>0,// nutricion
+        12=>0// Estetica
+      ];
+
+      $yearBef = $year;
+      if ($month>1)  $monthBef = $month-1;
+      else {
+        $monthBef = 1;
+        $yearBef -= 1;
+      }
+
+
+
+      foreach($lstUsers as $u){
+          $ratesIDs = UserRates::where('id_user',$u->id)->where(function($query) use ($year, $month, $yearBef, $monthBef) {
+            $query->where(function($query) use ($year, $month) {
+              $query->whereYear('created_at',$year)->whereMonth('created_at',$month);
+            })->orWhere(function($query) use ( $yearBef, $monthBef) {
+              $query->whereYear('created_at',$yearBef)->whereMonth('created_at',$monthBef);
+            });
+
+          })->get()->pluck('id_rate')->toArray();
+
+          foreach($ratesIDs as $ur){
+            foreach($rType as $r=>$v){
+              if(in_array($ur,$v)){
+                if($u->status == 1) $rUsersAlt[$r]++;
+                else $rUsersBaja[$r]++;
+              }
+            }
+          }
+          
+        }
+        include_once dirname(dirname(__FILE__)).'/Helps/AltasBajasRates.php';
+
+      }
   }
 }

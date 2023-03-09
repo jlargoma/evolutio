@@ -32,3 +32,22 @@
     </div>
   </div>
 </div>
+
+<div class="modal fade" id="modal-alta_bajas" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="block block-themed block-transparent remove-margin-b">
+        <div class="block-header bg-primary-dark">
+          <ul class="block-options">
+            <li>
+              <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+            </li>
+          </ul>
+        </div>
+        <div class="row block-content data_content">
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
