@@ -1,14 +1,13 @@
-<h2>Altas y Bajas por Familia: <?= $month.'/'.$year ?></h2>
+<h2>Servicios por Familia: <?= $month.'/'.$year ?></h2>
 
 <table class="table">
   <thead>
     <th>Familias</th>
-    <th>Altas</th>
-    <th>Bajas</th>
+    <th>Cantidad</th>
   </thead>
   <tbody>
     <?php
-    foreach ($rUsersAlt as $k => $v) :
+    foreach ($rUsers as $k => $v) :
     ?>
 
       <tr>
@@ -37,7 +36,7 @@
           ?>
         </td>
         <td><?= $v ?></td>
-        <td><?= $rUsersBaja[$k] ?></td>
+       
       </tr>
     <?php
     endforeach;

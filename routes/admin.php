@@ -43,6 +43,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::get('/usuarios/activate/{id}', 'UsersController@activate');
   Route::get('/usuarios/nuevo', 'UsersController@newCustomer');
   Route::get('/usuarios/getAltasBajasTarifas/{month}', 'UsersController@getAltasBajas');
+  Route::get('/usuarios/getFamilyCount/{month}/{status}', 'UsersController@getFamilyCount');
   Route::post('/usuarios/nuevo', 'UsersController@saveCustomer');
   Route::get('/see-contrato/{id}/{type}', 'CustomerController@seeContracts');
   Route::post('/usuarios/remove-contrato', 'CustomerController@rmContracts');

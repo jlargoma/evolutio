@@ -108,6 +108,8 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
           </select>
         </div>
         <button class="btn btn-success show_alta_bajas col-md-2 mt-1" role="button">Mostrar por Familias</button>
+        @else
+        <button class="btn btn-success show_all_family col-md-2 mt-1" role="button" >Mostrar por Familias</button>
         @endif
         <div class="col-md-5">
           <select id="filterByRate" class="form-control mt-1" data-url="{{url('/admin/clientes/'.$month)}}">
@@ -117,7 +119,7 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
           foreach ($rFamilyName as $rID => $rName): 
             $cant = isset($rFamilyQty[$rID]) ? $rFamilyQty[$rID] : 0;
           ?>
-          <option value="<?= $rID ?>" <?= ($fFamily == $rID) ? 'selected' : '' ?>><?php echo str_replace('<br>', ': ',$rName)." ($cant)";?></option>
+          <option value="<?= $rID ?>" <?= ($fFamily == $rID) ? 'selected' : '' ?>><?php echo str_replace('<br>', ': ',$rName);?></option>
             <?php
             endforeach;?>
           </select>
@@ -194,6 +196,10 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
       $('.show_alta_bajas').on('click',function(){
         $('#modal-alta_bajas').modal();
         $('#modal-alta_bajas').find('.data_content').html('Cargando...').load('/admin/usuarios/getAltasBajasTarifas/{{$month}}');
+      });
+      $('.show_all_family').on('click',function(){
+        $('#modal-alta_bajas').modal();
+        $('#modal-alta_bajas').find('.data_content').html('Cargando...').load('/admin/usuarios/getFamilyCount/{{$month}}/{{$status}}');
       });
 
       $('#filterByStatus').on('change',function(){
