@@ -107,17 +107,17 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
             <option value="unsuscr" <?php if($status == 'unsubscribeds') echo 'selected' ?> >Bajas del Mes</option>
           </select>
         </div>
-        <button class="btn btn-success show_alta_bajas col-md-2 mt-1" role="button">Mostrar por tarifas</button>
+        <button class="btn btn-success show_alta_bajas col-md-2 mt-1" role="button">Mostrar por Familias</button>
         @endif
         <div class="col-md-5">
           <select id="filterByRate" class="form-control mt-1" data-url="{{url('/admin/clientes/'.$month)}}">
-            <option value="">Filtrar Por Servicio</option>
+            <option value="">Filtrar Por Familia</option>
           <?php 
           
-          foreach ($rNames as $rID => $rName): 
-            $cant = isset($aRatesIds[$rID]) ? $aRatesIds[$rID] : 0;
+          foreach ($rFamilyName as $rID => $rName): 
+            $cant = isset($rFamilyQty[$rID]) ? $rFamilyQty[$rID] : 0;
           ?>
-          <option value="<?= $rID ?>" <?= ($fRate == $rID) ? 'selected' : '' ?>><?php echo str_replace('<br>', ': ',$rName)." ($cant)";?></option>
+          <option value="<?= $rID ?>" <?= ($fFamily == $rID) ? 'selected' : '' ?>><?php echo str_replace('<br>', ': ',$rName)." ($cant)";?></option>
             <?php
             endforeach;?>
           </select>
@@ -175,8 +175,17 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
       $('#filterByRate').on('change',function(){
         var url = $(this).data('url');
         var val = $(this).val();
-        if (val>0 && val != ''){
-          window.location.href = url+'?fRate='+val;
+        console.log(val);
+        if (val != ''){
+          var urlAux = document.location.href;
+          var urlParams = urlAux.substring(urlAux.indexOf('?') + 1);
+          const searchParams = new URLSearchParams(urlParams);
+          if (searchParams.has("fFamily")){
+            searchParams.delete("fFamily");
+          }
+          searchParams.set("fFamily", val)
+          window.location.href = url+'?'+searchParams.toString();
+          //console.log(searchParams.toString());
 
         }
       });

@@ -2,7 +2,7 @@
 
 <table class="table">
   <thead>
-    <th>Tarifa</th>
+    <th>Familias</th>
     <th>Altas</th>
     <th>Bajas</th>
   </thead>
@@ -15,6 +15,9 @@
         <td>
           <?php
           switch ($k) {
+            case 1:
+              echo 'Membresias';
+              break;
             case 8:
               echo 'Fisioterapia';
               break;

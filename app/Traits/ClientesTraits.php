@@ -38,10 +38,13 @@ trait ClientesTraits {
     $months = lstMonthsSpanish(false);
     unset($months[0]);
 
+    User::create_altaBajas($year, $month);
     $oUser = new User();
+    $oRates = Rates::orderBy('type','desc')->orderBy('name','desc')->get();
     $detail = [];
     $payments = $noPay = 0;
     $status = isset($request->status) ? $request->status : 1;
+    $fFamily = isset($request->fFamily) ? $request->fFamily : null;
     $fRate = isset($request->fRate) ? $request->fRate : null;
     $tit = '';
     switch($status){
@@ -51,19 +54,11 @@ trait ClientesTraits {
         break;
       case 'new':
         $tit ='Nuevos usuarios '.$month.'/'.$year;
-        $sqlUsers =  User::select('users.*')->where('role', 'user')->leftjoin('user_meta', function ($join) {
-          $join->on('users.id', '=', 'user_meta.user_id');
-        })->where('status',1)->where('meta_key','activate')->whereYear('user_meta.created_at',$year)->whereMonth('user_meta.created_at',$month)
-        ->orWhere(function($query) use ($year, $month) {
-          $query->whereYear('users.created_at',$year)->whereMonth('users.created_at',$month);
-        })->distinct();
-          break;
+        $sqlUsers = User::altaBajas($year,$month)->where('status',1);
+        break;
       case 'unsubscribeds':
         $tit ='Usuarios dados de baja '.$month.'/'.$year;
-        $sqlUsers =  User::select('users.*')->where('role', 'user')->leftjoin('user_meta', function ($join) {
-          $join->on('users.id', '=', 'user_meta.user_id');
-        })->where('status',0)->where('meta_key','disable')->whereYear('user_meta.created_at',$year)->whereMonth('user_meta.created_at',$month)->distinct();
-        
+        $sqlUsers = User::altaBajas($year,$month)->where('status',0);
         break;
       case 'new_unsubscribeds':
         $tit ='Usuarios Nuevos ó Dados de Baja '.$month.'/'.$year;
@@ -78,7 +73,7 @@ trait ClientesTraits {
         
         $sqlUsers = User::select('users.*')->where('role', 'user')
               ->where('status', 1)
-              ->whereIn('id',$uPlan);
+              ->whereIntegerInRaw('users.id',$uPlan);
         break;
       default:
       if ($status == 0) $tit ='Usuarios Inactivos';
@@ -100,16 +95,38 @@ trait ClientesTraits {
       ->where('users_rates.rate_month',$month)
       ->whereNull('users_rates.deleted_at')
       ->select('users.*');
+    }
 
+    if ($fFamily){
+
+      $sueloPelvico  = Rates::where('name', 'like', '%pelvico%')->pluck('id')->toArray();
+      if ($fFamily == -1)
+        $rIDs = $sueloPelvico;
+      else {
+        $rIDs = [];
+        foreach($oRates as $r){
+          if( $r->type ==  $fFamily && !in_array($r->id,$sueloPelvico)){
+            $rIDs[] = $r->id;
+          }
+        }
+      }
+     
+      $sqlUsers->join('users_rates', function ($join) {
+        $join->on('users.id', '=', 'users_rates.id_user');
         
+      })->whereIntegerInRaw('users_rates.id_rate',$rIDs)
+      ->where('users_rates.rate_year',$year)
+      ->where('users_rates.rate_month',$month)
+      ->whereNull('users_rates.deleted_at')
+      ->select('users.*');
     }
 
     $users = $sqlUsers->orderBy('name', 'asc')->get();
-    $userIDs = $sqlUsers->pluck('users.id');
+    $userIDs =  $sqlUsers->pluck('users.id');
     //---------------------------------------------//
     $aRates = [];
     $typeRates = TypesRate::pluck('name','id');
-    $oRates = Rates::orderBy('type','desc')->orderBy('name','desc')->get();
+   
 //    $oRates = Rates::whereIn('type', $typeRates)->get();
     $rPrices = $rNames = [];
     if ($oRates) {
@@ -172,13 +189,45 @@ trait ClientesTraits {
 
     $aRatesIds = UserRates::where('rate_year', $year)
             ->where('rate_month', $month)
+            ->whereIntegerInRaw('id_user', $userIDs)
             ->select('id_rate', DB::raw('count(*) as total'))
             ->groupBy('id_rate')->pluck('total','id_rate')->toArray();
+
+
+            
+            $sueloPelvico  = Rates::where('name', 'like', '%pelvico%')->pluck('id')->toArray();
+            $rFamilyQty = [
+              -1=>0,//suelo pelvico
+              1=>0,//Membresias
+              2=>0,//pt
+              8=>0,// Fisioterapia  (tood menos suelo pelvico)
+              10=>0,// nutricion
+              12=>0,// Estetica
+            ];
+            $rFamilyName = [
+              -1=>'Suelo Pélvico',
+              1=>'Membresias',
+              2=>'PT',
+              8=>'Fisioterapia',
+              10=>'Nutrición',
+              12=>'Estetica',
+            ];
+            $ratesAux = [];
+            foreach($oRates as $r){
+              if( isset($rFamilyQty[$r->type]) && !in_array($r->id,$sueloPelvico)){
+                $ratesAux[$r->id] = $r->type;
+              } else {
+                $ratesAux[$r->id] = -1;
+              }
+            }
+            foreach($aRatesIds as $rID=>$qty){
+              if( isset($ratesAux[$rID])) $rFamilyQty[$ratesAux[$rID]] += $qty;
+            }
+
     /**/
     /*new users*/
     $newUsers = User::altaBajas($year,$month)->count();
     $unsubscribeds = 0;
-
     $selectYear = $year;
     $year = getYearActive();
     return view('/admin/usuarios/clientes/index', [
@@ -196,7 +245,10 @@ trait ClientesTraits {
         'uPlan' => $uPlan,
         'uPlanPenal' => $uPlanPenal,
         'rNames' => $rNames,
+        'rFamilyName' => $rFamilyName,
+        'rFamilyQty' => $rFamilyQty,
         'fRate' => $fRate,
+        'fFamily' => $fFamily,
         'aRatesIds' => $aRatesIds,
         'newUsers' => $newUsers,
         'unsubscribeds' => $unsubscribeds,
@@ -209,10 +261,10 @@ trait ClientesTraits {
 
     $detail = [];
     $RateIDs = array_keys($rPrices);
-    $uRates = UserRates::whereIN('id_user', $userIDs)
+    $uRates = UserRates::whereIntegerInRaw('id_user', $userIDs)
             ->where('rate_year', $year)
             ->where('rate_month', $month)
-            ->whereIn('id_rate', $RateIDs)
+            ->whereIntegerInRaw('id_rate', $RateIDs)
             ->with('charges')
             ->get();
     
@@ -220,7 +272,7 @@ trait ClientesTraits {
     $uLstRates = [];
     if ($uRates) {
       /******************************** */
-      $aDates = Dates::whereIn('id_user_rates',$uRates->pluck('id'))
+      $aDates = Dates::whereIntegerInRaw('id_user_rates',$uRates->pluck('id'))
               ->pluck('date','id_user_rates')->toArray();
 
       foreach ($uRates as $k => $v) {
@@ -915,6 +967,7 @@ $uPlanPenal =  $sql->pluck('user_id')->toArray();
       $lstRates  = Rates::all();
       $sueloPelvico  = Rates::where('name', 'like', '%pelvico%')->pluck('id')->toArray();
       $rType = [
+        1=>[],//Membresias
         2=>[],//pt
         8=>[],// Fisioterapia  (tood menos suelo pelvico)
         10=>[],// nutricion
@@ -927,6 +980,7 @@ $uPlanPenal =  $sql->pluck('user_id')->toArray();
       }
       $rType[0] = $sueloPelvico;
       $rUsersAlt = $rUsersBaja = $rUsers =  [
+        1=>0,//Membresias
         2=>0,//pt
         8=>0,// Fisioterapia  (tood menos suelo pelvico)
         0=>0,

@@ -231,18 +231,45 @@ class User extends Authenticatable
   }
 
 
+  static function create_altaBajas($year,$month){
+
+    $create = false;
+
+    if (date('Y') == $year && date('m') == $month){
+      DB::table('user_alta_baja')->where('year_month',$year.'-'.$month)->delete();
+      $create = true;
+    }
+    else {
+      $exist = DB::table('user_alta_baja')->where('year_month',$year.'-'.$month)->count();
+      if ( !$exist || $exist==0 ) $create = true;
+    }
+ 
+    if ( $create ){
+          $lstUser = "INSERT user_alta_baja(`user_id`, `year_month`) (SELECT users.id, '".$year.'-'.$month."' AS 'year_mont'  FROM users INNER JOIN user_meta ON users.id = user_meta.user_id
+          WHERE role = 'user' AND ( 
+                                    ( 
+                                      ( meta_key = 'activate' OR meta_key = 'disable') 
+                                      AND YEAR(user_meta.created_at) = $year AND MONTH(user_meta.created_at) = $month
+                                    ) 
+                                    OR 
+                                    (
+                                      YEAR(users.created_at) = $year AND MONTH(users.created_at) = $month
+                                    )
+                                  )
+                                  group by users.id
+          )
+        ";
+        DB::select($lstUser);
+    }
+
+
+  }
   static function altaBajas($year,$month){
-    $sqlUsers_A = User::select('users.*')->where('role', 'user')->leftjoin('user_meta', function ($join) {
-      $join->on('users.id', '=', 'user_meta.user_id');
-    })->where('status',0)->where('meta_key','disable')->whereYear('user_meta.created_at',$year)->whereMonth('user_meta.created_at',$month);
 
-
-    return User::select('users.*')->where('role', 'user')->leftjoin('user_meta', function ($join) {
-      $join->on('users.id', '=', 'user_meta.user_id');
-    })->where('status',1)->where('meta_key','activate')->whereYear('user_meta.created_at',$year)->whereMonth('user_meta.created_at',$month)
-    ->orWhere(function($query) use ($year, $month) {
-      $query->whereYear('users.created_at',$year)->whereMonth('users.created_at',$month);
-    })->union($sqlUsers_A)->distinct();
+    $sql = User::select('users.*')->join('user_alta_baja', function ($join) {
+      $join->on('users.id', '=', 'user_alta_baja.user_id');
+    })->where('year_month',$year.'-'.$month);
+    return $sql;
 
   }
 
