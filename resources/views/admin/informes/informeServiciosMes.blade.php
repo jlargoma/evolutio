@@ -23,6 +23,18 @@ $filt_month = intVal($filt_month);
   option.b {
     font-weight: bold;
   }
+  .table-responsive.form-rigth {
+    margin: 15px;
+  }
+  .table-responsive.form-rigth .field-rigth {
+    max-width: 170px;
+    float: right;
+  }
+  .table-responsive.form-rigth label {
+    float: right;
+    margin-top: 6px;
+    margin-right: 1em;
+}
 </style>
 @endsection
 @section('content')
@@ -71,16 +83,7 @@ $filt_month = intVal($filt_month);
         ?>
       </select>
     </div>
-    <div class="col-md-2 col-xs-6">
-      <label>Tipo de Pago</label>
-      <select id="f_method" class="form-control">
-        <option value="all">Todos</option>
-        <option value="banco" <?php if ($filt_method == 'banco') echo 'selected' ?>>BANCO</option>
-        <option value="cash" <?php if ($filt_method == 'cash') echo 'selected' ?>>METALICO</option>
-        <option value="card" <?php if ($filt_method == 'card') echo 'selected' ?>>TARJETA</option>
-        <option value="bono" <?php if ($filt_method == 'bono') echo 'selected' ?>>BONO</option>
-      </select>
-    </div>
+    
     <div class="col-md-3 col-xs-6">
       <label>ENTRENADOR/FISIO</label>
       <select id="f_coach" class="form-control">
@@ -100,9 +103,28 @@ $filt_month = intVal($filt_month);
     </div>
     
   </div>
+
+ 
+
   <div class="row" id="content-table-inform">
     <div class="table-responsive">
     @include('admin.informes._table_sumary_global')
+    </div>
+
+    <div class="table-responsive form-rigth">
+      <div class="field-rigth">
+        <select id="f_method" class="form-control">
+          <option value="all">Todos</option>
+          <option value="BANCO" >BANCO</option>
+          <option value="METALICO" >METALICO</option>
+          <option value="TARJETA" >TARJETA</option>
+          <option value="BONO" >BONO</option>
+          <option value="PENDIENTE" >PENDIENTE</option>
+        </select>
+      </div>
+      <label class="">Tipo de Pago</label>
+    </div>
+    <div class="table-responsive">
     @include('admin.informes.servicios._table_sumary')
     </div>
     <div class="table-responsive">
@@ -124,6 +146,38 @@ $filt_month = intVal($filt_month);
 @endsection
 @section('scripts')
 <script type="text/javascript">
+  $('#f_method').on('change',function (event) {
+    var f_method = $(this).val();
+    console.log(f_method);
+    if (f_method == 'all'){
+      $('#tableServices > tr').each(function(index, tr) { 
+        $(this).show();
+      });
+      $('#tableBonos > tr').each(function(index, tr) { 
+        $(this).show();
+      });
+    } else {
+      f_method = 'payType_'+f_method;
+      
+      $('#tableServices > tr').each(function(index, tr) { 
+        console.log(f_method,$(this).hasClass(f_method));
+        if ($(this).hasClass(f_method)){
+          $(this).show();
+        } else {
+          $(this).hide();
+        }
+      });
+      $('#tableBonos > tr').each(function(index, tr) { 
+        console.log(f_method,$(this).hasClass(f_method));
+        if ($(this).hasClass(f_method)){
+          $(this).show();
+        } else {
+          $(this).hide();
+        }
+      });
+      
+    }
+  });
   $('#filter_cliMonths').on('click',function (event) {
 
       var year = $('#date').val();

@@ -671,7 +671,7 @@ class InformesController extends Controller {
 
       $aCoachs = User::getCoachs()->pluck('name', 'id');
 
-
+      $toPay = 0;
       $bank = 0;
       $cash = 0;
       $card = 0;
@@ -708,6 +708,8 @@ class InformesController extends Controller {
             'type_payment'=> $type_payment,
           ];
           
+        } else {
+          $toPay += $item->price;
         }
       }
   
@@ -721,6 +723,7 @@ class InformesController extends Controller {
         'cash' => $cash,
         'card' => $card,
         'bono' => $bono,
+        'toPay' => $toPay,
         'chargesData' => $charges,
         'aCustomers' => $aCustomers,
         'aRates' => $aRates,

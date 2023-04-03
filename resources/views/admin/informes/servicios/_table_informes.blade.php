@@ -13,9 +13,12 @@
             <th class="text-center">ENTRENADOR/FISIO</th>
         </tr>
         </thead>
-        <tbody>
-		<?php foreach ($uRates as $ur): $charge = isset($chargesData[$ur->id]) ? $chargesData[$ur->id] : null;?>
-        <tr>
+        <tbody  id="tableServices">
+		<?php foreach ($uRates as $ur): 
+            $charge = isset($chargesData[$ur->id]) ? $chargesData[$ur->id] : null;
+            $rPayType = ($charge) ? $charge['type_payment'] : 'PENDIENTE';
+        ?>
+        <tr class="payType_{{$rPayType}}">
             <td class="text-center sorting_disabled"><?php echo ($charge) ? $charge['id'] : '';?></td>
             <td class="text-center"><?php echo ($charge) ? '<b>'.$charge['date'].'</b>' : '';?>  </td>  
             <td class="text-center">
@@ -40,7 +43,7 @@
                 show_isset($ur->rate_month,$months);
               ?>
             </td>
-            <td class="text-center"><?php echo ($charge) ? $charge['type_payment'] : '';?></td>
+            <td class="text-center">{{$rPayType}}</td>
             <td class="text-center">
               <?php 
                $coach = '--';

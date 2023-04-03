@@ -13,9 +13,25 @@
             <th class="text-center">ENTRENADOR/FISIO</th>
         </tr>
         </thead>
-        <tbody>
-		<?php foreach ($oLstBonos as $charge): ?>
-        <tr>
+        <tbody id="tableBonos">
+		<?php foreach ($oLstBonos as $charge): 
+            $bTypePay = 'PENDIENTE';
+            switch ($charge->type_payment){
+              case 'banco':
+                $bTypePay = 'BANCO';
+                break;
+              case 'cash':
+                $bTypePay = 'METALICO';
+                break;
+              case 'card':
+                $bTypePay = 'TARJETA';
+                break;
+              case 'bono':
+                $bTypePay = 'BONO';
+                break;
+            }
+      ?>
+        <tr class="payType_{{$bTypePay}}">
             <td class="text-center sorting_disabled">{{$charge->id}}</td>
             <td class="text-center"><b>{{dateMin($charge->date_payment)}}</b></td>
             <td class="text-center">{{$charge->username}}</td>
@@ -33,24 +49,7 @@
               }
               ?>
             </td>
-            <td class="text-center">
-                <?php 
-                switch ($charge->type_payment){
-                  case 'banco':
-                    echo 'BANCO';
-                    break;
-                  case 'cash':
-                    echo 'METALICO';
-                    break;
-                  case 'card':
-                    echo 'TARJETA';
-                    break;
-                  case 'bono':
-                    echo 'BONO';
-                    break;
-                }
-                ?>
-            </td>
+            <td class="text-center">{{$bTypePay}}</td>
             <td class="text-center">
                 <?php 
                 $coach = '--';
