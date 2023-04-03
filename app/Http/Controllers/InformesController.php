@@ -52,14 +52,25 @@ class InformesController extends Controller {
     if ($type_payment && $type_payment != 'all') {
       $sql_charges->where('type_payment', $type_payment);
     }
-
     if ($rate) {
       if ($rate != 'all') {
         $filerRate = explode('-', $rate);
         if (count($filerRate) == 2) {
           $sql_charges->where('id_rate', $filerRate[1]);
         } else {
-          $sql_charges->where('type_rate', $filerRate[0]);
+          
+          $rType = intVal($filerRate[0]);
+          $bTypes = Bonos::listBonos();
+          $idBonosSel = [];
+          foreach($bTypes as $k=>$v){
+            if( $v == $rType ) $idBonosSel[] = $k;
+          }
+
+          $sql_charges->where(function ($query) use ($rType, $idBonosSel) {
+              $query->where("type_rate", $rType)
+                ->orWhereIn('bono_id', $idBonosSel);
+            });
+
         }
       }
     }
@@ -642,13 +653,14 @@ class InformesController extends Controller {
 
       $sqlURates = \App\Models\UserRates::where('rate_month', $f_month)->where('rate_year', $year);
       if ($f_coach) $sqlURates->where('coach_id', $f_coach);
-
+      $rType = null;
       if ($f_rate) {
         if ($f_rate != 'all') {
           $filerRate = explode('-', $f_rate);
           if (count($filerRate) == 2) {
             $sqlURates->where('id_rate', $filerRate[1]);
           } else {
+            $rType = intVal($filerRate[0]);
             $sqlURates->whereIn('id_rate', Rates::where('type',$filerRate[0])->pluck('id'));
           }
         }
@@ -746,11 +758,23 @@ class InformesController extends Controller {
 
     //--------------------------------------------------------------------//
     $aBonos = Bonos::all()->pluck('name','id');
-    $oLstBonos = Charges::select('charges.*', 'users.name as username')
+    $sqlBonos = Charges::select('charges.*', 'users.name as username')
     ->join('users', 'users.id', '=', 'charges.id_user')
     ->whereYear('date_payment', '=', $year)
-    ->whereMonth('date_payment', '=', $f_month)
-    ->where('bono_id','>',0)->get();
+    ->whereMonth('date_payment', '=', $f_month);
+    if ($rType){
+      $bTypes = Bonos::listBonos();
+      $idBonosSel = [];
+      foreach($bTypes as $k=>$v) 
+        if( $v == $rType ) $idBonosSel[] = $k;
+        
+      $sqlBonos->whereIn('bono_id', $idBonosSel);
+    } else {
+      $sqlBonos->where('bono_id','>',0);
+    }
+    
+
+    $oLstBonos = $sqlBonos->get();
     $cTotalBonos = ['cash'=>0,'card'=>0,'banco'=>0,'bono'=>0];
     $chargesID = [];
     foreach ($oLstBonos as $c) {
