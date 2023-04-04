@@ -708,6 +708,7 @@ class InformesController extends Controller {
             case 'card':
             $card += $charge->import;
             $type_payment = 'TARJETA';
+            break;
             case 'invita':
             $invita += $charge->import;
             $type_payment = 'Inv. Evolutio';

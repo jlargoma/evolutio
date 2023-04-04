@@ -343,7 +343,7 @@ class DptoController extends Controller {
     ->whereYear('date_payment', '=', $year)
     ->whereMonth('date_payment', '=', $f_month)
     ->whereIn('bono_id',$bIDs)->get();
-    $cTotalBonos = ['cash'=>0,'card'=>0,'banco'=>0];
+    $cTotalBonos = ['cash'=>0,'card'=>0,'banco'=>0,'invita'=>0];
     foreach ($oLstBonos as $c) {
       $cTotalBonos[$c->type_payment]  += $c->import;
     }
@@ -442,6 +442,7 @@ class DptoController extends Controller {
     $bank = 0;
     $cash = 0;
     $card = 0;
+    $invita = 0;
     $clients = [];
     $rates = $bonos = [];
     foreach ($charges as $charge) {
@@ -460,6 +461,9 @@ class DptoController extends Controller {
         case 'card':
           $card += $charge->import;
           break;
+        case 'invita':
+          $invita += $charge->import;
+          break;
       }
     }
     $endDay = date("t", strtotime($starDate));
@@ -475,6 +479,7 @@ class DptoController extends Controller {
         'aCargesCoachs' => $aCargesCoachs,
         'cash' => $cash,
         'card' => $card,
+        'invita' => $invita,
         'bank' => $bank,
         'clients' => $clients,
         'rates' => $rates,
