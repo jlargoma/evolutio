@@ -55,7 +55,7 @@ class PyGController extends Controller {
     $uRates = UserRates::withCharges()->where('rate_year',$year)->get();
       
     $aux = $months_empty;
-    $pay_method = ['c'=>$months_empty,'b'=>$months_empty,'v'=>$months_empty,'np'=>$months_empty];
+    $pay_method = ['c'=>$months_empty,'b'=>$months_empty,'v'=>$months_empty,'np'=>$months_empty,'i'=>$months_empty];
 
     $cashDepto = ['esthetic'=>$months_empty,'fisio'=>$months_empty,'other'=>$months_empty];
     $rIDsEsth = Rates::where('type',12)->orderBy('name')->pluck('id')->toArray();
@@ -79,6 +79,9 @@ class PyGController extends Controller {
             break;
           case 'banco':
             $pay_method['b'][$m] += $item->ch_import;
+            break;
+          case 'invita':
+            $pay_method['i'][$m] += $item->ch_import;
             break;
         }
         $rateGr = isset($aRates[$item->ch_id_rate]) ? $aRates[$item->ch_id_rate] : 3;
@@ -119,6 +122,9 @@ class PyGController extends Controller {
           break;
         case 'banco':
           $pay_method['b'][$m] += $c->import;
+          break;
+        case 'invita':
+          $pay_method['i'][$m] += $c->import;
           break;
       }
     }

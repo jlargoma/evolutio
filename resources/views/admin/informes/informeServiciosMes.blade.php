@@ -119,6 +119,7 @@ $filt_month = intVal($filt_month);
           <option value="BANCO" >BANCO</option>
           <option value="METALICO" >METALICO</option>
           <option value="TARJETA" >TARJETA</option>
+          <option value="invita" >Invit. Evolutio</option>
           <option value="BONO" >BONO</option>
           <option value="PENDIENTE" >PENDIENTE</option>
         </select>

@@ -1,8 +1,8 @@
 <?php 
 $auxTM = [];
-$pmName = ['c'=>'Cash','v'=>'Visa','b'=>'Banco','np'=>'No Pay'];
+$pmName = ['c'=>'Cash','v'=>'Visa','b'=>'Banco','i'=>'Inv. Evolutio','np'=>'No Pay'];
 foreach ($lstMonths as $k=>$v){
-  $auxTM[$k] = $pay_method['c'][$k] + $pay_method['v'][$k] + $pay_method['b'][$k] + $pay_method['np'][$k];
+  $auxTM[$k] = $pay_method['c'][$k] + $pay_method['v'][$k] + $pay_method['b'][$k] + $pay_method['np'][$k] + $pay_method['i'][$k];
 }
 ?>
 <br class='mt-1em' />

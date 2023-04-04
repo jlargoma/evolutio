@@ -55,6 +55,9 @@
                   case 'card':
                     echo 'TARJETA';
                     break;
+                  case 'invita':
+                    echo 'Invit. Evolutio';
+                    break;
                   case 'bono':
                     echo 'BONO';
                     break;

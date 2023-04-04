@@ -59,6 +59,7 @@ if ($rate->tarifa == 'fidelity') {
         <option value="cash" @if ($charge->type_payment == "cash") selected @endif>Efectivo</option>
         <option value="banco" @if ($charge->type_payment == "banco") selected @endif>Banco</option>
         <option value="bono" @if ($charge->type_payment == "bono") selected @endif>Bono</option>
+        <option value="invita" @if ($charge->type_payment == "invita") selected @endif>Invit. Evolutio</option>
       </select>
     </div>
     @if(!$oBono)

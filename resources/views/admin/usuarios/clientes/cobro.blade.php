@@ -80,6 +80,7 @@ $oBonoLst = $oBonoLst[1];
               <button  data-v="card" type="button">Tarjeta</button>
               <button  data-v="cash"  type="button">Efectivo</button>
               <button  data-v="banco"  type="button">Banco</button>
+              <button  data-v="invita" type="button">Evolutio</button>
               @if($tBonos>0)
               <button  data-v="bono"  type="button">Bonos ({{$tBonos}})</button>
                @else

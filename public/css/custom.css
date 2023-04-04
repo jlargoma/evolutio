@@ -222,7 +222,7 @@ ul.selectDate li.active {
 
 
 .likeOption button{
-    font-size: 1.2em;
+    font-size: 13px;
     text-align: center;
     display: inline-block;
     cursor: pointer;

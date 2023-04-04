@@ -80,6 +80,7 @@ $filt_month = intVal($month);
         <option value="banco" <?php if ($filt_method == 'banco') echo 'selected' ?>>BANCO</option>
         <option value="cash" <?php if ($filt_method == 'cash') echo 'selected' ?>>METALICO</option>
         <option value="card" <?php if ($filt_method == 'card') echo 'selected' ?>>TARJETA</option>
+        <option value="invita" <?php if ($filt_method == 'invita') echo 'selected' ?>>Invit. Evolutio</option>
         <option value="bono" <?php if ($filt_method == 'bono') echo 'selected' ?>>BONO</option>
       </select>
     </div>

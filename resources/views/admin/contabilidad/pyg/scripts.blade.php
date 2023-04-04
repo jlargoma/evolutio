@@ -147,6 +147,13 @@ var myChart = new Chart(ctx, {
         borderWidth: 2
       },
       {
+        label: 'Invit. Evolutio',
+        data: [<?php for($i=1;$i<13;$i++) echo "'" . round($pay_method['i'][$i]) . "',"; ?>],
+        backgroundColor: 'rgb(210,92,147,0.2)',
+        borderColor: '#d25c93',
+        borderWidth: 2
+      },
+      {
         label: 'No Pay',
         data: [<?php for($i=1;$i<13;$i++) echo "'" . round($pay_method['np'][$i]) . "',"; ?>],
         backgroundColor: 'rgb(178,189,6,0.2)',

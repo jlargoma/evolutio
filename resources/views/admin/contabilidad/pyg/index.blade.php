@@ -120,6 +120,10 @@ function sumMonthValue($m) {
             <td class="square" ><span style="background-color: #d25c93;"></span>VISA</td>
             <td>{{moneda(array_sum($pay_method['v']))}}</td>
           </tr>
+          <tr>
+            <td class="square" ><span style="background-color: #d25c93;"></span>Invit. Evoluti</td>
+            <td>{{moneda(array_sum($pay_method['i']))}}</td>
+          </tr>
           <tfoot>
             <tr>
               <td class="square" ><span style="background-color: #b2bd06;"></span>No Pay</td>

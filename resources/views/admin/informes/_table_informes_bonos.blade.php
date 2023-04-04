@@ -26,6 +26,9 @@
               case 'card':
                 $bTypePay = 'TARJETA';
                 break;
+              case 'invita':
+                $bTypePay = 'Invit. Evolutio';
+                break;
               case 'bono':
                 $bTypePay = 'BONO';
                 break;

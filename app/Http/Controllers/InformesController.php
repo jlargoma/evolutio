@@ -100,6 +100,7 @@ class InformesController extends Controller {
     $bank = 0;
     $cash = 0;
     $card = 0;
+    $invita = 0;
     $clients = [];
     $rates = $bonos = [];
     foreach ($charges as $charge) {
@@ -117,6 +118,9 @@ class InformesController extends Controller {
           break;
         case 'card':
           $card += $charge->import;
+          break;
+        case 'invita':
+          $invita += $charge->import;
           break;
       }
     }
@@ -139,6 +143,7 @@ class InformesController extends Controller {
         'cash' => $cash,
         'card' => $card,
         'bank' => $bank,
+        'invita' => $invita,
         'clients' => $clients,
         'rates' => $rates,
         'year' => $year,
@@ -164,6 +169,7 @@ class InformesController extends Controller {
     $bank = 0;
     $cash = 0;
     $card = 0;
+    $invita = 0;
     $clients = [];
     $rates = [];
     $charges = [];
@@ -184,6 +190,9 @@ class InformesController extends Controller {
           case 'card':
             $card += $charge->import;
             break;
+          case 'invita':
+            $invita += $charge->import;
+            break;
         }
       }
     }
@@ -201,6 +210,7 @@ class InformesController extends Controller {
         'cash' => $cash,
         'bank' => $bank,
         'card' => $card,
+        'invita' => $invita,
         'clients' => $clients,
         'rates' => $rates,
         'year' => $year,
@@ -251,7 +261,6 @@ class InformesController extends Controller {
     $data['f_coach'] = $f_coach;
     $data['aTRates'] = \App\Models\Rates::getRatesTypeRates();
     $data['aCoachs'] = User::getCoachs()->pluck('name', 'id');
-  //  dd($data);
     return view('admin.informes.informeClientesMes', $data);
   }
 
@@ -280,6 +289,7 @@ class InformesController extends Controller {
           'cash' => 0,
           'card' => 0,
           'bono' => 0,
+          'invita' => 0,
       ];
     }
 
@@ -676,6 +686,7 @@ class InformesController extends Controller {
       $toPay = 0;
       $bank = 0;
       $cash = 0;
+      $invita = 0;
       $card = 0;
       $bono = 0;
       $charges = [];
@@ -697,6 +708,9 @@ class InformesController extends Controller {
             case 'card':
             $card += $charge->import;
             $type_payment = 'TARJETA';
+            case 'invita':
+            $invita += $charge->import;
+            $type_payment = 'Inv. Evolutio';
             break;
             case 'bono':
             $bono += $charge->import;
@@ -724,6 +738,7 @@ class InformesController extends Controller {
         'bank' => $bank,
         'cash' => $cash,
         'card' => $card,
+        'invita' => $invita,
         'bono' => $bono,
         'toPay' => $toPay,
         'chargesData' => $charges,
@@ -780,7 +795,7 @@ class InformesController extends Controller {
     
 
     $oLstBonos = $sqlBonos->get();
-    $cTotalBonos = ['cash'=>0,'card'=>0,'banco'=>0,'bono'=>0];
+    $cTotalBonos = ['cash'=>0,'card'=>0,'banco'=>0,'bono'=>0,'invita'=>0];
     $chargesID = [];
     foreach ($oLstBonos as $c) {
       $cTotalBonos[$c->type_payment]  += $c->import;

@@ -7,6 +7,7 @@
             <td class="text-center bg-complete font-w800">METALICO</td>
             <td class="text-center bg-complete font-w800">BANCO</td>
             <td class="text-center bg-complete font-w800">TARJ</td>
+            <td class="text-center bg-complete font-w800">Invit. Evolutio</td>
             <td class="text-center bg-complete font-w800">TOTAL</td>
         </tr>
         <tr>
@@ -14,6 +15,7 @@
             <td class="text-center bg-complete"><?= moneda($cTotalBonos['cash']); ?></td>
             <td class="text-center bg-complete"><?= moneda($cTotalBonos['banco']); ?></td>
             <td class="text-center bg-complete"><?= moneda($cTotalBonos['card']); ?></td>
+            <td class="text-center bg-complete"><?= moneda($cTotalBonos['invita']); ?></td>
             <td class="text-center bg-complete"><?= moneda(array_sum($cTotalBonos)); ?></td>
         </tr>
         </tbody>

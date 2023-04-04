@@ -109,7 +109,7 @@ class DptoController extends Controller {
     $uRates = UserRates::withCharges()->whereIn('users_rates.id_rate',$rIDs)->where('rate_year', $year)->get();
 
     $aux = $months_empty;
-    $pay_method = ['c' => $months_empty, 'b' => $months_empty, 'v' => $months_empty, 'np' => $months_empty];
+    $pay_method = ['c' => $months_empty, 'b' => $months_empty, 'v' => $months_empty, 'np' => $months_empty, 'i' => $months_empty];
     $tPay = 0;
     foreach ($uRates as $item) {
       $m = $item->rate_month;
@@ -123,6 +123,9 @@ class DptoController extends Controller {
             break;
           case 'banco':
             $pay_method['b'][$m] += $item->ch_import;
+            break;
+          case 'invita':
+            $pay_method['i'][$m] += $item->ch_import;
             break;
         }
         $rateGr = isset($aRates[$item->ch_id_rate]) ? $aRates[$item->ch_id_rate] : 3;
@@ -158,6 +161,9 @@ class DptoController extends Controller {
           break;
         case 'banco':
           $pay_method['b'][$m] += $c->import;
+          break;
+        case 'invita':
+          $pay_method['i'][$m] += $c->import;
           break;
       }
     }

@@ -82,6 +82,7 @@
                         <select class="form-control" name="type_payment" id="type_payment">
                             <option value="cash">Efectivo</option>
                             <option value="banco">Tarjeta</option>
+                            <option value="invita">Invit. Evolutio</option>
                         </select>
                     </div>
                 </div>

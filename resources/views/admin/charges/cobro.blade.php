@@ -82,6 +82,7 @@
                         <option value="cash">Efectivo</option>
                         <option value="card">Banco</option>
                         <option value="banco">Tarjeta</option>
+                        <option value="invita">Invit. Evolutio</option>
                     </select>
                 </div>
                 <div class="col-xs-6">

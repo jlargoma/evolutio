@@ -29,6 +29,7 @@ $disableType = ($charge->type_payment == "card" || $charge->type_payment == "bon
           <option value="card" @if ($charge->type_payment == "card") selected @endif>Tarjeta</option>
           <option value="cash" @if ($charge->type_payment == "cash") selected @endif>Efectivo</option>
           <option value="banco" @if ($charge->type_payment == "banco") selected @endif>Banco</option>
+          <option value="invita" @if ($charge->type_payment == "invita") selected @endif>Invit. Evolutio</option>
         </select>
       </div>
      <div class="col-md-3">
@@ -89,6 +90,7 @@ $disableType = ($charge->type_payment == "card" || $charge->type_payment == "bon
         <option value="cash" @if ($charge->type_payment == "cash") selected @endif>Efectivo</option>
         <option value="banco" @if ($charge->type_payment == "banco") selected @endif>Banco</option>
         <option value="bono" @if ($charge->type_payment == "bono") selected @endif>Bono</option>
+        <option value="invita" @if ($charge->type_payment == "invita") selected @endif>Invit. Evolutio</option>
       </select>
     </div>
     

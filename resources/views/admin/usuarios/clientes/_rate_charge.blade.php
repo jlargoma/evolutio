@@ -128,6 +128,7 @@
                 <button  data-v="card"  type="button" <?php if ($old == 'card') echo 'class="active"'; ?>>Tarjeta</button>
                 <button  data-v="cash"  type="button" <?php if ($old == 'cash') echo 'class="active"'; ?>>Efectivo</button>
                 <button  data-v="banco"  type="button" <?php if ($old == 'banco') echo 'class="active"'; ?>>Banco</button>
+                <button  data-v="invita"  type="button" <?php if ($old == 'invita') echo 'class="active"'; ?>>Evolutio</button>
               </div>
               <div class="col-xs-3">
                 <button class="btn btn-lg btn-success" id="submitFormPayment" style="margin-left: -1em;">
