@@ -11,6 +11,8 @@ use \App\Models\User;
 use App\Models\Charges;
 use App\Models\Rates;
 use App\Models\UserBonosLogs;
+use App\Exports\ServicesExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class InformesController extends Controller {
 
@@ -791,4 +793,10 @@ class InformesController extends Controller {
     return view('admin.informes.informeServiciosMes', $data);
   }
 
+
+
+
+  public function informeServiciosAll(Request $request) {
+    return Excel::download(new ServicesExport, 'SERVICIOS_' . date('Y_m_d_s') . '.xlsx');
+  }
 }

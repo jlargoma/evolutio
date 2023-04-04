@@ -100,6 +100,7 @@ $filt_month = intVal($filt_month);
     </div>
     <div class="col-md-2 col-xs-6" style="margin-top: 1.7em;">
       <button type="button" id="filter_cliMonths" class="btn btn-success">Filtrar</button>
+      <a href="/admin/informes/servicios-mes-all">Descarga Anual</a>
     </div>
     
   </div>
