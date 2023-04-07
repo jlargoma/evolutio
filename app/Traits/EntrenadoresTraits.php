@@ -34,8 +34,9 @@ trait EntrenadoresTraits {
         $auxM = intval(substr($item->date, 5, 2));
         if (!isset($data['aLiq'][$item->to_user])){
           $data['aLiq'][$item->to_user] = $auxMonths;
-          $data['aLiqTotal'][$item->to_user] = 0;
         }
+        if (!isset($data['aLiqTotal'][$item->to_user]))
+          $data['aLiqTotal'][$item->to_user] = 0;
         
         $data['aLiq'][$item->to_user][$auxM] += $item->import;
         $data['aLiqTotal'][$item->to_user] += $item->import;

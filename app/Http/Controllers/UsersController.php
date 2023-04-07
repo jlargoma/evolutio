@@ -342,13 +342,14 @@ class UsersController extends Controller {
   public function disable($id) {
     $usuario = User::find($id);
     $usuario->status = 0;
-    if ($usuario->save()){
-      $usuario->newMetaContent('disable',Auth::user()->id);
-      die('OK');
-    } 
-    else die('ERROR');
+    // if ($usuario->save()){
+    //   $usuario->newMetaContent('disable',Auth::user()->id);
+    //   die('OK');
+    // } 
+    // else die('ERROR');
     if ($usuario->save()) {
       $usuario->newMetaContent('disable',Auth::user()->id);
+      return redirect()->back()->with('success', 'usuario desactivado');
       if ($usuario->role == 'admin') {
         return redirect('/admin/usuarios');
       } elseif ($usuario->role == 'teach' || $usuario->role == 'teacher') {
@@ -356,7 +357,7 @@ class UsersController extends Controller {
       } else {
         return redirect('/admin/clientes');
       }
-    }
+    } else die('ERROR');
   }
 
   public function activate($id) {
@@ -364,7 +365,7 @@ class UsersController extends Controller {
     $usuario->status = 1;
     if ($usuario->save()){
       $usuario->newMetaContent('activate',Auth::user()->id);
-       die('OK');
+      return redirect()->back()->with('success', 'usuario activado');
     }
     else die('ERROR');
   }
