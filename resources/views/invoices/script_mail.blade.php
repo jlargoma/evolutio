@@ -3,7 +3,9 @@
     $('.sendInvoiceEmail').on('click', function (e) {
       e.preventDefault();
       e.stopPropagation();
-      if (confirm('Enviar factura a ' + $('#email').val() + '?')) {
+      var email =$(this).data('email');
+      if ($('#email').length > 0) email = $('#email').val();
+      if (confirm('Enviar factura a ' + email + '?')) {
         $('#loadigPage').show('slow');
         $.ajax({
           url: '/admin/facturas/enviar',

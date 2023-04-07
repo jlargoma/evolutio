@@ -34,7 +34,7 @@
           @endif
           <a href="{{ route('invoice.view',$item->id) }}" class="btn btn-xs btn-primary" target="_black"><i class="fa fa-eye"></i></a>
           <a href="{{ route('invoice.downl',$item->id) }}" class="btn btn-xs btn-success" target="_black"><i class="fa fa-download"></i></a>
-          <a href="#" class="btn btn-xs btn-success sendInvoiceEmail" type="button" data-id="{{$item->id}}" title="Enviar factura"><i class="fa fa-envelope"></i></a>
+          <a href="#" class="btn btn-xs btn-success sendInvoiceEmail" type="button" data-id="{{$item->id}}" data-email="<?php echo $item->email?>" title="Enviar factura"><i class="fa fa-envelope"></i></a>
         </div>
       </td>
     </tr>
