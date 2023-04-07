@@ -356,7 +356,7 @@ trait ClientesTraits
     //----------------------//
     $oDates = Dates::where('id_user', $userID)->OrderBy('date')->get();
     //----------------------//
-    $oNotes = UsersNotes::where('id_user', $userID)->OrderBy('created_at')->get();
+    $oNotes = UsersNotes::where('id_user', $userID)->OrderBy('created_at','DESC')->get();
     //----------------------//
     $oCharges = Charges::where('id_user', $userID)
       ->pluck('import', 'id')->toArray();
