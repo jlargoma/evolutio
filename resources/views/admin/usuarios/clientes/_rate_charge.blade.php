@@ -33,6 +33,25 @@
     transition: box-shadow 150ms ease !important;
   }
   .stripeEmail{height: 0px;    overflow: hidden;}
+  div#importeFinalModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 14px;
+    background-color: #000;
+    text-align: center;
+    width: 150px;
+    height: 75px;
+    color: #FFF;
+}
+div#importeFinalModal .close {
+    color: #ff7a7a;
+    opacity: inherit;
+}
+div#importeFinalModal .value {
+    font-size: 25px;
+    text-align: left;
+}
 </style>
 <div class="content" style="max-width:975px;">
   <h2 class="text-center push-20"> ASIGNAR Y GENERAR COBRO PARA <?php echo strtoupper($user->name) ?></h2>
@@ -149,6 +168,11 @@
 
   </form>
 </div>
+
+<div id="importeFinalModal" style="display:none">
+<div class="value">0</div>
+<div class="close">X</div>
+</div>
 @endsection
 @section('scripts')
 <script src="{{asset('/admin-css/assets/js/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
@@ -209,7 +233,15 @@ $(document).ready(function () {
         } else {
           $('#stripeBox').find('.disabled').show();
         }
+        if (value == "cash") {
+          $('#importeFinalModal').show();
+          $('#importeFinalModal').find('.value').text($('#importeFinal').val());
+        }
   });
+  $('#importeFinalModal').on('click','.close', function (){
+    $('#importeFinalModal').hide();
+  });
+
     
   $('#submitFormPayment').on('click', function(e){
     if($('#type_payment').val() == ''){

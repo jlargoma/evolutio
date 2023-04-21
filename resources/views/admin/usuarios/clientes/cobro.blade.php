@@ -17,6 +17,27 @@ $oBonoLst = $oBonoLst[1];
 ?>
 @extends('layouts.popup')
 @section('content')
+<style>
+    div#importeFinalModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 14px;
+    background-color: #000;
+    text-align: center;
+    width: 150px;
+    height: 75px;
+    color: #FFF;
+}
+div#importeFinalModal .close {
+    color: #ff7a7a;
+    opacity: inherit;
+}
+div#importeFinalModal .value {
+    font-size: 25px;
+    text-align: left;
+}
+</style>
 <div class="content" style="max-width:1480px;">
   <div class="col-xs-12 not-padding push-20">
     <h2 class="text-center font-w300">
@@ -122,6 +143,10 @@ $oBonoLst = $oBonoLst[1];
     </div>
   </form>
 </div>
+<div id="importeFinalModal" style="display:none">
+<div class="value">0</div>
+<div class="close">X</div>
+</div>
 @endsection
 @section('scripts')
 
@@ -166,7 +191,14 @@ $(document).ready(function () {
         } else {
           $('#stripeBox').find('.disabled').show();
         }
-    });
+        if (value == "cash") {
+          $('#importeFinalModal').show();
+          $('#importeFinalModal').find('.value').text($('#importeFinal').val());
+        }
+  });
+  $('#importeFinalModal').on('click','.close', function (){
+    $('#importeFinalModal').hide();
+  });
 <?php if ($card): ?>
     $('#card-element').hide();
     $('#changeCreditCard').on('click', function () {
