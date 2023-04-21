@@ -171,7 +171,6 @@ div#importeFinalModal .value {
 
 <div id="importeFinalModal" style="display:none">
 <div class="value">0</div>
-<div class="close">X</div>
 </div>
 @endsection
 @section('scripts')
