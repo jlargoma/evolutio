@@ -18,7 +18,7 @@ class Rates extends Model
     }
         
     static function getByTypeRate($type){
-        return self::select('rates.*')
+        return self::select('rates.*','types_rate.name as familyname')
                 ->join('types_rate','rates.type','=','types_rate.id')
                 ->where('status',1)
                 ->whereNotIn('rates.id',self::noShow)

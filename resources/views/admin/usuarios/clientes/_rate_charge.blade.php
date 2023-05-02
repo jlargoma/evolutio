@@ -33,25 +33,6 @@
     transition: box-shadow 150ms ease !important;
   }
   .stripeEmail{height: 0px;    overflow: hidden;}
-  div#importeFinalModal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    padding: 14px;
-    background-color: #000;
-    text-align: center;
-    width: 150px;
-    height: 75px;
-    color: #FFF;
-}
-div#importeFinalModal .close {
-    color: #ff7a7a;
-    opacity: inherit;
-}
-div#importeFinalModal .value {
-    font-size: 25px;
-    text-align: left;
-}
 </style>
 <div class="content" style="max-width:975px;">
   <h2 class="text-center push-20"> ASIGNAR Y GENERAR COBRO PARA <?php echo strtoupper($user->name) ?></h2>
@@ -86,6 +67,7 @@ div#importeFinalModal .value {
                 <option value="<?php echo $rate->id ?>" 
                     data-price="<?php echo $price ?>"
                     data-family="<?php echo $k ?>"
+                    data-familyname="<?php echo $v['n'] ?>"
                     orig="<?php echo $rate->price ?>"
                     data-tarifa="{{$tarifa}}"
                     {{$sel}}>
@@ -171,6 +153,7 @@ div#importeFinalModal .value {
 
 <div id="importeFinalModal" style="display:none">
 <div class="value">0</div>
+<div class="text"><?php echo strtoupper($user->name) ?> - <span class="family"></span></div>
 </div>
 @endsection
 @section('scripts')
@@ -235,6 +218,7 @@ $(document).ready(function () {
         if (value == "cash") {
           $('#importeFinalModal').show();
           $('#importeFinalModal').find('.value').text($('#importeFinal').val());
+          $('#importeFinalModal').find('.family').text($("#id_rate option:selected").data('familyname'));
         }
   });
   $('#importeFinalModal').on('click','.close', function (){

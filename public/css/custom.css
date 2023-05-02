@@ -388,6 +388,24 @@ td.backgr.red {
     color: #FFF;
 }
 
+div#importeFinalModal .value,
+div#importeFinalModal .text {
+position: fixed;
+top: 0;
+left: 0;
+padding: 14px;
+background-color: #000;
+text-align: left;
+width: 100px;
+height: 70px;
+color: #FFF;
+font-size: 25px;
+}
+div#importeFinalModal .text {
+left: 120px;
+width: calc(100% - 140px);
+}
+
 /*-----------------------------------*/
 @media(max-width:991px) {
     .table-fixed th.static{

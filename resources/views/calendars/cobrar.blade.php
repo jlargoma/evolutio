@@ -58,7 +58,10 @@ $oBonoLst = $oBonoLst[1];
     @include('admin.blocks.stripe-buttons')
   </div>
 </form>
-    
+<div id="importeFinalModal" style="display:none">
+<div class="value">0</div>
+<div class="text"><?php echo strtoupper($oUser->name) ?> - <span class="family"></span></div>
+</div>
 @include('calendars.shareBonos')
 
 <script type="text/javascript">
@@ -72,6 +75,11 @@ $(document).ready(function () {
             $('#bonosBox').show();
             $('#stripeBox').hide();
         } else {
+          if (value == "cash") {
+            $('#importeFinalModal').show();
+            $('#importeFinalModal').find('.value').text($('#importeFinal').val());
+            $('#importeFinalModal').find('.family').text($("#id_rate option:selected").data('familyname'));
+          }
             $('#bonosBox').hide();
             $('#stripeBox').show();
         }

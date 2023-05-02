@@ -17,27 +17,6 @@ $oBonoLst = $oBonoLst[1];
 ?>
 @extends('layouts.popup')
 @section('content')
-<style>
-    div#importeFinalModal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    padding: 14px;
-    background-color: #000;
-    text-align: center;
-    width: 150px;
-    height: 75px;
-    color: #FFF;
-}
-div#importeFinalModal .close {
-    color: #ff7a7a;
-    opacity: inherit;
-}
-div#importeFinalModal .value {
-    font-size: 25px;
-    text-align: left;
-}
-</style>
 <div class="content" style="max-width:1480px;">
   <div class="col-xs-12 not-padding push-20">
     <h2 class="text-center font-w300">
@@ -145,6 +124,7 @@ div#importeFinalModal .value {
 </div>
 <div id="importeFinalModal" style="display:none">
 <div class="value">0</div>
+<div class="text"><?php echo strtoupper($user->name).' - '.$rate->typeRate->name; ?></div>
 </div>
 @endsection
 @section('scripts')
