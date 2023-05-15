@@ -18,7 +18,7 @@ class Administrativo
     public function handle($request, Closure $next)
     {
         if (!Auth::guest()) {
-            if (Auth::user()->role == "administrativo") {
+            if (Auth::user()->role == "administrativo" || Auth::user()->role == "admin") {
                 return $next($request);
             } else {
                 return response('Unauthorized.', 401);
