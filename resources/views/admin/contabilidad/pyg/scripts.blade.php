@@ -185,20 +185,27 @@ var myChart = new Chart(ctx, {
 
   $('.detail').on('click',function(){
     var k = $(this).data('id');
-    if($(this).data('t') == 'i'){
+    const type = $(this).data('t');
+    if(type == 'i'){
       $.get('/admin/ingreso-by-rate/'+k, function (data) {
         $('#contentModalInfo').html(data);
         $('#modalInfo').modal('show');
       });
     }
-    if($(this).data('t') == 'e'){
+    if(type == 'e'){
       $.get('/admin/gastos-by-byType/'+k, function (data) {
         $('#contentModalInfo').html(data);
         $('#modalInfo').modal('show');
       });
     }
-    if($(this).data('t') == 'e2'){
+    if(type == 'e2'){
       $.get('/departamento/gastos-by-byType/'+k, function (data) {
+        $('#contentModalInfo').html(data);
+        $('#modalInfo').modal('show');
+      });
+    }
+    if(type == 'e3'){
+      $.get('/admin/dpto/gastos-by-byType/'+k+'/<?= $dptoName ?>', function (data) {
         $('#contentModalInfo').html(data);
         $('#modalInfo').modal('show');
       });

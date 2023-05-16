@@ -36,6 +36,7 @@ class DptoController extends Controller {
       $type = ' Estética';
       $rIDs = \App\Models\Rates::whereIn('type',$rType)->orderBy('name')->pluck('id'); 
       $bIDs = Bonos::whereIn('rate_type',$rType)->orWhereIn('rate_id',$rIDs)->orWhere('rate_subf', 'LIKE', "%e%")->pluck('id');
+      $dptoName = 'estetica';
     }
     if ($uID == 2858 || $dpto == 'fisio'){ // fisio
       $expensesLst = ['gto_mat._fisio','renting_fisioterapia'];
@@ -44,8 +45,9 @@ class DptoController extends Controller {
       $rIDs = \App\Models\Rates::whereIn('type',$rType)->orderBy('name')->pluck('id'); 
       $bIDs = Bonos::whereIn('rate_type',$rType)->orWhereIn('rate_id',$rIDs)->orWhere('rate_subf', 'LIKE', "%f%")->pluck('id');
       $type = ' Fisioterapia';
+      $dptoName = 'fisio';
     }
-    return [ $expensesLst,$coachRole,$rType,$rIDs,$bIDs,$type];
+    return [ $expensesLst,$coachRole,$rType,$rIDs,$bIDs,$type,$dptoName];
   }
 
   public function perdidas_ganacias($dpto = null) {
@@ -66,6 +68,7 @@ class DptoController extends Controller {
     $rIDs = $dpto[3];
     $bIDs = $dpto[4];
     $typeTit = $dpto[5];
+    $dptoName = $dpto[6];
     //---------------------------------------------------------//
 
     $gType = Expenses::getTypes();
@@ -274,8 +277,9 @@ class DptoController extends Controller {
         'uActivsFidelity' => $uActivsFidelity,
         'subscsBasic' => $subscsBasic,
         'uActivsBasic' => $uActivsBasic,
-        'tExpenType'=>'e2',
+        'tExpenType'=>(Auth::user()->role == "admin" ) ? 'e3' : 'e2',
         'typeTit'=>$typeTit,
+        'dptoName'=>$dptoName,
     ]);
   }
 

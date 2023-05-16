@@ -269,7 +269,8 @@ Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function () {
   Route::get('/importarRegistro', 'FunctionalControler@importarRegistro');
 
   /* departamento */
-  Route::get('/dpto/contabilidad/{dpto?}', 'DptoController@perdidas_ganacias'); // 'PyGController@index');
+  Route::get('/dpto/contabilidad/{dpto?}', 'DptoController@perdidas_ganacias');
+  Route::get('/dpto/gastos-by-byType/{typeID}/{dpto?}', 'DptoController@ExpensesbyType');
   
 });
 
