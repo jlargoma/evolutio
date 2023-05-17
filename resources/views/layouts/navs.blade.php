@@ -15,7 +15,7 @@ $uRole = Auth::user()->role;
   </li>
   <li class="{{ (str_contains($path,'citas-nutricion')) ? 'active' : '' }}">
     <a href="{{ url('/admin/citas-nutricion') }}" >
-      <i class="fa fa-plus-circle"></i><span class="sidebar-mini-hide font-w600">NUTRICIÓN</span>
+      <i class="fa fa-calendar-o"></i><span class="sidebar-mini-hide font-w600">NUTRICIÓN</span>
     </a>
   </li>
   <li class="{{ (str_contains($path,'citas-fisioterapia')) ? 'active' : '' }}">

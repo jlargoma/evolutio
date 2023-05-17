@@ -157,4 +157,15 @@ $(document).ready(function () {
         }
         console.log(countByCoah)
     }
+    $('.justGrupal').on('click',function (event) {
+        if($(this).hasClass('active')){
+            $('.events').show();
+            $(this).removeClass('active');
+        } else {
+            $('.events').hide();
+            $('.events.group').show();
+            $(this).addClass('active');
+        }
+    });
+    
 });

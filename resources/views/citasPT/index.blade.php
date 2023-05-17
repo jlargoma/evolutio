@@ -15,7 +15,10 @@
       <input type="hidden" id="coachsFilter" value="{{$coach}}">
       <input type="hidden" id="selectMonth" value="{{$month}}">
       <div class="row">
-        <div class="col-md-10">
+        <div class="col-md-1 mx-1em">
+        <button class="btn btn-success justGrupal" role="button" >Grupales</button>
+        </div>
+        <div class="col-md-9">
           <div class="mbl-tabs">
             <ul class="coachsFilter">
               <li data-val="0" class="select_0 <?php echo ($coach == 0) ? 'active' : '' ?>">
