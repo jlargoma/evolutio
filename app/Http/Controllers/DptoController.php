@@ -85,14 +85,14 @@ class DptoController extends Controller {
         unset($gTypeGroup['names'][$k]);
       }
     }
-    $gTypeGroup['names']['otros'] = 'RESTO DE GASTOS';
+    $gTypeGroup['names']['allOther'] = 'RESTO DE GASTOS';
 
 
     $ggMonth = [];
     $crLst = [];
     foreach ($gTypeGroup_g as $k => $v)
       $ggMonth[$v] = $months_empty;
-    $ggMonth['otros'] = $months_empty;
+    $ggMonth['allOther'] = $months_empty;
     //---------------------------------------------------------//
     $oRateTypes = \App\Models\TypesRate::whereIn('id',$rType)->orderBy('name')->pluck('name', 'id')->toArray();
     $aRates = \App\Models\Rates::whereIn('id',$rIDs)->orderBy('name')->pluck('type', 'id')->toArray(); 
@@ -215,11 +215,11 @@ class DptoController extends Controller {
         $aux[0] += $e->import;
         $expensesYear[$year] += $e->import;
 
-        $g = isset($gTypeGroup_g[$e->type]) ? $gTypeGroup_g[$e->type] : 'otros';
+        $g = isset($gTypeGroup_g[$e->type]) ? $gTypeGroup_g[$e->type] : 'allOther';
         if (isset($ggMonth[$g])) {
           $ggMonth[$g][$m] += $e->import;
         } else {
-          $ggMonth['otros'][$m] += $e->import;
+          $ggMonth['allOther'][$m] += $e->import;
         }
       }
     }
@@ -366,6 +366,8 @@ class DptoController extends Controller {
     $coachRole = $dpto[1];
 
 
+    $sql_items = Expenses::whereYear('date', '=', $year);
+
     if ($type == 'pt' || $type == 'sueldos_y_salarios'){
       $sCoachLiq = new \App\Services\CoachLiqService();
       $data = $sCoachLiq->liqByCoachMonths($year,$coachRole);
@@ -373,27 +375,33 @@ class DptoController extends Controller {
     } else {
       $gTypeGroup = Expenses::getTypesGroup();
       $aTypeLst = Expenses::getTypes();
-      if (!isset($gTypeGroup['names'][$type])){
-        echo  '<p class="alert alert-warning">Sin Registros</p>';
-        return '';
-      }
       $gTypesNames = $gTypeGroup['names'];
       $gTypeGroup = $gTypeGroup['groups'];
       $auxTypes = [];
-      foreach ($gTypeGroup as $k=>$v){
-        if ($v == $type && in_array($k,$expensesLst)) $auxTypes[] = $k;
+      if ($type == 'allOther'){
+        $gTypesNames['allOther'] = 'Resto de los Gastos asignados al departamento';
+        $sql_items->whereNotIn('type', $expensesLst)->where('dpto',$coachRole);
+      } else {
+        if (!isset($gTypesNames[$type])){
+          echo  '<p class="alert alert-warning">Sin Registros</p>';
+          return '';
+        }
+        foreach ($gTypeGroup as $k=>$v){
+          if ($v == $type && in_array($k,$expensesLst)) $auxTypes[] = $k;
+        }
+        
+        if(count($auxTypes)>0){
+          $sql_items->whereIn('type', $auxTypes);
+        } else {
+          $sql_items->whereNotIn('type', $expensesLst)->where('dpto',$coachRole);
+        }
       }
       $payType = Expenses::getTypeCobro();
-
-
-      $items = Expenses::whereYear('date', '=', $year)->where(function($query) use ($auxTypes, $coachRole) {
-          $query->whereIn('type', $auxTypes)->orWhere('dpto',$coachRole);
-      })->get();
+      $items = $sql_items->get();
       if (count($items)== 0){
         echo  '<p class="alert alert-warning">Sin Registros</p>';
         return '';
       }
-//      dd($gTypeGroup);
       include_once app_path().'/Blocks/PyG_Expenses.php';
     }
   }

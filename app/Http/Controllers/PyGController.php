@@ -248,7 +248,8 @@ class PyGController extends Controller {
         'subscsBasic'=>$subscsBasic,
         'uActivsBasic'=>$uActivsBasic,
         'cashDepto'=>$cashDepto,
-        'tExpenType'=>'e'
+        'tExpenType'=>'e',
+        'dptoName'=>'',
   ]);
   }
 
