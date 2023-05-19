@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="{{ asset('admin-css/assets/js/plugins/bootstrap-datepicker/bootstrap-datepicker3.min.css') }}">
 <link rel="stylesheet" href="{{ assetV('css/custom.css') }}">
 <?php 
-$date_type_u = "estheticterapeuta";
+$date_type_u = "Esteticista";
 $date_type = 'esthetic'
 ?>
 <a class="back" href="<?php echo $urlBack; ?>">X</a>

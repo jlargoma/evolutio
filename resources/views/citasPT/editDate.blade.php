@@ -76,7 +76,7 @@
                     <label for="id_type_rate">Servicio</label>
                     <select class="form-control" id="id_rate" name="id_rate" style="width: 100%;" data-placeholder="Seleccione un servicio" required >
                       <option value="-1"></option>
-                        <?php foreach ($services as $key => $service): ?>
+                        <?php foreach ($services as $key => $service): if ($service->status == 0 || $service->show_list < 1) continue; ?>
                             <option value="<?php echo $service->id; ?>"  <?php if (isset($id_serv) && $id_serv == $service->id) echo 'selected' ?>>
                                 <?php echo $service->name; ?>
                             </option>

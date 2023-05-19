@@ -84,7 +84,7 @@
       <label for="id_type_rate">Servicio</label>
       <select class="js-select2 form-control" id="id_rate" name="id_rate" style="width: 100%;" data-placeholder="Seleccione un servicio" required>
         <option></option>
-        <?php foreach ($services as $key => $service) : ?>
+        <?php foreach ($services as $key => $service) : if ($service->status == 0 || $service->show_list < 1) continue; ?>
           <option value="<?php echo $service->id; ?>" data-price="<?php echo $service->price ?>" data-familyname="<?php echo $service->familyname ?>"  <?php if (isset($id_serv) && $id_serv == $service->id) echo 'selected' ?>>
             <?php echo $service->name; ?>
           </option>

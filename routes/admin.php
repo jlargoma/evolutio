@@ -155,6 +155,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::get('/tarifas/actualizar/{id}', 'RatesController@actualizar');
   Route::get('/tarifas/update', 'RatesController@update');
   Route::post('/tarifas/upd_fidelity', 'RatesController@upd_fidelity');
+  Route::post('/tarifas/upd_showLst', 'RatesController@upd_showLst');
   Route::get('/tarifas/delete/{id}', 'RatesController@delete');
   Route::get('/tarifas/stripe/{id}', 'RatesController@createStripe');
   Route::get('/rates/unassigned/{idUserRate}', 'RatesController@unassignedRate');

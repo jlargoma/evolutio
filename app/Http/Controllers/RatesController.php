@@ -68,6 +68,14 @@ class RatesController extends Controller {
     if ($oRates->save()) return 'OK';
     return 'ERROR';
   }
+
+  public function upd_showLst(Request $request) {
+    $id = $request->input('id');
+    $oRates = Rates::find($id);
+    $oRates->show_list = intVal($request->input('val'));
+    if ($oRates->save()) return 'OK';
+    return 'ERROR';
+  }
   public function update(Request $request) {
 
     $id = $request->input('id');

@@ -50,6 +50,7 @@
             foreach ($rateFamily as $k=>$v):
               echo '<optgroup label="'.$v['n'].'">';
               foreach ($v['l'] as $rate):
+                if ($rate->status == 0 || $rate->show_list < 1) continue;
                 $sel = ($rate->id == $old) ? 'selected' : '';
                          
                 $price = $rate->price;

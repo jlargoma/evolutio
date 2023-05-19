@@ -27,7 +27,8 @@
                 <th class="text-center">Familia</th>
                 <th class="text-center">SUBFAMILIA</th>
                 <th class="text-center">Servicio</th>
-                <th class="text-center">Tipo Plan</th>
+                <th class="text-center">Plan</th>
+                <th class="text-center">Show</th>
                 <th class="text-center">Precio</th>
                 <th class="text-center">Nº Ses<span class="hidden-xs hidden-sm">ion / sem</span></th>
                 <th class="text-center">Periodicidad</th>
@@ -69,6 +70,12 @@
                     <span style="font-size: 23px;" class="rate_fidelity" data-k="<?php echo $rate->id ?>" data-v="<?php echo $rate->tarifa ?>">
                       <i class="fa fa-heart text-success fidelity" <?php echo ($rate->tarifa != 'fidelity') ? 'style="display:none;"' : ''; ?>></i>
                       <i class="fa fa-heart-o no_fidelity" <?php echo ($rate->tarifa == 'fidelity') ? 'style="display:none;"' : ''; ?>></i>
+                    </span>
+                  </td>
+                  <td class="text-center">
+                    <span style="font-size: 23px;" class="rate_showLst" data-k="<?php echo $rate->id ?>" data-v="<?php echo $rate->show_list ?>">
+                      <i class="fa fa-eye text-success showLst_1" <?php echo ($rate->show_list == 0) ? 'style="display:none;"' : ''; ?>></i>
+                      <i class="fa fa-eye-slash showLst_0" <?php echo ($rate->show_list == 1) ? 'style="display:none;"' : ''; ?>></i>
                     </span>
                   </td>
                   <td class="text-center">
@@ -263,6 +270,31 @@
       
     });
     
+    $('.rate_showLst').on('click',function(){
+      var that = $(this);
+      var val = parseInt(that.data('v'));
+      var newVal = 1;
+      if (val) newVal = 0;
+      var data= {
+            id: that.data('k'),
+            val: newVal,
+            _token: '{{csrf_token()}}'
+        };
+        
+      $.post('/admin/tarifas/upd_showLst', data).done(
+        function (resp) {
+          if (resp == 'OK'){
+             window.show_notif('success', 'Actulizado');
+             console.log('.showLst_'+newVal);
+             that.find('.showLst_'+newVal).show();
+             that.find('.showLst_'+val).hide();
+             that.data('v',newVal);
+          } else {
+             window.show_notif('error', 'NO Actulizado');
+          }
+        });
+      
+    });
     
   });
 </script>
