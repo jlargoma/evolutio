@@ -2,14 +2,14 @@
     <table class="table table-striped table-header-bg">
         <tbody>
         <tr>
-            <td class="text-center bg-complete font-w800" rowspan="3">RESUMEN</td>
+            <td class="text-center bg-complete font-w800" rowspan="4">RESUMEN</td>
             <td class="text-center bg-complete font-w800"></td>
             <td class="text-center bg-complete font-w800"></td>
             <td class="text-center bg-complete font-w800">METALICO</br><?php echo moneda($cash+$cTotalBonos['cash']); ?></td>
             <td class="text-center bg-complete font-w800">BANCO</br><?php echo moneda($bank+$cTotalBonos['banco']); ?></td>
             <td class="text-center bg-complete font-w800">TARJ</br><?php echo moneda($card+$cTotalBonos['card']); ?></td>
             <td class="text-center bg-complete font-w800">Invit. Evolutio</br><?php echo moneda($invita+$cTotalBonos['invita']); ?></td>
-            <td class="text-center bg-complete font-w800">TOTAL</br><?php echo moneda($cash + $bank + $card+array_sum($cTotalBonos)); ?></td>
+            <td class="text-center bg-complete font-w800">TOTAL</br><?php echo moneda($cash + $bank + $card+$toPay+$invita+array_sum($cTotalBonos)); ?></td>
         </tr>
         <tr>
             <td class="text-center bg-complete ">SERVICIOS</td>
@@ -28,6 +28,15 @@
             <td class="text-center"><?= moneda($cTotalBonos['card']); ?></td>
             <td class="text-center"><?= moneda($cTotalBonos['invita']); ?></td>
             <td class="text-center"><?= moneda(array_sum($cTotalBonos)); ?></td>
+        </tr>
+        <tr>
+            <td class="text-center bg-complete ">Pendientes</td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"></td>
+            <td class="text-center"><?= moneda($toPay); ?></td>
         </tr>
         </tbody>
     </table>
