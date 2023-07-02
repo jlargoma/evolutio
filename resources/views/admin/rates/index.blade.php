@@ -8,6 +8,11 @@
     <i class="fa fa-plus"></i> Servicio
   </button>
 </li>
+<li class="text-center">
+  <button class="btn btn-sm btn-success openFloatBoxRates">
+    <i class="fa fa-pencil"></i> Servicio
+  </button>
+</li>
 @endsection
 
 @section('content')
@@ -206,6 +211,35 @@
     </div>
   </div>
 </div>
+
+<div class="floatBox" id="floatBoxRates" style="display: none;">
+  <div class="header">Filtros de Home</div>
+  <div class="body">
+    <div class="table-responsive">
+      <table class="table table-bordered table-header-bg">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>IDs</th>
+            <th>Icono</th>
+            <th>X</th>
+          </tr>
+        </thead>
+        <tbody class="listFields">
+
+        </tbody>
+      </table>
+    </div>
+    <div ></div>
+  </div>
+  <div class="footer">
+    <button role="button" class="btn btn-success addFloatBoxRates">Agregar</button>
+    <button role="button" class="btn btn-success saveFloatBoxRates">Guardar</button>
+    <button role="button" class="btn btn-default closeFloatBoxRates">Cerrar</button>
+
+    <a href="https://fontawesome.com/v4/icons/" target="_blank">Listado de iconos</a>
+  </div>
+</div>
 @endsection
 
 
@@ -296,12 +330,89 @@
       
     });
     
+
+    /** 
+     * 
+     */
+    var addFloatBoxRates = function(item){
+      var field = '<tr>'+
+      '<td><input name="names[]" value="'+item.name+'"></td>'+
+      '<td><input name="ids[]" value="'+item.ids+'"></td>'+
+      '<td><input name="icons[]" value="'+item.icon+'"></td>'+
+      '<td><button role="button" class="btn btn-danger removeFloatBoxRates">X</button></td>'+
+      '</tr>';
+      $('.listFields').append(field);
+    };
+    var listFloatBoxRates = JSON.parse('<?= ($customFamilyRates) ? $customFamilyRates : "{}"; ?>');
+    for(i in listFloatBoxRates){
+      addFloatBoxRates(listFloatBoxRates[i]);
+    }
+
+    $('.addFloatBoxRates').on('click',function(){
+      addFloatBoxRates({name:'',ids:'',icon:''});
+    });
+    $('.saveFloatBoxRates').on('click',function(){
+      var items = $('.listFields');
+      var data = {
+        'names': items.find('input[name^="names"]' ).map(function(){return $(this).val();}).get(),
+        'ids': items.find('input[name^="ids"]' ).map(function(){return $(this).val();}).get(),
+        'icons': items.find('input[name^="icons"]' ).map(function(){return $(this).val();}).get(),
+        _token: '{{csrf_token()}}'
+      }
+
+
+      $.post('/admin/saveCustomFamilyRates', data).done(
+        function (resp) {
+          if (resp == 'OK'){
+            window.show_notif('success', 'Actualizado');
+          } else {
+            window.show_notif('error', 'NO Actualizado');
+          }
+          $('#floatBoxRates').removeClass('show');
+        });
+    });
+    $('.closeFloatBoxRates').on('click',function(){
+      $('#floatBoxRates').removeClass('show');
+    });
+    $('.openFloatBoxRates').on('click',function(){
+      $('#floatBoxRates').addClass('show');
+    });
+
+    $('.listFields').on('click','.removeFloatBoxRates',function(){
+      $(this).closest('tr').remove();
+    });
+
+  
+
   });
 </script>
 <style>
 .td1 {
     min-width: 11em;
     padding: 16px 1px 0 !important;
+}
+.floatBox {
+  position: fixed;
+  right: 2em;
+  max-width: 80%;
+  min-height: 9em;
+  top: 5em;
+  background-color: #FFF;
+  bottom: 3px;
+  padding: 12px;
+  box-shadow: 1px 1px 6px 2px #c3c3c3;
+}
+.floatBox.show{
+  display: block;
+}
+.floatBox .header {
+    font-size: 2em;
+    border-bottom: 2px solid #C3C3C3;
+    margin-bottom: 1em;
+}
+.floatBox th,.floatBox td {
+    padding: 7px !important;
+    text-align: center;
 }
 </style>
 @endsection

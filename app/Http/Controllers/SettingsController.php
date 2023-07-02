@@ -99,4 +99,24 @@ class SettingsController extends Controller {
         'lstKeys' => $lstKeys,
     ]);
   }
+
+  function customFamilyRates(Request $request){
+    $req = $request->all();
+    $save = [];
+    foreach($req['names'] as $k=>$v){
+      $save[] = [
+        'k'=>md5($v),
+        'name'=>$v,
+        'ids'=>$req['ids'][$k],
+        'icon'=>$req['icons'][$k],
+
+      ];
+    }
+
+    $oSetting = Settings::findOrCreate('customFamilyRates');
+    $oSetting->content = json_encode($save);
+    $oSetting->save();
+    echo 'OK';
+    die; 
+  }
 }

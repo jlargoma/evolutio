@@ -19,6 +19,7 @@ use App\Models\Charges;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\UsersExport;
 use App\Models\UserBonos;
+use App\Models\Settings;
 use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 
 trait ClientesTraits
@@ -180,6 +181,15 @@ trait ClientesTraits
     $unsubscribeds = 0;
     $selectYear = $year;
     $year = getYearActive();
+
+    global $cFRates;
+    $customFamilyRates = Settings::getContent('customFamilyRates');
+    $cFRates = ($customFamilyRates) ? json_decode($customFamilyRates) : [];
+    foreach($cFRates as $k=>$item){
+      $cFRates[$k]->ids = explode(',',$item->ids);
+    }
+
+
     return view('/admin/usuarios/clientes/index', [
       'users' => $users,
       'month' => $month,

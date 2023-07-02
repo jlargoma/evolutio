@@ -1,4 +1,26 @@
-<?php $auxPay = $auxToPay = [0,0,0]; ?>
+<?php 
+$auxPay = $auxToPay = [0,0,0];
+
+
+function printIconRate($uRates){
+  global $cFRates;
+  $icons = [];
+  foreach($uRates as $ur){
+    foreach($ur as $rID => $rDetail){
+      foreach($cFRates as $item){
+        if (in_array($rID,$item->ids)){
+          $icons[$item->k] = [$item->name,$item->icon];
+        }
+      }
+    }
+  }
+  foreach($icons as $i){
+    echo '<i class="fa '.$i[1].'" title="'.$i[1].'"></i>';
+  }
+} 
+
+// var_dump($uRates); die;
+?>
 <table class="table table-striped js-dataTable-full-clients table-header-bg">
     <thead>
         <tr>
@@ -45,6 +67,12 @@
                     <?php echo in_array($user->id,$uPlan) ? '<i class="fa fa-heart text-success fidelity"></i>' : '' ?>
                     <?php echo in_array($user->id,$uPlanPenal) ? '<i class="fa fa-heart text-danger fidelity" title="CLEINTE CON PENALIZACION DE 60€ POR BAJA ANTICIPADA"></i>' : '' ?>
                     <?php if ($user->visa == 1) echo  '<i class="fa fa-credit-card text-success"></i>'  ?>
+                    <br/>
+                    <?php 
+                    $aRate = [];
+                    for ($i = 0; $i < 3; $i++) if (isset($uRates[$i][$user->id])) $aRate[] = $uRates[$i][$user->id];
+                    if (count($aRate) > 0 ) printIconRate($aRate); 
+                    ?>
                 </td>
                 <td class="text-center tc2">
                     <button class="btn btn-default openAdd" data-idUser="<?php echo $user->id; ?>">

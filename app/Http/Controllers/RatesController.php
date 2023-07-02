@@ -9,6 +9,7 @@ use Stripe;
 use App\Models\Rates;
 use App\Models\TypesRate;
 use App\Models\UserRates;
+use App\Models\Settings;
 
 class RatesController extends Controller {
 
@@ -19,12 +20,14 @@ class RatesController extends Controller {
     foreach ($types as $k=>$v){
         $serv[$k] = Rates::where('status', 1)->where('type',$k)->orderBy('name')->get();
     }
-//      dd($serv,$types);
+
+    $customFamilyRates = Settings::getContent('customFamilyRates');
     return view('/admin/rates/index', [
         'types' => $types,
         'services' => $serv,
         'subfamily' => TypesRate::subfamily(),
         'oldRates' => Rates::where('status', 0)->orderBy('order', 'asc')->orderBy('name', 'asc')->get(),
+        'customFamilyRates' => $customFamilyRates,
     ]);
   }
 

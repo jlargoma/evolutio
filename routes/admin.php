@@ -266,13 +266,14 @@ Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function () {
   /* Text emails */
   Route::get('/settings_msgs/{key?}', 'SettingsController@messages')->name('settings.msgs');
   Route::post('/settings_msgs/{key?}', 'SettingsController@messages_upd')->name('settings.msgs.upd');
-
+  
   Route::get('/importarRegistro', 'FunctionalControler@importarRegistro');
-
+  
   /* departamento */
   Route::get('/dpto/contabilidad/{dpto?}', 'DptoController@perdidas_ganacias');
   Route::get('/dpto/gastos-by-byType/{typeID}/{dpto?}', 'DptoController@ExpensesbyType');
   
+  Route::post('/saveCustomFamilyRates', 'SettingsController@customFamilyRates');
 });
 
 Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
