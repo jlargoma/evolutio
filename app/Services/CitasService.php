@@ -169,6 +169,7 @@ class CitasService {
       }
     }
 
+    $allCoachsName = User::where('role','!=','user')->pluck('name','id')->toArray();
     /*  ---------------------------   */
     $aLst = [];
     $sql = Dates::where('date_type', $type)
@@ -292,7 +293,9 @@ class CitasService {
         $u_name = '';
         $uRates = $item->uRates;
         $charge = null;
+        $uCoachAsig = null;
         if ($uRates) {
+          if ($type == 'pt') $uCoachAsig = $uRates->user->getCoachAsig();
           $u_name = ($uRates->user) ? $uRates->user->name : null;
           $charge = $uRates->charges;
         }
@@ -312,6 +315,7 @@ class CitasService {
             'charged' => $charged,
             'type' => $item->id_rate,
             'coach' => $item->id_coach,
+            'uCoachAsig' => $uCoachAsig,
             'name' => $u_name,
             'halfTime' => $halfTime,
             'h' => $hTime,
@@ -338,6 +342,9 @@ class CitasService {
         if ($charge) {
           $detail[$item->id]['mc'] = payMethod($charge->type_payment);
           $detail[$item->id]['dc'] = dateMin($charge->date_payment);
+        }
+        if($uCoachAsig && isset($allCoachsName[$uCoachAsig])){
+          $detail[$item->id]['cAsig'] = $allCoachsName[$uCoachAsig];
         }
 
         self::countByCoah($item->id_coach, $month);

@@ -204,6 +204,15 @@ img.equipment {
   padding: 1px;
 }
 
+span.circ-red {
+  width: 7px;
+  height: 7px;
+  display: inherit;
+  background-color: red;
+  border-radius: 50%;
+  margin-left: 3px;
+}
+
 @media only screen and (max-width:769px){
   .table-calendar tbody td.editDate .lst_events div cust{
     min-width: 80px !important;

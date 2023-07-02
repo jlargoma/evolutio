@@ -338,4 +338,18 @@ class User extends Authenticatable
     }
     return $returnIDs;
   }
+
+  function getCoachAsig(){
+    global $aUsrsCoachs;
+    if (isset($aUsrsCoachs[$this->id])) return $aUsrsCoachs[$this->id];
+
+    $oLstAux = UsersSuscriptions::where('id_user',$this->id)->get();
+    if($oLstAux){
+      foreach($oLstAux as $s){
+        return $s->id_coach;
+      }
+    }
+
+    return null;
+  }
 }

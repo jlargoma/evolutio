@@ -15,7 +15,8 @@ $(document).ready(function () {
       html += '<p>Cita: ' + data.date + '</p>';
     if (data.mtv)
       html += '<p>Motivo: ' + data.mtv + '</p>';
-    
+    if (data.cAsig)
+        html += '<p>Coach: ' + data.cAsig + '</p>';
 
     obj.html(html);
     if (screen.width < 768) {

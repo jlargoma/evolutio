@@ -36,6 +36,12 @@ function printEvents($lst){
       $room = ' <b>'.$item['room'].'</b>';
     }
 
+    if (isset($item['uCoachAsig']) && $item['uCoachAsig']){
+      if ( $item['uCoachAsig'] != $item['coach'] ){
+        $room .= '<span class="circ-red"></span>';
+      }
+    }
+
     switch ($item['charged']){
       case 2:
         echo '<div '
