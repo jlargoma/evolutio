@@ -32,7 +32,7 @@ class DptoController extends Controller {
     if ($uID == 2844 || $dpto == 'estetica'){ //estetica
       $expensesLst = ['gto_mat_esthetic','renting_estetica'];
       $coachRole = 'esthetic';
-      $rType = [12];
+      $rType = [12,3];
       $type = ' Estética';
       $rIDs = \App\Models\Rates::whereIn('type',$rType)->orderBy('name')->pluck('id'); 
       $bIDs = Bonos::whereIn('rate_type',$rType)->orWhereIn('rate_id',$rIDs)->orWhere('rate_subf', 'LIKE', "%e%")->pluck('id');
@@ -41,10 +41,29 @@ class DptoController extends Controller {
     if ($uID == 2858 || $dpto == 'fisio'){ // fisio
       $expensesLst = ['gto_mat._fisio','renting_fisioterapia'];
       $coachRole = 'fisio';
-      $rType = [8];
+      $rType = [8,3];
       $rIDs = \App\Models\Rates::whereIn('type',$rType)->orderBy('name')->pluck('id'); 
       $bIDs = Bonos::whereIn('rate_type',$rType)->orWhereIn('rate_id',$rIDs)->orWhere('rate_subf', 'LIKE', "%f%")->pluck('id');
       $type = ' Fisioterapia';
+      $dptoName = 'fisio';
+    }
+    if ($uID == 3238 || $dpto == 'pt'){ // JUANAN FUTBOL  fútbol 11
+      $expensesLst = [];
+      $coachRole = 'pt';
+      $rType = [2,3];
+      $rIDs = \App\Models\Rates::where('subfamily','t01')->orderBy('name')->pluck('id'); 
+      $bIDs = Bonos::Where('rate_subf', 'LIKE', 't01')->pluck('id');
+      $type = ' Fútbol 11';
+      $dptoName = 'fisio';
+    }
+
+    if ($uID == 3239 || $dpto == 'pt'){ // 3196 BORJA BLANCO FUTSAL
+      $expensesLst = [];
+      $coachRole = 'pt';
+      $rType = [2,3];
+      $rIDs = \App\Models\Rates::where('subfamily','t02')->orderBy('name')->pluck('id'); 
+      $bIDs = Bonos::Where('rate_subf', 'LIKE', 't02')->pluck('id');
+      $type = ' FUTSAL';
       $dptoName = 'fisio';
     }
     return [ $expensesLst,$coachRole,$rType,$rIDs,$bIDs,$type,$dptoName];

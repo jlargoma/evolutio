@@ -37,6 +37,7 @@ class Bonos extends Model
         if(str_contains($v->rate_subf,'v')) $rateType = 11;
         if(str_contains($v->rate_subf,'e')) $rateType = 12;
         if(str_contains($v->rate_subf,'p')) $rateType = 13;
+        if(str_contains($v->rate_subf,'t')) $rateType = 2;
       } else {
         $rateType = $v->rate_type;
       }

@@ -60,6 +60,8 @@ class IncomesController extends Controller {
                   $rateType = 12;
           if(str_contains($v->rate_subf,'p'))
             $rateType = 13;
+          if(str_contains($v->rate_subf,'t'))
+            $rateType = 2;
         }
       }
       if ($rateType && isset($lst[$rateType])){

@@ -321,6 +321,7 @@ class BonosController extends Controller {
         case 'v': $aux_rateType = 11; break;
         case 'e': $aux_rateType = 12; break;
         case 'p': $aux_rateType = 13; break;
+        case 't': $aux_rateType = 2; break;
       }
       if (!isset($byFamily[$aux_rateType])) $byFamily[$aux_rateType] = $v;
       else $byFamily[$aux_rateType] += $v;

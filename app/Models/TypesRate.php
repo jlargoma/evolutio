@@ -31,9 +31,9 @@ class TypesRate extends Model
         'p01'=>'prod. FISIOTERAPIA',
         'p02'=>'prod. ESTETICA',
         'p03'=>'prod. NUTRICIÓN',
+        't01'=>'FUTBOL 11',
+        't02'=>'FUTBOL SALA',
       ];
-      
-          
       if ($key){
         return isset($lst[$key]) ? $lst[$key] : '--';
       }

@@ -49,9 +49,9 @@ class InfoMonth extends Command {
       $email = 'test@test.cadfd';
       
       $emails = [
-        'carlos.biosca24@gmail.com',
+       // 'carlos.biosca24@gmail.com',
         'jlargo@mksport.es',
-        'pingodevweb@gmail.com'
+       // 'pingodevweb@gmail.com'
       ];
       $sended = \Illuminate\Support\Facades\Mail::send('emails.base', [
               'mailContent'=> $mailContent,
@@ -63,7 +63,6 @@ class InfoMonth extends Command {
           });
           
     } catch (\Exception $e) {
-      dd($e);
       Log::error("Error creando suscripciones");
     }
   }
