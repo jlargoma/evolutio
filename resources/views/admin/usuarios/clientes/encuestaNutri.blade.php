@@ -30,7 +30,20 @@
 @section('content')
 
 <?php
-$count = 1;
+$opts = [];
+function printQuestions($quest,$encNutr){
+  $nro = 1;
+  foreach($quest as $k=>$v){
+    $value = (isset($encNutr[$k])) ? $encNutr[$k] : '';
+    echo '<div class="field"><label>'.$nro.'. '. $v.'</label>';
+      echo '<input type="text" name="'.$k.'"  id="'.$k.'" value="'.$value.'" class="form-control autosaveNutri" required="">';
+      
+      echo '</div>';
+      $nro++;
+  }
+
+
+}
 ?>
 <div class="boxForm" >
   <h1 class="text-center">EDITAR ENCUESTA DE NUTRICIÓN</h1>
@@ -38,72 +51,31 @@ $count = 1;
     <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
     <input type="hidden" name="uid" value="{{ $user->id }}">
     <div class="fromEncNutri">
-      <?php $nro = 1; ?>
-      @foreach($encNutr['qstion1'] as $i=>$q)
-      <div class="field">
-        <label>{{$nro.'. '.$q}}</label>
-        <?php
-        switch ($i) {
-          case 'nutri_q22':
-            ?>
-        <div class="table-responsive">
-            <table class="table">
-              <tr>
-                <td></td>
-                <th class="text-center">Entre semana</th>
-                <th class="text-center">Fines de semana</th>
-              </tr>
-              <tr>
-                <th>Desayuno</th>
-                <td><input type="text" id="nutri_q22_1_1" name="nutri_q22_1_1" class="form-control autosaveNutri" required="" value="{{show_isset('nutri_q22_1_1',$encNutr)}}"></td>
-                <td><input type="text" id="nutri_q22_2_1" name="nutri_q22_2_1" class="form-control autosaveNutri" required="" value="{{show_isset('nutri_q22_2_1',$encNutr)}}"></td>
-              </tr>
-              <tr>
-                <th>Comida</th>
-                <td><input type="text" id="nutri_q22_1_2" name="nutri_q22_1_2" class="form-control autosaveNutri" required="" value="{{show_isset('nutri_q22_1_2',$encNutr)}}"></td>
-                <td><input type="text" id="nutri_q22_2_2" name="nutri_q22_2_2" class="form-control autosaveNutri" required="" value="{{show_isset('nutri_q22_2_2',$encNutr)}}"></td>
-              </tr>
-              <tr>
-                <th>Cena</th>
-                <td><input type="text" id="nutri_q22_1_3" name="nutri_q22_1_3" class="form-control autosaveNutri" required="" value="{{show_isset('nutri_q22_1_3',$encNutr)}}"></td>
-                <td><input type="text" id="nutri_q22_2_3" name="nutri_q22_2_3" class="form-control autosaveNutri" required="" value="{{show_isset('nutri_q22_2_3',$encNutr)}}"></td>
-              </tr>
-              <tr>
-                <th>Snacks / Entrehoras</th>
-                <td><input type="text" id="nutri_q22_1_4" name="nutri_q22_1_4" class="form-control autosaveNutri" required="" value="{{show_isset('nutri_q22_1_4',$encNutr)}}"></td>
-                <td><input type="text" id="nutri_q22_2_4" name="nutri_q22_2_4" class="form-control autosaveNutri" required="" value="{{show_isset('nutri_q22_2_4',$encNutr)}}"></td>
-              </tr>
-            </table>
-          </div>
-            <?php
-            break;
-          case 'nutri_q2':
-            ?>
 
-            <input  size="10" maxlength="10" onKeyUp = "this.value = formateafecha(this.value);" placeholder="DD-MM-YYYY" id="{{$i}}" name="{{$i}}" class="form-control autosaveNutri" required=""  value="{{show_isset($i,$encNutr)}}"></td>
-            <?php
-            break;
-          default :
-            ?>
-            @if(isset($encNutr['options'][$i]))
-            <?php $optValue = isset($encNutr[$i]) ? $encNutr[$i] : ''; ?>
-            <select name="{{$i}}"  id="{{$i}}" required="" class="form-control autosaveNutri">
-              <option></option>
-              @foreach($encNutr['options'][$i] as $i2=>$q2)
-              <option value='{{$q2}}' <?php if ($optValue == $q2) echo 'selected' ?>>{{$q2}}</option>
-              @endforeach
-            </select>
-            @else
-            <input type="text" id="{{$i}}" name="{{$i}}"  class="form-control autosaveNutri" required=""  value="{{show_isset($i,$encNutr)}}"></td>
-            @endif
-            <?php
-            break;
-        }
-        $nro++;
-        ?>
+    <h2>Datos personales</h2>
+    <?php printQuestions($encNutr['qstion1'],$encNutr); ?>
+    <h2>Datos laborales</h2>
+    <?php printQuestions($encNutr['qstion2'],$encNutr); ?>
+    <h2>Motivo de la consulta </h2>
+    <?php printQuestions($encNutr['qstion3'],$encNutr); ?>
+    <h2>Historia Ponderal </h2>
+    <?php printQuestions($encNutr['qstion4'],$encNutr); ?>
+    <h2>Datos clínicos </h2>
+    <?php printQuestions($encNutr['qstion5'],$encNutr); ?>
+    <h2>Historial Dietético </h2>
+    <?php printQuestions($encNutr['qstion6'],$encNutr); ?>
+    <h2>Temas digestivos</h2>
+    <?php printQuestions($encNutr['qstion7'],$encNutr); ?>
+    <h2>Si es mujer</h2>
+    <?php printQuestions($encNutr['qstion8'],$encNutr); ?>
+    <h2>Describir un día estándar en su semana y un día estándar en el fin de semana (Recuerdo 24h)</h2>
+    <div class="field">
+    <textarea name="nutri2_q9_1" id="nutri2_q9_1" class="form-control autosaveNutri" rows="10">{{show_isset('nutri2_q9_1',$encNutr)}}</textarea>
+    </div>
+    <h2>Antropometria</h2>
+    <?php printQuestions($encNutr['qstion10'],$encNutr); ?>
 
-      </div>
-      @endforeach
+
 
 
     </div>

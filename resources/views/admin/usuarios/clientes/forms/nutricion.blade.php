@@ -59,7 +59,7 @@ $csrf_token = csrf_token();
       <h3 class="text-center">ENCUESTA DE NUTRICIÓN</h3>
 
       <div class="text-center mb-3">
-      @if(trim($encNutr['nutri_q1']) != "")
+      @if(trim($encNutr['nutri2_q1_1']) != "")
         <a href="{{$encNutr['url_dwnl']}}" class="btn btn-success" target="_black">
           <i class="fa fa-eye"></i> Ver
         </a>

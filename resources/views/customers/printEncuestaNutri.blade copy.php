@@ -49,6 +49,52 @@ function printQuestions($quest,$data){
 
 
 
+
+  <?php $nro = 1; ?>
+  @foreach($data['qstion1'] as $i=>$q)
+  <div class="field">
+    <label>{{$nro.'. '.$q}}</label>
+    <?php
+    if($i == 'nutri_q22') {
+        ?>
+        <table class="table">
+          <tr>
+            <td></td>
+            <th class="text-center">Entre semana</th>
+            <th class="text-center">Fines de semana</th>
+          </tr>
+          <tr>
+            <th>Desayuno</th>
+            <td><?php echo (isset($data['nutri_q22_1_1']))? $data['nutri_q22_1_1'] : ''; ?></td>
+            <td><?php echo (isset($data['nutri_q22_2_1']))? $data['nutri_q22_2_1'] : ''; ?></td>
+          </tr>
+          <tr>
+            <th>Comida</th>
+            <td><?php echo (isset($data['nutri_q22_1_2']))? $data['nutri_q22_1_2'] : ''; ?></td>
+            <td><?php echo (isset($data['nutri_q22_2_2']))? $data['nutri_q22_2_2'] : ''; ?></td>
+          </tr>
+          <tr>
+            <th>Cena</th>
+            <td><?php echo (isset($data['nutri_q22_1_3']))? $data['nutri_q22_1_3'] : ''; ?></td>
+            <td><?php echo (isset($data['nutri_q22_2_3']))? $data['nutri_q22_2_3'] : ''; ?></td>
+          </tr>
+          <tr>
+            <th>Snacks / Entrehoras</th>
+            <td><?php echo (isset($data['nutri_q22_1_4']))? $data['nutri_q22_1_4'] : ''; ?></td>
+            <td><?php echo (isset($data['nutri_q22_2_4']))? $data['nutri_q22_2_4'] : ''; ?></td>
+          </tr>
+        </table>
+        <?php
+    } else {
+      echo (isset($data[$i]))? $data[$i] : '';
+    }
+    $nro++;
+    ?>
+
+  </div>
+  @endforeach
+
+
 </div>
   <div class="text-center">
   <button type="button" onclick="window.print();" class="btn btn-success">Imprimir</button>

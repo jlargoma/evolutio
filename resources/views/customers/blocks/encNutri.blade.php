@@ -1,80 +1,51 @@
 <?php
 $count = 1;
+$opts = [];
+function printQuestions($quest,$opt){
+  $nro = 1;
+  foreach($quest as $k=>$v){
+    echo '<div class="field"><label>'.$nro.'. '. $v.'</label>';
+    if(isset($opt[$k])){
+      foreach($opt[$k] as $i2=>$q2){
+        echo '<div class="radio">';
+        echo '<input type="radio" value="'.$q2.'" name="'.$k.'"  id="'.$k.'" required=""><span>'.$q2.'</span>';
+        echo '</div>';
+      }
+    }
+    else{
+      echo '<input type="text" name="'.$k.'"  id="'.$k.'" value="" class="form-control" required="">';
+      }
+      echo '</div>';
+      $nro++;
+  }
+
+
+}
 ?>
 <div class="fromEncNutri">
- <?php $nro = 1; ?>
-  @foreach($data['qstion1'] as $i=>$q)
+  <h2>Datos personales</h2>
+  <?php printQuestions($data['qstion1'],$opts); ?>
+  <h2>Datos laborales</h2>
+  <?php printQuestions($data['qstion2'],$opts); ?>
+  <h2>Motivo de la consulta </h2>
+  <?php printQuestions($data['qstion3'],$opts); ?>
+  <h2>Historia Ponderal </h2>
+  <?php printQuestions($data['qstion4'],$opts); ?>
+  <h2>Datos clínicos </h2>
+  <?php printQuestions($data['qstion5'],$opts); ?>
+  <h2>Historial Dietético </h2>
+  <?php printQuestions($data['qstion6'],$opts); ?>
+  <h2>Temas digestivos</h2>
+  <?php printQuestions($data['qstion7'],$opts); ?>
+  <h2>Si es mujer</h2>
+  <?php printQuestions($data['qstion8'],$opts); ?>
+  <h2>Describir un día estándar en su semana y un día estándar en el fin de semana (Recuerdo 24h)</h2>
   <div class="field">
-    <label>{{$nro.'. '.$q}}</label>
-    <?php
-    switch ($i) {
-      case 'nutri_q22':
-        ?>
-    <div class="table-responsive">
-        <table class="table">
-          <tr>
-            <td></td>
-            <th class="text-center">Entre semana</th>
-            <th class="text-center">Fines de semana</th>
-          </tr>
-          <tr>
-            <th>Desayuno</th>
-            <td><input type="text" id="nutri_q22_1_1" name="nutri_q22_1_1" class="form-control" required=""></td>
-            <td><input type="text" id="nutri_q22_2_1" name="nutri_q22_2_1" class="form-control" required=""></td>
-          </tr>
-          <tr>
-            <th>Comida</th>
-            <td><input type="text" id="nutri_q22_1_2" name="nutri_q22_1_2" class="form-control" required=""></td>
-            <td><input type="text" id="nutri_q22_2_2" name="nutri_q22_2_2" class="form-control" required=""></td>
-          </tr>
-          <tr>
-            <th>Cena</th>
-            <td><input type="text" id="nutri_q22_1_3" name="nutri_q22_1_3" class="form-control" required=""></td>
-            <td><input type="text" id="nutri_q22_2_3" name="nutri_q22_2_3" class="form-control" required=""></td>
-          </tr>
-          <tr>
-            <th>Snacks / Entrehoras</th>
-            <td><input type="text" id="nutri_q22_1_4" name="nutri_q22_1_4" class="form-control" required=""></td>
-            <td><input type="text" id="nutri_q22_2_4" name="nutri_q22_2_4" class="form-control" required=""></td>
-          </tr>
-        </table>
-    </div>
-        <?php
-        break;
-      case 'nutri_q2':
-        ?>
-    
-    <input  size="10" maxlength="10" onKeyUp = "this.value = formateafecha(this.value);" placeholder="DD-MM-YYYY" id="{{$i}}" name="{{$i}}" class="form-control" required="">
-        <?php
-        break;
-      default :
-        ?>
-        @if(isset($data['options'][$i]))
-        @foreach($data['options'][$i] as $i2=>$q2)
-        <div class="radio">
-          <input type="radio" value='{{$q2}}' name="{{$i}}"  id="{{$i}}" required=""><span>{{$q2}}</span>
-        </div>
-        @endforeach
-        @else
-        <input type="text" id="{{$i}}" name="{{$i}}" value="" class="form-control" required="">
-        @endif
-        <?php
-        break;
-    }
-     $nro++;
-    ?>
-
+  <textarea name="nutri2_q9_1" id="nutri2_q9_1" class="form-control" rows="10"></textarea>
   </div>
-  @endforeach
-
-
+  <h2>Antropometria</h2>
+  <?php printQuestions($data['qstion10'],$opts); ?>
 </div>
-
-
-
-
-
-
 
 <style>
   .fromEncNutri img{
@@ -109,5 +80,8 @@ $count = 1;
     padding: 18px 5px !important;
     font-size: 13px !important;
   }
+  h2 {
+    color: #00983d;
+}
 
 </style>
