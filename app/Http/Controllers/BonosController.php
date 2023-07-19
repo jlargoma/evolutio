@@ -93,11 +93,12 @@ class BonosController extends Controller {
   ///////////////////////////////////////////////////////////////////////////
   
   public function purcharse(Request $req) {
+    $bonoDiscVal = $req->input('bonoDiscVal', 0);
     $uID = $req->input('id_user', 0);
     $bID = $req->input('id_bono', 0);
     $cID = $req->input('coach', 0);
     $price = $req->input("price_$bID", 0);
-   
+    
     $oUser = \App\Models\User::find($uID);
     if (!$oUser || $oUser->id != $uID)
       return redirect()->back()->withErrors(['Usuario no encontrado']);
@@ -125,7 +126,7 @@ class BonosController extends Controller {
       $resp = $sStripe->automaticCharge($oUser,round($price*100));
       if ( $resp[0] != 'OK'){
          if ( $resp[0] == '3DS'){
-           \App\Models\Stripe3DS::addNew($oUser->id,$resp[1],$resp[2],'asignBono',['bono'=>$oBono->id,'tpay'=>$tpay]);
+           \App\Models\Stripe3DS::addNew($oUser->id,$resp[1],$resp[2],'asignBono',['bono'=>$oBono->id,'tpay'=>$tpay,'bonoDiscVal'=>$bonoDiscVal]);
           
           return redirect()->route(
                     'cashier.payment',
@@ -143,7 +144,7 @@ class BonosController extends Controller {
     }
     
     $oServ = new \App\Services\BonoService();
-    $resp = $oServ->asignBono($oUser,$oBono,$tpay,$idStripe,$cStripe,$price,$cID);
+    $resp = $oServ->asignBono($oUser,$oBono,$tpay,$idStripe,$cStripe,$price,$cID,$bonoDiscVal);
 
     if ($resp[0] == 'error') {
         return redirect()->back()->withErrors([$resp[1]]);

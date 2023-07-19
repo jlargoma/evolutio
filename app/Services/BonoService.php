@@ -39,7 +39,7 @@ class BonoService {
    * @param type $cStripe
    * @return type
    */
-  function asignBono($oUser, $oBono, $tpay, $idStripe = null, $cStripe = null,$price=null,$coachID=null) {
+  function asignBono($oUser, $oBono, $tpay, $idStripe = null, $cStripe = null,$price=null,$coachID=null,$discount=0) {
     if (!$price) $price = $oBono->price;
     $oBono->price = $price;
     $date = date('Y-m-d');
@@ -51,7 +51,7 @@ class BonoService {
     $oCobro->type_payment = $tpay;
     $oCobro->type = 1;
     $oCobro->import = $price;
-    $oCobro->discount = 0;
+    $oCobro->discount = $discount;
     $oCobro->type_rate = 0;
     $oCobro->bono_id = $oBono->id;
     $oCobro->id_stripe = $idStripe;

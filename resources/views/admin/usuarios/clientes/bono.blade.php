@@ -9,8 +9,14 @@
     <input type="hidden" name="id_user" value="<?php echo $user->id; ?>">
     <input type="hidden" name="type" value="<?php echo $type; ?>">
     <input type="hidden" name="id_back" value="<?php echo $id_back; ?>">
+    <input type="hidden" name="bonoDiscVal" id="bonoDiscVal"  value="">
     <div class="row">
       <div class="col-md-6 col-xs-12 mt-1em">
+        <div class="applDisc">
+          <label>Aplicar Descuento</label>
+          <input type="text" id="bonoDisc"  value="" class="form-control only-numbers">
+          <span  id="btnApplDisc">Aplicar</span>
+        </div>
         <div class="table-responsive">
         <table class="table t-center tableBono" style="margin-top: 2em;">
           <thead>
@@ -48,7 +54,7 @@
                   $price = $b->price;
                   if ($uPlan == 'basic' && $b->tarifa == 'fidelity') $price = priceNoFidelity($price);
                   ?>
-                <td><input type="text" name="price_{{$b->id}}" value="{{$price}}" class="form-control only-numbers"></td>
+                <td><input type="text" name="price_{{$b->id}}" value="{{$price}}" data-orig="{{$price}}" class="form-control only-numbers priceBonos"></td>
               </tr>
               @endforeach
             @endif
@@ -108,6 +114,15 @@ $(document).ready(function () {
     var val = $(this).val();
     $('.checkBono').removeClass('active');
     $(this).closest('.checkBono').addClass('active');
+  });
+
+  $('#btnApplDisc').on('click', function() {
+    var disc = $('#bonoDisc').val();
+    $('.priceBonos').each(function( index ) {
+      let orig = $( this ).data('orig');
+      $( this ).val( parseInt ( orig - (orig * disc / 100 ) ));
+    });
+    $('#bonoDiscVal').val(disc);
   });
 
 
@@ -218,6 +233,28 @@ $(document).ready(function () {
   .tableBono tr .first-col {
     padding-left: 130px !important;
   }
+  }
+  .applDisc {
+    border-bottom: 1px solid #c3c3c3;
+    padding-bottom: 11px;
+    padding-left: 2em;
+  }
+  .applDisc label,
+  .applDisc input{
+    display: inline-block;
+    margin-right: 1em;
+  }
+  .applDisc input{
+    width: 4em;
+  }
+
+  #btnApplDisc{
+    cursor: pointer;
+    background-color: #37a264;
+    padding: 8px 2em;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 14px;
   }
 </style>
 @include('admin.blocks.cardScripts')
