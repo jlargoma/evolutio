@@ -51,7 +51,7 @@ class BonoService {
     $oCobro->type_payment = $tpay;
     $oCobro->type = 1;
     $oCobro->import = $price;
-    $oCobro->discount = $discount;
+    $oCobro->discount = $discount ? intval($discount) : 0;
     $oCobro->type_rate = 0;
     $oCobro->bono_id = $oBono->id;
     $oCobro->id_stripe = $idStripe;
