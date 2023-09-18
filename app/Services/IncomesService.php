@@ -6,6 +6,7 @@ use App\Models\Rates;
 use App\Models\UserRates;
 use App\Models\User;
 use App\Models\Charges;
+use App\Models\Incomes;
 
 class IncomesService {
 
@@ -76,6 +77,15 @@ class IncomesService {
           $item['lst'][$r->id]['name'] = $r->name;
         }
       }
+
+      $oIncomes = Incomes::where('type',$r->id)->whereYear('date',$this->year)->get();
+      if ($oIncomes){
+        foreach($oIncomes as $i){
+          $m = intval(substr($i->date,5,2));
+          $item['lst'][$r->id][$m] += $i->import;
+        }
+      }
+
     }
     return $item;
   }

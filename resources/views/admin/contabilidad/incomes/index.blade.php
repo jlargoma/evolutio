@@ -15,6 +15,11 @@ function sumMonthValue($m){
 @include('admin.contabilidad._button-contabiliad')
 
 <div class="content">
+<h2>Ingresos 
+  <button type="button" class="btn btn-success" id="addNew_ingr" type="button" data-toggle="modal" data-target="#modalAddNew"><i class="fa fa-plus-circle"></i> Añadir</button>
+  <button type="button" class="btn btn-info" type="button" data-toggle="modal" data-target="#modalLst"><i class="fa fa-eye"></i>  Listado</button>
+</h2>
+
 <div class="row">
   
   <div class="col-sm-6">
@@ -28,12 +33,43 @@ function sumMonthValue($m){
   </div>
 </div>
   </div>
+
+
+  <div class="modal fade" id="modalAddNew" tabindex="-1" role="dialog"  aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <strong class="modal-title" id="modalChangeBookTit" style="font-size: 1.4em;">Añadir Ingreso</strong>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">@include('admin.contabilidad.incomes._form_new')</div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="modalLst" tabindex="-1" role="dialog"  aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <strong class="modal-title" id="modalChangeBookTit" style="font-size: 1.4em;"> Listado de Ingresos Manuales de <b><?php echo $year ?></b></strong>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">@include('admin.contabilidad.incomes._lst_Incomes')</div>
+      </div>
+    </div>
+  </div>
+
 @endsection
 
 @section('scripts')
 <link rel="stylesheet" href="{{ assetV('css/contabilidad.css') }}">
 <script type="text/javascript" src="/admin-css/assets/js/plugins/chartJs/Chart.min.js"></script>
 <script type="text/javascript" src="/admin-css/assets/js/charts.js"></script>
+<script src="{{asset('/admin-css/assets/js/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
+  <script src="{{asset('/admin-css/assets/js/plugins/bootstrap-datetimepicker/moment.min.js')}}"></script>
 <?php
   $tYearMonths = '';
     $aux = '';
@@ -57,6 +93,9 @@ function sumMonthValue($m){
         
 <script type="text/javascript">
     $(document).ready(function () {
+
+      App.initHelpers(['datepicker']);
+
       $('.d1').on('click',function(){
         var k = $(this).data('k');
         
@@ -147,7 +186,27 @@ function sumMonthValue($m){
       
       
       
+    $('#modalAddNew').on('submit', '#formNewIncomes', function (e) {
+      e.preventDefault();
+      $.ajax({
+        url: $(this).attr('action'),
+        type: 'POST',
+        data: $(this).serializeArray(),
+        success: function (response) {
+          if (response == 'ok') {
+            $('#import').val('');
+            $('#concept').val('');
+            $('#comment').val('');
+            alert('Ingreso Agregado');
+          } else
+            alert(response);
+        }
+      });
+    });
       
+    $('#modalAddNew').on('click', '#reload', function (e) {
+      location.reload();
+    });
       
       
       

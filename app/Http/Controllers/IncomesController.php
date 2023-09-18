@@ -7,6 +7,8 @@ use App\Http\Requests;
 use \Carbon\Carbon;
 use DB;
 use App\Models\Charges;
+use App\Models\Rates;
+use App\Models\Incomes;
 
 class IncomesController extends Controller {
 
@@ -135,6 +137,22 @@ class IncomesController extends Controller {
       }
     }
     //----------------------------------//
+    $lstRates = Rates::getTypeRatesGroups();
+    $oLstIncomes = Incomes::whereYear('date',$year)->orderBy('date')->get();
+    $oLstIncomesMonth = [];
+    foreach($monts as $k=>$v) $oLstIncomesMonth[$k] = 0;
+    if ($oLstIncomes){
+        foreach($oLstIncomes as $i){
+          $m = intval(substr($i->date,5,2));
+          $oLstIncomesMonth[$m] += $i->import;
+        }
+      }
+    $iLstRates = [];
+    foreach($lstRates as $k=>$v){
+      foreach($v['l'] as $k2=>$v2) $iLstRates[$k2] = $v['n'].' - '.$v2;
+    }
+
+    //----------------------------------//
     return view('admin.contabilidad.incomes.index',[
         'year'=>$year,
         'monts'=>$monts,
@@ -145,6 +163,10 @@ class IncomesController extends Controller {
         'totals'=>$totals,
         'byYears'=>$byYears,
         'tByYears'=>$tByYears,
+        'lstRates' => $lstRates,
+        'lstIncomes' => $oLstIncomes,
+        'lstIncomesMonth' => $oLstIncomesMonth,
+        'iLstRates' => $iLstRates,
     ]);
   }
 
@@ -176,4 +198,42 @@ class IncomesController extends Controller {
     include_once app_path().'/Blocks/IncomesDetail.php';
 
   }
+
+
+  public function create(Request $request) {
+
+    $messages = [
+        'concept.required' => 'El Concepto es requerido.',
+        'import.required' => 'El Importe es requerido.',
+        'fecha.required' => 'La Fecha es requerida.',
+        'concept.min' => 'El Concepto debe tener un mínimo de :min caracteres.',
+        'import.min' => 'El Importe debe ser mayor de :min.',
+        'import.max' => 'El Importe no debe ser mayor de :max.',
+    ];
+
+    $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+                'concept' => 'required|min:3',
+                'import' => 'required|min:1|max:3000',
+                'fecha' => 'required',
+                    ], $messages);
+
+    if ($validator->fails()) {
+      return $validator->errors()->first();
+    }
+    $comment = $request->input('comment','');
+
+    $oObj = new Incomes();
+    $oObj->concept = $request->input('concept');
+    $oObj->date = Carbon::createFromFormat('d-m-Y', $request->input('fecha'))->format('Y-m-d');
+    $oObj->import = $request->input('import');
+    $oObj->type = $request->input('type');
+    $oObj->comment = $comment ? $comment : '';
+
+    if ($oObj->save()) {
+      return 'ok';
+    }
+
+    return 'error';
+  }
+
 }

@@ -196,7 +196,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
 Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function () {
 
   /* Ingresos  rutas basicas */
-  Route::get('/nuevo/ingreso', 'IncomesController@nuevo');
+  Route::get('/nuevo/ingreso', 'IncomesController@newGral');
   Route::post('/ingresos/create', 'IncomesController@create');
   Route::get('/ingresos/{date?}', 'IncomesController@index');
   Route::get('/ingreso-by-rate/{rateID}', 'IncomesController@byRate');
