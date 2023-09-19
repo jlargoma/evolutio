@@ -208,8 +208,30 @@ function sumMonthValue($m){
       location.reload();
     });
       
+    $('#modalLst').on('click', '.filtIncome', function (e) {
+      var month = $(this).data('k');
+      $('.filtIncome').removeClass('active');
+      $(this).addClass('active');
+      console.log(month);
+      if (month<1){
+        $('.incomesMonths').show();
+      } else {
+        $('.incomesMonths').hide();
+        $('.im_'+month).show();
+      }
+    });
+      
       
       
     });
 </script>
+<style>
+  .filtIncome{
+    cursor: pointer;
+  }
+  .filtIncome.active {
+    border: 1px solid #0046a0;
+    background-color: #0067ea !important;
+  }
+  </style>
 @endsection

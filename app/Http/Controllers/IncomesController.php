@@ -149,7 +149,7 @@ class IncomesController extends Controller {
       }
     $iLstRates = [];
     foreach($lstRates as $k=>$v){
-      foreach($v['l'] as $k2=>$v2) $iLstRates[$k2] = $v['n'].' - '.$v2;
+      foreach($v['l'] as $k2=>$v2) $iLstRates[$k2] = '<b>'.$v['n'].'</b><br> '.$v2;
     }
 
     //----------------------------------//
@@ -227,6 +227,7 @@ class IncomesController extends Controller {
     $oObj->date = Carbon::createFromFormat('d-m-Y', $request->input('fecha'))->format('Y-m-d');
     $oObj->import = $request->input('import');
     $oObj->type = $request->input('type');
+    $oObj->type_payment = $request->input('type_payment');
     $oObj->comment = $comment ? $comment : '';
 
     if ($oObj->save()) {

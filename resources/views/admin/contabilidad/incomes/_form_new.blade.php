@@ -25,6 +25,16 @@ if (!isset($datePayment)){
       <label for="import">Importe</label>
       <input  type="number" step="0.01" name="import" id="import" class="form-control" required />
     </div>
+    <div class="col-lg-2 col-md-6 col-xs-12 mb-1em">
+      <label for="type_payment">Forma de pago</label>
+      <select class="form-control" name="type_payment" id="type_payment" >
+        <option value="cash">Efectivo</option>
+        <option value="card">Tarjeta</option>
+        <option value="banco">Banco</option>
+        <option value="bono">Bono</option>
+        <option value="invita">Invit. Evolutio</option>
+      </select>
+    </div>
     <div class="col-lg-4 col-md-6 col-xs-12 mb-1em">
       <label for="type">Tipo</label>
         <select class="form-control" id="type" name="type"  data-placeholder="Seleccione un tipo" required >

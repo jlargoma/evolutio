@@ -2,9 +2,9 @@
 <table class="table">
   <thead>
     <tr>
-      <th class="">Total<br>{{sumMonthValue($lstIncomesMonth)}}</th>
+      <th class='filtIncome active' data-k="0">Total<br>{{sumMonthValue($lstIncomesMonth)}}</th>
       @foreach($monts as $k=>$v)
-      <th class='filtIncome' date-k="{{$k}}">{{$v}}<br />{{moneda($lstIncomesMonth[$k])}}</th>
+      <th class='filtIncome' data-k="{{$k}}">{{$v}}<br />{{moneda($lstIncomesMonth[$k])}}</th>
       @endforeach
     </tr>
   </thead>
@@ -19,6 +19,7 @@
         <th class="thBlue">Fecha</th>
         <th class="thBlue">Tipo</th>
         <th class="thBlue">Importe</th>
+        <th class="thBlue">F. Pago</th>
         <th class="thBlue">Comentario</th>
 
       </tr>
@@ -26,12 +27,13 @@
     <tbody>
       @foreach($lstIncomes as $i)
       <?php $m = intval(substr($i->date,5,2)); ?>
-      <tr class="incomesMonths" data-k="{{$m}}">
+      <tr class="incomesMonths im_{{$m}}">
         <td class="static">{{$i->concept}}</td>
         <td class="first-col"></td>
         <td>{{convertDateToShow_text($i->date)}}</td>
         <td><?= isset($iLstRates[$i->type]) ? $iLstRates[$i->type] : ' - ' ?></td>
         <td>{{moneda($i->import)}}</td>
+        <td>{{payMethod($i->type_payment)}}</td>
         <td>{{$i->comment}}</td>
         <td></td>
       </tr>

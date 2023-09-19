@@ -15,6 +15,7 @@ use App\Models\Rates;
 use App\Models\Bonos;
 use App\Models\TypesRate;
 use App\Models\UsersSuscriptions;
+use App\Models\Incomes;
 
 class PyGController extends Controller {
 
@@ -93,6 +94,40 @@ class PyGController extends Controller {
         $pay_method['np'][$m] += $item->price;
       }
     }
+    //--------------------------------------------------------------------//
+    // ingresos extras
+    $oLstIncomes = Incomes::whereYear('date',$year)->orderBy('date')->get();
+    if ($oLstIncomes){
+      foreach($oLstIncomes as $i){
+        $m = intval(substr($i->date,5,2));
+        $rateGr = isset($aRates[$i->type]) ? $aRates[$i->type] : 3;
+        $crLst[$rateGr][$m] += $i->import;
+
+        switch ($i->type_payment){
+          case 'cash':
+            $pay_method['c'][$m] += $i->import;
+            break;
+          case 'card':
+            $pay_method['v'][$m] += $i->import;
+            break;
+          case 'banco':
+            $pay_method['b'][$m] += $i->import;
+            break;
+          case 'invita':
+            $pay_method['i'][$m] += $i->import;
+            break;
+        }
+
+
+        $tPay += $i->import;
+      }
+    }
+     //---------------------------------------------------------//
+     for ($i = 2; $i >= 0; $i--) {
+      $yAux = $year - $i;
+      $incomesYear[$yAux] += Incomes::whereYear('date',$yAux)->sum('import');
+    }
+
     //--------------------------------------------------------------------//
     $lstBonos = Bonos::listBonos();
     //--------------------------------------------------------------------//
