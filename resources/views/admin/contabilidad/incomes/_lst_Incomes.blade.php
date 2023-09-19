@@ -33,7 +33,7 @@
         <td>{{convertDateToShow_text($i->date)}}</td>
         <td><?= isset($iLstRates[$i->type]) ? $iLstRates[$i->type] : ' - ' ?></td>
         <td>{{moneda($i->import)}}</td>
-        <td>{{payMethod($i->type_payment)}}</td>
+        <td><?= ($i->type_payment) ? payMethod($i->type_payment) : ' - ' ?></td>
         <td>{{$i->comment}}</td>
         <td></td>
       </tr>
