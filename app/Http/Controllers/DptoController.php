@@ -81,6 +81,7 @@ class DptoController extends Controller {
 
     //---------------------------------------------------------//
     $dpto = $this->getDepto($dpto);
+    if (!$dpto) return response('Unauthorized.', 401);
     $expensesLst = $dpto[0];
     $coachRole = $dpto[1];
     $rType = $dpto[2];
@@ -306,6 +307,7 @@ class DptoController extends Controller {
 
         //---------------------------------------------------------//
         $dpto = $this->getDepto();
+        if (!$dpto) return response('Unauthorized.', 401);
         $coachRole = $dpto[1];
         $rType = $dpto[2];
         $rIDs = $dpto[3];
@@ -381,6 +383,7 @@ class DptoController extends Controller {
   function ExpensesbyType($type,$dpto=null){
     $year = getYearActive();
     $dpto = $this->getDepto($dpto);
+    if (!$dpto) return response('Unauthorized.', 401);
     $expensesLst = $dpto[0];
     $coachRole = $dpto[1];
 
