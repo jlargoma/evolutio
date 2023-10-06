@@ -300,3 +300,6 @@ Route::group(['middleware' => ['Administrativo'], 'prefix' => 'departamento'], f
   Route::get('/contabilidad', 'DptoController@perdidas_ganacias'); // 'PyGController@index');
   Route::get('/gastos-by-byType/{typeID}', 'DptoController@ExpensesbyType');
 });
+Route::group(['middleware' => ['Administrativo'], 'prefix' => 'admin'], function () {
+  Route::get('informes/servicios-mes/{f_month?}/{f_rate?}/{f_method?}/{f_coach?}', 'InformesController@informeServiciosMes');
+});

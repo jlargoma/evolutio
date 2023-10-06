@@ -111,6 +111,16 @@
                         </a>
                     </li>
                     <?php endif; ?>
+
+                    <?php
+                    if (Auth::user()->id == 3370):
+                    ?>
+                    <li class="text-center">
+                        <a href="{{ url('admin/informes/servicios-mes') }}" class="btn btn-success btn-home">
+                          Servicios Clientes
+                        </a>
+                    </li>
+                    <?php endif; ?>
                 </ul>                
                 
                 <ul class="nav-header pull-left">

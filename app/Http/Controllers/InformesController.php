@@ -13,6 +13,7 @@ use App\Models\Rates;
 use App\Models\UserBonosLogs;
 use App\Exports\ServicesExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Auth;
 
 class InformesController extends Controller {
 
@@ -657,6 +658,12 @@ class InformesController extends Controller {
 
 
   public function informeServiciosMes(Request $request, $f_month = null, $f_rate = null, $f_method = null, $f_coach = null) {
+
+    $oUser = Auth::user();
+    if ($oUser->role !== "admin" && $oUser->id !== 3370 ){ //admin && pauperezol
+      abort(401);
+      exit();
+    }
 
     $year = getYearActive();
     if (!$f_month)

@@ -21,7 +21,7 @@ class Admin
             if (Auth::user()->role == "admin") {
                 return $next($request);
             } else {
-                return response('Unauthorized.', 401);
+                abort(401);exit();
             }
         }
         return redirect()->guest('login');
