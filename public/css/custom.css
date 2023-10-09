@@ -405,7 +405,9 @@ div#importeFinalModal .text {
 left: 120px;
 width: calc(100% - 140px);
 }
-
+.toPay, .np{
+    color: red !important;
+  }
 /*-----------------------------------*/
 @media(max-width:991px) {
     .table-fixed th.static{

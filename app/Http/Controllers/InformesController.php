@@ -273,63 +273,86 @@ class InformesController extends Controller {
     if (!$day)
       $day = 'all';
 
-    $data = $this->getChargesRates($year, $month, $day);
     $lstMonthsSpanish = lstMonthsSpanish();
     unset($lstMonthsSpanish[0]);
     $data['months'] = $lstMonthsSpanish;
 
     $byRate = [];
     $byRateT = [];
-    $aRType = \App\Models\TypesRate::all()->pluck('name', 'id')->toArray();
-    //rate types
+    $aRates = \App\Models\Rates::pluck('name', 'id')->toArray();
+    $aRType = \App\Models\TypesRate::orderBy('name')->get()->pluck('name', 'id')->toArray();
     $aRrt = \App\Models\Rates::all()->pluck('type', 'id')->toArray();
-    foreach ($aRrt as $k => $v) {
-      $byRateT[$v] = [
-          't' => 0,
-          'banco' => 0,
-          'cash' => 0,
-          'card' => 0,
-          'bono' => 0,
-          'invita' => 0,
-      ];
-    }
+    $typePay = [
+      'toPay' => [],
+      'banco' => [],
+      'cash' => [],
+      'invita' => [],
+      'card' => [],
+    ];
+    $typePayTotal = [];
+      $uRates = \App\Models\UserRates::where('rate_month', $month)->where('rate_year', $year)->get();
+      $charges = [];
+      foreach ($uRates as $item) {
+        $charge = $item->charges;
+        $rID = $item->id_rate;
+        $rtID = isset($aRrt[$rID]) ? $aRrt[$rID] : -1;
+        if (!array_key_exists($rID,$byRate)) $byRate[$rID] = 0;
 
-    foreach ($data['charges'] as $c) {
-      if ($c->id_rate > 0) {
-
-        if (!isset($byRate[$c->id_rate]))
-          $byRate[$c->id_rate] = 0;
-
-        $byRate[$c->id_rate] += $c->import;
-        if (isset($aRrt[$c->id_rate])) {
-          $byRateT[$aRrt[$c->id_rate]]['t'] += $c->import;
-          $byRateT[$aRrt[$c->id_rate]][$c->type_payment] += $c->import;
+        $auxTypePay = 'toPay';
+        $price = $item->price;
+        if ($charge) {
+          $auxTypePay = $charge->type_payment;
+          $price = $charge->import;
         }
+
+
+          if (!array_key_exists($auxTypePay,$typePay)) $typePay[$auxTypePay] = [];
+          if (!array_key_exists($rtID,$typePay[$auxTypePay])) $typePay[$auxTypePay][$rtID] = 0;
+          $typePay[$auxTypePay][$rtID] += $price;
+          $byRate[$rID] += $price;
+          if (!array_key_exists($rtID,$typePayTotal)) $typePayTotal[$rtID] = 0;
+          $typePayTotal[$rtID] += $price;
+
       }
-    }
     //----------------------------------------------------------//
     //----  BEGIN: BONOS        --------------------------------//
     $byBono = [];
     $aBonos = Bonos::all()->pluck('name', 'id')->toArray();
+    $lstBonosRate = Bonos::listBonos();
     $oCharges = Charges::where('bono_id', '>', 0)
                     ->whereYear('date_payment', '=', $year)
                     ->whereMonth('date_payment', '=', $month)->get();
-    foreach ($oCharges as $charges) {
-      if (!isset($byBono[$charges->bono_id]))
-        $byBono[$charges->bono_id] = 0;
-      $byBono[$charges->bono_id] += $charges->import;
-//          $payType[$charges->type_payment] += $charges->import;
+    foreach ($oCharges as $c) {
+      if (!isset($byBono[$c->bono_id])) $byBono[$c->bono_id] = 0;
+
+
+      $rtID = isset($lstBonosRate[$c->bono_id]) ? $lstBonosRate[$c->bono_id] : null;
+      $byBono[$c->bono_id] += $c->import;
+      if (!array_key_exists($c->type_payment,$typePay)) $typePay[$c->type_payment] = [];
+      if (!array_key_exists($rtID,$typePay[$c->type_payment])) $typePay[$c->type_payment][$rtID] = 0;
+      $typePay[$c->type_payment][$rtID] += $c->import;
+      if (!array_key_exists($rtID,$typePayTotal)) $typePayTotal[$rtID] = 0;
+      $typePayTotal[$rtID] += $c->import;
     }
     //----  END: BONOS        --------------------------------//
     //----------------------------------------------------------//
+    $lstMonthsSpanish = lstMonthsSpanish();
+    unset($lstMonthsSpanish[0]);
+    $data = [
+      'year' => $year,
+      'month' => $month,
+      'months'=>$lstMonthsSpanish,
+      'day' => $day,
+      'byRate'=>$byRate,
+      'aRType'=>$aRType,
+      'byBono'=>$byBono,
+      'aBonos'=>$aBonos,
+      'typePay'=>$typePay,
+      'typePayTotal'=>$typePayTotal,
+      //'endDay' => $endDay,$endDay = date("t", strtotime("$year-$month-01"));
+      'aRates' => $aRates,
+    ];
 
-
-
-    $data['byRate'] = $byRate;
-    $data['byTypeRate'] = $byRateT;
-    $data['aRType'] = $aRType;
-    $data['byBono'] = $byBono;
-    $data['aBonos'] = $aBonos;
     return view('admin.informes.informeCuotaMes', $data);
   }
 
@@ -801,7 +824,6 @@ class InformesController extends Controller {
       $sqlBonos->where('bono_id','>',0);
     }
     
-
     $oLstBonos = $sqlBonos->get();
     $cTotalBonos = ['cash'=>0,'card'=>0,'banco'=>0,'bono'=>0,'invita'=>0];
     $chargesID = [];

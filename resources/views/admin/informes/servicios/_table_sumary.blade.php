@@ -19,7 +19,7 @@
             <td class="text-center bg-complete"><?php echo moneda($card); ?> </td>
             <td class="text-center bg-complete"><?php echo moneda($invita); ?> </td>
             <td class="text-center bg-complete"><?php echo moneda($cash + $bank + $card); ?> </td>
-            <td class="text-center bg-complete"><?php echo moneda($toPay); ?> </td>
+            <td class="text-center bg-complete toPay"><?php echo moneda($toPay); ?> </td>
             <td class="text-center bg-complete"><?php echo moneda($cash + $bank + $card + $invita + $bono + $toPay); ?> </td>
         </tr>
         </tbody>

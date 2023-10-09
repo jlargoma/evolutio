@@ -77,48 +77,30 @@ echo moneda($import); ?>
                 <tr>
                   <th class="text-left bg-complete font-w800 static">Familia</th>
                   <th class="first-col bg-complete"></th>
-                  <th class="text-center bg-complete font-w800">Total</th>
-                  <th class="text-center bg-complete font-w800">Banco</th>
-                  <th class="text-center bg-complete font-w800">Visa</th>
-                  <th class="text-center bg-complete font-w800">Cash</th>
+                  <th class="text-center bg-complete font-w800">Total <br> {{moneda(array_sum($typePayTotal))}}</th>
+                  <th class="text-center bg-complete font-w800">Banco<br> {{moneda(array_sum($typePay['banco']))}}</th>
+                  <th class="text-center bg-complete font-w800">Tarjeta<br> {{moneda(array_sum($typePay['card']))}}</th>
+                  <th class="text-center bg-complete font-w800">Cash<br> {{moneda(array_sum($typePay['cash']))}}</th>
+                  <th class="text-center bg-complete font-w800">Invita<br> {{moneda(array_sum($typePay['invita']))}}</th>
+                  <th class="text-center bg-complete font-w800 toPay">A pagar<br> {{moneda(array_sum($typePay['toPay']))}}</th>
                 </tr>
               </thead>
               <tbody>
-                    <?php $total = $tbanco = $tcard = $tcash = 0; ?>
-                @foreach($byTypeRate as $rt=>$import)
+                @foreach($aRType as $rtID=>$rtName)
                 <tr>
-                  <td class="text-left static">
-                    <?php echo (isset($aRType[$rt])) ? $aRType[$rt] : ' - '; ?>
-                  </td>
+                  <td class="text-left static">{{$rtName}}</td>
                   <td class="first-col"></td>
-                  <td class="text-center">
-                    <?php $total += $import['t'];
-                    echo moneda($import['t']); ?>
-                  </td>
-                  <td class="text-center">
-<?php $tbanco += $import['banco'];
-echo moneda($import['banco']); ?>
-                  </td>
-                  <td class="text-center">
-<?php $tcard += $import['card'];
-echo moneda($import['card']); ?>
-                  </td>
-                  <td class="text-center">
-<?php $tcash += $import['cash'];
-echo moneda($import['cash']); ?>
-                  </td>
+                  <td class="text-center"><?= isset($typePayTotal[$rtID]) ? moneda($typePayTotal[$rtID]) : '0';?></td>
+                  <td class="text-center"><?= isset($typePay['banco'][$rtID]) ? moneda($typePay['banco'][$rtID]) : '0';?></td>
+                  <td class="text-center"><?= isset($typePay['card'][$rtID]) ? moneda($typePay['card'][$rtID]) : '0';?></td>
+                  <td class="text-center"><?= isset($typePay['cash'][$rtID]) ? moneda($typePay['cash'][$rtID]) : '0';?></td>
+                  <td class="text-center"><?= isset($typePay['invita'][$rtID]) ? moneda($typePay['invita'][$rtID]) : '0';?></td>
+                  <td class="text-center toPay"><?= isset($typePay['toPay'][$rtID]) ? moneda($typePay['toPay'][$rtID]) : '0';?></td>
                 </tr>
                 @endforeach
               </tbody>
               <tfoot>
-                <tr>
-                  <th class="text-left bg-complete font-w800 static">Total</th>
-                  <th class="first-col bg-complete"></th>
-                  <th class="text-center bg-complete font-w800">{{moneda($total)}}</th>
-                  <th class="text-center bg-complete font-w800">{{moneda($tbanco)}}</th>
-                  <th class="text-center bg-complete font-w800">{{moneda($tcard)}}</th>
-                  <th class="text-center bg-complete font-w800">{{moneda($tcash)}}</th>
-                </tr>
+               
               </tfoot>
             </table>
           </div>

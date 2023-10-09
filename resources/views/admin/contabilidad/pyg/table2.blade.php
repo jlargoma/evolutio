@@ -21,11 +21,11 @@ foreach ($lstMonths as $k=>$v){
         </tr>
          @foreach($pay_method as $k1=>$v1)
           <tr>
-            <td class="static"><?php echo $pmName[$k1]; ?></td>
+            <td class="static {{$k1}}"><?php echo $pmName[$k1]; ?></td>
             <td class="first-col"></td>
-            <td><b>{{ moneda(array_sum($v1))}}</b></td>
+            <td class="{{$k1}}"><b>{{ moneda(array_sum($v1))}}</b></td>
             @foreach($lstMonths as $k=>$v)
-            <td>{{moneda($v1[$k])}}</td>
+            <td class="{{$k1}}">{{moneda($v1[$k])}}</td>
             @endforeach
           </tr>
             @endforeach

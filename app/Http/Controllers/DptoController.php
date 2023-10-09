@@ -221,10 +221,13 @@ class DptoController extends Controller {
                             ->where(function($query) use ($expensesLst, $coachRole) {
                                 $query->whereIn('type', $expensesLst)->orWhere('dpto',$coachRole);
                             })->sum('import');
+      $expensesYear[$yAux] += Expenses::whereYear('date', '=', $yAux)->where('type', 'seguros_soc')->orWhere('dpto',$coachRole)->sum('import');
     }
+    //---------------------------------------------------------//
+
     $oExpenses = Expenses::whereYear('date', '=', $year)->where(function($query) use ($expensesLst, $coachRole) {
                       $query->whereIn('type', $expensesLst)->orWhere('dpto',$coachRole);
-                  })->get();
+                  })->where('type','!=','seguros_soc')->get();
     $aux = $months_empty;
     $expensesYear[$year] = 0;
     if ($oExpenses) {
@@ -263,6 +266,20 @@ class DptoController extends Controller {
       }
     }
     //---------------------------------------------------------//
+    $ggMonth['seguros_soc'] = $months_empty;
+    $gTypeGroup['names']['seguros_soc'] = 'SEGUROS SOCIALES';
+    $oExpenses2 = Expenses::whereYear('date', '=', $year)->where('type', 'seguros_soc')->where('dpto',$coachRole)->get();
+    if ($oExpenses2) {
+      foreach ($oExpenses2 as $e) {
+        $m = intval(substr($e->date, 5, 2));
+        $aux[$m] += $e->import;
+        $aux[0] += $e->import;
+        $expensesYear[$year] += $e->import;
+        $ggMonth['seguros_soc'][$m] += $e->import;
+      }
+    }
+
+
     $currentY['Gastos'] = $aux;
 
     //---------------------------------------------------------//
@@ -400,22 +417,29 @@ class DptoController extends Controller {
       $gTypesNames = $gTypeGroup['names'];
       $gTypeGroup = $gTypeGroup['groups'];
       $auxTypes = [];
-      if ($type == 'allOther'){
-        $gTypesNames['allOther'] = 'Resto de los Gastos asignados al departamento';
-        $sql_items->whereNotIn('type', $expensesLst)->where('dpto',$coachRole);
+    
+      if ($type == 'seguros_soc'){
+        $gTypesNames['seguros_soc'] = 'SEGUROS SOCIALES';
+        $sql_items->where('type', 'seguros_soc')->where('dpto',$coachRole);
       } else {
-        if (!isset($gTypesNames[$type])){
-          echo  '<p class="alert alert-warning">Sin Registros</p>';
-          return '';
-        }
-        foreach ($gTypeGroup as $k=>$v){
-          if ($v == $type && in_array($k,$expensesLst)) $auxTypes[] = $k;
-        }
-        
-        if(count($auxTypes)>0){
-          $sql_items->whereIn('type', $auxTypes);
-        } else {
+        if ($type == 'allOther'){
+          $expensesLst[] = 'seguros_soc';
+          $gTypesNames['allOther'] = 'Resto de los Gastos asignados al departamento';
           $sql_items->whereNotIn('type', $expensesLst)->where('dpto',$coachRole);
+        } else {
+          if (!isset($gTypesNames[$type])){
+            echo  '<p class="alert alert-warning">Sin Registros</p>';
+            return '';
+          }
+          foreach ($gTypeGroup as $k=>$v){
+            if ($v == $type && in_array($k,$expensesLst)) $auxTypes[] = $k;
+          }
+          
+          if(count($auxTypes)>0){
+            $sql_items->whereIn('type', $auxTypes);
+          } else {
+            $sql_items->whereNotIn('type', $expensesLst)->where('dpto',$coachRole);
+          }
         }
       }
       $payType = Expenses::getTypeCobro();

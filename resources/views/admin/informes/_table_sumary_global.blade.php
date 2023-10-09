@@ -36,7 +36,7 @@
             <td class="text-center"></td>
             <td class="text-center"></td>
             <td class="text-center"></td>
-            <td class="text-center"><?= moneda($toPay); ?></td>
+            <td class="text-center toPay"><?= moneda($toPay); ?></td>
         </tr>
         </tbody>
     </table>

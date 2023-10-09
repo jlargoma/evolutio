@@ -126,8 +126,8 @@ function sumMonthValue($m) {
           </tr>
           <tfoot>
             <tr>
-              <td class="square" ><span style="background-color: #b2bd06;"></span>No Pay</td>
-              <td>{{moneda(array_sum($pay_method['np']))}}</td>
+              <td class="square toPay" ><span style="background-color: #b2bd06;"></span>No Pay</td>
+              <td class="toPay">{{moneda(array_sum($pay_method['np']))}}</td>
             </tr>
           </tfoot>
         </table>
