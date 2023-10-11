@@ -47,25 +47,25 @@ class DptoController extends Controller {
       $type = ' Fisioterapia';
       $dptoName = 'fisio';
     }
-    // if ($uID == 3238 || $dpto == 'pt'){ // JUANAN FUTBOL  fútbol 11
-    //   $expensesLst = [];
-    //   $coachRole = 'pt';
-    //   $rType = [2,3];
-    //   $rIDs = \App\Models\Rates::where('subfamily','t01')->orderBy('name')->pluck('id'); 
-    //   $bIDs = Bonos::Where('rate_subf', 'LIKE', 't01')->pluck('id');
-    //   $type = ' Fútbol 11';
-    //   $dptoName = 'futbool';
-    // }
+    if ($uID == 3238 || $dpto == 'pt'){ // JUANAN FUTBOL  fútbol 11
+      $expensesLst = [];
+      $coachRole = 'pt';
+      $rType = [2];
+      $rIDs = \App\Models\Rates::where('subfamily','t01')->orderBy('name')->pluck('id'); 
+      $bIDs = Bonos::Where('rate_subf', 'LIKE', 't01')->pluck('id');
+      $type = ' Fútbol 11';
+      $dptoName = 'futbool';
+    }
 
-    // if ($uID == 3239 || $dpto == 'pt'){ // 3196 BORJA BLANCO FUTSAL
-    //   $expensesLst = [];
-    //   $coachRole = 'pt';
-    //   $rType = [2,3];
-    //   $rIDs = \App\Models\Rates::where('subfamily','t02')->orderBy('name')->pluck('id'); 
-    //   $bIDs = Bonos::Where('rate_subf', 'LIKE', 't02')->pluck('id');
-    //   $type = ' FUTSAL';
-    //   $dptoName = 'futbool';
-    // }
+    if ($uID == 3239 || $dpto == 'pt'){ // 3196 BORJA BLANCO FUTSAL
+      $expensesLst = [];
+      $coachRole = 'pt';
+      $rType = [2];
+      $rIDs = \App\Models\Rates::where('subfamily','t02')->orderBy('name')->pluck('id'); 
+      $bIDs = Bonos::Where('rate_subf', 'LIKE', 't02')->pluck('id');
+      $type = ' FUTSAL';
+      $dptoName = 'futbool';
+    }
     return [ $expensesLst,$coachRole,$rType,$rIDs,$bIDs,$type,$dptoName];
   }
 
@@ -347,7 +347,7 @@ class DptoController extends Controller {
           $f_rate = $rType[0];
       }
     } else $f_rate = $rType[0];
-    $data = $this->getCharges($year, $f_month, $day, null, $f_method, $f_rate, $f_coach, $f_month);
+    $data = $this->getCharges($year, $f_month, $day, null, $f_method, $f_rate, $f_coach, $f_month, $rIDs);
     $lstMonthsSpanish = lstMonthsSpanish();
     unset($lstMonthsSpanish[0]);
     $data['months'] = $lstMonthsSpanish;
@@ -454,7 +454,7 @@ class DptoController extends Controller {
     }
   }
 
-  private function getCharges($year, $month, $day, $search = null, $type_payment = null, $rate = null, $f_coach = null,$f_month = null) {
+  private function getCharges($year, $month, $day, $search = null, $type_payment = null, $rate = null, $f_coach = null,$f_month = null,$rIDs=null) {
     $sql_charges = Charges::where('import', '!=', 0);
     if ($search) {
       $search = trim($search);
@@ -486,6 +486,7 @@ class DptoController extends Controller {
         }
       }
     }
+    $sql_charges->whereIN('id_rate', $rIDs);
     //------------------------------------------------------------//
     if ($f_coach){
       $sql_charges->join('users_rates', 'users_rates.id_charges', '=', 'charges.id');
