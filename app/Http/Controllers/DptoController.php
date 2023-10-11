@@ -24,7 +24,7 @@ class DptoController extends Controller {
     $bIDs = [];
     $rIDs = [];
     $type = '';
-
+    $dptoName = '';
     $uID = Auth()->id();
     if (Auth::user()->role !== "admin" ){ //admin
       $dpto = null;
@@ -47,25 +47,25 @@ class DptoController extends Controller {
       $type = ' Fisioterapia';
       $dptoName = 'fisio';
     }
-    if ($uID == 3238 || $dpto == 'pt'){ // JUANAN FUTBOL  fútbol 11
-      $expensesLst = [];
-      $coachRole = 'pt';
-      $rType = [2,3];
-      $rIDs = \App\Models\Rates::where('subfamily','t01')->orderBy('name')->pluck('id'); 
-      $bIDs = Bonos::Where('rate_subf', 'LIKE', 't01')->pluck('id');
-      $type = ' Fútbol 11';
-      $dptoName = 'fisio';
-    }
+    // if ($uID == 3238 || $dpto == 'pt'){ // JUANAN FUTBOL  fútbol 11
+    //   $expensesLst = [];
+    //   $coachRole = 'pt';
+    //   $rType = [2,3];
+    //   $rIDs = \App\Models\Rates::where('subfamily','t01')->orderBy('name')->pluck('id'); 
+    //   $bIDs = Bonos::Where('rate_subf', 'LIKE', 't01')->pluck('id');
+    //   $type = ' Fútbol 11';
+    //   $dptoName = 'futbool';
+    // }
 
-    if ($uID == 3239 || $dpto == 'pt'){ // 3196 BORJA BLANCO FUTSAL
-      $expensesLst = [];
-      $coachRole = 'pt';
-      $rType = [2,3];
-      $rIDs = \App\Models\Rates::where('subfamily','t02')->orderBy('name')->pluck('id'); 
-      $bIDs = Bonos::Where('rate_subf', 'LIKE', 't02')->pluck('id');
-      $type = ' FUTSAL';
-      $dptoName = 'fisio';
-    }
+    // if ($uID == 3239 || $dpto == 'pt'){ // 3196 BORJA BLANCO FUTSAL
+    //   $expensesLst = [];
+    //   $coachRole = 'pt';
+    //   $rType = [2,3];
+    //   $rIDs = \App\Models\Rates::where('subfamily','t02')->orderBy('name')->pluck('id'); 
+    //   $bIDs = Bonos::Where('rate_subf', 'LIKE', 't02')->pluck('id');
+    //   $type = ' FUTSAL';
+    //   $dptoName = 'futbool';
+    // }
     return [ $expensesLst,$coachRole,$rType,$rIDs,$bIDs,$type,$dptoName];
   }
 
@@ -81,7 +81,7 @@ class DptoController extends Controller {
 
     //---------------------------------------------------------//
     $dpto = $this->getDepto($dpto);
-    if (!$dpto) return response('Unauthorized.', 401);
+    if (!$dpto){ abort(401);exit(); }
     $expensesLst = $dpto[0];
     $coachRole = $dpto[1];
     $rType = $dpto[2];
@@ -89,6 +89,7 @@ class DptoController extends Controller {
     $bIDs = $dpto[4];
     $typeTit = $dpto[5];
     $dptoName = $dpto[6];
+    if ($coachRole == '-'){ abort(401);exit(); }
     //---------------------------------------------------------//
 
     $gType = Expenses::getTypes();
@@ -324,11 +325,12 @@ class DptoController extends Controller {
 
         //---------------------------------------------------------//
         $dpto = $this->getDepto();
-        if (!$dpto) return response('Unauthorized.', 401);
+        if (!$dpto){ abort(401);exit(); }
         $coachRole = $dpto[1];
         $rType = $dpto[2];
         $rIDs = $dpto[3];
         $bIDs = $dpto[4];
+        if ($coachRole == '-'){ abort(401);exit(); }
         //---------------------------------------------------------//
         
     $year = getYearActive();
@@ -400,10 +402,10 @@ class DptoController extends Controller {
   function ExpensesbyType($type,$dpto=null){
     $year = getYearActive();
     $dpto = $this->getDepto($dpto);
-    if (!$dpto) return response('Unauthorized.', 401);
+    if (!$dpto){ abort(401);exit(); }
     $expensesLst = $dpto[0];
     $coachRole = $dpto[1];
-
+    if ($coachRole == '-'){ abort(401);exit(); }
 
     $sql_items = Expenses::whereYear('date', '=', $year);
 
