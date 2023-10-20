@@ -40,7 +40,7 @@ class Rates extends Model
      * @param type $name => just name and ID
      * @return type
      */
-    static function getTypeRatesGroups($name=true){
+    static function getTypeRatesGroups($name=true,$justID=false){
       
       $rateFilter = [];
       $oTypes = \App\Models\TypesRate::orderBy('name', 'asc')->get();
@@ -55,7 +55,11 @@ class Rates extends Model
           }
           $rateFilter[$item->id] = ['n' => $item->name,'l'=>$aux2];
         } else {
-          $rateFilter[$item->id] = ['n' => $item->name,'l'=>$aux];
+          if ($justID){
+            $rateFilter[$item->id] = $aux->pluck('id')->toArray();
+          } else {
+            $rateFilter[$item->id] = ['n' => $item->name,'l'=>$aux];
+          }
         }
       }
       return $rateFilter;

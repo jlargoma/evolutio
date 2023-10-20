@@ -45,6 +45,8 @@ class User extends Authenticatable
     'email_verified_at' => 'datetime',
   ];
 
+  var $ratesTypes;
+
   public function rates()
   {
     return $this->hasMany('\App\Models\UserRates', 'id_user', 'id');
@@ -243,7 +245,7 @@ class User extends Authenticatable
   }
 
 
-  static function create_altaBajas($year, $month)
+  function create_altaBajas($year, $month)
   {
 
     $create = false;
@@ -257,27 +259,102 @@ class User extends Authenticatable
     }
 
     if ($create) {
-      $lstUser = "INSERT user_alta_baja(`user_id`, `year_month`) (SELECT users.id, '" . $year . '-' . $month . "' AS 'year_mont'  FROM users INNER JOIN user_meta ON users.id = user_meta.user_id
-          WHERE role = 'user' AND ( 
-                                    ( 
-                                      ( meta_key = 'activate' OR meta_key = 'disable') 
-                                      AND YEAR(user_meta.created_at) = $year AND MONTH(user_meta.created_at) = $month
-                                    ) 
-                                    OR 
-                                    (
-                                      YEAR(users.created_at) = $year AND MONTH(users.created_at) = $month
-                                    )
-                                  )
-                                  group by users.id
-          )
-        ";
-      DB::select($lstUser);
+      $this->ratesTypes = Rates::getTypeRatesGroups(false,true);
+      $sueloPelvico  = Rates::where('name', 'like', '%pelvico%')->pluck('id')->toArray();
+      foreach($this->ratesTypes as $k=>$v){
+        foreach($v as $k2=>$v2){
+          if (in_array($v2,$sueloPelvico)){
+            unset($this->ratesTypes[$k][$v2]);
+          }
+        }
+      }
+      $this->ratesTypes[99] = $sueloPelvico;
+      if ($month == 1){
+        $lastmonth = 12;
+        $lastYear = $year-1;
+      } else {
+        $lastYear = $year;
+        $lastmonth = $month-1;
+      }
+      $oUsrRates = UserRates::where('rate_year',$lastYear)->where('rate_month',$lastmonth)->get();
+      $uRatesYesterday = [];
+      foreach($oUsrRates as $item){
+        $rTypeUsr = $this->getRateTypeUsr($item->id_rate);
+        if ($rTypeUsr){
+          if (array_key_exists($item->id_user,$uRatesYesterday)) $uRatesYesterday[$item->id_user] = [];
+          $uRatesYesterday[$item->id_user][] = $rTypeUsr;
+        }
+      }
+
+      $oUsrRates = UserRates::where('rate_year',$year)->where('rate_month',$month)->get();
+      $uRatesNow = [];
+      foreach($oUsrRates as $item){
+        $rTypeUsr = $this->getRateTypeUsr($item->id_rate);
+        if ($rTypeUsr){
+          if (array_key_exists($item->id_user,$uRatesNow)) $uRatesNow[$item->id_user] = [];
+          $uRatesNow[$item->id_user][] = $rTypeUsr;
+        }
+      }
+
+
+      $keyMonth = $year . '-' . $month;
+      $aItemsDB = [];
+      /** altas */
+      foreach($uRatesNow as $uId => $rTypes){
+        $lstIds = [];
+        if (array_key_exists($uId,$uRatesYesterday)){
+          $aux = $uRatesYesterday[$uId];
+          foreach($rTypes as $rtID){
+            if (!in_array($rtID,$aux)){
+              $lstIds[] =  $rtID;
+            }
+          }
+        } else {
+          $lstIds = $rTypes;
+        }
+        if (count($lstIds)){
+          foreach($lstIds as $rtID)
+            $aItemsDB[] = "($uId,'$keyMonth',$rtID,1)";
+        }
+      }
+      /** bajas */
+      foreach($uRatesYesterday as $uId => $rTypes){
+        $lstIds = [];
+        if (array_key_exists($uId,$uRatesNow)){
+          $aux = $uRatesNow[$uId];
+          foreach($rTypes as $rtID){
+            if (!in_array($rtID,$aux)){
+              $lstIds[] =  $rtID;
+            }
+          }
+        } else {
+          $lstIds = $rTypes;
+        }
+        if (count($lstIds)){
+          foreach($lstIds as $rtID)
+          $aItemsDB[] = "($uId,'$keyMonth',$rtID,0)";
+        }
+      }
+
+      DB::select("INSERT user_alta_baja(`user_id`, `year_month`, `rate_type`, `active` ) VALUES ". implode(',',$aItemsDB));
     }
   }
+
+  private function getRateTypeUsr($id_rate){
+    foreach($this->ratesTypes as $rt => $rIds){
+      if (in_array($id_rate,$rIds)){
+        return $rt;
+      }
+    }
+    return null;
+  }
+
+
+
   static function altaBajas($year, $month)
   {
 
-    $sql = User::select('users.*')->join('user_alta_baja', function ($join) {
+    $sql = User::select('users.*','user_alta_baja.rate_type','user_alta_baja.active')->join('user_alta_baja', function ($join) {
       $join->on('users.id', '=', 'user_alta_baja.user_id');
     })->where('year_month', $year . '-' . $month);
     return $sql;

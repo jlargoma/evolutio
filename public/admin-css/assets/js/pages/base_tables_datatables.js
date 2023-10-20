@@ -22,7 +22,7 @@ var BaseTableDatatables = function() {
                             $('div.loading').remove();
                             $('#containerTableResult').show();
                         },
-            columnDefs: [ { orderable: false, targets: [0,2,3,7] } ],
+            //columnDefs: [ { orderable: false, targets: [0,2,7] } ],
             pageLength: 100,
             paging:  true,
             pagingType: "full_numbers",

@@ -40,9 +40,8 @@ trait ClientesTraits
 
     $months = lstMonthsSpanish(false);
     unset($months[0]);
-
-    User::create_altaBajas($year, $month);
     $oUser = new User();
+    $oUser->create_altaBajas($year, $month);
     $oRates = Rates::orderBy('type', 'desc')->orderBy('name', 'desc')->get();
     $detail = [];
     $payments = $noPay = 0;
@@ -87,7 +86,6 @@ trait ClientesTraits
     }
 
     $sqlUsers->with('userCoach');
-
     if ($fRate) {
       $sqlUsers->join('users_rates', function ($join) {
         $join->on('users.id', '=', 'users_rates.id_user');
@@ -189,7 +187,19 @@ trait ClientesTraits
       $cFRates[$k]->ids = explode(',',$item->ids);
     }
 
+    ob_start();
+    $this->getAltasBajas($month);
+    $altasBajas = ob_get_contents();
+    ob_clean();
 
+
+
+    $lstAltBaj = DB::select('SELECT rate_type, active, user_id FROM `user_alta_baja` WHERE rate_type IN (1,2) AND `year_month` ="'.$year . '-' . $month.'" ORDER BY active');
+    $aLstAltBaj = [];
+    foreach ($lstAltBaj as $item) {
+      if (!array_key_exists($item->user_id,$aLstAltBaj)) $aLstAltBaj[$item->user_id] = [];
+      $aLstAltBaj[$item->user_id][] = ['rt'=>$item->rate_type,'active'=>$item->active];
+    }
     return view('/admin/usuarios/clientes/index', [
       'users' => $users,
       'month' => $month,
@@ -213,6 +223,8 @@ trait ClientesTraits
       'unsubscribeds' => $unsubscribeds,
       'tit' => $tit,
       'total_pending' => array_sum($arrayPaymentMonthByUser),
+      'altasBajas' => $altasBajas,
+      'aLstAltBaj' => $aLstAltBaj,
     ]);
   }
 
@@ -939,82 +951,35 @@ trait ClientesTraits
 
       $sueloPelvico  = Rates::where('name', 'like', '%pelvico%')->pluck('id')->toArray();
       $sueloPelvico = implode(',', $sueloPelvico);
-      $rUsersAlt = $rUsersBaja = $rUsers =  [
+      $aUsersAlt = $aUsersBaja = [
         1 => 0, //Membresias
         2 => 0, //pt
         8 => 0, // Fisioterapia  (tood menos suelo pelvico)
         0 => 0,
         10 => 0, // nutricion
-        12 => 0 // Estetica
+        12 => 0, // Estetica
+        99 => 0 // suelo pelvico
+      ];
+      $rTypes =  [
+        1 => 'Membresias',
+        2 => 'P.T.', //
+        8 => 'Fisioterapia',
+        0 => 0,
+        10 => 'Nutrición', // nutricion
+        12 => 'Estética', // Estetica
+        99 => 'Suelo Pelvico' // suelo pelvico
       ];
 
-      $date = date('Y-m-d', strtotime($year . '-' . $month . '-01' . ' -1 month'));
+      $sql = 'SELECT rate_type, active, count(*) as cant FROM `user_alta_baja` WHERE `year_month`="'.$year . '-' . $month.'" GROUP BY rate_type, active;';
 
-      $sqlDate = [];
-      $monthAux = date('m', strtotime($date));
-      $yearAux = date('Y', strtotime($date));
-      for ($i = 0; $i < 3; $i++) {
-
-        $sqlDate[] = "( rate_month = $monthAux AND rate_year = $yearAux)";
-        $next = strtotime($date . ' +1 month');
-        $date = date('Y-m-d', $next);
-        $monthAux = date('m', $next);
-        $yearAux = date('Y', $next);
-      }
-
-      $sqlDate = '(' . implode(' OR ', $sqlDate) . ')';
-
-
-
-      $sql = 'SELECT user_alta_baja.user_id,rates.type,users.status 
-      FROM `user_alta_baja` 
-      INNER JOIN users ON users.id = user_alta_baja.user_id 
-      LEFT JOIN users_rates ON users_rates.id_user = user_alta_baja.user_id 
-      INNER JOIN rates ON rates.id = users_rates.id_rate 
-      WHERE `users_rates`.`deleted_at` is null
-      AND users_rates.id_rate NOT IN (' . $sueloPelvico . ') 
-      AND `user_alta_baja`.`year_month` = "' . $year . '-' . $month . '"
-      AND ' . $sqlDate . '
-      GROUP BY user_alta_baja.user_id,rates.type ,users.status';
-
-      $lstUsrTypeRate = DB::select($sql);
-      foreach ($lstUsrTypeRate as $u) {
-        if (isset($rUsers[$u->type])) {
-          if ($u->status == 1) $rUsersAlt[$u->type]++;
-          else $rUsersBaja[$u->type]++;
+      $lstItems = DB::select($sql);
+      foreach ($lstItems as $item) {
+        if ($item->active == 0){
+          $aUsersBaja[$item->rate_type] = $item->cant;
+        } else {
+          $aUsersAlt[$item->rate_type] = $item->cant;
         }
       }
-
-
-
-
-      /** sueloPelvico */
-      $sql = 'SELECT user_alta_baja.user_id,users.status 
-        FROM `user_alta_baja` 
-        INNER JOIN users ON users.id = user_alta_baja.user_id 
-        LEFT JOIN users_rates ON users_rates.id_user = user_alta_baja.user_id 
-        WHERE `users_rates`.`deleted_at` is null 
-        AND users_rates.id_rate IN (' . $sueloPelvico . ') 
-        AND `user_alta_baja`.`year_month` = "' . $year . '-' . $month . '"
-        AND ' . $sqlDate . '
-        GROUP BY user_alta_baja.user_id,users.status
-      ';
-
-      $lstUsrTypeRate = DB::select($sql);
-      foreach ($lstUsrTypeRate as $u) {
-
-        if ($u->status == 1) $rUsersAlt[0]++;
-        else $rUsersBaja[0]++;
-      }
-      /** sueloPelvico */
-
-
-
-
-
-
-
-
       include_once dirname(dirname(__FILE__)) . '/Helps/AltasBajasRates.php';
     }
   }
@@ -1108,14 +1073,6 @@ trait ClientesTraits
         $rUsers[0]++;
       }
       /** sueloPelvico */
-
-
-
-
-
-
-
-
       include_once dirname(dirname(__FILE__)) . '/Helps/RatesFamilyCount.php';
     
   }

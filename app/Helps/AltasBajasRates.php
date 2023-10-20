@@ -8,36 +8,13 @@
   </thead>
   <tbody>
     <?php
-    foreach ($rUsersAlt as $k => $v) :
+    foreach ($rTypes as $k => $v) :
     ?>
 
       <tr>
-        <td>
-          <?php
-          switch ($k) {
-            case 1:
-              echo 'Membresias';
-              break;
-            case 8:
-              echo 'Fisioterapia';
-              break;
-            case 2:
-              echo 'P.T.';
-              break;
-            case 0:
-              echo 'Suelo Pelvico';
-              break;
-            case 10:
-              echo 'Nutrición';
-              break;
-            case 12:
-              echo 'Estética';
-              break;
-          }
-          ?>
-        </td>
         <td><?= $v ?></td>
-        <td><?= $rUsersBaja[$k] ?></td>
+        <td><?= (array_key_exists($k,$aUsersAlt)) ? $aUsersAlt[$k] : 0; ?></td>
+        <td><?= (array_key_exists($k,$aUsersBaja)) ? $aUsersBaja[$k] : 0; ?></td>
       </tr>
     <?php
     endforeach;

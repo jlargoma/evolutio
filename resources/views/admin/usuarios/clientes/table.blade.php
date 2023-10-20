@@ -27,6 +27,8 @@ function printIconRate($uRates){
             <th class="text-center tc0 hidden-xs hidden-sm"></th>
             <th class="text-center tc1">Nombre Cliente<br></th>
             <th class="text-center tc2">Acciones</th>
+            <th class="text-center tc2">Altas / Bajas</th>
+            <th class="text-center tc2">Tarifa</th>
             <th class="text-center tc3">Tel<span class="hidden-xs hidden-sm">éfono</span><br></th>
             <th class="text-center tc4">
                 <?php
@@ -88,6 +90,22 @@ function printIconRate($uRates){
                     </button>
                   </div>
                 </td>
+                <?php if (array_key_exists($user->id,$aLstAltBaj)) : 
+                  $auxRate = $auxActive = [];
+                  foreach($aLstAltBaj[$user->id] as $altBaj){
+                    $auxRate[] = ($altBaj['active'] == 0) ? 'BAJA' : 'ALTA';
+                    if ($altBaj['rt'] == 1) $auxActive[] = 'Membresias';
+                    if ($altBaj['rt'] == 2) $auxActive[] = 'P.T.';
+                  }
+                  
+                  ?>
+                  <td class="text-center tc3"><?php echo implode('<br>',$auxRate)?></td>
+                  <td class="text-center tc3"><?php echo implode('<br>',$auxActive)?></td>
+                <?php else : ?>
+                  <td class="text-center tc3"></td>
+                  <td class="text-center tc3"></td>
+                <?php endif; ?>
+              
                 <td class="text-center tc3">
                     <span class="hidden-xs hidden-sm"><?php echo $user->telefono; ?></span>
                     <span class="hidden-lg hidden-md">
