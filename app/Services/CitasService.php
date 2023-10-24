@@ -47,6 +47,7 @@ class CitasService {
       $indiba = $oDate->getMetaContent('indiba');
       $motive = $oDate->getMetaContent('motive');
       $id_room = $oDate->getMetaContent('room');
+      $observ = $oDate->getMetaContent('observ');
 
       $equip_a = $equip_b = $equip_c = null;
       if ($oDate->date_type == 'esthetic'){
@@ -99,6 +100,7 @@ class CitasService {
           'tColors' => $tColors,
           'id_room' => $id_room,
           'extrs' => $extrs,
+          'observ' => $observ,
       ];
     }
     return null;
@@ -144,7 +146,8 @@ class CitasService {
         'blocked' => false,
         'urlBack' => self::get_urlBack($type, date('Y-m-d', $date)),
         'tColors' => $tColors,
-        'extrs'   => ''
+        'extrs'   => '',
+        'observ'   => '',
     ];
   }
 

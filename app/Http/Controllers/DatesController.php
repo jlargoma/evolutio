@@ -73,6 +73,7 @@ class DatesController extends Controller {
     $date = $request->input('date');
     $hour = $request->input('hour');
     $cHour = $request->input('customTime');
+    $observ = $request->input('observ');
     $isGroup = ($request->input('is_group') == 'on');
     $timeCita = strtotime($date);
     /* -------------------------------------------------------------------- */
@@ -332,6 +333,7 @@ class DatesController extends Controller {
 
       $roomID = $request->input('id_room');
       $oObj->setMetaContent('room', $roomID);
+      $oObj->setMetaContent('observ', $observ);
       
       $equipments = ['ecogr', 'indiba', 'equip_a', 'equip_b', 'equip_c' ];
       foreach($equipments as $eq){ $oObj->setMetaContent($eq, 0); }

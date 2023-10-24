@@ -93,7 +93,11 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
           Listado x Bonos
         </button>
       </a>
-
+      <a href="{{url('/admin/clientes/'.$month)}}?status=new_unsubscribeds" class="inline">
+        <button class="btn btn-md btn-primary">
+        alta/bajas ({{$newUsers}})
+        </button>
+      </a>
     </div> 
     <div class="col-xs-8 col-md-2 pull-right">
       @if ($noPay > 0)

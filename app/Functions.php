@@ -295,6 +295,7 @@ function payMethod($i = null) {
       'card' => 'Tarjeta',
       'banco' => 'Banco',
       'bono' => 'Bono',
+      'invita' => 'Invit. Evolutio',
   ];
 
   if ($i) {

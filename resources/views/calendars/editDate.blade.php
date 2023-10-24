@@ -111,7 +111,7 @@
       </select>
     </div>
 
-    <div class="col-xs-8 col-md-7  push-20 block-icons-form">
+    <div class="col-xs-8 col-md-5  push-20 block-icons-form">
 
       @if($date_type=='fisio' )
       <div class=" checkbox_ecogr <?php echo (isset($ecogr) && $ecogr == 1) ? "active" : ''; ?>">
@@ -139,11 +139,19 @@
       </div>
       @endif
     </div>
-    <div class="col-xs-12 col-md-3  push-20 ">
+    <div class="col-xs-8 col-md-5  push-20">
+      <label >Observaciones</label>
+      <textarea class="form-control" name="observ" id="observ" rows="6">{{$observ}}</textarea>
+    </div>
+    </div>
+    <div class="row">
+    <div class="col-xs-12 col-md-4"></div>
+    <div class="col-xs-12 col-md-4  push-20 ">
       <label for="id_type_rate" class="btnExtr">+ Servicios <i class="fa fa-pencil"></i></label>
       <input type="hidden" name="extrIDs" id="extrIDs" value="<?= $extrs?>">
       <ul class="lstextr"></ul>
     </div>
+    <div class="col-xs-12 col-md-4"></div>
   </div>
   <div class="table-responsive tableExtrs" style="display:none">
     <table class="table">
