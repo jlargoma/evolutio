@@ -35,6 +35,10 @@ $filt_month = intVal($filt_month);
     margin-top: 6px;
     margin-right: 1em;
 }
+tr.payType_PENDIENTE td.price,
+tr.payType_PENDIENTE td.typePay {
+    color: red;
+}
 </style>
 @endsection
 @section('content')

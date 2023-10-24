@@ -37,13 +37,13 @@
                 echo (isset($aTRates[$ur->id_rate])) ? $aTRates[$ur->id_rate] : ' - ';
                 ?>
             </td>
-            <td class="text-center"><?php echo ($charge) ? $charge['import'] : moneda($ur->price,false,1);?></td>
+            <td class="text-center price"><?php echo ($charge) ? $charge['import'] : moneda($ur->price,false,1);?></td>
             <td class="text-center">
             <?php 
                 show_isset($ur->rate_month,$months);
               ?>
             </td>
-            <td class="text-center">{{$rPayType}}</td>
+            <td class="text-center typePay">{{$rPayType}}</td>
             <td class="text-center">
               <?php 
                $coach = '--';
