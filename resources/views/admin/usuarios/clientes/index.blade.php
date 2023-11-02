@@ -98,6 +98,19 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
         alta/bajas ({{$newUsers}})
         </button>
       </a>
+      <div style="display: inline-block;">
+          <select id="filterByRate" class="form-control mt-1" data-url="{{url('/admin/clientes/'.$month)}}">
+            <option value="">Filtrar Por Familia</option>
+          <?php 
+          
+          foreach ($rFamilyName as $rID => $rName): 
+            $cant = isset($rFamilyQty[$rID]) ? $rFamilyQty[$rID] : 0;
+          ?>
+          <option value="<?= $rID ?>" <?= ($fFamily == $rID) ? 'selected' : '' ?>><?php echo str_replace('<br>', ': ',$rName);?></option>
+            <?php
+            endforeach;?>
+          </select>
+        </div>
     </div> 
     <div class="col-xs-8 col-md-2 pull-right">
       @if ($noPay > 0)
@@ -151,19 +164,18 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
       $('#filterByRate').on('change',function(){
         var url = $(this).data('url');
         var val = $(this).val();
-        console.log(val);
-        if (val != ''){
+        
           var urlAux = document.location.href;
           var urlParams = urlAux.substring(urlAux.indexOf('?') + 1);
           const searchParams = new URLSearchParams(urlParams);
           if (searchParams.has("fFamily")){
             searchParams.delete("fFamily");
           }
+          if (val != ''){
           searchParams.set("fFamily", val)
+          }
           window.location.href = url+'?'+searchParams.toString();
-          //console.log(searchParams.toString());
-
-        }
+       
       });
 
 
