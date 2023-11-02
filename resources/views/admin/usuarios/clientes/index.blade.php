@@ -156,7 +156,7 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
 @include('/admin/usuarios/clientes/modals')
 @endsection
 
-
+resources/views/admin/usuarios/clientes/index.blade.php
 @section('scripts')
   <script type="text/javascript">
     var dataTableClient = 1
@@ -165,16 +165,19 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
         var url = $(this).data('url');
         var val = $(this).val();
         
-          var urlAux = document.location.href;
-          var urlParams = urlAux.substring(urlAux.indexOf('?') + 1);
-          const searchParams = new URLSearchParams(urlParams);
-          if (searchParams.has("fFamily")){
-            searchParams.delete("fFamily");
-          }
-          if (val != ''){
+        var urlAux = document.location.href;
+        var urlParams = urlAux.substring(urlAux.indexOf('?') + 1);
+        var searchParams = null;
+        if (urlAux.indexOf('?')>1) searchParams = new URLSearchParams(urlParams);
+        else searchParams = new URLSearchParams();
+        
+        if (searchParams.has("fFamily")){
+          searchParams.delete("fFamily");
+        }
+        if (val != ''){
           searchParams.set("fFamily", val)
-          }
-          window.location.href = url+'?'+searchParams.toString();
+        }
+        window.location.href = url+'?'+searchParams.toString();
        
       });
 
