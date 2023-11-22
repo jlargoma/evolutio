@@ -156,7 +156,6 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
 @include('/admin/usuarios/clientes/modals')
 @endsection
 
-resources/views/admin/usuarios/clientes/index.blade.php
 @section('scripts')
   <script type="text/javascript">
     var dataTableClient = 1

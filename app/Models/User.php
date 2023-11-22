@@ -249,7 +249,7 @@ class User extends Authenticatable
   {
 
     $create = false;
-
+    if ((date('Y') == $year && date('m') < $month) || date('Y') < $year ) return;
     if (date('Y') == $year && date('m') == $month) {
       DB::table('user_alta_baja')->where('year_month', $year . '-' . $month)->delete();
       $create = true;
@@ -354,10 +354,30 @@ class User extends Authenticatable
   static function altaBajas($year, $month)
   {
 
-    $sql = User::select('users.*','user_alta_baja.rate_type','user_alta_baja.active')->join('user_alta_baja', function ($join) {
-      $join->on('users.id', '=', 'user_alta_baja.user_id');
-    })->where('year_month', $year . '-' . $month);
+    // $sql = User::select('users.*','user_alta_baja.rate_type','user_alta_baja.active')->join('user_alta_baja', function ($join) {
+    //   $join->on('users.id', '=', 'user_alta_baja.user_id');
+    // })->where('year_month', $year . '-' . $month)->whereIn('rate_type', [1,2]);
+
+    $lstAltBaj = UsersSuscriptions::where(function($query) use ($year, $month) {
+          $query->whereYear('deleted_at', $year)->whereMonth('deleted_at',$month);
+      })->orWhere(function($query) use ($year, $month) {
+        $query->whereYear('created_at', $year)->whereMonth('deleted_at',$month);
+    })->withTrashed()->get();
+    $uIDs = [];
+    if ($lstAltBaj){
+      foreach ($lstAltBaj as $item) {
+        $uIDs[$item->id_user] = $item->id_user;
+      }
+    }
+
+
+    $sql = User::whereIn('id',$uIDs);
+
+
+
+
     return $sql;
+
   }
 
   static function usersRatesFamilyMonths($year, $month, $fFamily)

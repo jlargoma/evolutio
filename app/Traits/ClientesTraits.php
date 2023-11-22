@@ -20,6 +20,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\UsersExport;
 use App\Models\UserBonos;
 use App\Models\Settings;
+use App\Models\UsersSuscriptions;
 use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 
 trait ClientesTraits
@@ -107,7 +108,7 @@ trait ClientesTraits
     //---------------------------------------------//
     $aRates = [];
     $typeRates = TypesRate::pluck('name', 'id');
-
+    $aRateType = [];
     //    $oRates = Rates::whereIn('type', $typeRates)->get();
     $rPrices = $rNames = [];
     if ($oRates) {
@@ -117,6 +118,7 @@ trait ClientesTraits
         $rNames[$r->id] = $r->name;
         if (isset($typeRates[$r->type])) {
           $rNames[$r->id] = $typeRates[$r->type] . '<br>' . $r->name;
+          $aRateType[$r->id] = $typeRates[$r->type];
         }
       }
     }
@@ -174,8 +176,6 @@ trait ClientesTraits
       10 => 'Nutrición',
       12 => 'Estetica',
     ];
-    /*new users*/
-    $newUsers = User::altaBajas($year, $month)->count();
     $unsubscribeds = 0;
     $selectYear = $year;
     $year = getYearActive();
@@ -193,13 +193,27 @@ trait ClientesTraits
     ob_clean();
 
 
+    $newUsers = 0;
+    //$lstAltBaj = DB::select('SELECT rate_type, active, user_id FROM `user_alta_baja` WHERE rate_type IN (1,2) AND `year_month` ="'.$year . '-' . $month.'" ORDER BY active');
 
-    $lstAltBaj = DB::select('SELECT rate_type, active, user_id FROM `user_alta_baja` WHERE rate_type IN (1,2) AND `year_month` ="'.$year . '-' . $month.'" ORDER BY active');
+    $lstAltBaj = UsersSuscriptions::where(function($query) use ($year, $month) {
+            $query->whereYear('deleted_at', $year)->whereMonth('deleted_at',$month);
+        })->orWhere(function($query) use ($year, $month) {
+          $query->whereYear('created_at', $year)->whereMonth('deleted_at',$month);
+      })->withTrashed()->get();
     $aLstAltBaj = [];
     foreach ($lstAltBaj as $item) {
-      if (!array_key_exists($item->user_id,$aLstAltBaj)) $aLstAltBaj[$item->user_id] = [];
-      $aLstAltBaj[$item->user_id][] = ['rt'=>$item->rate_type,'active'=>$item->active];
+      if (isset($aRateType[$item->id_rate])){
+        $auxRate = $aRateType[$item->id_rate];
+        if (!array_key_exists($item->id_user,$aLstAltBaj)) $aLstAltBaj[$item->id_user] = [];
+        $aLstAltBaj[$item->id_user][$auxRate] = [
+          'rt'=>$auxRate,
+          'active'=>($item->deleted_at ? 0 : 1 )];
+        }
     }
+    $newUsers = count($aLstAltBaj);
+
+
     return view('/admin/usuarios/clientes/index', [
       'users' => $users,
       'month' => $month,
@@ -579,7 +593,7 @@ trait ClientesTraits
     $oObj->coach_id = $request->input('id_rateCoach');
     $oObj->save();
 
-    $oObj = new \App\Models\UsersSuscriptions();
+    $oObj = new UsersSuscriptions();
     $oObj->id_user = $uID;
     $oObj->id_rate = $rID;
     $oObj->price = $price;
@@ -599,7 +613,7 @@ trait ClientesTraits
   {
     $subscr_id = $request->input('subscr_id');
     $price = $request->input('price');
-    $oObj = \App\Models\UsersSuscriptions::find($subscr_id);
+    $oObj = UsersSuscriptions::find($subscr_id);
     if (!is_numeric($price) || $price < 0)
       return response()->json(['error', 'El valor debe ser mayor o igual a 0€']);
 
@@ -617,7 +631,7 @@ trait ClientesTraits
    */
   public function rmSubscr($uID, $id)
   {
-    $oObj = \App\Models\UsersSuscriptions::find($id);
+    $oObj = UsersSuscriptions::find($id);
     if (!$oObj || $oObj->id_user != $uID) {
       return redirect('/admin/usuarios/informe/' . $uID . '/servic')->withErrors(['Servicio no encontrada']);
     }

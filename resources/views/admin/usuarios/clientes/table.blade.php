@@ -94,8 +94,7 @@ function printIconRate($uRates){
                   $auxRate = $auxActive = [];
                   foreach($aLstAltBaj[$user->id] as $altBaj){
                     $auxRate[] = ($altBaj['active'] == 0) ? 'BAJA' : 'ALTA';
-                    if ($altBaj['rt'] == 1) $auxActive[] = 'Membresias';
-                    if ($altBaj['rt'] == 2) $auxActive[] = 'P.T.';
+                    $auxActive[] = $altBaj['rt'];
                   }
                   
                   ?>
