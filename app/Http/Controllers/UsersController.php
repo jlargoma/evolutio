@@ -349,6 +349,7 @@ class UsersController extends Controller {
     // else die('ERROR');
     if ($usuario->save()) {
       $usuario->newMetaContent('disable',Auth::user()->id);
+      \App\Models\UsersSuscriptions::where('id_user',$usuario->id)->delete();
       return redirect()->back()->with('success', 'usuario desactivado');
       if ($usuario->role == 'admin') {
         return redirect('/admin/usuarios');

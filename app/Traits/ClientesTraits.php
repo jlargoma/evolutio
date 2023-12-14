@@ -199,7 +199,7 @@ trait ClientesTraits
     $lstAltBaj = UsersSuscriptions::where(function($query) use ($year, $month) {
             $query->whereYear('deleted_at', $year)->whereMonth('deleted_at',$month);
         })->orWhere(function($query) use ($year, $month) {
-          $query->whereYear('created_at', $year)->whereMonth('deleted_at',$month);
+          $query->whereYear('created_at', $year)->whereMonth('created_at',$month);
       })->withTrashed()->get();
     $aLstAltBaj = [];
     foreach ($lstAltBaj as $item) {
