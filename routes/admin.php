@@ -86,6 +86,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::get('/citas/create/createSchedules', 'DatesController@createSchedules');
   Route::get('/citas/delete/{id}', 'DatesController@delete');
   Route::post('/citas/create', 'DatesController@create');
+  Route::post('/citas/createMultip', 'DatesController@createMultip');
   Route::post('/citas/createAdvanced', 'DatesController@createAdvanced');
   Route::post('/citas/chargeAdvanced', 'DatesController@chargeAdvanced');
   Route::get('/citas/charge', 'DatesController@chargeDate');

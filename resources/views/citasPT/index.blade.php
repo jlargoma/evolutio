@@ -35,6 +35,7 @@
         <div class="col-md-2 mx-1em">
           <button class="btn btn-horarios" data-toggle="modal" data-target="#modalIfrm">Horarios</button>
           <button class="btn btn-bloqueo" data-toggle="modal" data-target="#modalIfrm">Bloqueos</button>
+          <button class="btn btn-mult" data-toggle="modal" data-target="#modalMultGroup">Multiples</button>
         </div>
       </div>
       <div class="row">  

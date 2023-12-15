@@ -762,4 +762,54 @@ class DatesController extends Controller {
 
     return $data;
   }
+
+
+
+  public function createMultip(Request $request) {
+
+    $dates = $request->input('dates', null);
+    $times = $request->input('times', null);
+    $id_rate = $request->input('id_rate');
+    $id_coach = $request->input('id_coach');
+
+    /* -------------------------------------------------------------------- */
+    $validated = $this->validate($request, [
+        'dates' => 'required',
+        'id_rate' => 'required',
+        'id_coach' => 'required',
+        'times' => 'required',
+            ], [
+        'dates.required' => 'Fecha requerida',
+        'id_rate.required' => 'Tarifa requerida',
+        'id_coach.required' => 'Coach requerido',
+        'times.required' => 'Horarios requeridos',
+    ]);
+
+    foreach($dates as $k=>$date){
+      if (!$times[$k]) continue;
+      $sTime = explode(',',$times[$k]);
+      foreach($sTime as $t){
+
+        $time = str_pad($t, 2, "0", STR_PAD_LEFT).':00:00';
+        $date_compl = $date.' '. $time;
+
+        $oObj = new Dates();
+        $oObj->id_rate = $id_rate;
+        $oObj->id_coach = $id_coach;
+        $oObj->date_type = 'pt';
+        $oObj->date = $date_compl;
+        $oObj->customTime = $time;
+        $oObj->price = 0;
+        $oObj->id_user = 0;
+        $oObj->blocked = 1;
+        $oObj->is_group = 1;
+        $oObj->save();
+
+
+      }
+    }
+
+    return redirect('/admin/citas-pt')->with(['success'=>'Registro guardado']);
+
+  }
 }

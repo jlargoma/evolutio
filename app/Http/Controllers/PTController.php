@@ -37,6 +37,7 @@ class PTController extends Controller {
         $rslt['calendar'] = $calendar['days'];
         $rslt['month'] = $month;
         $rslt['tColors'] = $this->changeColors($rslt['tColors']);
+        $rslt['services'] = Rates::getByTypeRate('pt');
         /*******************************************/
         return view('citasPT.index', $rslt);
     }
