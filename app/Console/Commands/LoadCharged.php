@@ -51,7 +51,6 @@ class LoadCharged extends Command
         ->where('rate_year', $year)->leftJoin('charges', 'id_charges', 'charges.id')->get();
       foreach ($uRates as $item) {
         if ($item->import != $item->charged || $item->type_payment != $item->charged_method){
-          dd($item);
           UserRates::where('id', $item->id)
           ->update(['charged' => $item->import, 'charged_method' => $item->type_payment]);
         }
