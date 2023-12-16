@@ -26,9 +26,9 @@ class ConveniosController extends Controller {
     $aMonth = [1=>0,2=>0,3=>0,4=>0,5=>0,6=>0,7=>0,8=>0,9=>0,10=>0,11=>0,12=>0];
     $tConvenio = [];
     $convLstRates = [];
+    $totals = $aMonth;
     foreach($lstObjs as $item){
       $crLst = [];
-      $totals = $aMonth;
       $tConvenio[$item->id] = $aMonth;
       $convLstRates[$item->id] = null;
       $uConvenios = User::where('convenio',$item->id)->get()->pluck('id');
