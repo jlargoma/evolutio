@@ -189,6 +189,13 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::post('/caja-diaria-cierre', 'CashBoxsController@close');
   Route::post('/gastos/create', 'ExpensesController@create');
 
+  /* convenios */
+  Route::get('/convenios/listado', 'ConveniosController@index');
+  Route::post('/convenios/new', 'ConveniosController@newItem');
+  Route::get('/convenios/update', 'ConveniosController@update');
+  Route::post('/convenios/delete', 'ConveniosController@delete');
+
+
   Route::get('', function () {
     return redirect('admin/clientes');
   });

@@ -21,6 +21,7 @@ class Kernel extends ConsoleKernel
       Commands\RememberPayment::class,
       Commands\RememberPaymentAgain::class,
       Commands\SubscEvolutioTv::class,
+      Commands\LoadCharged::class,
       Commands\Tasks::class,
     ];
 
@@ -33,6 +34,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
 //      $schedule->command('inspire')->hourly();   
+      $schedule->command('LoadCharged:proccess')->hourly();   
       $schedule->command('Subscriptions:createRates')->dailyAt('3:00');
       $schedule->command('InfoMonth:weekStatus')->weeklyOn(7, '9:00');
       $schedule->command('Remember:appointment')->dailyAt('7:00');

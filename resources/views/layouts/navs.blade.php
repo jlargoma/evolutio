@@ -28,6 +28,9 @@ $uRole = Auth::user()->role;
       <i class="fa fa-calendar-o"></i><span class="sidebar-mini-hide font-w600">ESTÉTICA</span>
     </a>
   </li>
+  <li class="{{ $path == 'admin/convenios' ? 'active' : '' }}">
+    <a href="{{url('/admin/convenios/listado')}}" class="font-w600"><i class="fa fa-thumb-tack"></i> <span class="sidebar-mini-hide font-w600">Convenios</span></a>
+  </li>
   <li class="{{ $path == 'admin/tarifas' ? 'active' : '' }}">
     <a href="{{url('/admin/tarifas/listado')}}" class="font-w600"><i class="fa fa-thumb-tack"></i> <span class="sidebar-mini-hide font-w600">Servicios</span></a>
   </li>
