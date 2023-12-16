@@ -213,6 +213,7 @@ class UsersController extends Controller {
     $userToUpdate->address = $request->input('address');
     $userToUpdate->status = $request->input('status');
     $userToUpdate->visa = $request->input('visa');
+    $userToUpdate->convenio = $request->input('convenio');
       
     if ($request->input('password'))
       $userToUpdate->password = bcrypt($request->input('password'));

@@ -506,6 +506,8 @@ trait ClientesTraits
       }
     }
     /********************************/
+    $lstConvenios = \App\Models\Convenios::all();
+    /********************************/
     return view('/admin/usuarios/clientes/informe', [
       'aRates' => $aRates,
       'atypeRates' => $typeRates,
@@ -548,6 +550,7 @@ trait ClientesTraits
       'seeClinicalHistorySP' => $seeClinicalHistorySP,
       'photo' => $photo,
       'hasPhoto' => $hasPhoto,
+      'lstConvenios' => $lstConvenios,
     ]);
   }
 

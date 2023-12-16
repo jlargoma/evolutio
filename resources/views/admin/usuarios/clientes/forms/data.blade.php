@@ -32,9 +32,17 @@
       <input type="text" id="address" class="form-control" name="address" value="<?php echo $user->address ?>">
       <label for="email">Dirección</label>
     </div>
+    <div class="form-material mt-5">
+      <select name="convenio" id="convenio" class="form-control">
+        <option value="">Ninguno</option>
+        @foreach($lstConvenios as $oConv)
+        <option value="{{$oConv->id}}" @if( $oConv->id == $user->convenio) selected @endif >{{$oConv->name}}</option>
+        @endforeach
+      </select>
+      <label for="convenio">Convenio</label>
+    </div>
   </div>
   <div class="col-md-3 box-photo">
-
   <?php
     if ($hasPhoto) echo '<img src="/img/camera.webp"  class=" showImg photo" alt="Mostrat foto" style="cursor: pointer;">';
     else echo '<img src="/img/userIcondefault.png"  class="photo" >';
@@ -49,6 +57,10 @@
         <input type="file" name="f_photoMobil" accept="image/*" capture="user">
         <i class="fa fa-cloud-upload"></i> Tomar una Foto
       </label>
+      <br>
+      <button class="btn btn-success" type="submit">
+      <i class="fa fa-floppy-o" aria-hidden="true"></i> Actualizar
+    </button>
     </div>
   </div>
   <div class="col-md-6 hidden">
@@ -57,6 +69,7 @@
       <label for="password">Contraseña</label>
     </div>
   </div>
+  <div class="col-md-2 col-xs-6 mt-1">&nbsp;</div>
   <div class="col-md-2 col-xs-6 mt-1 fFIDELITY">
     <select name="fidelity" class="form-control">
       <option value="none" <?php if($uPlan == 'none') echo "selected"; ?>>SIN PLAN</option>
@@ -72,17 +85,13 @@
       <option value="1" <?php if($user->visa == 1) echo "selected"; ?>>Con tarj</option>
     </select>
   </div>
-  <div class="col-md-1 col-xs-6 mt-1">
-    <select name="status" class="form-control">
+  <div class="col-md-2 col-xs-6 mt-1">
+  <select name="status" class="form-control">
       <option value="1" <?php if($user->status == 1) echo "selected"; ?>>Activo</option>
       <option value="0" <?php if($user->status != 1) echo "selected"; ?>>No Activo</option>
     </select>
   </div>
-  <div class="col-md-1 col-xs-6 mt-1">
-    <button class="btn btn-success" type="submit">
-      <i class="fa fa-floppy-o" aria-hidden="true"></i> Actualizar
-    </button>
-  </div>
+
 </form>
 
 
