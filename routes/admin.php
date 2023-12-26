@@ -194,7 +194,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::post('/convenios/new', 'ConveniosController@newItem');
   Route::get('/convenios/update', 'ConveniosController@update');
   Route::post('/convenios/delete', 'ConveniosController@delete');
-
+  Route::get('/convenios/informes/{month?}/{convenio?}', 'ConveniosController@informeConvenios');
 
   Route::get('', function () {
     return redirect('admin/clientes');

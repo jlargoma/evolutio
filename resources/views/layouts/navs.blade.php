@@ -28,9 +28,6 @@ $uRole = Auth::user()->role;
       <i class="fa fa-calendar-o"></i><span class="sidebar-mini-hide font-w600">ESTÉTICA</span>
     </a>
   </li>
-  <li class="{{ $path == 'admin/convenios' ? 'active' : '' }}">
-    <a href="{{url('/admin/convenios/listado')}}" class="font-w600"><i class="fa fa-thumb-tack"></i> <span class="sidebar-mini-hide font-w600">Convenios</span></a>
-  </li>
   <li class="{{ $path == 'admin/tarifas' ? 'active' : '' }}">
     <a href="{{url('/admin/tarifas/listado')}}" class="font-w600"><i class="fa fa-thumb-tack"></i> <span class="sidebar-mini-hide font-w600">Servicios</span></a>
   </li>
@@ -73,6 +70,18 @@ $uRole = Auth::user()->role;
     <a href="{{url('/admin/settings_msgs')}}" class="font-w600"><i class="fa fa-building"></i> <span class="sidebar-mini-hide font-w600">Txt Mails</span></a>
   </li>
 
+  <li class="subMenu <?php echo str_contains($path,'admin/convenio') ? 'opened' : 'open' ?>">
+    <i class="fa fa-files-o" style="margin-right: 15px;"></i> <span class="sidebar-mini-hide font-w600 ">  Convenios</span>
+    <ul>
+    <li class="<?php echo str_contains($path,'convenios/listado') ? 'active' : '' ?>">
+       <a href="{{url('/admin/convenios/listado')}}" class="font-w600"><i class="fa fa-thumb-tack"></i> <span class="sidebar-mini-hide font-w600">Convenios</span></a>
+      </li>
+      <li class="<?php echo str_contains($path,'admin/convenios/informes') ? 'active' : '' ?>">
+        <a href="{{url('/admin/convenios/informes/')}}" class="font-w600"><i class="fa fa-files-o"></i> <span class="sidebar-mini-hide font-w600">Informes</span></a>
+      </li>
+    </ul>
+  </li>
+  
   @endif
   
   @if($uRole == "administrativo")
