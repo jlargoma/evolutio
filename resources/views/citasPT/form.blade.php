@@ -39,6 +39,7 @@ jQuery(function () {
             $.get('/admin/get-mail/' + id, function(data) {
                 $('#NC_email').val(data[0]);
                 $('#NC_phone').val(data[1]);
+                $('#NC_convenio').val(data[2]);
             });
             $( "#id_rate").val(-1)
             $.get('/admin/get-rates/' + id, function(data) {

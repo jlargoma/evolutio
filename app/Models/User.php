@@ -449,4 +449,11 @@ class User extends Authenticatable
 
     return null;
   }
+
+
+  function print_convenio(){
+    if (!$this->convenio) return '--';
+    $lstConvenios = \App\Models\Convenios::all()->pluck('name','id')->toArray();
+    return array_key_exists($this->convenio,$lstConvenios) ? $lstConvenios[$this->convenio] : '--';
+  }
 }
