@@ -281,6 +281,8 @@ Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function () {
   Route::get('/dpto/contabilidad/{dpto?}', 'DptoController@perdidas_ganacias');
   Route::get('/dpto/gastos-by-byType/{typeID}/{dpto?}', 'DptoController@ExpensesbyType');
   
+  Route::post('/dpto/save_reparto', 'DptoController@saveDataReparto');
+  Route::post('/dpto/save_percents', 'DptoController@saveDataPercents');
   Route::post('/saveCustomFamilyRates', 'SettingsController@customFamilyRates');
 });
 

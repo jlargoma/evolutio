@@ -2,6 +2,8 @@
 <?php 
 $tIngr = $currentY['Ingresos'];
 $tGast = $currentY['Gastos']; 
+global $tResultado;
+$tResultado = [];
 ?>
 <h2 class="font-w600">
     Listado de Ingresos / Gastos de <b><?php echo $year?></b>
@@ -14,6 +16,7 @@ $tGast = $currentY['Gastos'];
           <th class="first-col"></th>
           <th class="">Total <br/>({{ moneda($tIngr[0])}})</th>
           @foreach($lstMonths as $k=>$v)
+          <?php $tResultado[$k] = $tIngr[$k]; ?>
           <th>{{$v}} <br/>({{ moneda($tIngr[$k])}})</th>
           @endforeach
         </tr>
@@ -41,6 +44,7 @@ $tGast = $currentY['Gastos'];
           <th class="">Total <br/>({{ moneda($tGast[0])}})</th>
           @foreach($lstMonths as $k=>$v)
           <th>{{$v}}<br/>({{ moneda($tGast[$k])}})</th>
+          <?php $tResultado[$k] -= $tGast[$k]; ?>
           @endforeach
         </tr>
        </thead>

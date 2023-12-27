@@ -83,6 +83,7 @@ function sumMonthValue($m){
     <div class="col-xs-12">
 @include('admin.contabilidad.pyg.table')
 @include('admin.contabilidad.pyg.table2')
+@include('admin.contabilidad.pyg.beneficio')
     </div>
   </div>
 </div>

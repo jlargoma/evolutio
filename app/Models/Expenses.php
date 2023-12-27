@@ -32,7 +32,8 @@ class Expenses extends Model
         'servicios_prof' => 'SERVICIOS PROF INDEPENDIENTES',
         'software' => 'SOFTWARE',
         'suministros' => 'SUMINISTROS',
-        'varios' => 'VARIOS'
+        'varios' => 'VARIOS',
+        'comisions' => 'COMISIONES',
         
     ];
   }        
@@ -49,7 +50,8 @@ class Expenses extends Model
               'marketing_y_publicidad' => 'MARKETING Y PUBLICIDAD',
               'seg_social' => 'SEGUROS SOCIALES',
               'bancarios' => 'BANCARIOS',
-              'otros' => 'RESTO DE GASTOS'
+              'otros' => 'RESTO DE GASTOS',
+              'comisions' => 'COMISIONES',
             ],
             'groups' => [
                 'alquiler_nave_y_comunidad' => 'alquileres',
@@ -74,7 +76,8 @@ class Expenses extends Model
                 'suministros' => 'suministros',
                 'limpieza' => 'suministros',
                 'impuestos' => 'impuestos',
-                'varios' => 'otros'
+                'varios' => 'otros',
+                'comisions' => 'comisions'
             ]];
         
   }

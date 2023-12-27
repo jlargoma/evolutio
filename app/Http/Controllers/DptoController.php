@@ -13,6 +13,7 @@ use App\Services\CoachLiqService;
 use App\Models\User;
 use App\Models\UserRates;
 use App\Models\DistribBenef;
+use App\Models\RepartoMensual;
 use Illuminate\Support\Facades\Auth;
 
 class DptoController extends Controller {
@@ -294,6 +295,14 @@ class DptoController extends Controller {
     //---------------------------------------------------------//
     $aux_i = $aux_e = $months_empty;
     //---------------------------------------------------------//
+    $oRepartoMensual = RepartoMensual::where('year',$year)->where('dpto',$dptoName)->first();
+    if(!$oRepartoMensual){
+      $oRepartoMensual = new RepartoMensual();
+      $oRepartoMensual->year = $year;
+      $oRepartoMensual->dpto = $dptoName;
+      $oRepartoMensual->save();
+    }
+    //---------------------------------------------------------//
     return view('admin.contabilidad.pyg.indexDpto', [
         'year' => $year,
         'lstMonths' => $lstMonths,
@@ -318,6 +327,7 @@ class DptoController extends Controller {
         'tExpenType'=>(Auth::user()->role == "admin" ) ? 'e3' : 'e2',
         'typeTit'=>$typeTit,
         'dptoName'=>$dptoName,
+        'oRepartoMensual'=>$oRepartoMensual,
     ]);
   }
 
@@ -554,4 +564,45 @@ class DptoController extends Controller {
     ];
   }
 
+  function saveDataReparto(Request $request){
+    $year = getYearActive();
+    $oRepartoMensual = RepartoMensual::where('year',$year)->where('dpto',$request->input('dpto'))->first();
+    if(!$oRepartoMensual){
+      $oRepartoMensual = new RepartoMensual();
+      $oRepartoMensual->year = $year;
+      $oRepartoMensual->dpto = $request->input('dpto');
+    }
+    $month = 'month_'.$request->input('month');
+    $oRepartoMensual->$month = $request->input('value');
+    $oRepartoMensual->save();
+    /****************** */
+    $date = "$year-".str_pad($request->input('month'), 2, "0", STR_PAD_LEFT) .'-01';
+    $gasto = Expenses::where('concept','comisions')->where('date',$date)->first();
+    if(!$gasto){
+      $gasto = new Expenses();
+      $gasto->concept = 'comisions';
+      $gasto->type = 'comisions';
+      $gasto->comment = '';
+      $gasto->date = $date;
+    }
+    $gasto->typePayment = 3;
+    $gasto->import = RepartoMensual::where('year',$year)->get()->sum($month);
+    $gasto->save();
+    /****************** */
+    return 'ok';
+  }
+  function saveDataPercents(Request $request){
+    $year = getYearActive();
+    $oRepartoMensual = RepartoMensual::where('year',$year)->where('dpto',$request->input('dpto'))->first();
+    if(!$oRepartoMensual){
+      $oRepartoMensual = new RepartoMensual();
+      $oRepartoMensual->year = $year;
+      $oRepartoMensual->dpto = $request->input('dpto');
+    }
+    $field = $request->input('field');
+    $oRepartoMensual->$field = $request->input('value');
+    $oRepartoMensual->save();
+
+    return 'ok';
+  }
 }
