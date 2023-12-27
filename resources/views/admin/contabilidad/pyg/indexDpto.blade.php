@@ -171,4 +171,5 @@ tfoot tr td {
   }
 }
 </style>
+@yield('subscripts')
 @endsection

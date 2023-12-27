@@ -51,6 +51,9 @@ foreach ($oRepartoMensual as $k => $v){
 </div>
 
 <style>
+    .benef_dpto {
+        margin-top: 1em;
+    }
     .benef_dpto input {
         width: 5em;
         padding: 4px 0px 0 4px;
@@ -62,10 +65,10 @@ foreach ($oRepartoMensual as $k => $v){
         width: 2em;
     }
     .benef_dpto th {
-        background-color: yellow;
+        background-color: #ffc000;
     }
 </style>
-@section('scripts')
+@section('subscripts')
 
 <script type="text/javascript">
     $(document).ready(function() {
