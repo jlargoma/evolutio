@@ -28,9 +28,13 @@
                     <label for="id_email">Email</label>
                     <input class="form-control" type="email" id="NC_email" name="email" placeholder="email" value="{{$email}}"/>
                 </div>
-                <div class="col-xs-12 col-md-4 push-20">
+                <div class="col-xs-12 col-md-2 push-20">
                     <label for="id_email">Teléfono</label>
                     <input class="form-control" type="text" id="NC_phone" name="phone" placeholder="Teléfono" value="{{$phone}}"/>
+                </div>
+                <div class="col-xs-12 col-md-2 push-20">
+                    <label for="id_email">Convenio</label>
+                    <input class="form-control" type="text" id="NC_convenio" name="convenio" placeholder="Convenio" @if($id>1) value="{{$oUser->print_convenio()}}" @endif readonly/>
                 </div>
             </div>
             <div class="row">
