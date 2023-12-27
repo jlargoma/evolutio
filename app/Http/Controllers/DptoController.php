@@ -301,6 +301,7 @@ class DptoController extends Controller {
       $oRepartoMensual->year = $year;
       $oRepartoMensual->dpto = $dptoName;
       $oRepartoMensual->save();
+      $oRepartoMensual = RepartoMensual::where('year',$year)->where('dpto',$dptoName)->first();
     }
     //---------------------------------------------------------//
     return view('admin.contabilidad.pyg.indexDpto', [
