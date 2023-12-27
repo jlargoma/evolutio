@@ -203,6 +203,8 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
 
 Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function () {
 
+  Route::get('/revenue', 'RevenueController@index');
+
   /* Ingresos  rutas basicas */
   Route::get('/nuevo/ingreso', 'IncomesController@newGral');
   Route::post('/ingresos/create', 'IncomesController@create');

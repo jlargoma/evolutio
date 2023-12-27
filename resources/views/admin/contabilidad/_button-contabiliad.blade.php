@@ -15,7 +15,8 @@ $items = [
     'bonos-clientes'=>'Bonos',
     'distr-beneficios'=>'DISTR. DE BENEFICIO',
     'dpto/contabilidad/fisio'=>'Contabilidad FISIO',
-    'dpto/contabilidad/estetica'=>'Contabilidad ESTÉTICA'
+    'dpto/contabilidad/estetica'=>'Contabilidad ESTÉTICA',
+    //'revenue'=>'REVENUE'
 ];
 ?>
 <div class="col-md-12 col-xs-12 push-20">
