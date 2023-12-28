@@ -148,7 +148,7 @@ class MailController extends Controller
             }
             /***********************************************************/
             $mailData['remember'] = false;
-        
+            $mailData['is_senial'] = ($oDate->senial == 1 );
         
             
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return $email.' no es un mail válido';

@@ -48,7 +48,8 @@ class CitasService {
       $motive = $oDate->getMetaContent('motive');
       $id_room = $oDate->getMetaContent('room');
       $observ = $oDate->getMetaContent('observ');
-
+      $has_senial = $oDate->getMetaContent('senial');
+      if($has_senial) $has_senial = unserialize($has_senial);
       $equip_a = $equip_b = $equip_c = null;
       if ($oDate->date_type == 'esthetic'){
         $equip_a = $oDate->getMetaContent('equip_a');
@@ -77,6 +78,9 @@ class CitasService {
           'id_user' => $id_user,
           'id_coach' => $oDate->id_coach,
           'customTime' => $oDate->customTime,
+          'time_type' => $oDate->time_type,
+          'senial' => $oDate->senial,
+          'has_senial' => $has_senial,
           'email' => $email,
           'phone' => $phone,
           'price' => $price,
@@ -133,6 +137,9 @@ class CitasService {
         'id_user' => -1,
         'id_coach' => -1,
         'customTime' => $time . ':00',
+        'time_type' => 'simpl',
+        'senial' => null,
+        'has_senial' => null,
         'email' => '',
         'phone' => '',
         'card' => null,

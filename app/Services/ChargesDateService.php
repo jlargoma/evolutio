@@ -86,4 +86,16 @@ class ChargesDateService {
     return ['OK'];
   }
 
+
+  function generatePayment3DS_senail($pID,$oData) {
+    $dID = $oData->dID;
+    $oDate = \App\Models\Dates::find($dID);
+    if($oDate){
+      $oDate->setMetaContent('senial',serialize(['price'=>15,'date'=>date('d/m/Y')]));
+      $uRates = UserRates::find($oDate->id_user_rates);
+      $uRates->price = $uRates->price-15;
+      $uRates->save();
+    }
+  }
+
 }

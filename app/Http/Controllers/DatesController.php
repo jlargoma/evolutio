@@ -75,6 +75,8 @@ class DatesController extends Controller {
     $cHour = $request->input('customTime');
     $observ = $request->input('observ');
     $isGroup = ($request->input('is_group') == 'on');
+    $senial = $request->input('senial');
+    $time_type = $request->input('time_type');
     $timeCita = strtotime($date);
     /* -------------------------------------------------------------------- */
     $oCarbon = Carbon::createFromFormat('d-m-Y H:00:00', "$date $hour:00:00");
@@ -225,6 +227,10 @@ class DatesController extends Controller {
       $id_user_rates = $uRate->id;
     }
     /* -------------------------------------------------------------------- */
+    $hasSenial = $oObj->getMetaContent('senial');
+    if($hasSenial) $senial = 2;
+    //dd($hasSenial,$senial);
+    /* -------------------------------------------------------------------- */
     $oObj->id_rate = $id_rate;
     $oObj->id_user = $id_user;
     $oObj->id_coach = $id_coach;
@@ -233,6 +239,8 @@ class DatesController extends Controller {
     $oObj->date = $date_compl;
     $oObj->customTime = $cHour;
     $oObj->updated_at = $date;
+    $oObj->senial = $senial;
+    $oObj->time_type = $time_type;
 
     if ($isGroup) {
       $oObj->price = $importe;
@@ -317,10 +325,12 @@ class DatesController extends Controller {
       $uRate = $oObj->uRates;
       $charge = ($uRate) ? $uRate->charges : null;
       if (!$charge) {
+        $isSenial = ($senial == 1);
+        if($isSenial) $importe = 15;
         $data = [$oObj->id, $oUser->id, $importe * 100, $oRate->id];
         $sStripe = new \App\Services\StripeService();
         $rType = \App\Models\TypesRate::find($oRate->type);
-        $pStripe = url($sStripe->getPaymentLink($rType->type, $data));
+        $pStripe = url($sStripe->getPaymentLink($rType->type, $data,$isSenial));
       }
       /* -------------------------------------------------------------------- */
       /* -------------------------------------------------------------------- */

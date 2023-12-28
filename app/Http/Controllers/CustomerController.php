@@ -25,6 +25,7 @@ class CustomerController extends Controller {
     $amount = 15000;
     $name = '';
     $items = null;
+    $id_coach = null;
     $sStripe = new \App\Services\StripeService();
     $data = $sStripe->getPaymentLinkData($type, $token, $control);
     if (!$data) die('error');
@@ -802,5 +803,98 @@ return [
       $storage = \Illuminate\Support\Facades\Storage::disk('local');
       $storage->put($fileName, $output);
       return redirect('/resultado')->with(['success' => 'Firma Guardada']);
+    }
+
+    public function pagoSenial ($type, $token = null, $control = null) {
+      $amount = 15000;
+      $name = '';
+      $items = null;
+      $id_coach = null;
+      $sStripe = new \App\Services\StripeService();
+      $data = $sStripe->getPaymentLinkData($type, $token, $control);
+      if (!$data) die('error');
+        
+      $payment = false;
+      $disc = null;
+      if (count($data) == 2) {
+  
+        $typeKey = $data[0];
+        $data = $data[1];
+       
+            $oDate = \App\Models\Dates::find($data[0]);
+            if (!$oDate){
+              die('Cita eliminada');
+            }
+            $uRates = $oDate->uRates;
+            if ($uRates->id_charges) $payment = true;
+            if (!$uRates){
+              $oDate->delete();
+              die('Usuario eliminado');
+            }
+            $oUser = $uRates->user;
+            if (!$oUser){
+              $uRates->delete();
+              $oDate->delete();
+              die('Usuario eliminado');
+            }
+            $dateTime = strtotime($oDate->date);
+            $day = date('d', $dateTime) . ' de ' . getMonthSpanish(date('n', $dateTime),false);
+            $hour = $oDate->getHour();
+            $oRate = $uRates->rate;
+            $oCoach = $oDate->coach;
+            /** @Todo Controlar si ya está pagado */
+            $name = 'Pago de la señal para su cita de ';
+            $items = [];
+            if ($oDate->date_type == 'nutri') {
+              $name .= ' Nutrición ';
+              $items[] = '<b>Nutricionista:</b> ' . $oCoach->name;
+            }
+            if ($oDate->date_type == 'esthetic') {
+              $name .= ' Estética ';
+              $items[] = '<b>Profesional:</b> ' . $oCoach->name;
+            }
+            if ($oDate->date_type == 'fisio') {
+              $name .= ' Fisioterapia ';
+              $items[] = '<b>Fisioterapeuta:</b> ' . $oCoach->name;
+            }
+            $items[] = '<b>Servicio:</b> ' . $oRate->name;
+            $items[] = '<b>Fecha:</b> ' . $day;
+            $items[] = '<b>Hora:</b> ' . $hour;
+  
+            $amount = round($data[2]);
+      }
+      
+      //--------------------------------------------------------------//
+      //--------------------------------------------------------------//
+      $checkout = null;
+      if (!$payment){
+        $checkout = $sStripe->newCheckout($oUser, $amount,$name);
+        if (is_string($checkout)){
+          die($checkout);
+        }
+  
+        $oSession = $checkout->jsonSerialize();
+        $iStripe = $oSession['payment_intent'];
+        $cStripe = $oSession['customer'];
+        $price = round($amount / 100, 2);
+        \App\Models\Stripe3DS::addNew($oUser->id,$iStripe,$cStripe,'senial_cita',['dID'=>$oDate->id]);
+      }
+      //--------------------------------------------------------------//
+      //--------------------------------------------------------------//
+      //--------------------------------------------------------------//
+  
+      return view('customers.payments.stripe_payment', [
+          'keyStripe' => config('cashier.key'),
+          'amount' => $amount,
+          'name' => $name,
+          'type' => $type,
+          'token' => $token,
+          'control' => $control,
+          'items' => $items,
+          'disc'=>$disc,
+          'email' => $oUser->email,
+          'checkout' => $checkout,
+          'payment' => $payment,
+      ]);
     }
 }

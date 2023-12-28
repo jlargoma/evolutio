@@ -85,6 +85,12 @@ class StripeController extends Controller {
           $obj->events = $this->eventID;
           $obj->save();
           break;
+        case 'senial_cita':
+          $ChargesService = new \App\Services\ChargesDateService();
+          $resp = $ChargesService->generatePayment3DS_senail($this->pID, $oData);
+          $obj->events = $this->eventID;
+          $obj->save();
+          break;
       }
     }
   }

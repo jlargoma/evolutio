@@ -113,6 +113,22 @@
           </option>
         <?php endfor ?>
       </select>
+      </div>
+      <div class="col-xs-4 col-md-2  push-20">
+        <label for="time_type">Tipo de turno</label>
+        <select class="form-control" id="time_type" name="time_type" data-placeholder="Seleccione" required>
+          <option value="simpl" <?php if ($time_type == 'simpl') echo 'selected' ?>>Turno Simple</option>
+          <option value="double" <?php if ($time_type == 'double') echo 'selected' ?>>Turno Doble ( largo )</option>
+        </select>
+      </div>
+      <div class="col-xs-4 col-md-2  push-20">
+          <label for="senial">Pedir Señal</label><br>
+          @if($has_senial)
+          <b>Señal Realizada el {{$has_senial['date']}}</b>
+          @else
+          <input type="checkbox" id="senial" name="senial" value="1" <?php echo (isset($senial) && $senial == 1) ? "checked" : ''; ?>> <b>Con Señal</b>
+          @endif
+      </div>
     </div>
 
     <div class="col-xs-8 col-md-5  push-20 block-icons-form">

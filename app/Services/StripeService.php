@@ -18,13 +18,15 @@ class StripeService {
          $this->sPRivKey = config('cashier.secret');
      }
      
-    function getPaymentLink($type,$data){
+    function getPaymentLink($type,$data,$isSenia=false){
         foreach ($data as $k=>$v) $data[$k] = encriptID ($v);
         $code = implode('-', $data);
         if ($type == 'bono')
           return '/copra-de-bonos/'.$code.'/'.getKeyControl($code);
         
         $tId = array_search($type, $this->aTypes);
+        if ($isSenia) return '/pago-senial/'.$tId.'/'.$code.'/'.getKeyControl($code);
+
         return '/pago-simple/'.$tId.'/'.$code.'/'.getKeyControl($code);
     }
     

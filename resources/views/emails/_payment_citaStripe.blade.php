@@ -6,7 +6,11 @@ $tit = 'Su cita en Evolutio';
 ¡Hola! <?php echo $user->name ?><br><br>
 
 <p style="color: black">
-  <?php echo ($remember) ? 'Le recordamos su' : 'Tienes una';?> cita en nuestro centro de <b><?php echo $rate->name ?></b> en <strong> Evolutio</strong>
+  <?php if($is_senial){
+      echo 'Pago de la señal para su ';
+    } else {
+      echo ($remember) ? 'Le recordamos su' : 'Tienes una';
+    }?> cita en nuestro centro de <b><?php echo $rate->name ?></b> en <strong> Evolutio</strong>
 </p>
 
 <p style="color: black;font-size: 18px;">
@@ -25,7 +29,12 @@ $tit = 'Su cita en Evolutio';
 </p>
 @if($pStripe)
 <p>
+    @if($is_senial)
+    Para realizar el pago de la señal, haz click en este enlace o copia y pega en tu navegador habitual.<br/>
+    @else
     Para realizar el pago, haz click en este enlace o copia y pega en tu navegador habitual.<br/>
+    @endif
+    
     <a href="{{$pStripe}}" title="link pago Stripe">{{$pStripe}}</a>
 </p>
 @endif
