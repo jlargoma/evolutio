@@ -130,9 +130,16 @@ class DatesController extends Controller {
     }
     $alreadyExit = Dates::where('date', $date_compl)
                     ->where('id', '!=', $ID)
-                    ->where('id_coach', $id_coach)->count();
-    if ($alreadyExit > 1) {
-      return redirect()->back()->withErrors(['Personal ocupado']);
+                    ->where('id_coach', $id_coach)->get();
+    if ($alreadyExit){
+      $aux = 0;
+      foreach($alreadyExit as $v){
+        $aux++;
+        if($v->time_type == 'double') return redirect()->back()->withErrors(['Personal ocupado']);
+      }
+      if ($aux > 1) {
+        return redirect()->back()->withErrors(['Personal ocupado']);
+      }
     }
     /* -------------------------------------------------------------------- */
     if (!$isGroup) {
@@ -733,6 +740,7 @@ class DatesController extends Controller {
       foreach($useCoach as $d){
         if (isset($aCoachs[$d->id_coach]) && is_numeric($aCoachs[$d->id_coach])){
           $aCoachs[$d->id_coach]++;
+          if($d->time_type == 'double') $aCoachs[$d->id_coach] = 'blocked';
         }
       }
     }
