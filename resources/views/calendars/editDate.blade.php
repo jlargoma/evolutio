@@ -124,7 +124,7 @@
       <div class="col-xs-4 col-md-2  push-20">
           <label for="senial">Pedir Señal</label><br>
           @if($has_senial)
-          <b>Señal Realizada el {{$has_senial['date']}}</b>
+          <b>Señal Realizada el {{$has_senial}}</b>
           @else
           <input type="checkbox" id="senial" name="senial" value="1" <?php echo (isset($senial) && $senial == 1) ? "checked" : ''; ?>> <b>Con Señal</b>
           @endif

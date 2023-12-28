@@ -35,15 +35,14 @@ class UserRates extends Model {
     $uRates = $sqlRates->get();
     $total = 0;
     foreach ($uRates as $item) {
-      if ($item->ch_id) {
-        $total += $item->ch_import;
+      if ($item->charged>0 || ($item->ch_id && $item->charged == 0 && $item->ch_import == 0) ){
+        $total += $item->charged;
       } else {
         $total += $item->price;
       }
     }
-
     $sql = Charges::whereYear('date_payment', '=', $year)->where('bono_id', '>', 0);
-    if ($bIDs !== null) $sql->whereIn('bono_id',$rIDs);
+    if ($bIDs !== null) $sql->whereIn('bono_id',$bIDs);
     $oBonos = $sql->sum('import');
     if ($oBonos) {
       $total += $oBonos;

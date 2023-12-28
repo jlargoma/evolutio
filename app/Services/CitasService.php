@@ -48,8 +48,7 @@ class CitasService {
       $motive = $oDate->getMetaContent('motive');
       $id_room = $oDate->getMetaContent('room');
       $observ = $oDate->getMetaContent('observ');
-      $has_senial = $oDate->getMetaContent('senial');
-      if($has_senial) $has_senial = unserialize($has_senial);
+      $has_senial = $oDate->getMetaContent('senial_date');
       $equip_a = $equip_b = $equip_c = null;
       if ($oDate->date_type == 'esthetic'){
         $equip_a = $oDate->getMetaContent('equip_a');

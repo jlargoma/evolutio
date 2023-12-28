@@ -725,33 +725,34 @@ class InformesController extends Controller {
         $charge = $item->charges;
         $uCount[] =  $item->id_user;
         if ($charge) {
+          $inport = $item->charged;
           $type_payment = '';
           switch ($charge->type_payment) {
             case 'banco':
-            $bank += $charge->import;
+            $bank += $inport;
             $type_payment = 'BANCO';
             break;
             case 'cash':
-            $cash += $charge->import;
+            $cash += $inport;
             $type_payment = 'METALICO';
             break;
             case 'card':
-            $card += $charge->import;
+            $card += $inport;
             $type_payment = 'TARJETA';
             break;
             case 'invita':
-            $invita += $charge->import;
+            $invita += $inport;
             $type_payment = 'Inv. Evolutio';
             break;
             case 'bono':
-            $bono += $charge->import;
+            $bono += $inport;
             $type_payment = 'BONO';
             break;
           }
           $charges[$item->id] = [
             'id'=> $charge->id,
             'date'=> dateMin($charge->date_payment),
-            'import'=> moneda($charge->import,true,1),
+            'import'=> moneda($inport,true,1),
             'type_payment'=> $type_payment,
           ];
           

@@ -227,7 +227,7 @@ class DatesController extends Controller {
       $id_user_rates = $uRate->id;
     }
     /* -------------------------------------------------------------------- */
-    $hasSenial = $oObj->getMetaContent('senial');
+    $hasSenial = $oObj->getMetaContent('senial_price');
     if($hasSenial) $senial = 2;
     //dd($hasSenial,$senial);
     /* -------------------------------------------------------------------- */

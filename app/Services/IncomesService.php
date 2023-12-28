@@ -29,8 +29,8 @@ class IncomesService {
       if (!isset($crLst[$rID]))
           $crLst[$rID] = $this->mm;
       $m = $item->rate_month;
-      if ($c){
-        $crLst[$rID][$m] += $c->import;
+      if ($item->charged>0 || ($c && $item->charged == 0 && $c->import == 0) ){
+        $crLst[$rID][$m] += $item->charged;
       } else {
         $crLst[$rID][$m] += $item->price;
       }

@@ -23,6 +23,7 @@ class Kernel extends ConsoleKernel
       Commands\SubscEvolutioTv::class,
       Commands\LoadCharged::class,
       Commands\Tasks::class,
+      Commands\AppointmentSenial::class,
     ];
 
     /**
@@ -40,10 +41,11 @@ class Kernel extends ConsoleKernel
       $schedule->command('Remember:appointment')->dailyAt('7:00');
       $schedule->command('SubscEvolutioTv:send')->dailyAt('7:00');
       $schedule->command('Salary:createMonthly')->dailyAt('5:00'); // que lo genere el 25
-
+      
       $schedule->command('SubscPayment:chargeNextMonth')->monthlyOn(23, '5:00');
       $schedule->command('Remember:payment')->monthlyOn(1, '0:10');
       $schedule->command('Remember:paymentAgain')->monthlyOn(5, '0:10');
+      $schedule->command('AppointmentSenial:proccess')->hourly()->timezone('Europe/Madrid');   
   }
 
     /**

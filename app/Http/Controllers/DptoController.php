@@ -132,34 +132,36 @@ class DptoController extends Controller {
     }
     //----------------------------------------------------------//
     $uRates = UserRates::withCharges()->whereIn('users_rates.id_rate',$rIDs)->where('rate_year', $year)->get();
-
     $aux = $months_empty;
     $pay_method = ['c' => $months_empty, 'b' => $months_empty, 'v' => $months_empty, 'np' => $months_empty, 'i' => $months_empty];
     $tPay = 0;
     foreach ($uRates as $item) {
       $m = $item->rate_month;
-
+      $price = $item->price;
+      if ($item->charged>0 || ($item->ch_id && $item->charged == 0 && $item->ch_import == 0) ){
+        $price = $item->charged;
+      }
       if ($item->ch_id){
         switch ($item->ch_type_payment){
           case 'cash':
-            $pay_method['c'][$m] += $item->ch_import;
+            $pay_method['c'][$m] += $price;
           case 'card':
-            $pay_method['v'][$m] += $item->ch_import;
+            $pay_method['v'][$m] += $price;
             break;
           case 'banco':
-            $pay_method['b'][$m] += $item->ch_import;
+            $pay_method['b'][$m] += $price;
             break;
           case 'invita':
-            $pay_method['i'][$m] += $item->ch_import;
+            $pay_method['i'][$m] += $price;
             break;
         }
         $rateGr = isset($aRates[$item->ch_id_rate]) ? $aRates[$item->ch_id_rate] : 3;
-        $crLst[$rateGr][$m] += $item->ch_import;
-        $tPay += $item->ch_import;
+        $crLst[$rateGr][$m] += $price;
+        $tPay += $price;
       } else {
         $rateGr = isset($aRates[$item->id_rate]) ? $aRates[$item->id_rate] : 3;
-        $crLst[$rateGr][$m] += $item->price;
-        $pay_method['np'][$m] += $item->price;
+        $crLst[$rateGr][$m] += $price;
+        $pay_method['np'][$m] += $price;
       }
     }
     //--------------------------------------------------------------------//
@@ -195,7 +197,7 @@ class DptoController extends Controller {
     //--------------------------------------------------------------------//
     $aux = $months_empty;
     foreach ($crLst as $k => $v) {
-      for ($i = 0; $i < 13; $i++) {
+      for ($i = 1; $i < 13; $i++) {
         $aux[$i] += $v[$i];
       }
     }
