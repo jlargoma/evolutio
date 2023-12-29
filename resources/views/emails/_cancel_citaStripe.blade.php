@@ -6,7 +6,7 @@ $tit = 'Su cita en Evolutio';
 ¡Hola! <?php echo $user->name ?><br><br>
 
 <p style="color: black">
-  Su plazo para el pado de la señal de su cita de <b><?php echo $rate->name ?></b> ha inspirado, si necesita solicitar hora comuniquese con nosotros. 
+  Su plazo para el pago de la señal de su cita de <b><?php echo $rate->name ?></b> ha inspirado, si necesita solicitar hora comuniquese con nosotros. 
 </p>
 
 <p style="color: black;font-size: 18px;">
