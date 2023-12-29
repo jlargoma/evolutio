@@ -44,9 +44,15 @@ class AppointmentSenial extends Command {
   public function handle() {
     try {
       $this->sLog = new LogsService('schedule','Borrar Cita señal');
-      $date = date('Y-m-d H:i',strtotime('-3 hours')).':01';
-      $lst = Dates::where('senial',1)->whereDate('created_at','<',$date)->get();
-      if (count($lst)>0){
+      $lstID = \DB::select('SELECT id FROM `appointment` WHERE TIMESTAMPDIFF(HOUR, created_at, CURRENT_TIMESTAMP())>3 AND senial = 1 LIMIT 150;');
+      if (!$lstID) return;
+      $aIDs = [];
+      foreach($lstID as $v){
+        $aIDs[] = $v->id;
+      }
+
+      $lst = Dates::whereIn('id',$aIDs)->get();
+      if ($lst){
         foreach ($lst as $item){
           $uRate = $item->uRates;
           if ($uRate){
