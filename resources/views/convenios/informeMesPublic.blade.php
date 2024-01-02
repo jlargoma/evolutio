@@ -25,7 +25,7 @@
   <input type="hidden" id="_token" name="_token" value="<?php echo csrf_token(); ?>">
   <div class="col-xs-12 btn-months mx-1em">
     @foreach($lstMonths as $k=>$v)
-    <a href="<?= '/informes-convenio/' . $oConvenio->token . '/' . $k  ?>" class=" btn btn-success <?php echo ($month == $k) ? 'active' : '' ?>">
+    <a href="<?= '/informes-convenio/' .$year.'/' . $oConvenio->token . '/' . $k  ?>" class=" btn btn-success <?php echo ($month == $k) ? 'active' : '' ?>">
       {{$v.' '.$year}}
     </a>
     @endforeach
@@ -110,7 +110,7 @@
   $(document).ready(function() {
     $('#filter_form').on('click', function(event) {
       var rate = $('#rate').val();
-      window.location.href = '/informes-convenio/{{$oConvenio->token}}/{{$month}}/' + rate;
+      window.location.href = '/informes-convenio/{{$year}}/{{$oConvenio->token}}/{{$month}}/' + rate;
     });
   });
 </script>
