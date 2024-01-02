@@ -114,7 +114,7 @@ class ConveniosController extends Controller
         $auxConv->token = str_random(150);
         $auxConv->save();
       }
-      $urlPubl = \URL::to('/informes-convenio/'.$auxConv->token);
+      $urlPubl = \URL::to('/informes-convenio/'.$year.'/'.$auxConv->token);
       $oConvenios[] = $auxConv;
     } 
     else $oConvenios = $lstObjs;
@@ -172,10 +172,9 @@ class ConveniosController extends Controller
     ]);
   }
 
-  public function informeConveniosPublic(Request $request, $toke, $month = null, $rateID=null)
+  public function informeConveniosPublic(Request $request,$year, $toke, $month = null, $rateID=null)
   {
 
-    $year = getYearActive();
     if (!$month)
       $month = date('m');
 
