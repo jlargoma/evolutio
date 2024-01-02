@@ -99,7 +99,7 @@ class ConveniosController extends Controller
   ///////////////////////////////////////////////////////////////////////////
 
 
-  public function informeConvenios(Request $request, $month = null, $convenio = null)
+  public function informeConvenios(Request $request, $month = null, $convenio_id = null, $rateID=null)
   {
 
     $year = getYearActive();
@@ -107,8 +107,16 @@ class ConveniosController extends Controller
       $month = date('m');
 
     $lstObjs = Convenios::all();
-
-    if($convenio) $oConvenios = Convenios::where('id',$convenio)->get();
+    $urlPubl = null;
+    if($convenio_id && $convenio_id != 'all'){
+      $auxConv = Convenios::where('id',$convenio_id)->first();
+      if (!$auxConv->token){
+        $auxConv->token = str_random(150);
+        $auxConv->save();
+      }
+      $urlPubl = \URL::to('/informes-convenio/'.$auxConv->token);
+      $oConvenios[] = $auxConv;
+    } 
     else $oConvenios = $lstObjs;
    
     $convenioNames = [];
@@ -121,6 +129,7 @@ class ConveniosController extends Controller
     unset($lstMonths[0]);
     $convLstUsers = [];
     $totals = 0;
+    $lstRatesNames = $lstUsers = [];
     foreach ($oConvenios as $item) {
       $convLstRates[$item->id] = null;
       $uConvenios = User::where('convenio', $item->id)->get();
@@ -131,25 +140,86 @@ class ConveniosController extends Controller
           $uRates = UserRates::where('rate_year', $year)->where('rate_month', $month)->where('id_user', $uc->id)->get();
           foreach ($uRates as $ur) {
             $rt_id = array_key_exists($ur->id_rate, $lstRates) ? $lstRates[$ur->id_rate] : -1;
-            $c = $ur->charged;
-            $p = ($c) ? ($c) : $ur->price;
-            $convLstUsers[$uc->id]['rates'][] = ['price' => $p, 'date' => $ur->created_at, 'rGroup' => $rt_id, 'rateID' => $ur->id_rate];
-            $totals += $p;
+            if(!$rateID || $rateID == $rt_id){
+              $c = $ur->charged;
+              $p = ($c) ? ($c) : $ur->price;
+              $convLstUsers[$uc->id]['rates'][] = ['price' => $p, 'date' => $ur->created_at, 'rGroup' => (isset($lstRateTypes[$rt_id]) ? $rt_id : -1 ), 'rateID' => $ur->id_rate];
+              $totals += $p;
+              $lstUsers[$uc->id] = $convLstUsers[$uc->id];
+            }
+            if(array_key_exists($rt_id,$lstRateTypes))  $lstRatesNames[$rt_id] = $lstRateTypes[$rt_id];
+              else $lstRatesNames[-1] = 'Otros';
           }
         }
+        $lstRateTypes = $lstRatesNames;
+        $convLstUsers = $lstUsers;
       }
     }
+    
     return view('/convenios/informeMes', [
       'year' => $year,
       'month' => $month,
       'lstObjs' => $lstObjs,
-      'convenio' => $convenio,
+      'convenio' => $convenio_id,
+      'urlPubl' => $urlPubl,
       'convenioNames' => $convenioNames,
       'totals' => $totals,
       'lstMonths' => $lstMonths,
       'lstRates' => $lstRates,
       'lstRateTypes' => $lstRateTypes,
       'convLstUsers' => $convLstUsers,
+      'rateID' => $rateID,
     ]);
   }
+
+  public function informeConveniosPublic(Request $request, $toke, $month = null, $rateID=null)
+  {
+
+    $year = getYearActive();
+    if (!$month)
+      $month = date('m');
+
+    $oConvenio = Convenios::where('token',$toke)->first();
+    $lstRates = Rates::orderBy('name', 'asc')->pluck('type', 'id')->toArray();
+    $lstRateTypes = \App\Models\TypesRate::orderBy('name', 'asc')->pluck('name', 'id')->toArray();
+    $lstRateTypes['-1'] = 'Otros';
+    $lstMonths = lstMonthsSpanish();
+    unset($lstMonths[0]);
+    $convLstUsers = [];
+    $totals = 0;
+    $uConvenios = User::where('convenio', $oConvenio->id)->get();
+    $lstRatesNames = $lstUsers = [];
+    if ($uConvenios) {
+      foreach ($uConvenios as $uc) {
+        $convLstUsers[$uc->id] = ['name' => $uc->name, 'cID' => $uc->convenio, 'rates' => []];
+        $uRates = UserRates::where('rate_year', $year)->where('rate_month', $month)->where('id_user', $uc->id)->get();
+        foreach ($uRates as $ur) {
+          $rt_id = array_key_exists($ur->id_rate, $lstRates) ? $lstRates[$ur->id_rate] : -1;
+          if(!$rateID || $rateID == $rt_id){
+            $c = $ur->charged;
+            $p = ($c) ? ($c) : $ur->price;
+            $convLstUsers[$uc->id]['rates'][] = ['price' => $p, 'date' => $ur->created_at, 'rGroup' => $rt_id, 'rateID' => $ur->id_rate];
+            $totals += $p;
+            $lstUsers[$uc->id] = $convLstUsers[$uc->id];
+          }
+          if(array_key_exists($rt_id,$lstRateTypes))  $lstRatesNames[$rt_id] = $lstRateTypes[$rt_id];
+            else $lstRatesNames[-1] = 'Otros';
+        }
+      }
+    }
+    $lstRateTypes = $lstRatesNames;
+    $convLstUsers = $lstUsers;
+    return view('/convenios/informeMesPublic', [
+      'year' => $year,
+      'month' => $month,
+      'oConvenio' => $oConvenio,
+      'totals' => $totals,
+      'lstMonths' => $lstMonths,
+      'lstRates' => $lstRates,
+      'rateID' => $rateID,
+      'lstRateTypes' => $lstRateTypes,
+      'convLstUsers' => $convLstUsers,
+    ]);
+  }
+ 
 }

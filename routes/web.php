@@ -36,4 +36,4 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
 
 Route::post('/stripe-events/Ij8TwDPIlaJjDoZLSnfD','StripeController@processEvent');
 Route::get('test-text/{key?}', 'SettingsController@testText');
-
+Route::get('informes-convenio/{key}/{month?}/{rate?}', 'ConveniosController@informeConveniosPublic');

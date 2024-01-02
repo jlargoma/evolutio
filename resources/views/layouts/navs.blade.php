@@ -1,6 +1,8 @@
 <?php
 $path = Request::path();
-$uRole = Auth::user()->role;
+$oUser = Auth::user();
+$uRole = $oUser->role;
+
 ?>
 <ul class="nav-main">
   <li class="{{ $path == 'admin/clientes' ? 'active' : '' }}">
@@ -92,6 +94,19 @@ $uRole = Auth::user()->role;
   <li class="{{ $path == 'informes-cliente' ? 'active' : '' }}">
     <a href="{{url('/departamento/informes-cliente')}}" class="font-w600"><i class="fa fa-line-chart"></i> <span class="sidebar-mini-hide font-w600">Clientes del mes</span></a>
   </li>
+    @if($oUser->id == 3370)
+    <li class="subMenu <?php echo str_contains($path,'admin/convenio') ? 'opened' : 'open' ?>">
+      <i class="fa fa-files-o" style="margin-right: 15px;"></i> <span class="sidebar-mini-hide font-w600 ">  Convenios</span>
+      <ul>
+      <li class="<?php echo str_contains($path,'convenios/listado') ? 'active' : '' ?>">
+        <a href="{{url('/admin/convenios/listado')}}" class="font-w600"><i class="fa fa-thumb-tack"></i> <span class="sidebar-mini-hide font-w600">Convenios</span></a>
+        </li>
+        <li class="<?php echo str_contains($path,'admin/convenios/informes') ? 'active' : '' ?>">
+          <a href="{{url('/admin/convenios/informes/')}}" class="font-w600"><i class="fa fa-files-o"></i> <span class="sidebar-mini-hide font-w600">Informes</span></a>
+        </li>
+      </ul>
+    </li>
+    @endif
 
   @endif
   <li style="margin-left: 17px;">

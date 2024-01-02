@@ -1,6 +1,6 @@
 <?php setlocale(LC_TIME, "ES"); ?>
 <?php setlocale(LC_TIME, "es_ES"); ?>
-@extends('layouts.admin-master')
+@extends('layouts.app')
 
 @section('title') INFORME DE CONVENIOS - Evolutio HTS @endsection
 
@@ -21,36 +21,16 @@
 @endsection
 @section('content')
 <div class="content content-boxed bg-gray-lighter">
-  <h2 class="text-center">INFORME DE CONVENIOS CLIENTES</h2>
-  <div class="text-center">Listado de CONVENIOS por fecha</div>
-
+  <h2 class="text-center">INFORME DE CONVENIO {{$oConvenio->name}}</h2>
   <input type="hidden" id="_token" name="_token" value="<?php echo csrf_token(); ?>">
-
-
   <div class="col-xs-12 btn-months mx-1em">
     @foreach($lstMonths as $k=>$v)
-    <?php
-    $url = '/admin/convenios/informes/' . $k .'/'.(($convenio) ? $convenio : 'all').(($rateID) ? '/' . $rateID : '');
-    ?>
-    <a href="{{$url}}" class=" btn btn-success <?php echo ($month == $k) ? 'active' : '' ?>">
+    <a href="<?= '/informes-convenio/' . $oConvenio->token . '/' . $k  ?>" class=" btn btn-success <?php echo ($month == $k) ? 'active' : '' ?>">
       {{$v.' '.$year}}
     </a>
     @endforeach
   </div>
-  <input type="text" id="searchInform" class="form-control" placeholder="Buscar" />
-  <div class="row mt-1">
-    <div class="col-md-2 col-xs-3">
-      <label>Mes</label>
-      <select id="month" class="form-control">
-        <option> -- </option>
-        <?php
-        foreach ($lstMonths as $k => $v) :
-          $s = ($k == $month) ? 'selected' : '';
-          echo '<option value="' . $k . '" ' . $s . '>' . $v . '</option>';
-        endforeach;
-        ?>
-      </select>
-    </div>
+  <div class="row mx-1em">
     <div class="col-md-6 col-xs-12">
       <label>Servicio</label>
       <select id="rate" class="form-control">
@@ -63,23 +43,9 @@
         ?>
       </select>
     </div>
-    <div class="col-md-3 col-xs-6">
-      <label>Convenio</label>
-      <select id="convenio" class="form-control">
-        <option value="all">Todos</option>
-        <?php
-        foreach ($lstObjs as $k => $oConve) :
-          $s = ($oConve->id == $convenio) ? 'selected' : '';
-          echo '<option value="' . $oConve->id . '" ' . $s . ' class="b">' . $oConve->name . '</option>';
-        endforeach;
-        ?>
-      </select>
-    </div>
     <div class="col-md-2 col-xs-6" style="margin-top: 1.7em;">
       <button type="button" id="filter_form" class="btn btn-success">Filtrar</button>
-      @if($urlPubl) <a href="{{$urlPubl}}" target="_blank" class="btn btn-success">Url Pública</a> @endif
     </div>
-
   </div>
   <div class="row" id="content-table-inform">
     <div class="table-responsive">
@@ -100,19 +66,12 @@
       </div>
     </div>
     <div class="table-responsive">
-
-
-
-
-
-
       <div class="col-md-12 col-xs-12">
         <table class="table table-striped table-header-bg">
           <thead>
             <tr>
               <th class="text-center">Fecha</th>
               <th class="text-center">Nombre cliente</th>
-              <th class="text-center">Convenio</th>
               <th class="text-center">Familia</th>
               <th class="text-center">Importe</th>
             </tr>
@@ -123,10 +82,8 @@
                 <tr>
                   <td class="text-center"><b>{{dateMin($uLstrates['date'])}}</b></td>
                   <td class="text-center">{{$data['name']}}</td>
-                  <td class="text-center">{{$convenioNames[$data['cID']]}}</td>
                   <td class="text-center">{{$lstRateTypes[$uLstrates['rGroup']]}}</td>
                   <td class="text-center">{{moneda($uLstrates['price'],false,1)}}</td>
-
                 </tr>
               <?php endforeach ?>
             <?php endforeach ?>
@@ -139,29 +96,22 @@
 
 @endsection
 @section('scripts')
-<script type="text/javascript">
-  $('#filter_form').on('click', function(event) {
-    var year = $('#date').val();
-    var month = $('#month').val();
-    var convenio = $('#convenio').val();
-    var rate = $('#rate').val();
-    window.location.href = '/admin/convenios/informes/' + month + '/' + convenio+ '/' + rate;
-  });
+<style>
+  .mx-1em {
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
 
-  $('#searchInform').keydown(function(evt) {
-    setTimeout(function() {
-      var search = $('#searchInform').val();
-      var token = $('#_token').val();
-      var month = $('#month').val();
-      var convenio = $('#convenio').val();
+  a.btn.btn-success {
+    margin: 7px 2px;
+  }
+</style>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#filter_form').on('click', function(event) {
       var rate = $('#rate').val();
-      $.post('/admin/convenios/informes/' + month + '/' + convenio+ '/' + rate, {
-        search: search,
-        _token: token
-      }).done(function(data) {
-        $('#content-table-inform').empty().append(data);
-      });
-    }, 50);
+      window.location.href = '/informes-convenio/{{$oConvenio->token}}/{{$month}}/' + rate;
+    });
   });
 </script>
 @endsection
