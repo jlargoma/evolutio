@@ -13,7 +13,6 @@
   <li <?php if ($tab == 'valoracion') echo 'class="active"'; ?>><a data-toggle="tab" href="#valoracion">Valoración</a></li>
   <li <?php if ($tab == 'nutricion') echo 'class="active"'; ?>><a data-toggle="tab" href="#nutricion">Nutrición</a></li>
   <li <?php if ($tab == 'fisio') echo 'class="active"'; ?>><a data-toggle="tab" href="#fisio">Fisio</a></li>
-  <li <?php if ($tab == 'fisioG') echo 'class="active"'; ?>><a data-toggle="tab" href="#fisioG">Fisio GETAFE</a></li>
   <li <?php if ($tab == 'esthetic') echo 'class="active"'; ?>><a data-toggle="tab" href="#esthetic">Estética</a></li>
 </ul>
 </div>

@@ -133,7 +133,7 @@
 
     <div class="col-xs-8 col-md-5  push-20 block-icons-form">
 
-      @if($date_type=='fisio' )
+      @if($date_type=='fisio' || $date_type=='fisioG' )
       <div class=" checkbox_ecogr <?php echo (isset($ecogr) && $ecogr == 1) ? "active" : ''; ?>">
         <input type="checkbox" id="equipments[]" name="equipments[]" value="ecogr" <?php echo (isset($ecogr) && $ecogr == 1) ? "checked" : ''; ?>>
         <img src="/img/ecog-gris.png" class="grey" alt="ecografo">
