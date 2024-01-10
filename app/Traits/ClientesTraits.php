@@ -544,6 +544,7 @@ trait ClientesTraits
       'encNutr' => $sEncNutri->get_enc($user),
       'filesNutri' => $this->getFileLst($user->id, 'nutri'),
       'filesFisio' => $this->getFileLst($user->id, 'fisio'),
+      'filesFisioG' => $this->getFileLst($user->id, 'fisioG'),
       'filesEsthetic' => $this->getFileLst($user->id, 'esthetic'),
       'filesPT' => $this->getFileLst($user->id, 'pt'),
       'seeClinicalHistory' => $seeClinicalHistory,
@@ -731,6 +732,9 @@ trait ClientesTraits
       case 'fisio':
         $urlBack = '/fisio';
         break;
+      case 'fisioG':
+          $urlBack = '/fisioG';
+          break;
       case 'esthetic':
         $urlBack = '/esthetic';
         break;
@@ -754,6 +758,9 @@ trait ClientesTraits
           $urlBack = '/nutricion';
           break;
         case 'fisio':
+          $urlBack = '/fisio';
+          break;
+        case 'fisioG':
           $urlBack = '/fisio';
           break;
         case 'esthetic':

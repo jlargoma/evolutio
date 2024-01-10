@@ -109,6 +109,9 @@ class User extends Authenticatable
       case 'fisio':
         $roles = ['fisio', 'teach_fisio'];
         break;
+      case 'fisioG':
+        $roles = ['fisioG'];
+        break;
       case 'nutri':
         $roles = ['teach_nutri', 'nutri'];
         break;
@@ -122,7 +125,7 @@ class User extends Authenticatable
         $roles = ['esthetic'];
         break;
       default:
-        $roles = ['teach', 'fisio', 'nutri', 'empl', 'teach_nutri', 'teach_fisio', 'esthetic'];
+        $roles = ['teach', 'fisio', 'nutri', 'empl', 'teach_nutri', 'teach_fisio', 'esthetic', 'fisioG'];
         break;
     }
     if ($includeAdmin) $roles[] = 'admin';

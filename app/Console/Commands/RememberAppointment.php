@@ -119,13 +119,13 @@ class RememberAppointment extends Command {
                 $mailData['urlEntr'] = $helpCitaCont->get_urlEntrevista($oUser);
               }
               //BEGIN: entrevista Fisioterapia
-              if ($type == 'fisio'){
+              if ($type == 'fisio' || $type == 'fisioG'){
                 $mailData['urlIndiba']   = $helpCitaCont->get_urlIndiba($oUser,$oRate);
                 $mailData['urlSuelPelv'] = $helpCitaCont->get_urlSuelPelv($oUser,$oRate);
               }
               /***********************************************************/
               $pStripe = null;
-              if ($type == 'nutri' || $type == 'fisio'){
+              if ($type == 'nutri' || $type == 'fisio'|| $type == 'fisioG'){
                 $uRate = $oDate->uRates;
                 $charge = ($uRate) ? $uRate->charges : null;
                 if (!$charge) {

@@ -52,6 +52,13 @@
 													->where('id_type_rate',6)
 													->orderBy('date','ASC')->get(); 
 							?>
+						<?php elseif (Auth::user()->role == 'fisioG'): ?>
+							<?php $dates = \App\Dates::whereYear('date','=', $weekDays->format('Y'))
+													->whereMonth('date','=', $weekDays->format('m'))
+													->whereDay('date','=', $weekDays->format('d'))
+													->where('id_type_rate',14)
+													->orderBy('date','ASC')->get(); 
+							?>
 						<?php else: ?>
 							<?php $dates = \App\Dates::whereYear('date','=', $weekDays->format('Y'))
 													->whereMonth('date','=', $weekDays->format('m'))

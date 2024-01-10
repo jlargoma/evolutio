@@ -34,6 +34,9 @@
             case 'fisio';
               echo 'Fisio';
               break;
+            case 'fisioG';
+              echo 'Fisio';
+              break;
             case 'teach_nutri';
               echo 'P.T. / Nutri';
               break;

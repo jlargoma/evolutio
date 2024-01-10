@@ -6,7 +6,7 @@ $tit = 'Su cita en Evolutio';
 ¡Hola! <?php echo $user->name ?><br><br>
 
 <p style="color: black">
-  Le recordamos su cita en nuestro centro de <b><?php echo $rate->name ?></b> en <strong> Evolutio</strong>
+  Le recordamos su cita en nuestro centro de <b><?php echo $rate->name ?></b> en <strong> Evolutio<?php if($obj->date_type == 'fisioG') echo ' / Getafe'; ?></strong> 
 </p>
 
 <p style="color: black;font-size: 18px;">
@@ -14,7 +14,7 @@ $tit = 'Su cita en Evolutio';
   <?php
   if ($obj->date_type == 'nutri')
     echo '- Nutricionista: ' . $oCoach->name . '<br>';
-  if ($obj->date_type == 'fisio')
+  if ($obj->date_type == 'fisio' || $obj->date_type == 'fisioG')
     echo '- Fisioterapeuta: ' . $oCoach->name . '<br>';
   if ($obj->date_type == 'pt')
     echo '- Entrenador: ' . $oCoach->name . '<br>';

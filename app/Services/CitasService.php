@@ -507,6 +507,9 @@ class CitasService {
         case 'fisio':
           $urlBack = '/admin/citas-fisioterapia-week/';
           break;
+        case 'fisioG':
+          $urlBack = '/admin/citas-fisioterapia-getafe-week/';
+          break;
         case 'esthetic':
           $urlBack = '/admin/citas-estetica-week/';
           break;
@@ -531,6 +534,9 @@ class CitasService {
         break;
       case 'fisio':
         $urlBack = '/admin/citas-fisioterapia/';
+        break;
+      case 'fisioG':
+        $urlBack = '/admin/citas-fisioterapia-getafe/';
         break;
       case 'esthetic':
         $urlBack = '/admin/citas-estetica/';

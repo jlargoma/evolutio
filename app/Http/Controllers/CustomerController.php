@@ -51,6 +51,7 @@ class CustomerController extends Controller {
           break;
         case 'nutri': //$dID,$oUser->id,$importe*100,$oRate->id;
         case 'fisio': //$dID,$oUser->id,$importe*100,$oRate->id;
+        case 'fisioG': //$dID,$oUser->id,$importe*100,$oRate->id;
         case 'esthetic': //$dID,$oUser->id,$importe*100,$oRate->id;
           $oDate = \App\Models\Dates::find($data[0]);
           if (!$oDate){
@@ -84,7 +85,7 @@ class CustomerController extends Controller {
             $name .= ' Estética ';
             $items[] = '<b>Profesional:</b> ' . $oCoach->name;
           }
-          if ($oDate->date_type == 'fisio') {
+          if ($oDate->date_type == 'fisio' || $oDate->date_type == 'fisioG') {
             $name .= ' Fisioterapia ';
             $items[] = '<b>Fisioterapeuta:</b> ' . $oCoach->name;
           }
@@ -124,6 +125,7 @@ class CustomerController extends Controller {
             case 'nutri':
             case 'esthetic':
             case 'fisio':
+            case 'fisioG':
               \App\Models\Stripe3DS::addNew($oUser->id,$iStripe,$cStripe,'cita',['dID'=>$oDate->id]);
               break;
           }
@@ -853,7 +855,7 @@ return [
               $name .= ' Estética ';
               $items[] = '<b>Profesional:</b> ' . $oCoach->name;
             }
-            if ($oDate->date_type == 'fisio') {
+            if ($oDate->date_type == 'fisio' || $oDate->date_type == 'fisioG') {
               $name .= ' Fisioterapia ';
               $items[] = '<b>Fisioterapeuta:</b> ' . $oCoach->name;
             }

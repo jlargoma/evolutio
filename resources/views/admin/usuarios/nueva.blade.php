@@ -56,6 +56,7 @@
                             <option value="admin" >Administrador</option>
                             <option value="teach">Entrenador</option>
                             <option value="fisio">Fisioterapia</option>
+                            <option value="fisioG">Fisioterapia Getafe</option>
                             <option value="nutri">Nutricionista</option>
                             <option value="teach_nutri">Entrenador / Nutricionista</option>
                             <option value="teach_fisio">Entrenador / Fisioterapia</option>

@@ -16,7 +16,7 @@
 	    </a>
 	</li>
 <?php endif ?>
-<?php if (Auth::user()->role == 'fisio' || Auth::user()->role == 'admin'): ?>
+<?php if (Auth::user()->role == 'fisio' || Auth::user()->role == 'fisioG' || Auth::user()->role == 'admin'): ?>
 	<li class="text-center">
 		<a href="{{url('admin/fisioterapia')}}" class="text-white btn btn-sm btn-primary font-s16 font-w300" style="padding: 10px 15px;line-height: 15px;">
 		    Listado FISIOTERAPIA
@@ -122,6 +122,13 @@
 																	->where('id_type_rate',6)
 																	->orderBy('date','ASC')->get(); 
 										?>
+									<?php elseif (Auth::user()->role == 'fisioG'): ?>
+										<?php $dates = \App\Dates::whereYear('date','=', $weekDays->format('Y'))
+																	->whereMonth('date','=', $weekDays->format('m'))
+																	->whereDay('date','=', $weekDays->format('d'))
+																	->where('id_type_rate',14)
+																	->orderBy('date','ASC')->get(); 
+										?>
 									<?php else: ?>
 										<?php $dates = \App\Dates::whereYear('date','=', $weekDays->format('Y'))
 																	->whereMonth('date','=', $weekDays->format('m'))
@@ -214,6 +221,13 @@
 																	->whereMonth('date','=', $weekDays->format('m'))
 																	->whereDay('date','=', $weekDays->format('d'))
 																	->where('id_type_rate',6)
+																	->orderBy('date','ASC')->get(); 
+										?>
+									<?php elseif (Auth::user()->role == 'fisioG'): ?>
+										<?php $dates = \App\Dates::whereYear('date','=', $weekDays->format('Y'))
+																	->whereMonth('date','=', $weekDays->format('m'))
+																	->whereDay('date','=', $weekDays->format('d'))
+																	->where('id_type_rate',14)
 																	->orderBy('date','ASC')->get(); 
 										?>
 									<?php else: ?>

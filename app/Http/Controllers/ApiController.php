@@ -27,6 +27,7 @@ class ApiController extends Controller {
   private $itemsCoachs = [
       'nutri' => 1715,
       'fisio' => 1971,
+      'fisioG' => 1971,
   ];
 
   public function index() {

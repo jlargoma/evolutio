@@ -14,7 +14,7 @@ $tit = 'Su cita en Evolutio';
     <?php 
     if ($date_type == 'nutri')
       echo '- Nutricionista: '.$oCoach->name.'<br>';    
-    if ($date_type == 'fisio')
+    if ($date_type == 'fisio' || $date_type == 'fisioG')
       echo '- Fisioterapeuta: '.$oCoach->name.'<br>';  
     ?>
     - Servicio: <?php echo implode(', ',$rateLst) ?><br>

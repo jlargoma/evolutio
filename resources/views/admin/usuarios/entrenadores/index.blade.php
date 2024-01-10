@@ -103,6 +103,9 @@
                   case 'fisio';
                     echo 'Fisioterapeuta';
                     break;
+                  case 'fisioG';
+                    echo 'Fisioterapeuta Getafe';
+                    break;
                   case 'esthetic';
                     echo 'Estética';
                     break;

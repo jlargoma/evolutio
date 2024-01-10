@@ -100,6 +100,7 @@ class Expenses extends Model
     return [
       ''=>'GENERICO',
       'fisio'=>'FISIOTERAPIA',
+      'fisioG'=>'FISIOTERAPIA',
       'esthetic'=>'ESTETICA',
       'pt'=>'ENTRENAMIENTO',
       'nutri'=>'NUTRICIÓN',

@@ -19,7 +19,7 @@
 			                <option></option>
 			                <?php if (Auth::user()->role == 'nutri'): ?> 
 			                	<option value="5">Nutricion</option>
-			                <?php elseif(Auth::user()->role == 'fisio'): ?>
+			                <?php elseif(Auth::user()->role == 'fisio' || Auth::user()->role == 'fisioG'): ?>
 								<option value="6">Fisioterapia</option>
 			                <?php else: ?>
 			                	<?php foreach ($services as $key => $service): ?>
@@ -79,7 +79,7 @@
 											<?php echo $nutri->name; ?>
 										</option>
 									<?php endforeach ?>
-								<?php elseif (Auth::user()->role == 'fisio'): ?>
+								<?php elseif (Auth::user()->role == 'fisio' || Auth::user()->role == 'fisioG'): ?>
 									<?php foreach ($fisios as $fisio): ?>
 										<option value="<?php echo $fisio->id; ?>">
 											<?php echo $fisio->name; ?>

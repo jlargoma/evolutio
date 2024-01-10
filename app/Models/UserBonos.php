@@ -64,6 +64,9 @@ class UserBonos extends Model
         case 'fisio':
           $text .= 'Fisioterapia';
           break;
+        case 'fisioG':
+          $text .= 'Fisioterapia';
+          break;
         case 'nutri':
           $text .= 'Nutrición';
           break;

@@ -52,6 +52,7 @@
                             <option value="admin"  <?php if ($user->role == "admin") echo "selected";?>>Administrador</option>
                             <option value="teach" <?php if ($user->role == "teach") echo "selected";?>>Entrenador</option>
                             <option value="fisio" <?php if ($user->role == "fisio") echo "selected";?>>Fisioterapia</option>
+                            <option value="fisioG" <?php if ($user->role == "fisioG") echo "selected";?>>Fisioterapia Getafe</option>
                             <option value="nutri" <?php if ($user->role == "nutri") echo "selected";?>>Nutricionista</option>
                             <option value="teach_nutri" <?php if ($user->role == "teach_nutri") echo "selected";?>>Entrenador / Nutricionista</option>
                             <option value="teach_fisio" <?php if ($user->role == "teach_fisio") echo "selected";?>>Entrenador / Fisioterapia</option>

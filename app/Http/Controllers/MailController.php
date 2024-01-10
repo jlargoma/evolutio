@@ -52,7 +52,7 @@ class MailController extends Controller
         
         $rType = \App\Models\TypesRate::find($oRate->type);
         $type = 'Nuevo Servicio';
-        if ($rType->type == 'fisio' || $rType->type == 'nutri'){
+        if ($rType->type == 'fisio' || $rType->type == 'fisioG' || $rType->type == 'nutri'){
           $type = 'Nueva Cita';
         }
         try{
@@ -142,7 +142,7 @@ class MailController extends Controller
               $mailData['urlEntr'] = $helpCitaCont->get_urlEntrevista($oUser);
             }
             //BEGIN: entrevista Fisioterapia
-            if ($type == 'fisio'){
+            if ($type == 'fisio' || $type == 'fisioG'){
               $mailData['urlIndiba']   = $helpCitaCont->get_urlIndiba($oUser,$oRate);
               $mailData['urlSuelPelv'] = $helpCitaCont->get_urlSuelPelv($oUser,$oRate);
             }

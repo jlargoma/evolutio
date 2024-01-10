@@ -58,7 +58,7 @@ class PyGController extends Controller {
     $aux = $months_empty;
     $pay_method = ['c'=>$months_empty,'b'=>$months_empty,'v'=>$months_empty,'np'=>$months_empty,'i'=>$months_empty];
 
-    $cashDepto = ['esthetic'=>$months_empty,'fisio'=>$months_empty,'other'=>$months_empty];
+    $cashDepto = ['esthetic'=>$months_empty,'fisio'=>$months_empty,'fisioG'=>$months_empty,'other'=>$months_empty];
     $rIDsEsth = Rates::where('type',12)->orderBy('name')->pluck('id')->toArray();
     $bIDsEsth = Bonos::where('rate_type',12)->orWhereIn('rate_id',$rIDsEsth)->orWhere('rate_subf', 'LIKE', "%e%")->pluck('id')->toArray();
     $rIDsFisio = Rates::where('type',8)->orderBy('name')->pluck('id')->toArray();

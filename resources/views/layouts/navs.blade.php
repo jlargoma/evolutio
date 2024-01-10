@@ -20,9 +20,14 @@ $uRole = $oUser->role;
       <i class="fa fa-calendar-o"></i><span class="sidebar-mini-hide font-w600">NUTRICIÓN</span>
     </a>
   </li>
-  <li class="{{ (str_contains($path,'citas-fisioterapia')) ? 'active' : '' }}">
+  <li class="{{ (str_contains($path,'citas-fisioterapia/')) ? 'active' : '' }}">
     <a href="{{ url('/admin/citas-fisioterapia') }}" >
       <i class="fa fa-calendar-o"></i><span class="sidebar-mini-hide font-w600">FISIOTERAPIA</span>
+    </a>
+  </li>
+  <li class="{{ (str_contains($path,'citas-fisioterapia-getafe')) ? 'active' : '' }}">
+    <a href="{{ url('/admin/citas-fisioterapia-getafe') }}" >
+      <i class="fa fa-calendar-o"></i><span class="sidebar-mini-hide font-w600">FISIOTERAPIA Getafe</span>
     </a>
   </li>
   <li class="{{ (str_contains($path,'citas-estetica')) ? 'active' : '' }}">

@@ -413,9 +413,9 @@ class InformesController extends Controller {
 
     /*     * ********************************* */
 
-    $auxCount = ['nutri' => 0, 'fisio' => 0, 'suscrip' => 0, 'bonos' => 0, 'otros' => 0];
+    $auxCount = ['nutri' => 0, 'fisio' => 0, 'fisioG' => 0, 'suscrip' => 0, 'bonos' => 0, 'otros' => 0];
     $countCoachs = [null => $auxCount];
-    $sql_lstDates = \App\Models\Dates::whereIn('date_type', ['nutri', 'fisio'])
+    $sql_lstDates = \App\Models\Dates::whereIn('date_type', ['nutri', 'fisio', 'fisioG'])
             ->whereYear('date', '=', $year)
             ->where('id_user_rates', '>', 1);
     if ($month>0) $sql_lstDates->whereMonth('date', '=', $month);

@@ -158,6 +158,8 @@ class BonosController extends Controller {
                return redirect('/admin/citas-nutricion/edit/'.$id_back)->with('success', $resp[1]);
             case 'fisio':
                return redirect('/admin/citas-fisioterapia/edit/'.$id_back)->with('success', $resp[1]);
+            case 'fisioG':
+               return redirect('/admin/citas-fisioterapia-getafe/edit/'.$id_back)->with('success', $resp[1]);
 //            case 'ficha':
 //               return redirect('/admin/usuarios/informe/'.$id_back.'#bono')->with('success', $resp[1]);
             case 'pt':

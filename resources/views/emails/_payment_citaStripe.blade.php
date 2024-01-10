@@ -10,7 +10,7 @@ $tit = 'Su cita en Evolutio';
       echo 'Pago de la señal para su ';
     } else {
       echo ($remember) ? 'Le recordamos su' : 'Tienes una';
-    }?> cita en nuestro centro de <b><?php echo $rate->name ?></b> en <strong> Evolutio</strong>
+    }?> cita en nuestro centro de <b><?php echo $rate->name ?></b> en <strong> Evolutio <?php if($obj->date_type == 'fisioG') echo ' / Getafe'; ?></strong>
 </p>
 
 <p style="color: black;font-size: 18px;">
@@ -19,7 +19,7 @@ $tit = 'Su cita en Evolutio';
     
     if ($obj->date_type == 'nutri')
       echo '- Nutricionista: '.$oCoach->name.'<br>';    
-    if ($obj->date_type == 'fisio')
+    if ($obj->date_type == 'fisio' || $obj->date_type == 'fisioG')
       echo '- Fisioterapeuta: '.$oCoach->name.'<br>';  
     ?>
     - Servicio: <?php echo implode(', ',$rateLst) ?><br>
