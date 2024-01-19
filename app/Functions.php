@@ -128,7 +128,7 @@ function getYearActive() {
 }
 
 function colors() {
-  return ['#9b59ff', '#295d9b', '#10cfbd', '#ffa116', '#871282', '#066572', '#06931d', '#1fa7c0', '#b2d33d', '#3aaa49'];
+  return ['#9b59ff', '#295d9b', '#10cfbd', '#ffa116', '#871282', '#066572', '#06931d', '#1fa7c0', '#b2d33d', '#3aaa49', '#d08de1', '#b9847a', '#c5288b', '#455224', '#ca7b35', '#d048e1'];
 }
 
 function printColor($id) {

@@ -19,6 +19,9 @@ Homestead.yaml
 npm-debug.log
 yarn-error.log
 composer.phar
+Dockerfile
+docker-compose.yml
+evolutio_admin.sql
 /bkp-old
 /config
 .htaccess
