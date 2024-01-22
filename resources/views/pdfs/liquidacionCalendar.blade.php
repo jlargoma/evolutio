@@ -155,7 +155,7 @@
             <tbody>
                 @for($i = 8; $i <= 22; $i++)
                 <tr>
-                    <td>
+                    <td class="small">
                         <?php
                             echo $i;
                         ?>
