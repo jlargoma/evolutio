@@ -136,7 +136,7 @@ class CoachLiqService {
         $className .= ' a las ' . date('h a', $time);
         $className .= ' (cliente : ' . $item->user->name . ')';
         $pagosClase[$key][] = $className;
-        $claseDay[strtotime(date('Y-m-d', $time))][] = $item->user->name;
+        $claseDay[strtotime(date('Y-m-d', $time))][$time] = $item->user->name;
       }
     }
     

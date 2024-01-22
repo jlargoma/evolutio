@@ -134,24 +134,47 @@
     @foreach($calendar['days'] as $k=>$days)
         @if(count($days)>0)
         <table class="table table-calendar">
+            @php
+                $showBody = false;
+            @endphp
             <thead>
                 <tr>
+                    <th>Hora</th>
                     @foreach($days as $d)
-                    <th>{{$d['day'].' '.$d['date']}}</th>
+                        <th>{{$d['day'].' '.$d['date']}}</th>
+
+                        @php
+                            if(isset($claseDay[$d['time']]))
+                                $showBody = true;
+                        @endphp
+
                     @endforeach
                 </tr>
             </thead>
+            @if($showBody)
             <tbody>
+                @for($i = 8; $i <= 22; $i++)
                 <tr>
+                    <td>
+                        <?php
+                            echo $i;
+                        ?>
+                    </td>
                     @foreach($days as $d)
                     <td class="small">
                         <?php
-                        if (isset($claseDay[$d['time']])) echo implode('<br>', $claseDay[$d['time']]);
+                        if (
+                            isset($claseDay[$d['time']]) && 
+                            isset($claseDay[$d['time']][$d['time'] + $i * 60 * 60])
+                        ) 
+                            echo $claseDay[$d['time']][$d['time'] + $i * 60 * 60];
                         ?>
                     </td>
                     @endforeach
                 </tr>
+                @endfor
             </tbody>
+            @endif
         </table>
         @endif
     @endforeach

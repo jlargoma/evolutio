@@ -38,6 +38,18 @@
           <button class="btn btn-mult" data-toggle="modal" data-target="#modalMultGroup">Multiples</button>
         </div>
       </div>
+
+      @if($coach != 0)
+      <div class="row">
+        <div class="col-md-12 col-xs-12  mx-1em text-center">
+          <a href='/admin/imprimir-liquidacion-Entrenador/{{$coach}}/{{$month}}' target="_blank" class="btn btn-success">
+            <i class="fa fa-file-pdf-o"></i>&nbsp;
+            PDF
+          </a>
+        </div>
+      </div>
+      @endif
+
       <div class="row">  
         <div class="col-md-2 col-xs-12  mx-1em">
           <input type="search" id="search_cust" class="form-control" placeholder="Buscar clientes">

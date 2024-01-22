@@ -337,46 +337,8 @@ class FisioController extends Controller {
       
     }
     
-    private function changeColors($tColors){
-      $tColors[1716] = '#9b59ff';
-      $tColors[1971] = '#295d9b';
-      $tColors[2347] = '#ffa116';
-      $tColors[2504] = '#10cfbd';
-
-      $finalColors = User::changeColors($tColors);
-      $checkColoresRep = [
-        '#9b59ff' => true,
-        '#295d9b' => true,
-        '#ffa116' => true,
-        '#10cfbd' => true
-      ];
-
-      $allColors = colors();
-      $colorsIndex = count($allColors) - 1;
-      
-      foreach($finalColors as $k => $v){
-
-        //Chequeo si el color existe
-        if(
-            isset($checkColoresRep[$finalColors[$k]]) && 
-            $checkColoresRep[$finalColors[$k]] &&
-            !in_array($k, [1716, 1971, 2347, 2504]) //ya esta tomado el color para esos usuarios
-        ){
-            //Si ya existe utilizo otro desde el final del array, no lo agrego como nuevo color usado para
-            // que en caso de que haya muchos usuarios y llegue a repetirse no produzca un deadlock, simplemente 
-            // habra que agregar mas colores para que no se repitan
-            if($colorsIndex >= 0){
-                $finalColors[$k] = $allColors[$colorsIndex];
-                $colorsIndex--;
-            }
-
-        } else {
-            $checkColoresRep[$finalColors[$k]] = true;
-        }
-
-      }
-      
-      return $finalColors;
+    private function changeColors($tColors){      
+      return User::changeColors($tColors);
     }
 
 }
