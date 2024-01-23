@@ -30,8 +30,17 @@
             <tbody>
                 @foreach($lstObjs as $oConve)
                 <tr class="d1" data-k="{{$oConve->id}}">
-                    <td class="static"><i class="fa fa-eye"></i> {{$oConve->name}}</td>
-                    <td class="first-col"></td>
+                    <td class="static convenio-name-display"><i class="fa fa-eye"></i> {{$oConve->name}}</td>
+                    <td class="static first-col">
+                        <button 
+                            data-id="{{$oConve->id}}" 
+                            data-name="{{$oConve->name}}" 
+                            data-comision="{{$oConve->comision_porcentaje / 100}}" 
+                            style="margin-top:6px;" class="btn btn-sm btn-primary btn-edit-convenio"
+                        >
+                            Editar
+                        </button>
+                    </td>
                     <td><b>{{moneda(array_sum($tConvenio[$oConve->id]))}}</b></td>
                     @foreach($lstMonths as $km=>$vm)
                     <td>{{moneda($tConvenio[$oConve->id][$km])}}</td>
@@ -73,6 +82,25 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="modal-convenio-update" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="block block-themed block-transparent remove-margin-b">
+                <div class="block-header bg-primary-dark">
+                    <ul class="block-options">
+                        <li>
+                            <button data-dismiss="modal" type="button"><i class="si si-close"></i></button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="row block-content" id="content-bono">
+                    @include('convenios.update')
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 @section('scripts')
 
@@ -80,10 +108,32 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $('.d1').on('click', function() {
-            var k = $(this).data('k');
-            $('.d1_' + k).toggle();
+
+        $('body').on("click", ".btn-edit-convenio", function(event) {
+            event.stopPropagation();
+            let element = $(event.target);
+            
+            $('#convenio-name-update').val(element.data('name'));
+            $('#convenio-comision-update').val(element.data('comision'));
+            $('#convenio-id-update').val(element.data('id'));
+            
+            $("#modal-convenio-update").modal("show");
         });
+
+        $('.d1').on('click', function() {
+            let element = $(event.target);
+            if (!element.hasClass("btn-edit-convenio")) {
+                var k = $(this).data('k');
+                $('.d1_' + k).toggle();
+            }else{
+                $('#convenio-name-update').val(element.data('name'));
+                $('#convenio-comision-update').val(element.data('comision'));
+                $('#convenio-id-update').val(element.data('id'));
+                $("#modal-convenio-update").modal("show");
+            }
+                
+        });
+        
     });
 </script>
 <style>

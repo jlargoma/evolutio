@@ -22,6 +22,7 @@ use App\Models\UserBonos;
 use App\Models\Settings;
 use App\Models\UsersSuscriptions;
 use phpDocumentor\Reflection\DocBlock\Tags\Var_;
+use App\Models\Convenios;
 
 trait ClientesTraits
 {
@@ -236,6 +237,223 @@ trait ClientesTraits
       'newUsers' => $newUsers,
       'unsubscribeds' => $unsubscribeds,
       'tit' => $tit,
+      'total_pending' => array_sum($arrayPaymentMonthByUser),
+      'altasBajas' => $altasBajas,
+      'aLstAltBaj' => $aLstAltBaj,
+    ]);
+  }
+
+  public function clientesConvenio(Request $request, $month = false)
+  {
+    $convenios = Convenios::all();
+    $year = getYearActive();
+    if (str_contains($month, '-')) {
+      $aux = explode('-', $month);
+      $year = $aux[0];
+      $month = $aux[1];
+    }
+    if (!$month)
+      $month = date('n');
+
+
+    $months = lstMonthsSpanish(false);
+    unset($months[0]);
+    $oUser = new User();
+    $oUser->create_altaBajas($year, $month);
+    $oRates = Rates::orderBy('type', 'desc')->orderBy('name', 'desc')->get();
+    $detail = [];
+    $payments = $noPay = 0;
+    $status = isset($request->status) ? $request->status : 1;
+    $fFamily = isset($request->fFamily) ? $request->fFamily : null;
+    $fRate = isset($request->fRate) ? $request->fRate : null;
+    $tit = '';
+    switch ($status) {
+      case 'all':
+        $sqlUsers = User::where('role', 'user');
+        $tit = 'Todos los usuarios';
+        break;
+      case 'new':
+        $tit = 'Nuevos usuarios ' . $month . '/' . $year;
+        $sqlUsers = User::altaBajas($year, $month)->where('status', 1);
+        break;
+      case 'unsubscribeds':
+        $tit = 'Usuarios dados de baja ' . $month . '/' . $year;
+        $sqlUsers = User::altaBajas($year, $month)->where('status', 0);
+        break;
+      case 'new_unsubscribeds':
+        $tit = 'Usuarios Nuevos ó Dados de Baja ' . $month . '/' . $year;
+        $sqlUsers = User::altaBajas($year, $month);
+        break;
+      case 2:
+        $tit = 'Usuarios fidelity';
+        $uPlan = DB::table('user_meta')
+          ->where('meta_key', 'plan')
+          ->where('meta_value', 'fidelity')
+          ->pluck('user_id');
+
+        $sqlUsers = User::select('users.*')->where('role', 'user')
+          ->where('status', 1)
+          ->whereIntegerInRaw('users.id', $uPlan);
+        break;
+      default:
+        if ($status == 0) $tit = 'Usuarios Inactivos';
+        if ($status == 1) $tit = 'Usuarios Activos';
+        $sqlUsers = User::where('role', 'user')
+          ->where('status', $status);
+        break;
+    }
+
+    $sqlUsers->with('userCoach');
+    if ($fRate) {
+      $sqlUsers->join('users_rates', function ($join) {
+        $join->on('users.id', '=', 'users_rates.id_user');
+      })->where('users_rates.id_rate', $fRate)
+        ->where('users_rates.rate_year', $year)
+        ->where('users_rates.rate_month', $month)
+        ->whereNull('users_rates.deleted_at')
+        ->select('users.*');
+    }
+
+    if ($fFamily) {
+
+      $lstIDs = User::usersRatesFamilyMonths($year, $month, $fFamily);
+      $sqlUsers->whereIN('users.id', $lstIDs);
+    }
+
+    $users = $sqlUsers->orderBy('name', 'asc')->get();
+    $userIDs =  $sqlUsers->pluck('users.id');
+    //---------------------------------------------//
+    $aRates = [];
+    $typeRates = TypesRate::pluck('name', 'id');
+    $aRateType = [];
+    //    $oRates = Rates::whereIn('type', $typeRates)->get();
+    $rPrices = $rNames = [];
+    if ($oRates) {
+      foreach ($oRates as $r) {
+        $aRates[$r->id] = $r;
+        $rPrices[$r->id] = $r->price;
+        $rNames[$r->id] = $r->name;
+        if (isset($typeRates[$r->type])) {
+          $rNames[$r->id] = $typeRates[$r->type] . '<br>' . $r->name;
+          $aRateType[$r->id] = $typeRates[$r->type];
+        }
+      }
+    }
+
+    //---------------------------------------------//
+    $arrayPaymentMonthByUser = array();
+    $date = date('Y-m-d', strtotime($year . '-' . $month . '-01' . ' -1 month'));
+    $toPay = $uRates = $uCobros = [];
+    $total_pending = 0;
+    $monthAux = date('m', strtotime($date));
+    $yearAux = date('Y', strtotime($date));
+    for ($i = 0; $i < 3; $i++) {
+      $resp = $this->getRatesByMonth($monthAux, $yearAux, $userIDs, $rPrices, $rNames);
+      $uRates[$i] = $resp[0];
+      $toPay[$i] = $resp[2];
+      $noPay += $resp[2];
+      $detail[] = $resp[3];
+      $next = strtotime($date . ' +1 month');
+      $date = date('Y-m-d', $next);
+      $monthAux = date('m', $next);
+      $yearAux = date('Y', $next);
+    }
+
+    if (count($detail) > 0) {
+      $aux = '';
+      foreach ($detail as $item) {
+        foreach ($item as $k => $d) {
+          $aux .= $k . ':{';
+          foreach ($d as $k2 => $i2) {
+            $aux .= "$k2: '$i2',";
+          }
+          $aux .= '},';
+        }
+      }
+      $detail = "{ $aux }";
+    } else {
+      $detail = null;
+    }
+    $aCoachs = $oUser->whereCoachs('teach')->orderBy('name')->pluck('name', 'id')->toArray();
+
+    /**/
+    $uPlan = $oUser->getMetaUserID_byKey('plan', 'fidelity');
+    $sql = DB::table('user_meta')
+      ->where('meta_key', 'plan')
+      ->where('meta_value', 'basic')
+      ->where('created_at', '>=', date('Y-m-d', strtotime('-12 months')));
+
+    $uPlanPenal =  $sql->pluck('user_id')->toArray();
+    //    dd($uPlanPenal);
+    $rFamilyName = [
+      -1 => 'Suelo Pélvico',
+      1 => 'Membresias',
+      2 => 'PT',
+      8 => 'Fisioterapia',
+      10 => 'Nutrición',
+      12 => 'Estetica',
+    ];
+    $unsubscribeds = 0;
+    $selectYear = $year;
+    $year = getYearActive();
+
+    global $cFRates;
+    $customFamilyRates = Settings::getContent('customFamilyRates');
+    $cFRates = ($customFamilyRates) ? json_decode($customFamilyRates) : [];
+    foreach($cFRates as $k=>$item){
+      $cFRates[$k]->ids = explode(',',$item->ids);
+    }
+
+    ob_start();
+    $this->getAltasBajas($month);
+    $altasBajas = ob_get_contents();
+    ob_clean();
+
+
+    $newUsers = 0;
+    //$lstAltBaj = DB::select('SELECT rate_type, active, user_id FROM `user_alta_baja` WHERE rate_type IN (1,2) AND `year_month` ="'.$year . '-' . $month.'" ORDER BY active');
+
+    $lstAltBaj = UsersSuscriptions::where(function($query) use ($year, $month) {
+            $query->whereYear('deleted_at', $year)->whereMonth('deleted_at',$month);
+        })->orWhere(function($query) use ($year, $month) {
+          $query->whereYear('created_at', $year)->whereMonth('created_at',$month);
+      })->withTrashed()->get();
+    $aLstAltBaj = [];
+    foreach ($lstAltBaj as $item) {
+      if (isset($aRateType[$item->id_rate])){
+        $auxRate = $aRateType[$item->id_rate];
+        if (!array_key_exists($item->id_user,$aLstAltBaj)) $aLstAltBaj[$item->id_user] = [];
+        $aLstAltBaj[$item->id_user][$auxRate] = [
+          'rt'=>$auxRate,
+          'active'=>($item->deleted_at ? 0 : 1 )];
+        }
+    }
+    $newUsers = count($aLstAltBaj);
+
+
+    return view('/admin/usuarios/clientes/indexConvenio', [
+      'users' => $users,
+      'month' => $month,
+      'year' => $year,
+      'selectYear' => $selectYear,
+      'status' => $status,
+      'toPay' => $toPay,
+      'noPay' => $noPay,
+      'uRates' => $uRates,
+      'detail' => $detail,
+      'months' => $months,
+      'aCoachs' => $aCoachs,
+      'uPlan' => $uPlan,
+      'uPlanPenal' => $uPlanPenal,
+      'rNames' => $rNames,
+      'rFamilyName' => $rFamilyName,
+      'fRate' => $fRate,
+      'fFamily' => $fFamily,
+      'aRatesIds' => [],
+      'newUsers' => $newUsers,
+      'unsubscribeds' => $unsubscribeds,
+      'tit' => $tit,
+      'convenios' => $convenios,
       'total_pending' => array_sum($arrayPaymentMonthByUser),
       'altasBajas' => $altasBajas,
       'aLstAltBaj' => $aLstAltBaj,

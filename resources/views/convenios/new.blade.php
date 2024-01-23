@@ -6,10 +6,16 @@
         <form class="form-horizontal" action="{{ url('/admin/convenios/new') }}" method="post">
             <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
             <div class="row  mx-1em">
-                <div class="col-md-12 mx-1em">
+                <div class="col-md-8 mx-1em">
                     <div class="form-material">
                         <input class="form-control" type="text" id="name" name="name" required>
                         <label for="nombre">Nombre del Convenio</label>
+                    </div>
+                </div>
+                <div class="col-md-4 mx-1em">
+                    <div class="form-material">
+                        <label for="comision">Comisión</label>
+                        <input id="comision" oninput="limitDecimals(this, 2)" type="number" step="0.01" name="comision" class="form-control" value="0">
                     </div>
                 </div>
             </div>
@@ -48,3 +54,12 @@
         </form>
     </div>
 </div>
+<script>
+     function limitDecimals(inputElement, decimalPlaces) {
+      let inputValue = inputElement.value.toString();
+
+      if (inputValue.includes('.') && inputValue.split('.')[1].length > decimalPlaces) {
+        inputElement.value = parseFloat(inputValue).toFixed(decimalPlaces);
+      }
+    }
+</script>

@@ -80,7 +80,10 @@ $uRole = $oUser->role;
   <li class="subMenu <?php echo str_contains($path,'admin/convenio') ? 'opened' : 'open' ?>">
     <i class="fa fa-files-o" style="margin-right: 15px;"></i> <span class="sidebar-mini-hide font-w600 ">  Convenios</span>
     <ul>
-    <li class="<?php echo str_contains($path,'convenios/listado') ? 'active' : '' ?>">
+      <li class="<?php echo str_contains($path,'admin/convenios/altas-clientes') ? 'active' : '' ?>">
+        <a href="{{url('/admin/convenios/altas-clientes')}}" class="font-w600"><i class="fa fa-plus"></i> <span class="sidebar-mini-hide font-w600">Altas Clientes</span></a>
+      </li>
+      <li class="<?php echo str_contains($path,'convenios/listado') ? 'active' : '' ?>">
        <a href="{{url('/admin/convenios/listado')}}" class="font-w600"><i class="fa fa-thumb-tack"></i> <span class="sidebar-mini-hide font-w600">Convenios</span></a>
       </li>
       <li class="<?php echo str_contains($path,'admin/convenios/informes') ? 'active' : '' ?>">

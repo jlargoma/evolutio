@@ -199,8 +199,11 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
 
   /* convenios */
   Route::get('/convenios/listado', 'ConveniosController@index');
+  Route::get('/convenios/altas-clientes', 'ConveniosController@clientesConvenio');
+  Route::post('/convenios/actualizar-usuario', 'ConveniosController@actualizarConvenioUsuario');
   Route::post('/convenios/new', 'ConveniosController@newItem');
   Route::get('/convenios/update', 'ConveniosController@update');
+  Route::post('/convenios/update', 'ConveniosController@updateConvenio');
   Route::post('/convenios/delete', 'ConveniosController@delete');
   Route::get('/convenios/informes/{month?}/{convenio?}/{rate?}', 'ConveniosController@informeConvenios');
 

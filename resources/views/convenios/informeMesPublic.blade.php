@@ -56,10 +56,12 @@
               <td class="text-center bg-complete font-w800" rowspan="2">RESUMEN</td>
               <td class="text-center bg-complete font-w800">Nº Clientes</td>
               <td class="text-center bg-complete font-w800">TOTAL</td>
+              <td class="text-center bg-complete font-w800">TOTAL COMISIONES</td>
             </tr>
             <tr>
               <td class="text-center bg-complete"><?php echo count($convLstUsers); ?></td>
               <td class="text-center bg-complete"><?php echo moneda($totals, false, 1)  ?> </td>
+              <td class="text-center bg-complete"><?php echo moneda($totals * $oConvenio->comision_porcentaje / 10000, false, 1)  ?> </td>
             </tr>
           </tbody>
         </table>
@@ -74,6 +76,7 @@
               <th class="text-center">Nombre cliente</th>
               <th class="text-center">Familia</th>
               <th class="text-center">Importe</th>
+              <th class="text-center">Comisión</th>
             </tr>
           </thead>
           <tbody>
@@ -84,6 +87,11 @@
                   <td class="text-center">{{$data['name']}}</td>
                   <td class="text-center">{{$lstRateTypes[$uLstrates['rGroup']]}}</td>
                   <td class="text-center">{{moneda($uLstrates['price'],false,1)}}</td>
+                  @if($oConvenio && $oConvenio->comision_porcentaje && $uLstrates['price'])
+                    <td class="text-center">{{moneda($uLstrates['price'] * $oConvenio->comision_porcentaje / 10000,false,1)}}</td>
+                  @else
+                    <td class="text-center">{{moneda($uLstrates['price'],false,1)}}</td>
+                  @endif
                 </tr>
               <?php endforeach ?>
             <?php endforeach ?>

@@ -9,11 +9,13 @@ use App\Models\Convenios;
 use App\Models\User;
 use App\Models\UserRates;
 use App\Models\Rates;
+use App\Models\TypesRate;
+use \App\Traits\ClientesTraits;
 
 class ConveniosController extends Controller
 {
 
-
+  use ClientesTraits;
 
   public function index()
   {
@@ -66,8 +68,12 @@ class ConveniosController extends Controller
 
   public function newItem(Request $request)
   {
+    if($request->input('comision') > 100 || $request->input('comision') < 0){
+      return redirect()->back()->with(['error' => 'Comisión inválida']);
+    }
     $oObj = new Convenios();
     $oObj->name = $request->input('name');
+    $oObj->comision_porcentaje = $request->input('comision') * 100;
     $oObj->save();
     return redirect()->back()->with(['success' => 'Convenio agregado']);
   }
@@ -108,6 +114,8 @@ class ConveniosController extends Controller
 
     $lstObjs = Convenios::all();
     $urlPubl = null;
+    $oConveniosId = [];
+
     if($convenio_id && $convenio_id != 'all'){
       $auxConv = Convenios::where('id',$convenio_id)->first();
       if (!$auxConv->token){
@@ -118,6 +126,10 @@ class ConveniosController extends Controller
       $oConvenios[] = $auxConv;
     } 
     else $oConvenios = $lstObjs;
+
+    foreach($lstObjs as $conv) {
+      $oConveniosId[$conv->id] = $conv;
+    }
    
     $convenioNames = [];
     $year = getYearActive();
@@ -129,6 +141,7 @@ class ConveniosController extends Controller
     unset($lstMonths[0]);
     $convLstUsers = [];
     $totals = 0;
+    $totalsComision = 0;
     $lstRatesNames = $lstUsers = [];
     foreach ($oConvenios as $item) {
       $convLstRates[$item->id] = null;
@@ -145,6 +158,10 @@ class ConveniosController extends Controller
               $p = ($c) ? ($c) : $ur->price;
               $convLstUsers[$uc->id]['rates'][] = ['price' => $p, 'date' => $ur->created_at, 'rGroup' => (isset($lstRateTypes[$rt_id]) ? $rt_id : -1 ), 'rateID' => $ur->id_rate];
               $totals += $p;
+              if($item->comision_porcentaje){
+                $totalsComision += $p * $item->comision_porcentaje / 10000;
+              }
+              
               $lstUsers[$uc->id] = $convLstUsers[$uc->id];
             }
             if(array_key_exists($rt_id,$lstRateTypes))  $lstRatesNames[$rt_id] = $lstRateTypes[$rt_id];
@@ -161,9 +178,11 @@ class ConveniosController extends Controller
       'month' => $month,
       'lstObjs' => $lstObjs,
       'convenio' => $convenio_id,
+      'oConveniosId' => $oConveniosId,
       'urlPubl' => $urlPubl,
       'convenioNames' => $convenioNames,
       'totals' => $totals,
+      'totalsComision' => $totalsComision,
       'lstMonths' => $lstMonths,
       'lstRates' => $lstRates,
       'lstRateTypes' => $lstRateTypes,
@@ -219,6 +238,60 @@ class ConveniosController extends Controller
       'lstRateTypes' => $lstRateTypes,
       'convLstUsers' => $convLstUsers,
     ]);
+  }
+
+  public function actualizarConvenioUsuario(Request $request) {
+
+    try {
+      if(!$request->usuario || !$request->convenio){
+        throw new \Exception('Faltan datos');
+      }
+
+      $usuario = User::find($request->usuario);
+
+      if(!$usuario->id) {
+        throw new \Exception('Usuario no encontrado');
+      }
+
+      $usuario->convenio = $request->convenio;
+      if ($usuario->save()){
+        return 'OK';
+      } else {
+        throw new \Exception('Error al actualizar usuario');
+      }
+    } catch (\Exception $e) {
+      return $e->getMessage();
+    }
+
+  }
+
+  public function updateConvenio(Request $request) {
+    try {
+      if(!$request->id || !$request->comision || !$request->name){
+        throw new \Exception('Faltan datos');
+      }
+
+      if($request->comision > 100 || $request->comision < 0){
+        throw new \Exception('Comisión inválida');
+      }
+
+      $convenio = Convenios::find($request->id);
+
+      if(!$convenio->id) {
+        throw new \Exception('Convenio no encontrado');
+      }
+
+      $convenio->name = $request->input('name');
+      $convenio->comision_porcentaje = $request->input('comision') * 100;
+
+      if ($convenio->save()){
+        return redirect('admin/convenios/listado')->with(['success' => 'Convenio actualizado']);
+      } else {
+        throw new \Exception('No se pudo actualizar convenio');
+      }
+    } catch (\Exception $e) {
+      return redirect('admin/convenios/listado')->with(['error' => $e->getMessage()]);
+    }
   }
  
 }
