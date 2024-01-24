@@ -69,7 +69,7 @@
         <option value="all">Todos</option>
         <?php
         foreach ($lstObjs as $k => $oConve) :
-          if($oConve == $convenio){
+          if($oConve->id == $convenio){
             $s ='selected';
           } else {
             $s = '';

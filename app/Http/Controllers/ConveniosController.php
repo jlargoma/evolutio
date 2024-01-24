@@ -198,6 +198,10 @@ class ConveniosController extends Controller
       $month = date('m');
 
     $oConvenio = Convenios::where('token',$toke)->first();
+    if(!$oConvenio) {
+      abort(404);
+      exit();
+    }
     $lstRates = Rates::orderBy('name', 'asc')->pluck('type', 'id')->toArray();
     $lstRateTypes = \App\Models\TypesRate::orderBy('name', 'asc')->pluck('name', 'id')->toArray();
     $lstRateTypes['-1'] = 'Otros';
