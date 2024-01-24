@@ -87,11 +87,7 @@
                   <td class="text-center">{{$data['name']}}</td>
                   <td class="text-center">{{$lstRateTypes[$uLstrates['rGroup']]}}</td>
                   <td class="text-center">{{moneda($uLstrates['price'],false,1)}}</td>
-                  @if($oConvenio && $oConvenio->comision_porcentaje && $uLstrates['price'])
-                    <td class="text-center">{{moneda($uLstrates['price'] * $oConvenio->comision_porcentaje / 10000,false,1)}}</td>
-                  @else
-                    <td class="text-center">{{moneda($uLstrates['price'],false,1)}}</td>
-                  @endif
+                  <td class="text-center">{{moneda($uLstrates['price'] * $oConvenio->comision_porcentaje / 10000,false,1)}}</td>
                 </tr>
               <?php endforeach ?>
             <?php endforeach ?>
