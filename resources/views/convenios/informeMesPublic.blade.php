@@ -21,7 +21,7 @@
 @endsection
 @section('content')
 <div class="content content-boxed bg-gray-lighter">
-  <h2 class="text-center">INFORME DE CONVENIO {{$oConvenio->name}}</h2>
+  <h2 class="text-center">INFORME DE CONVENIO <b>{{$oConvenio->name}}</b></h2>
   <input type="hidden" id="_token" name="_token" value="<?php echo csrf_token(); ?>">
   <div class="col-xs-12 btn-months mx-1em">
     @foreach($lstMonths as $k=>$v)

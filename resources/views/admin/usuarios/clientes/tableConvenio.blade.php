@@ -74,7 +74,6 @@ function printIconRate($uRates){
                       <option value="{{$oConv->id}}" @if( $oConv->id == $user->convenio) selected @endif >{{$oConv->name}}</option>
                       @endforeach
                     </select>
-                    <label for="convenio">Convenio</label>
                   </div>
                 </td>
 
