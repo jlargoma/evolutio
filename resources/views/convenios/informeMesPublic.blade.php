@@ -37,7 +37,7 @@
         <option value=""> -- </option>
         <?php
         foreach ($lstRateTypes as $k => $v) :
-          $s = ($k == $rateID) ? 'selected' : '';
+          $s = ($k == $rateTypeID) ? 'selected' : '';
           echo '<option value="' . $k . '" ' . $s . '>' . $v . '</option>';
         endforeach;
         ?>
@@ -81,16 +81,28 @@
           </thead>
           <tbody>
             <?php foreach ($convLstUsers as $data) : ?>
-              <?php foreach ($data['rates'] as $rt_id => $uLstrates) : ?>
-                <tr>
-                  <td class="text-center"><b>{{dateMin($uLstrates['date'])}}</b></td>
-                  <td class="text-center">{{$data['name']}}</td>
-                  <td class="text-center">{{$lstRateTypes[$uLstrates['rGroup']]}}</td>
-                  <td class="text-center">{{moneda($uLstrates['price'],false,1)}}</td>
-                  <td class="text-center">{{moneda($uLstrates['price'] * $oConvenio->comision_porcentaje / 10000,false,1)}}</td>
-                </tr>
+              <tr>
+                <td class="text-center">
+                  @if($data->date)
+                  <b>{{dateMin($data->date)}}</b>
+                  @else
+                  <b>--</b>
+                  @endif
+                </td>
+                <td class="text-center">{{$data->name}}</td>
+                @if(isset($data->type_rate) && isset($lstRateTypes[$data->type_rate]))
+                  <td class="text-center">{{$lstRateTypes[$data->type_rate]}}</td>
+                @else
+                  <td class="text-center">Otros</td>
+                @endif
+                <td class="text-center">{{moneda($data->charged ? $data->charged : $data->price, false, 1)}}</td>
+                @if($oConvenio->comision_porcentaje)
+                <td class="text-center">{{moneda(($data->charged ? $data->charged : $data->price) * $oConvenio->comision_porcentaje / 10000,false,1)}}</td>
+                @else
+                <td class="text-center">--</td>
+                @endif
+              </tr>
               <?php endforeach ?>
-            <?php endforeach ?>
           </tbody>
         </table>
       </div>

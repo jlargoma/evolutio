@@ -105,7 +105,7 @@ class ConveniosController extends Controller
   ///////////////////////////////////////////////////////////////////////////
 
 
-  public function informeConvenios(Request $request, $month = null, $convenio_id = null, $rateID=null)
+  /*public function informeConveniosOld(Request $request, $month = null, $convenio_id = null, $rateID=null)
   {
 
     $year = getYearActive();
@@ -153,9 +153,11 @@ class ConveniosController extends Controller
           $uRates = UserRates::where('rate_year', $year)->where('rate_month', $month)->where('id_user', $uc->id)->get();
           foreach ($uRates as $ur) {
             $rt_id = array_key_exists($ur->id_rate, $lstRates) ? $lstRates[$ur->id_rate] : -1;
+            
             if(!$rateID || $rateID == $rt_id){
               $c = $ur->charged;
               $p = ($c) ? ($c) : $ur->price;
+              
               $convLstUsers[$uc->id]['rates'][] = ['price' => $p, 'date' => $ur->created_at, 'rGroup' => (isset($lstRateTypes[$rt_id]) ? $rt_id : -1 ), 'rateID' => $ur->id_rate];
               $totals += $p;
               if($item->comision_porcentaje){
@@ -168,7 +170,7 @@ class ConveniosController extends Controller
               else $lstRatesNames[-1] = 'Otros';
           }
         }
-        $lstRateTypes = $lstRatesNames;
+        $lstRateTypes = $lstRatesNames;//Aca se esta pisando el arreglo de nombres haciendo que se resuelvan nombres de rates_type incorrectos
         $convLstUsers = $lstUsers;
       }
     }
@@ -189,9 +191,103 @@ class ConveniosController extends Controller
       'convLstUsers' => $convLstUsers,
       'rateID' => $rateID,
     ]);
+  }*/
+
+  public function informeConvenios(Request $request, $month = null, $convenio_id = null, $rateTypeID=null)
+  {
+
+    $year = getYearActive();
+    if (!$month)
+      $month = date('m');
+
+    $lstObjs = Convenios::all();
+    $urlPubl = null;
+    $oConveniosId = [];
+
+    if($convenio_id && $convenio_id != 'all'){
+      $auxConv = Convenios::where('id',$convenio_id)->first();
+      if (!$auxConv->token){
+        $auxConv->token = str_random(150);
+        $auxConv->save();
+      }
+      $urlPubl = \URL::to('/informes-convenio/'.$year.'/'.$auxConv->token);
+      $oConvenios[] = $auxConv;
+    } 
+    else $oConvenios = $lstObjs;
+
+    foreach($lstObjs as $conv) {
+      $oConveniosId[$conv->id] = $conv;
+    }
+   
+    $year = getYearActive();
+
+    $lstRates = Rates::orderBy('name', 'asc')->pluck('type', 'id')->toArray();
+    $lstRateTypes = \App\Models\TypesRate::orderBy('name', 'asc')->pluck('name', 'id')->toArray();
+    
+    $lstMonths = lstMonthsSpanish();
+    unset($lstMonths[0]);
+    $totals = 0;
+    $totalsComision = 0;
+
+    $uRatesBuilder = UserRates::leftJoin('users', 'users.id', '=', 'users_rates.id_user')
+                      ->leftJoin('appointment', 'users_rates.id', '=', 'appointment.id_user_rates')
+                      ->leftJoin('rates', 'users_rates.id_rate', '=', 'rates.id')
+                      ->select(
+                        'users_rates.*', 
+                        'appointment.date', 
+                        'users.convenio', 
+                        'users.name', 
+                        'rates.type as type_rate'
+                      )
+                      ->where('users_rates.rate_year', $year)
+                      ->where('users_rates.rate_month', $month)
+                      ->where('users.convenio', '>', 0)
+                      ->whereNotNull('users.convenio');
+           
+    if(isset($rateTypeID)) {
+      $uRatesBuilder->where('rates.type', $rateTypeID);
+    }
+
+    if(isset($convenio_id) && $convenio_id != 'all') {
+      $uRatesBuilder->where('users.convenio', $convenio_id);
+    }
+                      
+    $uRates = $uRatesBuilder->orderBy('appointment.date','desc')->get();
+    
+    if($uRates->isNotEmpty()){
+      foreach($uRates as $rate){
+        $priceAux = $rate->charged ? $rate->charged : $rate->price;
+        $totals += $priceAux;
+        if(
+          $rate->convenio && 
+          isset($oConveniosId[$rate->convenio]) && 
+          isset($oConveniosId[$rate->convenio]->comision_porcentaje)
+        ){
+          $totalsComision += $priceAux *  $oConveniosId[$rate->convenio]->comision_porcentaje / 10000;
+        }
+        
+      }
+    }
+
+    
+    return view('/convenios/informeMes', [
+      'year' => $year,
+      'month' => $month,
+      'lstObjs' => $lstObjs,
+      'convenio' => $convenio_id,
+      'oConveniosId' => $oConveniosId,
+      'urlPubl' => $urlPubl,
+      'totals' => $totals,
+      'totalsComision' => $totalsComision,
+      'lstMonths' => $lstMonths,
+      'lstRates' => $lstRates,
+      'lstRateTypes' => $lstRateTypes,
+      'convLstUsers' => $uRates,
+      'rateTypeID' => $rateTypeID,
+    ]);
   }
 
-  public function informeConveniosPublic(Request $request,$year, $toke, $month = null, $rateID=null)
+  /*public function informeConveniosPublicOld(Request $request,$year, $toke, $month = null, $rateID=null)
   {
 
     if (!$month)
@@ -241,6 +337,66 @@ class ConveniosController extends Controller
       'rateID' => $rateID,
       'lstRateTypes' => $lstRateTypes,
       'convLstUsers' => $convLstUsers,
+    ]);
+  }*/
+
+  public function informeConveniosPublic(Request $request,$year, $toke, $month = null, $rateTypeID=null)
+  {
+
+    if (!$month)
+      $month = date('m');
+
+    $oConvenio = Convenios::where('token',$toke)->first();
+    if(!$oConvenio) {
+      abort(404);
+      exit();
+    }
+    $lstRates = Rates::orderBy('name', 'asc')->pluck('type', 'id')->toArray();
+    $lstRateTypes = \App\Models\TypesRate::orderBy('name', 'asc')->pluck('name', 'id')->toArray();
+    $lstRateTypes['-1'] = 'Otros';
+    $lstMonths = lstMonthsSpanish();
+    unset($lstMonths[0]);
+    $totals = 0;
+    
+    $uRatesBuilder = UserRates::leftJoin('users', 'users.id', '=', 'users_rates.id_user')
+                      ->leftJoin('appointment', 'users_rates.id', '=', 'appointment.id_user_rates')
+                      ->leftJoin('rates', 'users_rates.id_rate', '=', 'rates.id')
+                      ->select(
+                        'users_rates.*', 
+                        'appointment.date', 
+                        'users.convenio', 
+                        'users.name', 
+                        'rates.type as type_rate'
+                      )
+                      ->where('users_rates.rate_year', $year)
+                      ->where('users_rates.rate_month', $month)
+                      ->where('users.convenio', $oConvenio->id)
+                      ->where('users.convenio', '>', 0)
+                      ->whereNotNull('users.convenio');
+           
+    if(isset($rateTypeID)) {
+      $uRatesBuilder->where('rates.type', $rateTypeID);
+    }
+                      
+    $uRates = $uRatesBuilder->orderBy('appointment.date','desc')->get();
+    
+    if($uRates->isNotEmpty()){
+      foreach($uRates as $rate){
+        $priceAux = $rate->charged ? $rate->charged : $rate->price;
+        $totals += $priceAux;        
+      }
+    }
+
+    return view('/convenios/informeMesPublic', [
+      'year' => $year,
+      'month' => $month,
+      'oConvenio' => $oConvenio,
+      'totals' => $totals,
+      'lstMonths' => $lstMonths,
+      'lstRates' => $lstRates,
+      'rateTypeID' => $rateTypeID,
+      'lstRateTypes' => $lstRateTypes,
+      'convLstUsers' => $uRates,
     ]);
   }
 
