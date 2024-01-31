@@ -143,8 +143,8 @@
                   <td class="text-center">Otros</td>
                 @endif
                 <td class="text-center">{{moneda($data->charged ? $data->charged : $data->price, false, 1)}}</td>
-                @if(!empty($oConveniosId[$data->convenio]) && $oConveniosId[$data->convenio]->comision_porcentaje)
-                <td class="text-center">{{moneda(($data->charged ? $data->charged : $data->price) * $oConveniosId[$data->convenio]->comision_porcentaje / 10000,false,1)}}</td>
+                @if(($data->charged || $data->price) && !empty($oConveniosId[$data->convenio]) && $oConveniosId[$data->convenio]->comision_fija)
+                <td class="text-center">{{moneda($oConveniosId[$data->convenio]->comision_fija / 100,false,1)}}</td>
                 @else
                 <td class="text-center">--</td>
                 @endif

@@ -35,7 +35,7 @@
                         <button 
                             data-id="{{$oConve->id}}" 
                             data-name="{{$oConve->name}}" 
-                            data-comision="{{$oConve->comision_porcentaje / 100}}" 
+                            data-comision="{{$oConve->comision_fija / 100}}" 
                             style="margin-top:6px;" class="btn btn-sm btn-primary btn-edit-convenio"
                         >
                             Editar

@@ -61,7 +61,7 @@
             <tr>
               <td class="text-center bg-complete"><?php echo count($convLstUsers); ?></td>
               <td class="text-center bg-complete"><?php echo moneda($totals, false, 1)  ?> </td>
-              <td class="text-center bg-complete"><?php echo moneda($totals * $oConvenio->comision_porcentaje / 10000, false, 1)  ?> </td>
+              <td class="text-center bg-complete"><?php echo moneda($totalsComision, false, 1)  ?> </td>
             </tr>
           </tbody>
         </table>
@@ -96,8 +96,8 @@
                   <td class="text-center">Otros</td>
                 @endif
                 <td class="text-center">{{moneda($data->charged ? $data->charged : $data->price, false, 1)}}</td>
-                @if($oConvenio->comision_porcentaje)
-                <td class="text-center">{{moneda(($data->charged ? $data->charged : $data->price) * $oConvenio->comision_porcentaje / 10000,false,1)}}</td>
+                @if(($data->price || $data->charged) && $oConvenio->comision_fija)
+                <td class="text-center">{{moneda($oConvenio->comision_fija / 100,false,1)}}</td>
                 @else
                 <td class="text-center">--</td>
                 @endif

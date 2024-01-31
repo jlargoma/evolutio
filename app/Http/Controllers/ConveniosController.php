@@ -73,7 +73,7 @@ class ConveniosController extends Controller
     }
     $oObj = new Convenios();
     $oObj->name = $request->input('name');
-    $oObj->comision_porcentaje = $request->input('comision') * 100;
+    $oObj->comision_fija = $request->input('comision') * 100;
     $oObj->save();
     return redirect()->back()->with(['success' => 'Convenio agregado']);
   }
@@ -259,11 +259,12 @@ class ConveniosController extends Controller
         $priceAux = $rate->charged ? $rate->charged : $rate->price;
         $totals += $priceAux;
         if(
+          $priceAux &&
           $rate->convenio && 
           isset($oConveniosId[$rate->convenio]) && 
-          isset($oConveniosId[$rate->convenio]->comision_porcentaje)
+          isset($oConveniosId[$rate->convenio]->comision_fija)
         ){
-          $totalsComision += $priceAux *  $oConveniosId[$rate->convenio]->comision_porcentaje / 10000;
+          $totalsComision += $oConveniosId[$rate->convenio]->comision_fija / 100;
         }
         
       }
@@ -357,7 +358,8 @@ class ConveniosController extends Controller
     $lstMonths = lstMonthsSpanish();
     unset($lstMonths[0]);
     $totals = 0;
-    
+    $totalsComision = 0;
+
     $uRatesBuilder = UserRates::leftJoin('users', 'users.id', '=', 'users_rates.id_user')
                       ->leftJoin('appointment', 'users_rates.id', '=', 'appointment.id_user_rates')
                       ->leftJoin('rates', 'users_rates.id_rate', '=', 'rates.id')
@@ -383,7 +385,15 @@ class ConveniosController extends Controller
     if($uRates->isNotEmpty()){
       foreach($uRates as $rate){
         $priceAux = $rate->charged ? $rate->charged : $rate->price;
-        $totals += $priceAux;        
+        $totals += $priceAux;  
+        if(
+          $priceAux &&
+          $rate->convenio && 
+          isset($oConvenio) && 
+          isset($oConvenio->comision_fija)
+        ){
+          $totalsComision += $oConvenio->comision_fija / 100;
+        }      
       }
     }
 
@@ -392,6 +402,7 @@ class ConveniosController extends Controller
       'month' => $month,
       'oConvenio' => $oConvenio,
       'totals' => $totals,
+      'totalsComision' => $totalsComision,
       'lstMonths' => $lstMonths,
       'lstRates' => $lstRates,
       'rateTypeID' => $rateTypeID,
@@ -442,7 +453,7 @@ class ConveniosController extends Controller
       }
 
       $convenio->name = $request->input('name');
-      $convenio->comision_porcentaje = $request->input('comision') * 100;
+      $convenio->comision_fija = $request->input('comision') * 100;
 
       if ($convenio->save()){
         return redirect('admin/convenios/listado')->with(['success' => 'Convenio actualizado']);
