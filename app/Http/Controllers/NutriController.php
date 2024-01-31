@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\Rates;
 use App\Models\TypesRate;
 use App\Services\CitasService;
+use App\Models\Convenios;
 
 class NutriController extends Controller {
 
@@ -74,6 +75,8 @@ class NutriController extends Controller {
     public function create($date = null, $time = null) {
       $data = CitasService::get_create($date,$time,'nutri');
       $data['tColors'] = $this->changeColors($data['tColors']);
+      $convenios = Convenios::all();
+      $data['convenios'] = $convenios;
 
       return view('nutricion.form', $data);
     }
@@ -97,6 +100,8 @@ class NutriController extends Controller {
         }
         /**************************************************** */
         $data['tColors'] = $this->changeColors($data['tColors']);
+        $convenios = Convenios::all();
+        $data['convenios'] = $convenios;
         return view('nutricion.form',$data);
       } else {
         return $this->create();

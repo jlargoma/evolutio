@@ -176,7 +176,7 @@ class UsersController extends Controller {
     $oUser = User::find($id);
     if ($oUser) {
       $lstConvenios = \App\Models\Convenios::all()->pluck('name','id')->toArray();
-      return [$oUser->email, $oUser->telefono,array_key_exists($oUser->convenio,$lstConvenios) ? $lstConvenios[$oUser->convenio] : '--'];
+      return [$oUser->email, $oUser->telefono,array_key_exists($oUser->convenio,$lstConvenios) ? $oUser->convenio : 0];
     }
     return ['', ''];
 //        return ($oUser) ? $oUser->email : '';

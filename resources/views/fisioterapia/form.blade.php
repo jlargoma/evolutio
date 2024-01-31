@@ -52,6 +52,8 @@ jQuery(function () {
                 $('#NC_email').val(data[0]);
                 $('#NC_phone').val(data[1]);
                 $('#NC_convenio').val(data[2]);
+                $('#NC_convenio').change();
+                $('#NC_convenio').prop('disabled', true);
             });
         });
 
@@ -76,9 +78,11 @@ jQuery(function () {
             } else {
               if (resp == 1){
                 if (confirm('Ya hay una cita para ese momento, continuar de todas maneras?')){
+                  $('#NC_convenio').prop('disabled', false);
                   oForm.submit();
                 }
               } else {
+                $('#NC_convenio').prop('disabled', false);
                 oForm.submit();
               }
             }
@@ -104,6 +108,7 @@ jQuery(function () {
                 $('#div_user').hide();
                 $('#id_user').val('0');
                 $('#tit_user').text('Nuevo Cliente');
+                $('#NC_convenio').prop('disabled', false);
             });
                     
             $('#is_group').click(function (e) {

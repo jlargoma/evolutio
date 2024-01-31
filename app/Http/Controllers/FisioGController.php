@@ -12,6 +12,7 @@ use App\Models\Rates;
 use App\Models\CoachTimes;
 use App\Models\TypesRate;
 use App\Services\CitasService;
+use App\Models\Convenios;
 
 class FisioGController extends Controller {
 
@@ -77,6 +78,8 @@ class FisioGController extends Controller {
     public function create($date = null, $time = null) {
       $data = CitasService::get_create($date,$time,'fisioG');
       $data['tColors'] = $this->changeColors($data['tColors']);
+      $convenios = Convenios::all();
+      $data['convenios'] = $convenios;
       return view('fisioterapiaGetafe.form', $data);
     }
 
@@ -110,6 +113,8 @@ class FisioGController extends Controller {
       $data = CitasService::get_edit($id);
       if ($data){
         $data['tColors'] = $this->changeColors($data['tColors']);
+        $convenios = Convenios::all();
+        $data['convenios'] = $convenios;
         return view('fisioterapiaGetafe.form',$data);
       } else {
         return $this->create();

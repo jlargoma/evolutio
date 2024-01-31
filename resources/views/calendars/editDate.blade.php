@@ -42,7 +42,12 @@
     </div>
     <div class="col-xs-12 col-md-2 push-20">
       <label for="id_email">Convenio</label>
-      <input class="form-control" type="text" id="NC_convenio" name="convenio" placeholder="Convenio" @if($id>1) value="{{$oUser->print_convenio()}}" @endif readonly/>
+      <select disabled class="js-select2 form-control" id="NC_convenio" name="convenio" style="width: 100%; cursor: pointer" data-placeholder="">
+        <option value='0'>-</option>
+      <?php foreach ($convenios as $key => $conv) : ?>
+        <option value="{{$conv->id}}" {{isset($oUser) && $oUser->convenio == $conv->id ? 'selected' : ''}}>{{$conv->name}}</option>
+      <?php endforeach; ?>
+      </select>
     </div>
   </div>
   <div class="row">

@@ -77,6 +77,7 @@ class DatesController extends Controller {
     $isGroup = ($request->input('is_group') == 'on');
     $senial = $request->input('senial');
     $time_type = $request->input('time_type');
+    $convenio = $request->input('convenio');
     $timeCita = strtotime($date);
     /* -------------------------------------------------------------------- */
     $oCarbon = Carbon::createFromFormat('d-m-Y H:00:00', "$date $hour:00:00");
@@ -155,6 +156,7 @@ class DatesController extends Controller {
           $oUser->remember_token = str_random(60);
           $oUser->role = 'user';
           $oUser->telefono = $uPhone;
+          $oUser->convenio = $convenio;
           $oUser->save();
           $id_user = $oUser->id;
         }
