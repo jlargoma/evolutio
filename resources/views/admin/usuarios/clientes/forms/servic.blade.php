@@ -5,6 +5,7 @@
       <th>Servicio</th>
       <th>Entrenador</th>
       <th>Precio</th>
+      <th>Sesiones Sem.</th>
       <th></th>
     </tr>
     @if($subscrLst)
@@ -20,6 +21,7 @@
       </td>
       <td>{{$coach}}</td>
       <td><input type="number" step="0.01" data-r="{{$r->id}}" value="{{$r->price}}" class="subscr_price">€</td>
+      <td>{{isset($aux->max_pax) && $aux->max_pax ? $aux->max_pax : '-'}}</td>
       <td>
         <a 
           href="/admin/clientes-unsubscr/{{ $user->id }}/{{$r->id}}"

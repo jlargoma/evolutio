@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\Response;
 use App\Http\Requests;
+use App\Models\Dates;
+use App\Models\Rates;
 use \Carbon\Carbon;
 use Mail;
 use URL;
@@ -179,6 +181,111 @@ class UsersController extends Controller {
     return ['', ''];
 //        return ($oUser) ? $oUser->email : '';
   }
+
+  public function getUserDetailsPT($id) {
+
+    try {
+      
+      $oUser = User::find($id);
+      if ($oUser) {
+
+        $lstConvenios = \App\Models\Convenios::all()->pluck('name','id')->toArray();
+
+        $aLst = UserRates::where('id_user',$id)
+                        ->where('rate_month', date('n'))
+                        ->where('rate_year', date('Y'))
+                        ->where('active',1)->pluck('id_rate')->toArray();
+
+        \App\Services\ValoracionService::RateLstID($id,$aLst);
+
+        $ratesIds = array_values($aLst);
+
+        $ratesInfo = Rates::whereIn('id', $ratesIds)->get();
+        
+        /**
+         * Count times per week
+         */
+        // Get the current date
+        $today = new \DateTime();
+
+        // Set the DateTime object to the beginning of the week (Sunday)
+        $initialDay = clone $today;
+        $initialDay->modify('this week');
+
+        // Set the DateTime object to the end of the week (Saturday)
+        $lastDay = clone $initialDay;
+        $lastDay->modify('this week +6 days');
+
+        // Format the dates if needed
+        $initialDayFormatted = $initialDay->format('Y-m-d');
+        $lastDayFormatted = $lastDay->format('Y-m-d');
+
+        $thisWeekRates = Dates::select('id_rate', 'id_coach', 'date')
+                              ->whereIn('id_rate', $ratesIds)
+                              ->where('id_user', $id)
+                              ->where('date', '>=' , $initialDayFormatted . ' 00:00:00')
+                              ->where('date', '<=' , $lastDayFormatted . ' 23:59:59')
+                              ->get()->toArray();//->pluck('count,id_coach', 'id_rate')->toArray();
+                              
+        $ratesWeekInfo = [];
+
+        foreach($thisWeekRates as $i => $rateWeek){
+
+          if(isset($ratesWeekInfo[$rateWeek['id_rate']])){
+
+            if($ratesWeekInfo[$rateWeek['id_rate']]['date'] < $rateWeek['date']){
+              $ratesWeekInfo[$rateWeek['id_rate']]['date'] = $rateWeek['date'];
+              $ratesWeekInfo[$rateWeek['id_rate']]['id_coach'] = $rateWeek['id_coach'];
+            }
+
+            $ratesWeekInfo[$rateWeek['id_rate']]['count']++;
+
+          }else{
+
+            $ratesWeekInfo[$rateWeek['id_rate']] = [
+              'count'     => 1,
+              'date'      => $rateWeek['date'],
+              'id_coach'  => $rateWeek['id_coach']
+            ];
+
+          }
+
+        }
+        
+        $ratesInfoArr = [];
+        if($ratesInfo->isNotEmpty()){
+          foreach($ratesInfo as $i => $rate){
+            if(isset($ratesWeekInfo[$rate->id])){
+              $rate['count'] = $ratesWeekInfo[$rate->id]['count'];
+              $rate['id_coach'] = $ratesWeekInfo[$rate->id]['id_coach'];
+              $rate['date'] = $ratesWeekInfo[$rate->id]['date'];
+
+              $ratesInfoArr[$rate->id] = $rate;
+            }
+          } 
+        }
+                        
+        return response()->json(['status' => 'OK', 'details' => [
+          'email'     => $oUser->email,
+          'telefono'  => $oUser->telefono,
+          'convenio'  => array_key_exists($oUser->convenio,$lstConvenios) ? $lstConvenios[$oUser->convenio] : '--',
+          'rates'     => $ratesInfoArr
+        ]]);
+
+      } else {
+
+        throw new \Exception('User not found', 404);
+
+      }
+
+    } catch (\Exception $e) {
+
+      return response()->json(['status' => 'error', 'details' => $e->getMessage()], $e->getCode());
+
+    }
+    
+  }
+
   public function getRates($uID) {
     $aLst = UserRates::where('id_user',$uID)
             ->where('active',1)->pluck('id_rate')->toArray();

@@ -21,7 +21,7 @@
         <th class="thBlue">Importe</th>
         <th class="thBlue">F. Pago</th>
         <th class="thBlue">Comentario</th>
-
+        <th class="thBlue"></th>
       </tr>
     </thead>
     <tbody>
@@ -32,10 +32,10 @@
         <td class="first-col"></td>
         <td>{{convertDateToShow_text($i->date)}}</td>
         <td><?= isset($iLstRates[$i->type]) ? $iLstRates[$i->type] : ' - ' ?></td>
-        <td>{{moneda($i->import)}}</td>
+        <td><input style="max-width: 80px;" pattern="\d+(\.\d{1,2})?"  type="number" value="{{$i->import}}" step="0.01" id="importe{{$i->id}}"/></td>
         <td><?= ($i->type_payment) ? payMethod($i->type_payment) : ' - ' ?></td>
         <td>{{$i->comment}}</td>
-        <td></td>
+        <td><button data-id="{{$i->id}}" class="btn btn-primary btn-actualizar">Actualizar</button></td>
       </tr>
       @endforeach
     </tbody>

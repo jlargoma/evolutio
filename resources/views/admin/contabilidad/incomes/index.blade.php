@@ -222,7 +222,24 @@ function sumMonthValue($m){
     });
       
       
-      
+      $('.btn-actualizar').on('click', (e) => {
+        let $this = $(e.target);
+        let id = $this.data('id');
+
+        let importe = $('#importe'+id).val();
+
+        $.post( '/admin/ingresos/edit', { 
+          _token: '{{csrf_token()}}',
+          import: importe,
+          id: id,
+        }).done(function (data) {
+          if (data.status == 'OK') {
+            window.show_notif('success', data.details);
+          } else {
+            window.show_notif('error', data.details);
+          }
+        });
+      });
     });
 </script>
 <style>

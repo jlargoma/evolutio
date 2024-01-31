@@ -87,12 +87,25 @@
                         <?php endforeach ?>
                     </select>
                 </div>
+                <div class="col-xs-6 col-md-2 push-20">
+                    <label for="importeFinal">Precio</label>
+                    <input readonly id="importeFinal" type="number" step="0.01" name="importe" class="form-control" value="{{$price}}">
+                </div>
                 <div class="col-xs-6 col-md-2 mt-1">
                   @if($id>0 && $is_valora && !$charge)   
                    <button class="btn btn-lg btn-user btn-danger" type="button" data-idUser="{{$id_user}}">
                     No Cobrado
                   </button>
                   @endif
+                </div>
+            </div>
+            <div class="row" id="rowRateDetails" >
+                <div class="col-xs-6 col-md-6  push-20">
+                    <h4 id="rowRateDetailsSesiones"></h4>
+                </div>   
+                
+                <div class="col-xs-6 col-md-6 push-20">
+                    <div style="display: none;" id="rowRateDetailsRecuperacionLabel">SESIÓN DE RECUPERACIÓN</div>
                 </div>
             </div>
         </form>

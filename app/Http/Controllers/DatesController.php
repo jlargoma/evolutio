@@ -247,6 +247,45 @@ class DatesController extends Controller {
     $oObj->customTime = $cHour;
     $oObj->updated_at = $date;
     $oObj->senial = $senial;
+    if ($type == 'pt') {
+      $ratesInfo = Rates::where('id', $id_rate)->first();
+
+      $dateAppointment = new \DateTime($date);
+
+      // Set the DateTime object to the beginning of the week 
+      $initialDay = clone $dateAppointment;
+      $initialDay->modify('this week');
+
+      // Set the DateTime object to the end of the week 
+      $lastDay = clone $initialDay;
+      $lastDay->modify('this week +6 days');
+
+      // Format the dates if needed
+      $initialDayFormatted = $initialDay->format('Y-m-d');
+      $lastDayFormatted = $lastDay->format('Y-m-d');
+
+      $thisWeekRatesBuilder = Dates::select('id_rate', 'id_coach', 'date')
+                                  ->where('id_rate', $id_rate)
+                                  ->where('id_user', $id_user)
+                                  ->where('recuperacion', 0)
+                                  ->where('date', '>=' , $initialDayFormatted . ' 00:00:00')
+                                  ->where('date', '<=' , $lastDayFormatted . ' 23:59:59');
+
+      $thisWeekRates = [];
+      
+      if($ID) {
+        $thisWeekRates = $thisWeekRatesBuilder->where('id', '!=', $ID)->get()->toArray();
+      } else {
+        $thisWeekRates = $thisWeekRatesBuilder->get()->toArray();
+      }
+      
+      if(count($thisWeekRates) >= $ratesInfo->max_pax) {
+        $oObj->recuperacion = 1;
+      } else {
+        $oObj->recuperacion = 0;
+      }
+      
+    }
     $oObj->time_type = $time_type;
 
     if ($isGroup) {

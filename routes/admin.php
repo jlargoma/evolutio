@@ -22,6 +22,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::post('/clientes/autosaveValora', 'UsersController@autosaveValora');
   Route::post('/clientes/sendFileTo', 'UsersController@sendFileTo');
   Route::get('/get-mail/{id?}', 'UsersController@getMail');
+  Route::get('/get-user-details-pt/{id?}', 'UsersController@getUserDetailsPT');
   Route::get('/get-rates/{id?}', 'UsersController@getRates');
   Route::get('/clientes-export/{status?}', 'UsersController@exportClients');
   Route::get('/clientes-unassigned/{idUserRate}', 'RatesController@unassignedRate');
@@ -222,6 +223,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function () {
   Route::get('/ingresos/{date?}', 'IncomesController@index');
   Route::get('/ingreso-by-rate/{rateID}', 'IncomesController@byRate');
   Route::get('/ingresos', 'IncomesController@index');
+  Route::post('/ingresos/edit', 'IncomesController@edit');
 
   /* Gastos  rutas basicas */
 

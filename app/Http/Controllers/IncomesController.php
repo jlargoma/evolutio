@@ -237,4 +237,50 @@ class IncomesController extends Controller {
     return 'error';
   }
 
+  public function edit(Request $request) {
+    try {
+      $messages = [
+        'id.required' => 'El Id es requerido.',
+        'import.required' => 'El Importe es requerido.',
+        'import.min' => 'El Importe debe ser mayor de :min.',
+        'import.max' => 'El Importe no debe ser mayor de :max.',
+      ];
+
+      $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+                  'import' => 'required|min:1|max:3000',
+                  'id' => 'required',
+                      ], $messages);
+
+      if ($validator->fails()) {
+        throw new \Exception($validator->errors()->first(), 400);
+      }
+      
+      $oObj = Incomes::find($request->input('id'));
+
+      if($oObj) {
+        $oObj->import = $request->input('import');
+
+        if ($oObj->save()) {
+
+          return response()->json(['status' => 'OK', 'details' => 'Importe actualizado']);
+
+        } else {
+
+          throw new \Exception('No se pudo actualizar el ingreso', 500);
+
+        }
+
+      } else {
+
+        throw new \Exception('Ingreso no encontrado', 404);
+
+      }
+
+      return 'error';
+    } catch (\Exception $e) {
+
+      return response()->json(['status' => 'error', 'details' => $e->getMessage()], $e->getCode());
+
+    }
+  }
 }

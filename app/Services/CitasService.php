@@ -76,6 +76,7 @@ class CitasService {
           'id_serv' => $id_serv,
           'id_user' => $id_user,
           'id_coach' => $oDate->id_coach,
+          'recuperacion' => $oDate->recuperacion,
           'customTime' => $oDate->customTime,
           'time_type' => $oDate->time_type,
           'senial' => $oDate->senial,

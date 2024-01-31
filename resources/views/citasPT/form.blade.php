@@ -33,16 +33,64 @@ $date_type = 'pt'
 jQuery(function () {
     App.initHelpers(['datepicker', 'select2']);
     
+          @if(isset($id_user) && isset($recuperacion))
+            $.get('/admin/get-user-details-pt/{{$id_user}}', function(data) {
+                
+                window.ratesDetailsPT = data.details.rates;
+
+                var ratesId = Object.keys(window.ratesDetailsPT);
+                
+                $( "#id_rate option" ).each(function( index ) {
+                  var dis = true;
+                  var opt = parseInt($( this ).val());
+                  for (const i in data.details.rates) {
+                    if (i == opt) dis = false;
+                  }
+                  $( this ).attr('disabled',dis);
+                });
+
+                $('#id_rate').change();
+            });
+          @endif
 
         $("#id_user").change(function() {
             var id = $(this).val();
-            $.get('/admin/get-mail/' + id, function(data) {
-                $('#NC_email').val(data[0]);
-                $('#NC_phone').val(data[1]);
-                $('#NC_convenio').val(data[2]);
+            $.get('/admin/get-user-details-pt/' + id, function(data) {
+                $('#NC_email').val(data.details.email);
+                $('#NC_phone').val(data.details.telefono);
+                $('#NC_convenio').val(data.details.convenio);
+
+                window.ratesDetailsPT = data.details.rates;
+
+                var ratesId = Object.keys(window.ratesDetailsPT);
+
+                if(ratesId.length == 1){
+                  $('#id_rate').val(ratesId[0]);
+                  $('#id_rate').change();
+                } else if (ratesId.length > 1) {
+                  for(let i = 0; i < ratesId.length; i++){
+                    if(ratesId[i] != 45){
+                      $('#id_rate').val(ratesId[i]);
+                      $('#id_rate').change();
+                      break;
+                    }
+                  }
+                } else {
+                  $( "#id_rate").val(-1);
+                  $('#id_rate').change();
+                }
+                
+                $( "#id_rate option" ).each(function( index ) {
+                  var dis = true;
+                  var opt = parseInt($( this ).val());
+                  for (const i in data.details.rates) {
+                    if (i == opt) dis = false;
+                  }
+                  $( this ).attr('disabled',dis);
+                })
             });
             $( "#id_rate").val(-1)
-            $.get('/admin/get-rates/' + id, function(data) {
+            /*$.get('/admin/get-rates/' + id, function(data) {
               
               $( "#id_rate option" ).each(function( index ) {
                 var dis = true;
@@ -52,7 +100,53 @@ jQuery(function () {
                 }
                 $( this ).attr('disabled',dis);
               })
-            });
+            });*/
+        });
+
+        $('#id_rate').change((e) => {
+          var val = $(e.target).find(':selected').val();
+          
+          if(window.ratesDetailsPT && window.ratesDetailsPT[val]){
+            //$('#rowRateDetails').show();
+            $('#rowRateDetailsSesiones').text(window.ratesDetailsPT[val]['count'] + '/' + window.ratesDetailsPT[val]['max_pax'] + ' Sesiones');
+
+            $('#importeFinal').val(window.ratesDetailsPT[val]['price']);
+
+            @if($id_user && isset($recuperacion))
+            if(
+              window.ratesDetailsPT[val]['count'] >= window.ratesDetailsPT[val]['max_pax'] &&
+              $("#id_user").val() != {{$id_user}}
+              ||
+              $("#id_user").val() == {{$id_user}} && {{$recuperacion}} && val == {{$id_serv}}
+            ){
+              $('#rowRateDetailsRecuperacionLabel').show();
+            } else {
+              $('#rowRateDetailsRecuperacionLabel').hide();
+            }
+            @else
+            if(
+              window.ratesDetailsPT[val]['count'] >= window.ratesDetailsPT[val]['max_pax'] 
+            ){
+              $('#rowRateDetailsRecuperacionLabel').show();
+            } else {
+              $('#rowRateDetailsRecuperacionLabel').hide();
+            }
+            @endif
+
+            if(window.ratesDetailsPT[val]['id_coach']){
+              console.log(window.ratesDetailsPT[val]['id_coach']);
+              $('#id_coach').val(window.ratesDetailsPT[val]['id_coach']);
+              $('#id_coach').change();
+            }
+          } else {
+            $('#id_coach').val(-1);
+            $('#id_coach').change();
+            $('#rowRateDetailsRecuperacionLabel').hide();
+            $('#rowRateDetailsSesiones').text('');
+
+            $('#importeFinal').val(0);
+            //$('#rowRateDetails').hide();
+          }
         });
         
         $('.sendForm').on('click', function(){
@@ -134,7 +228,6 @@ jQuery(function () {
         $(".js-select2-coach").select2({
           templateResult: formatCoach
         });
-
     });
 
 </script>

@@ -408,6 +408,15 @@ width: calc(100% - 140px);
 .toPay, .np{
     color: red !important;
   }
+
+#rowRateDetailsRecuperacionLabel {
+    font-weight: bold;
+    border-radius: 5px;
+    border: 2px black solid;
+    display: inline-block;
+    padding: 10px 20px;
+}
+
 /*-----------------------------------*/
 @media(max-width:991px) {
     .table-fixed th.static{
@@ -421,4 +430,12 @@ width: calc(100% - 140px);
     .table-fixed .first-col {
         padding-left: 10em !important;
     }   
+}
+
+.btn-actualizar {
+    visibility: hidden;
+}
+
+.incomesMonths:hover .btn-actualizar {
+    visibility: visible;
 }
