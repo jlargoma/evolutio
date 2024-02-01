@@ -255,18 +255,27 @@ class ConveniosController extends Controller
     $uRates = $uRatesBuilder->orderBy('appointment.date','desc')->get();
     
     if($uRates->isNotEmpty()){
-      foreach($uRates as $rate){
+      foreach($uRates as &$rate){
         $priceAux = $rate->charged ? $rate->charged : $rate->price;
-        $totals += $priceAux;
-        if(
-          $priceAux &&
-          $rate->convenio && 
-          isset($oConveniosId[$rate->convenio]) && 
-          isset($oConveniosId[$rate->convenio]->comision_fija)
-        ){
-          $totalsComision += $oConveniosId[$rate->convenio]->comision_fija / 100;
+
+        $rate->price = $priceAux; 
+        if(!$rate->comision){
+          if(
+            $rate->price && 
+            $rate->convenio &&
+            !empty($oConveniosId[$rate->convenio]) &&
+            $oConveniosId[$rate->convenio]->comision_fija
+          ) {
+            $rate->comision = $oConveniosId[$rate->convenio]->comision_fija / 100;
+          } else {
+            $rate->comision = 0;
+          }
+        } else {
+          $rate->comision /= 100;
         }
-        
+
+        $totals += $priceAux;
+        $totalsComision += $rate->comision;
       }
     }
 
@@ -383,17 +392,29 @@ class ConveniosController extends Controller
     $uRates = $uRatesBuilder->orderBy('appointment.date','desc')->get();
     
     if($uRates->isNotEmpty()){
-      foreach($uRates as $rate){
+      foreach($uRates as &$rate){
         $priceAux = $rate->charged ? $rate->charged : $rate->price;
+        
+        $rate->price = $priceAux;
+        
+        if(!$rate->comision){
+          if(
+            $rate->price && 
+            $rate->convenio &&
+            isset($oConvenio) && 
+            isset($oConvenio->comision_fija)
+          ) {
+            $rate->comision = $oConvenio->comision_fija / 100;
+          } else {
+            $rate->comision = 0;
+          }
+        } else {
+          $rate->comision /= 100;
+        }
+        
         $totals += $priceAux;  
-        if(
-          $priceAux &&
-          $rate->convenio && 
-          isset($oConvenio) && 
-          isset($oConvenio->comision_fija)
-        ){
-          $totalsComision += $oConvenio->comision_fija / 100;
-        }      
+        $totalsComision += $rate->comision;
+              
       }
     }
 

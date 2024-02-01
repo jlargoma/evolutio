@@ -553,4 +553,55 @@ class ChargesController extends Controller {
 
     }
 
+    public function updateUserRate(Request $request) {
+
+      try {
+        $messages = [
+          'id.required' => 'El Id es requerido.',
+          'price.required' => 'El precio es requerido.',
+          'price.*' => 'Precio inválido.',
+          'comision.required' => 'La comisión es requerida.',
+          'comision.*' => 'Comisión invalida.',
+        ];
+  
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+                    'price' => 'required|min:0|max:3000|numeric|regex:/^\d+(\.\d{1,2})?$/',
+                    'comision' => 'required|min:0|max:3000|numeric|regex:/^\d+(\.\d{1,2})?$/',
+                    'id' => 'required',
+        ], $messages);
+  
+        if ($validator->fails()) {
+          throw new \Exception($validator->errors()->first(), 400);
+        }
+        
+        $oObj = UserRates::find($request->input('id'));
+  
+        if($oObj) {
+          $oObj->charged = $request->input('price');
+          $oObj->comision = $request->input('comision') * 100;
+
+          if ($oObj->save()) {
+  
+            return response()->json(['status' => 'OK', 'details' => 'Registro actualizado']);
+  
+          } else {
+  
+            throw new \Exception('No se pudo actualizar el registro', 500);
+  
+          }
+  
+        } else {
+  
+          throw new \Exception('Registro no encontrado', 404);
+  
+        }
+  
+        return 'error';
+      } catch (\Exception $e) {
+  
+        return response()->json(['status' => 'error', 'details' => $e->getMessage()], $e->getCode());
+  
+      }
+
+    }
 }

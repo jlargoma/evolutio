@@ -436,6 +436,7 @@ width: calc(100% - 140px);
     visibility: hidden;
 }
 
+.informeConvenioRate:hover .btn-actualizar,
 .incomesMonths:hover .btn-actualizar {
     visibility: visible;
 }

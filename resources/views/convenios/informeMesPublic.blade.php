@@ -95,12 +95,8 @@
                 @else
                   <td class="text-center">Otros</td>
                 @endif
-                <td class="text-center">{{moneda($data->charged ? $data->charged : $data->price, false, 1)}}</td>
-                @if(($data->price || $data->charged) && $oConvenio->comision_fija)
-                <td class="text-center">{{moneda($oConvenio->comision_fija / 100,false,1)}}</td>
-                @else
-                <td class="text-center">--</td>
-                @endif
+                <td class="text-center">{{moneda($data->price, false, 1)}}</td>
+                <td class="text-center">{{moneda($data->comision,false,1)}}</td>
               </tr>
               <?php endforeach ?>
           </tbody>

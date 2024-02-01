@@ -123,11 +123,12 @@
               <th class="text-center">Familia</th>
               <th class="text-center">Importe</th>
               <th class="text-center">Comisión</th>
+              <th class="text-center"></th>
             </tr>
           </thead>
           <tbody>
             <?php foreach ($convLstUsers as $data) : ?>
-              <tr>
+              <tr class="informeConvenioRate">
                 <td class="text-center">
                   @if($data->date)
                   <b>{{dateMin($data->date)}}</b>
@@ -142,12 +143,28 @@
                 @else
                   <td class="text-center">Otros</td>
                 @endif
-                <td class="text-center">{{moneda($data->charged ? $data->charged : $data->price, false, 1)}}</td>
-                @if(($data->charged || $data->price) && !empty($oConveniosId[$data->convenio]) && $oConveniosId[$data->convenio]->comision_fija)
-                <td class="text-center">{{moneda($oConveniosId[$data->convenio]->comision_fija / 100,false,1)}}</td>
-                @else
-                <td class="text-center">--</td>
-                @endif
+                <td class="text-center">
+                 <input 
+                    style="width: 80px;"
+                    type="number" 
+                    value="{{$data->price}}"
+                    id="priceConvenioRate{{$data->id}}" 
+                    step="0.01"
+                    pattern="\d+(\.\d{1,2})?"
+                  />
+                </td>
+                
+                <td class="text-center">
+                  <input 
+                    style="width: 80px;"
+                    type="number" 
+                    value="{{$data->comision}}"
+                    id="comisionConvenioRate{{$data->id}}" 
+                    step="0.01"
+                    pattern="\d+(\.\d{1,2})?"
+                  />
+                </td>
+                <td><button data-id="{{$data->id}}" class="btn btn-primary btn-actualizar">Actualizar</button></td>
               </tr>
             <?php endforeach ?>
           </tbody>
@@ -183,5 +200,35 @@
       });
     }, 50);
   });
+
+  $('.btn-actualizar').on('click', (e) => {
+      let $this = $(e.target);
+      let id = $this.data('id');
+
+      let price = $('#priceConvenioRate'+id).val();
+      let comision = $('#comisionConvenioRate'+id).val();
+
+      if(!price){
+        price = 0;
+      }
+
+      if(!comision) {
+        comision = 0;
+      }
+
+      $.post( '/admin/update/cobro/comision', { 
+        _token: '{{csrf_token()}}',
+        price: price,
+        comision: comision,
+        id: id,
+      }).done(function (data) {
+        if (data.status == 'OK') {
+          window.show_notif('success', data.details);
+          location.reload();
+        } else {
+          window.show_notif('error', data.details);
+        }
+      });
+    });
 </script>
 @endsection

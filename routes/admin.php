@@ -156,6 +156,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::post('/cobros/cobrar/{id}', 'ChargesController@updateCharge');
   Route::get('/cobros/getPriceTax', 'ChargesController@getPriceTax');
   Route::post('/cobros/cobrar-usuario', 'ChargesController@chargeUser');
+  Route::post('/update/cobro/comision', 'ChargesController@updateUserRate');
   Route::get('/usuarios/cobrar/tarifa/', 'UsersController@rateCharge');
   
     /* Tarifas */
