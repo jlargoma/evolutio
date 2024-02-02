@@ -1,7 +1,15 @@
 $(document).ready(function () {
   function showInfo(e, data) {
     var obj = $('toltip');
-    var html = '<h3>' + data.n + '</h3>';
+    
+    var html = '';
+
+    if(data.rec) {
+      html += '<h3>SESIÓN DE RECUPERACIÓN</h3><hr/>';
+    }
+
+    html += '<h3>' + data.n + '</h3>';
+
     if (data.d) html += '<p>' + data.d + '</p>';
     if (data.cn) html += '<p>' + data.cn + '</p>';
     html += '<p>' + data.p + '</p>';

@@ -213,6 +213,22 @@ span.circ-red {
   margin-left: 3px;
 }
 
+.rec-cal-cont {
+  display: flex;
+  justify-content: end;
+  margin-top: 5px!important;
+}
+
+span.circ-black {
+  width: 7px;
+  height: 7px;
+  display: block;
+  background-color: black;
+  border-radius: 50%;
+  margin-left: 3px;
+  right: 0;
+}
+
 @media only screen and (max-width:769px){
   .table-calendar tbody td.editDate .lst_events div cust{
     min-width: 80px !important;

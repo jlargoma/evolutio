@@ -167,7 +167,19 @@
                             isset($claseDay[$d['time']]) && 
                             isset($claseDay[$d['time']][$d['time'] + $i * 60 * 60])
                         ) 
-                            echo $claseDay[$d['time']][$d['time'] + $i * 60 * 60];
+                            if(isset($claseDay[$d['time']][$d['time'] + $i * 60 * 60]['name'])){
+                                if(
+                                    isset($claseDay[$d['time']][$d['time'] + $i * 60 * 60]['recuperacion']) &&
+                                    $claseDay[$d['time']][$d['time'] + $i * 60 * 60]['recuperacion']
+                                ) {
+                                    echo '<span style="color:red;">' . $claseDay[$d['time']][$d['time'] + $i * 60 * 60]['name'] . '</span>';
+                                } else {
+                                    echo $claseDay[$d['time']][$d['time'] + $i * 60 * 60]['name'];
+                                }
+                            } else {
+                                echo $claseDay[$d['time']][$d['time'] + $i * 60 * 60];
+                            }
+                            
                         ?>
                     </td>
                     @endforeach

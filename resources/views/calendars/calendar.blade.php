@@ -42,6 +42,11 @@ function printEvents($lst){
       }
     }
 
+    $recuperacion = '';
+    if(isset($item['recuperacion']) && $item['recuperacion']){
+      $recuperacion = '<div class="rec-cal-cont"><span class="circ-black"></span></div>';
+    }
+
     switch ($item['charged']){
       case 2:
         echo '<div '
@@ -64,8 +69,9 @@ function printEvents($lst){
         . 'data-id="'.$item['id'].'" '
         . 'data-name="'. strtolower($item['name']).'" '
         . 'data-room="'. $item['room'].'" '
+        . 'data-recuperacion="'. ($recuperacion? 1:0) .'" '
         . 'class="eventType_'.$item['coach'].' events">'
-          .$hour.'<cust>'.str_limit($item['name'],10).$equip.$room.'</cust>'
+          .$hour.'<cust>'.$recuperacion.str_limit($item['name'],10).$equip.$room.'</cust>'
             .'<toltip/>'
         . '</div>';
        break;

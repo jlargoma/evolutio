@@ -242,7 +242,7 @@ class CoachLiquidationController extends Controller
 
 
 
-      $aData = $sCoachLiq->liquMensual($id,$year,$month);
+      $aData = $sCoachLiq->liquMensual($id,$year,$month, true);
       $user = User::find($id);
 
       $aData['user'] = $user;

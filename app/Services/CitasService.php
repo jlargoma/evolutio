@@ -289,6 +289,7 @@ class CitasService {
               's' => ($item->service) ? $item->service->name : '-',
               'cn' => isset($cNames[$item->id_coach]) ? $cNames[$item->id_coach] : '-',
               'mtv' => $mtv,
+              'rec'  => isset($item->recuperacion) ? $item->recuperacion : 0,
               'mc' => '', //Metodo pago
               'dc' => '', // fecha pago
               'd' => $dTime, // fecha 
@@ -327,6 +328,7 @@ class CitasService {
             'coach' => $item->id_coach,
             'uCoachAsig' => $uCoachAsig,
             'name' => $u_name,
+            'recuperacion'  => isset($item->recuperacion) ? $item->recuperacion : 0,
             'halfTime' => $halfTime,
             'h' => $hTime,
             'ecogr' => (in_array($item->id, $ecogrs)),
@@ -346,6 +348,7 @@ class CitasService {
             'dc' => '', // fecha pago
             'd' => $dTime, // fecha 
             'mtv' => isset($motives[$item->id]) ? $motives[$item->id] : '',
+            'rec'  => isset($item->recuperacion) ? $item->recuperacion : 0,
             'room' => isset($rooms[$item->id]) ? $rooms[$item->id] : ''
         ];
 

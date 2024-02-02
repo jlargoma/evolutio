@@ -65,7 +65,7 @@ class CoachLiqService {
     ];
   }
   
-  function liqMensualBasic($id, $year, $month) {
+  function liqMensualBasic($id, $year, $month, $extra = false) {
     $lstMonts = lstMonthsSpanish();
     $typePT = 2;
 
@@ -136,7 +136,14 @@ class CoachLiqService {
         $className .= ' a las ' . date('h a', $time);
         $className .= ' (cliente : ' . $item->user->name . ')';
         $pagosClase[$key][] = $className;
-        $claseDay[strtotime(date('Y-m-d', $time))][$time] = $item->user->name;
+        if($extra) {
+          $claseDay[strtotime(date('Y-m-d', $time))][$time] = [
+            'name' => $item->user->name,
+            'recuperacion' => $item->recuperacion
+          ];
+        }else{
+          $claseDay[strtotime(date('Y-m-d', $time))][$time] = $item->user->name;
+        }
       }
     }
     
@@ -179,9 +186,9 @@ class CoachLiqService {
     return compact('pagosClase', 'totalClase', 'classLst', 'ppc', 'salary','commision','claseDay','totalClaseSimple','totalClaseGrupal');
   }
 
-  function liquMensual($id, $year, $month) {
+  function liquMensual($id, $year, $month, $extra = false) {
 
-    $data = $this->liqMensualBasic($id, $year, $month);
+    $data = $this->liqMensualBasic($id, $year, $month, $extra);
     
     //-----------------------------------------------------------//
     $oExpenses = \App\Models\Expenses::where('to_user', $id)
