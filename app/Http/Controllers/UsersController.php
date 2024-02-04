@@ -261,6 +261,12 @@ class UsersController extends Controller {
               $rate['date'] = $ratesWeekInfo[$rate->id]['date'];
 
               $ratesInfoArr[$rate->id] = $rate;
+            } else {
+              $rate['count'] = 0;
+              $rate['id_coach'] = $rate->id_coach;
+              $rate['date'] = null;
+
+              $ratesInfoArr[$rate->id] = $rate;
             }
           } 
         }

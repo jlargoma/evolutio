@@ -156,7 +156,9 @@ class DatesController extends Controller {
           $oUser->remember_token = str_random(60);
           $oUser->role = 'user';
           $oUser->telefono = $uPhone;
-          $oUser->convenio = $convenio;
+          if(isset($convenio)) {
+            $oUser->convenio = $convenio;
+          }
           $oUser->save();
           $id_user = $oUser->id;
         }
@@ -275,7 +277,7 @@ class DatesController extends Controller {
 
       $thisWeekRates = [];
       
-      if($ID) {
+      if(isset($ID) && $ID) {
         $thisWeekRates = $thisWeekRatesBuilder->where('id', '!=', $ID)->get()->toArray();
       } else {
         $thisWeekRates = $thisWeekRatesBuilder->get()->toArray();
