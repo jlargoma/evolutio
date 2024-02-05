@@ -254,28 +254,35 @@ class ConveniosController extends Controller
                       
     $uRates = $uRatesBuilder->orderBy('appointment.date','desc')->get();
     
+    $arrayIndexUserRates = [];
     if($uRates->isNotEmpty()){
-      foreach($uRates as &$rate){
-        $priceAux = $rate->charged ? $rate->charged : $rate->price;
-
-        $rate->price = $priceAux; 
-        if(!$rate->comision){
-          if(
-            $rate->price && 
-            $rate->convenio &&
-            !empty($oConveniosId[$rate->convenio]) &&
-            $oConveniosId[$rate->convenio]->comision_fija
-          ) {
-            $rate->comision = $oConveniosId[$rate->convenio]->comision_fija / 100;
-          } else {
-            $rate->comision = 0;
-          }
+      foreach($uRates as $index => &$rate){
+        if(in_array($rate->id,$arrayIndexUserRates)){
+          unset($uRates[$index]);
         } else {
-          $rate->comision /= 100;
-        }
+          $arrayIndexUserRates[] = $rate->id;
+          $priceAux = !is_null($rate->charged) ? $rate->charged : $rate->price;
 
-        $totals += $priceAux;
-        $totalsComision += $rate->comision;
+          $rate->price = $priceAux; 
+          if(is_null($rate->comision)){
+            if(
+              $rate->price && 
+              $rate->convenio &&
+              !empty($oConveniosId[$rate->convenio]) &&
+              $oConveniosId[$rate->convenio]->comision_fija
+            ) {
+              $rate->comision = $oConveniosId[$rate->convenio]->comision_fija / 100;
+            } else {
+              $rate->comision = 0;
+            }
+          } else {
+            $rate->comision /= 100;
+          }
+  
+          $totals += $priceAux;
+          $totalsComision += $rate->comision;
+        }
+        
       }
     }
 
@@ -390,31 +397,36 @@ class ConveniosController extends Controller
     }
                       
     $uRates = $uRatesBuilder->orderBy('appointment.date','desc')->get();
-    
+
+    $arrayIndexUserRates = [];
     if($uRates->isNotEmpty()){
-      foreach($uRates as &$rate){
-        $priceAux = $rate->charged ? $rate->charged : $rate->price;
-        
-        $rate->price = $priceAux;
-        
-        if(!$rate->comision){
-          if(
-            $rate->price && 
-            $rate->convenio &&
-            isset($oConvenio) && 
-            isset($oConvenio->comision_fija)
-          ) {
-            $rate->comision = $oConvenio->comision_fija / 100;
-          } else {
-            $rate->comision = 0;
-          }
+      foreach($uRates as $index => &$rate){
+        if(in_array($rate->id,$arrayIndexUserRates)){
+          unset($uRates[$index]);
         } else {
-          $rate->comision /= 100;
-        }
+          $arrayIndexUserRates[] = $rate->id;
+          $priceAux = !is_null($rate->charged) ? $rate->charged : $rate->price;
         
-        $totals += $priceAux;  
-        $totalsComision += $rate->comision;
-              
+          $rate->price = $priceAux;
+          
+          if(is_null($rate->comision)){
+            if(
+              $rate->price && 
+              $rate->convenio &&
+              isset($oConvenio) && 
+              isset($oConvenio->comision_fija)
+            ) {
+              $rate->comision = $oConvenio->comision_fija / 100;
+            } else {
+              $rate->comision = 0;
+            }
+          } else {
+            $rate->comision /= 100;
+          }
+          
+          $totals += $priceAux;  
+          $totalsComision += $rate->comision;
+        }              
       }
     }
 
