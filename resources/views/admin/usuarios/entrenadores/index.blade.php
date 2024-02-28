@@ -40,6 +40,10 @@
       <button class="btn btn-success" data-toggle="modal" data-target="#modalColors" >
         <i class="fa fa-palete"></i> Colores
       </button>
+
+      <a class="btn btn-info active" href="/admin/horas-extras/list">
+        Liquidaciones provicionales
+      </a>
       
     </div>
     </div>
@@ -74,6 +78,7 @@
                 <a class="btn-user" data-toggle="modal" data-target="#modal-popout" data-idUser="<?php echo $user->id; ?>" type="button" data-toggle="tooltip" title="" data-type="user" data-original-title="Editar Entrenador">
                   <b><?php echo ($user->name) ? $user->name : '--'; ?></b>
                 </a>
+                <button data-id="<?php echo $user->id ?>" class="btn btn-xs btn-primary get-link-btn" style="float:right;"><i class="fa fa-external-link"></i></button>
               </td>
               <td class="first-col"></td>
               <td class="text-center hidden-xs hidden-sm"> 
@@ -316,6 +321,39 @@ $(document).ready(function () {
     });
   });
 
+  $('.get-link-btn').click(function (e) {
+    e.preventDefault();
+
+
+
+    $.get('/admin/horas-extras/link/' + $(this).data('id'),  function (data) {
+      
+    
+      if(data.status == 'OK'){
+
+        let text = "LIQUIDACION SUELDO EVOLUTIO\n" +
+          "Hola "  + data.details.user.name + ", en este link podrás rellenar y enviar tu liquidación de horas extras para este mes\n" +
+          "https://" + window.location.host	+ "/horas-extras/" + data.details.id + "/" + data.details.token;
+
+        navigator.clipboard.writeText(text)
+        .then(function() {
+            console.log('Text copied to clipboard');
+        })
+        .catch(function(err) {
+            console.error('Unable to copy text to clipboard:', err);
+        });
+
+        window.show_notif('success', 'Link copiado al portapapeles!');
+
+      } else {
+
+        window.show_notif('error', 'Ocurrio un error al generar el link');
+
+      }
+    });
+
+  });
+
   $('.btn-user').click(function (e) {
     e.preventDefault();
     var id = $(this).attr('data-idUser');
@@ -388,7 +426,6 @@ $(document).ready(function () {
 
   $('#content').on('click', '.btn-horarios', function (e) {
     e.preventDefault();
-    console.log('asdad');
     $('#content').empty().load('/admin/horariosEntrenador/' + $(this).data('id'));
   });
 });

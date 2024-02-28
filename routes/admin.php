@@ -226,6 +226,13 @@ Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function () {
   Route::get('/ingresos', 'IncomesController@index');
   Route::post('/ingresos/edit', 'IncomesController@edit');
 
+  /* Rutas horas extras */
+  Route::get('/horas-extras/link/{id}', 'HorasExtrasController@getLink');
+  Route::get('/horas-extras/list', 'HorasExtrasController@list');
+  Route::post('/horas-extras/delete', 'HorasExtrasController@deleteItem');
+  Route::post('/horas-extras/edit', 'HorasExtrasController@editItem');
+  Route::post('/horas-extras/add', 'HorasExtrasController@addItem');
+
   /* Gastos  rutas basicas */
 
   Route::post('/gastos/importar', 'ExpensesController@gastos_import');

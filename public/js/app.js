@@ -39,7 +39,43 @@ $(document).ready(function () {
         });
     }
 
-
+    window["copyToClipboard"] = function (text) { 
+        if (navigator.clipboard) {
+            
+            navigator.clipboard.writeText(text)
+                .then(function() {
+                    console.log('Text copied to clipboard');
+                })
+                .catch(function(err) {
+                    console.error('Unable to copy text to clipboard:', err);
+                });
+        } else {
+            // Create a new textarea element
+            var textarea = document.createElement('textarea');
+            // Set the value of the textarea to the text to be copied
+            textarea.value = text;
+            // Make the textarea invisible
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            textarea.style.top = '-9999px';
+            
+            // Append the textarea to the document body
+            document.body.appendChild(textarea);
+            
+            // Select the text within the textarea
+            textarea.select();
+            
+            try {
+                // Execute the copy command
+                document.execCommand('copy');
+            } catch (err) {
+                console.error('Unable to copy text to clipboard:', err);
+            }
+            
+            // Remove the textarea from the document body
+            document.body.removeChild(textarea);
+        }
+    }
 
     window["formatDate"] = function (date) {
         var d = new Date(date),

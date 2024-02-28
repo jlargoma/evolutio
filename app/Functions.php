@@ -20,6 +20,32 @@ function lstMonthsSpanish($min = true) {
   }
 }
 
+function getRoles(){
+  return [
+    'user'  => 'Usuario/Cliente',
+    'admin' => 'Administrador',
+    'teach' => 'Entrenador',
+    'fisio' => 'Fisioterapia',
+    'fisioG'  => 'Fisioterapia Getafe',
+    'nutri'   => 'Nutricionista',
+    'teach_nutri' => 'Entrenador / Nutricionista',
+    'teach_fisio' => 'Entrenador / Fisioterapia',
+    'empl'        => 'Empleado',
+    'esthetic'    => 'Estética'
+  ];
+}
+
+function getRoleName($roleCode) {
+
+  $roles = getRoles();
+
+  if(isset($roles[$roleCode])){
+    return $roles[$roleCode];
+  } else {
+    return false;
+  }
+}
+
 function getMonthSpanish($m, $min = true) {
   $arrayMonth = lstMonthsSpanish($min);
   $m = intval($m);
