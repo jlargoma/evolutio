@@ -232,6 +232,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => 'admin'], function () {
   Route::post('/horas-extras/delete', 'HorasExtrasController@deleteItem');
   Route::post('/horas-extras/edit', 'HorasExtrasController@editItem');
   Route::post('/horas-extras/add', 'HorasExtrasController@addItem');
+  Route::post('/horas-extras/review', 'HorasExtrasController@review');
 
   /* Gastos  rutas basicas */
 

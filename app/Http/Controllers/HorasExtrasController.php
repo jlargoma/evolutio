@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Http\Requests;
+use App\Models\CoachLiquidation;
 use App\Models\ExtraHoursRequestItems;
 use App\Models\ExtraHoursRequests;
 use App\Models\CoachRates;
@@ -425,12 +426,20 @@ class HorasExtrasController extends Controller {
           unset($roles[$index]);
         }
       }
+
+      $review = ExtraHoursRequestReviews::where('month', $month)->where('year', $year)->first();
+
+      $allowCRUD = true;
+      if($review){
+        $allowCRUD = false;
+      }
       
       return view('horasExtras.index',[
         'roles'       => $roles,
         'year'        => $year,
         'lstMonths'   => $months,
-        'month'       => $month
+        'month'       => $month,
+        'allowCRUD'   => $allowCRUD
       ]);
 
     } catch (\Exception $e) {
@@ -618,6 +627,121 @@ class HorasExtrasController extends Controller {
 
       return response()->json(['status' => 'error', 'details' => $e->getMessage()], $e->getCode());
 
+    }
+  }
+
+  public function review(Request $request) {
+
+    try {
+
+      $year = getYearActive();
+
+      $messages = [
+        'month.required'  => 'El mes es requerido.',
+        'month.numeric'   => 'El mes es inválido.',
+        'month.between'   => 'El mes es inválido.',
+      ];
+
+      $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+        'month'          => 'required|numeric|between:1,12',
+      ], $messages);
+
+      if ($validator->fails()) {
+        return redirect()->back()->withErrors($validator);
+      }
+
+      $review = ExtraHoursRequestReviews::where('month', $request->month)->where('year', $year)->first();
+
+      if($review){
+        throw new \Exception('No se puede volver a enviar, ya se ha enviado a sueldos y salarios.', 400);
+      }
+
+      try {
+
+        $qryBuilder = ExtraHoursRequestItems::leftjoin('extra_hours_requests','extra_hours_requests.id','extra_hours_request_items.request_id')
+        ->leftjoin('users', 'users.id', 'extra_hours_requests.user_id')
+        ->leftjoin('coach_rates', 'users.id', 'coach_rates.id_user')
+        ->select('extra_hours_request_items.*', 'users.id as user_id', 'coach_rates.salary')
+        ->where('extra_hours_request_items.year', $year)
+        ->where('extra_hours_request_items.month', $request->month);
+
+        $items = $qryBuilder->get();
+
+        $users = [];
+        foreach($items as $item){
+          if(isset($users[$item->user_id])){
+            $users[$item->user_id]['amount'] += $item->amount / 100;
+          } else {
+            $users[$item->user_id] = [
+              'salary' => $item->salary,
+              'amount'  => $item->amount / 100
+            ];
+          }
+        }
+
+        $coachs = User::whereCoachs()->leftjoin('coach_rates', 'users.id', 'coach_rates.id_user')
+        ->select('users.*', 'coach_rates.salary')
+        ->where('status', 1)->get();
+
+        foreach($coachs as $coach) {
+          if(!isset($users[$coach->id])) {
+            $users[$coach->id] = [
+              'salary' => $coach->salary,
+              'amount'  => null
+            ];
+          }
+        }
+
+        DB::beginTransaction();
+        $date = date('Y-m-d 00:00:00', strtotime($year.'-'.$request->month));
+        
+        foreach($users as $id => $user) {
+          $oLiq = CoachLiquidation::where('id_coach',$id)
+          ->where('date_liquidation',$date)->first();
+
+          if (!$oLiq){
+            $oLiq = new CoachLiquidation();
+            $oLiq->id_coach = $id;
+            $oLiq->date_liquidation = $date;
+          }
+
+          if($user['salary']){
+            $oLiq->salary = intval($user['salary']);
+          }
+
+          if($user['amount']){
+            $oLiq->commision = intval($user['amount']);
+          }
+          
+          if (!$oLiq->save()){
+            throw new \Exception('Hubo un error al guardar los datos.');
+          }
+        }
+
+        $review = new ExtraHoursRequestReviews();
+        $review->month      = $request->month;
+        $review->year       = $year;
+        $review->creator_id = Auth::user()->id;
+
+        if (!$review->save()){
+          throw new \Exception('Hubo un error al guardar los datos.');
+        }
+
+        DB::commit();
+
+      } catch (\Exception $e) {
+
+        DB::rollback();
+
+        throw new \Exception('No se pudo procesar la solicitud.');
+      }
+      
+      return redirect()->back()->with('message', 'La información ha sido procesada exitosamente.');
+      
+    } catch (\Exception $e) {
+      return redirect()->back()->withErrors([
+        $e->getMessage()
+      ]);
     }
   }
 }

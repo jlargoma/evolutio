@@ -50,6 +50,7 @@
                   </div>
                 </td>
                 <td>
+                @if($allowCRUD)
                   <div id="action_btns_{{$item['id']}}_item">
                     <button 
                       data-id="{{$item['id']}}" 
@@ -76,13 +77,15 @@
                       class="btn btn-success btn-xs btn-approve-edit-item"
                     ><i class="fa fa-check"></i></button>
                   </div>
-                  
+                @endif
                 </td>
               </tr>
             @endforeach
             <tr id="{{$index}}_{{$index2}}_add_row" class="d3 d2_{{$index}}_{{$index2}}" data-k="{{$index}}_{{$index2}}_add">
               <td colspan='3' class="text-center">
+                @if($allowCRUD)
                 <button data-dept="{{$index}}" data-user="{{$index2}}" class="btn btn-primary btn-add-item">Agregar</button>
+                @endif
               </td>
             </tr>
           @endforeach

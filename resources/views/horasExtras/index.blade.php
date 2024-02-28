@@ -13,7 +13,15 @@
 
 @section('content')
 <div class="content  content-full bg-white">
-
+  <div class="row mb-3">
+    <div class="col-xs-12">
+      @if(session('message'))
+        <div class="alert alert-success">
+            {{ session('message') }}
+        </div>
+      @endif
+    </div>
+  </div>
   <div class="row mb-5">
     <div class="col-xs-12 btn-months ">
       @foreach($lstMonths as $k=>$v)
@@ -31,9 +39,20 @@
   </div>
 
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-xs-12 mb-3">
       @include('horasExtras.table')
     </div>
+    @if($allowCRUD)
+    <div class="col-xs-12">
+      <form action="/admin/horas-extras/review" method="POST">
+        <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+        <input type="hidden" name="month" value="{{$month}}" />
+        <div class="text-center">
+          <button class="btn btn-primary" type="submit">Enviar a Sueldos y Salarios</button>
+        </div>
+      </form>
+    </div>
+    @endif
   </div>
 </div>
 
