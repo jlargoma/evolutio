@@ -21,6 +21,7 @@
                 <tr>
                     <th class="static thBlue">Convenio</th>
                     <th class="first-col"></th>
+                    <th class="first-col"></th>
                     <th class="">Total<br>{{moneda(array_sum($totals))}}</th>
                     @foreach($lstMonths as $k=>$v)
                     <th>{{$v}}<br />{{moneda($totals[$k])}}</th>
@@ -30,13 +31,23 @@
             <tbody>
                 @foreach($lstObjs as $oConve)
                 <tr class="d1" data-k="{{$oConve->id}}">
-                    <td class="static convenio-name-display"><i class="fa fa-eye"></i> {{$oConve->name}}</td>
+                    <td class="static convenio-name-display">
+                        <i class="fa fa-eye"></i> {{$oConve->name}}
+                    </td>
+                    <td class="static first-col">
+                        <button 
+                            data-id="{{$oConve->id}}" 
+                            style="margin-top:5px;margin-right:5px;" class="btn btn-sm btn-primary btn-url-convenio pull-right"
+                        >
+                            <i data-id="{{$oConve->id}}" class="fa fa-external-link btn-url-inner"></i>
+                        </button>
+                    </td>
                     <td class="static first-col">
                         <button 
                             data-id="{{$oConve->id}}" 
                             data-name="{{$oConve->name}}" 
                             data-comision="{{$oConve->comision_fija / 100}}" 
-                            style="margin-top:6px;" class="btn btn-sm btn-primary btn-edit-convenio"
+                            style="margin-top:5px;" class="btn btn-sm btn-primary btn-edit-convenio"
                         >
                             Editar
                         </button>
@@ -50,6 +61,7 @@
                 @foreach($convLstRates[$oConve->id] as $k2=>$d2)
                 <tr class="d2 d1_{{$oConve->id}} " data-k="{{$oConve->id}}_{{$k2}}">
                     <td class="static">{{$lstRateTypes[$k2]}}</td>
+                    <td class="first-col"></td>
                     <td class="first-col"></td>
                     <td><b>{{moneda(array_sum($d2))}}</b></td>
                     @foreach($lstMonths as $km=>$vm)
@@ -120,16 +132,41 @@
             $("#modal-convenio-update").modal("show");
         });
 
+        $('body').on("click", ".btn-url-convenio", function(event) {
+            event.stopPropagation();
+            let element = $(event.target);
+            let convenio = element.data('id');
+
+            $.get('/admin/convenios/url', {convenio:convenio}, function(resp){
+                if (resp.status == 'OK'){
+
+                    navigator.clipboard.writeText(resp.details.url)
+                    .then(function() {
+                        console.log('Text copied to clipboard');
+                    })
+                    .catch(function(err) {
+                        console.error('Unable to copy text to clipboard:', err);
+                    });
+
+                    window.show_notif('success', 'Link copiado al portapapeles!');
+                } else {
+                    window.show_notif('error', 'Error!');
+                }
+            });
+        });
+
         $('.d1').on('click', function() {
             let element = $(event.target);
-            if (!element.hasClass("btn-edit-convenio")) {
+            if (!element.hasClass("btn-edit-convenio") && !element.hasClass("btn-url-convenio") && !element.hasClass("btn-url-inner")) {
                 var k = $(this).data('k');
                 $('.d1_' + k).toggle();
-            }else{
+            }else if (element.hasClass("btn-edit-convenio")) {
+
                 $('#convenio-name-update').val(element.data('name'));
                 $('#convenio-comision-update').val(element.data('comision'));
                 $('#convenio-id-update').val(element.data('id'));
                 $("#modal-convenio-update").modal("show");
+
             }
                 
         });

@@ -95,7 +95,13 @@
                 @else
                   <td class="text-center">Otros</td>
                 @endif
-                <td class="text-center">{{moneda($data->price, false, 1)}}</td>
+                <td class="text-center">
+                  @if($data->charged_method == 'bono')
+                  BONO
+                  @else
+                  {{moneda($data->price, false, 1)}}
+                  @endif
+                </td>
                 <td class="text-center">{{moneda($data->comision,false,1)}}</td>
               </tr>
               <?php endforeach ?>

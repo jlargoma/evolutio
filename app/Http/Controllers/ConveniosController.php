@@ -193,6 +193,45 @@ class ConveniosController extends Controller
     ]);
   }*/
 
+  public function getPublicURL(Request $request){
+    try {
+
+      $year = getYearActive();
+
+      if(!$request->convenio){
+        throw new \Exception('Faltan datos', 400);
+      }
+
+      $convenio_id = $request->convenio;
+
+      $convenio = Convenios::where('id', $convenio_id)->first();
+
+      if($convenio){
+
+        if (!$convenio->token){
+          $convenio->token = str_random(150);
+          if(!$convenio->save()) {
+            throw new \Exception('Error al actualizar datos', 500);
+          }
+        }
+
+        $urlPubl = \URL::to('/informes-convenio/'.$year.'/'.$convenio->token);
+       
+        return response()->json(['status' => 'OK', 'details' => [
+          'url'     => $urlPubl
+        ]]);
+
+      } else {
+
+        throw new \Exception('No se encontro convenio', 404);
+
+      } 
+
+    } catch (\Exception $e) {
+      return response()->json(['status' => 'error', 'details' => $e->getMessage()], $e->getCode());
+    }
+  }
+
   public function informeConvenios(Request $request, $month = null, $convenio_id = null, $rateTypeID=null)
   {
 
@@ -261,12 +300,12 @@ class ConveniosController extends Controller
           unset($uRates[$index]);
         } else {
           $arrayIndexUserRates[] = $rate->id;
-          $priceAux = !is_null($rate->charged) ? $rate->charged : $rate->price;
+          $priceAux = !is_null($rate->charged_method) ? $rate->charged : $rate->price;
 
           $rate->price = $priceAux; 
           if(is_null($rate->comision)){
             if(
-              $rate->price && 
+              ($rate->price || $rate->charged_method == "bono") && 
               $rate->convenio &&
               !empty($oConveniosId[$rate->convenio]) &&
               $oConveniosId[$rate->convenio]->comision_fija
@@ -405,13 +444,13 @@ class ConveniosController extends Controller
           unset($uRates[$index]);
         } else {
           $arrayIndexUserRates[] = $rate->id;
-          $priceAux = !is_null($rate->charged) ? $rate->charged : $rate->price;
+          $priceAux = !is_null($rate->charged_method) ? $rate->charged : $rate->price;
         
           $rate->price = $priceAux;
           
           if(is_null($rate->comision)){
             if(
-              $rate->price && 
+              ($rate->price || $rate->charged_method == "bono") && 
               $rate->convenio &&
               isset($oConvenio) && 
               isset($oConvenio->comision_fija)

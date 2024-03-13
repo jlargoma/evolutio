@@ -13,6 +13,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   /* Clientes */
   Route::get('/clientes/lstByBonos', 'UsersController@lstByBonos');
   Route::get('/clientes/generar-cobro/{rate}', 'UsersController@clienteRateCharge');
+  Route::get('/clientes/cuotas-pendientes', 'UsersController@cuotasPendientes');
   Route::get('/clientes/{month?}', 'UsersController@clientes');
   Route::post('/clientes/update', 'UsersController@updateCli');
   Route::post('/clientes/setValora', 'UsersController@setValora');
@@ -208,6 +209,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::post('/convenios/update', 'ConveniosController@updateConvenio');
   Route::post('/convenios/delete', 'ConveniosController@delete');
   Route::get('/convenios/informes/{month?}/{convenio?}/{rate?}', 'ConveniosController@informeConvenios');
+  Route::get('/convenios/url', 'ConveniosController@getPublicURL');
 
   Route::get('', function () {
     return redirect('admin/clientes');

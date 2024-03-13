@@ -1318,4 +1318,111 @@ trait ClientesTraits
       include_once dirname(dirname(__FILE__)) . '/Helps/RatesFamilyCount.php';
     
   }
+
+  public function cuotasPendientes(Request $request)
+  {
+    $year = getYearActive();
+    $month = date('n');
+
+    $months = lstMonthsSpanish(false);
+    unset($months[0]);
+    $oUser = new User();
+    $oUser->create_altaBajas($year, $month);
+    $oRates = Rates::orderBy('type', 'desc')->orderBy('name', 'desc')->get();
+    $detail = [];
+    $noPay = 0;
+    
+    $sqlUsers = User::where('role', 'user');
+    
+
+    $sqlUsers->with('userCoach');
+
+
+    //$users = $sqlUsers->orderBy('name', 'asc')->get();
+    $userIDs =  $sqlUsers->pluck('users.id');
+    $userIDNames =  $sqlUsers->pluck('users.name', 'users.id');
+
+    //---------------------------------------------//
+    $aRates = [];
+    $typeRates = TypesRate::pluck('name', 'id');
+    $aRateType = [];
+    //    $oRates = Rates::whereIn('type', $typeRates)->get();
+    $rPrices = $rNames = [];
+    if ($oRates) {
+      foreach ($oRates as $r) {
+        $aRates[$r->id] = $r;
+        $rPrices[$r->id] = $r->price;
+        $rNames[$r->id] = $r->name;
+        if (isset($typeRates[$r->type])) {
+          $rNames[$r->id] = $typeRates[$r->type] . '<br>' . $r->name;
+          $aRateType[$r->id] = $typeRates[$r->type];
+        }
+      }
+    }
+
+    //---------------------------------------------//
+    $date = $year . '-01-01';
+    $toPay = $uRates = [];
+    $monthAux = date('m', strtotime($date));
+    $yearAux = date('Y', strtotime($date));
+
+    $data = [];
+
+    for ($i = 1; $i <= 12; $i++) {
+
+      if(!isset($data[$i])){
+        $data[$i] = [
+          'name'  => $months[$i],
+          'users' => [],
+          'totalDebt' => 0
+        ];
+      }
+
+      $resp = $this->getRatesByMonth($monthAux, $yearAux, $userIDs, $rPrices, $rNames);
+      
+      foreach($resp[0] as $userId => $userSubs){
+        foreach($userSubs as $userClasses){
+          foreach($userClasses as $userPayments){
+            if(!$userPayments['paid'] && $userPayments['price'] > 0){
+              if(isset($data[$i]['users'][$userId])){
+                $data[$i]['totalDebt'] += $userPayments['price'];
+                $data[$i]['users'][$userId]['totalDebt'] += $userPayments['price'];
+                $auxDebtDetails = $userPayments;
+                $auxDebtDetails['details'] = $resp[3][$auxDebtDetails['id']];
+                
+                $data[$i]['users'][$userId]['debtDetails'][] = $auxDebtDetails;
+              }else{
+                $auxDebtDetails = $userPayments;
+                $auxDebtDetails['details'] = $resp[3][$auxDebtDetails['id']];
+                
+                $data[$i]['totalDebt'] += $userPayments['price'];
+                $data[$i]['users'][$userId] = [
+                  'name'      => $userIDNames[$userId],
+                  'totalDebt' => $userPayments['price'],
+                  'debtDetails' => [
+                    $auxDebtDetails
+                  ]
+                ];
+
+              }
+            }
+          }
+        }
+      }
+
+      $uRates[$i] = $resp[0];
+      $toPay[$i] = $resp[2];
+      $noPay += $resp[2];
+      $detail[] = $resp[3];
+      $next = strtotime($date . ' +1 month');
+      $date = date('Y-m-d', $next);
+      $monthAux = date('m', $next);
+      $yearAux = date('Y', $next);
+    }
+    
+    return view('/admin/usuarios/clientes/indexCuotasPendientes', [
+      'year'  => $year,
+      'data'  => $data
+    ]);
+  }
 }

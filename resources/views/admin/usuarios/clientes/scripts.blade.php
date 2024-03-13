@@ -1,8 +1,5 @@
 <script type="text/javascript">
 $(document).ready(function () {
-  $('#cuotas-pendientes').click(function () {
-    $('#estado-payment').click();
-  })
 
   $('#addIngreso').click(function () {
     $.get('/admin/nuevo/ingreso', function (data) {

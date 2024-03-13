@@ -160,6 +160,11 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
   <script type="text/javascript">
     var dataTableClient = 1
     $(document).ready(function () {
+
+      $('#cuotas-pendientes').click(function () {
+      location.href = "/admin/clientes/cuotas-pendientes";
+    });
+
       $('#filterByRate').on('change',function(){
         var url = $(this).data('url');
         var val = $(this).val();

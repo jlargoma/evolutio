@@ -144,14 +144,18 @@
                   <td class="text-center">Otros</td>
                 @endif
                 <td class="text-center">
-                 <input 
-                    style="width: 80px;"
-                    type="number" 
-                    value="{{$data->price}}"
-                    id="priceConvenioRate{{$data->id}}" 
-                    step="0.01"
-                    pattern="\d+(\.\d{1,2})?"
-                  />
+                  @if($data->charged_method == 'bono')
+                  BONO
+                  @else
+                    <input 
+                      style="width: 80px;"
+                      type="number" 
+                      value="{{$data->price}}"
+                      id="priceConvenioRate{{$data->id}}" 
+                      step="0.01"
+                      pattern="\d+(\.\d{1,2})?"
+                    />
+                  @endif
                 </td>
                 
                 <td class="text-center">
