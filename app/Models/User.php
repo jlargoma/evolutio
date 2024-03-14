@@ -89,11 +89,25 @@ class User extends Authenticatable
       ->where(function ($query) use ($ubRateType, $ubRsubfamily) {
         $query->where("rate_subf", $ubRsubfamily)
           ->orWhere('rate_type', $ubRateType);
+        
+        //Fisio should also work for Fisio Getafe and viceversa
+        switch($ubRateType){
+          case 14: //Is Fisio Getafe we include Fisio
+            $query->orWhere('rate_type', 8);
+          break;
+          case 8: //Is Fisio we include Fisio Getafe
+            $query->orWhere('rate_type', 14);
+          break;
+        }
+        
       })->get();
+    
+    $ratesTypes = TypesRate::all()->pluck('name', 'id');
+    
     if ($oBonos) {
       foreach ($oBonos as $b) {
         $name = '--';
-        if ($b->rate_type) $name = $oType->name;
+        if ($b->rate_type && isset($ratesTypes[$b->rate_type])) $name = $ratesTypes[$b->rate_type];//$oType->name;
         if ($b->rate_subf) $name = $rate_subf[$b->rate_subf];
         $lst[] = [$b->id, $name, $b->qty];
         $total += $b->qty;
