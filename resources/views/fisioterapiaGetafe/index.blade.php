@@ -1,7 +1,7 @@
 @extends('layouts.admin-master')
 
 @section('title') Citas Fisioterapia Evolutio HTS @endsection
-@section('headerTitle') Citas Fisioterapia @endsection
+@section('headerTitle') Citas Fisioterapia Getafe @endsection
 @section('headerButtoms')
 <button type="button" class="btn btn-success addDate" data-date="{{time()}}" data-time="8">
     <i class="fa fa-plus-circle"></i></button>
@@ -15,6 +15,15 @@
             <div class="col-md-12">
                 <input type="hidden" id="coachsFilter" value="{{$coach}}">
                 <input type="hidden" id="selectMonth" value="{{$month}}">
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="text-center">
+                      <a href="/admin/citas-fisioterapia" class="btn btn-lg btn-dark">VILLAVICIOSA</a>
+                      <a href="/admin/citas-fisioterapia-getafe" class="btn btn-lg btn-success">GETAFE</a>
+                      <hr>
+                    </div>
+                  </div>
+                </div>
                 <div class="row">
                     <div class="col-md-10">
                       <div class="mbl-tabs">
