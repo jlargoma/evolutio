@@ -6,7 +6,7 @@ $tit = 'Su cita en Evolutio';
 ¡Hola! <?php echo $user->name ?><br><br>
 
 <p style="color: black">
-  Le recordamos su cita en nuestro centro de <b><?php echo $rate->name ?></b> en <strong> Evolutio<?php if($obj->date_type == 'fisioG') echo ' / Getafe'; ?></strong> 
+  Le recordamos su cita en nuestro centro de <b><?php echo $rate->name ?></b> en <strong> Evolutio<?php if($obj->date_type == 'fisioG' || $obj->date_type == 'nutriG' || $obj->date_type == 'estheticG') echo ' / Getafe'; ?></strong> 
 </p>
 
 <p style="color: black;font-size: 18px;">
@@ -17,7 +17,9 @@ $tit = 'Su cita en Evolutio';
   if ($obj->date_type == 'fisio' || $obj->date_type == 'fisioG')
     echo '- Fisioterapeuta: ' . $oCoach->name . '<br>';
   if ($obj->date_type == 'pt')
-    echo '- Entrenador: ' . $oCoach->name . '<br>';
+    echo '- Entrenador: ' . $oCoach->name . '<br>';    
+  if ($obj->date_type == 'esthetic' || $obj->date_type == 'estheticG')
+    echo '- Esteticista: '.$oCoach->name.'<br>';  
   ?>
   - Servicio: <?php echo implode(', ',$rateLst) ?><br>
   - Fecha: <?php echo $day; ?><br>

@@ -369,6 +369,12 @@ class DatesController extends Controller {
               ->setStart($dateStart)
               ->setEnd($dateEnd)
               ->setCreated(new \DateTime());
+
+      //Set location GETAFE if needed
+      if(in_array($type, ['fisioG', 'nutriG', 'estheticG'])){
+        $invite->setLocation('C. Morse, 57, 28906 Getafe, Madrid');
+      }
+
       $calFile = $invite->save();
       /** END:  prepare iCAL * */
       /* -------------------------------------------------------------------- */
