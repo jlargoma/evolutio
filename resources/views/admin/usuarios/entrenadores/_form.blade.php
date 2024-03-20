@@ -54,10 +54,12 @@
                             <option value="fisio" <?php if ($user->role == "fisio") echo "selected";?>>Fisioterapia</option>
                             <option value="fisioG" <?php if ($user->role == "fisioG") echo "selected";?>>Fisioterapia Getafe</option>
                             <option value="nutri" <?php if ($user->role == "nutri") echo "selected";?>>Nutricionista</option>
+                            <option value="nutriG" <?php if ($user->role == "nutriG") echo "selected";?>>Nutricionista Getafe</option>
                             <option value="teach_nutri" <?php if ($user->role == "teach_nutri") echo "selected";?>>Entrenador / Nutricionista</option>
                             <option value="teach_fisio" <?php if ($user->role == "teach_fisio") echo "selected";?>>Entrenador / Fisioterapia</option>
                             <option value="empl" <?php if ($user->role == "empl") echo "selected";?>>Empleado</option>
                             <option value="esthetic" <?php if ($user->role == "esthetic") echo "selected";?>>Estética</option>
+                            <option value="estheticG" <?php if ($user->role == "estheticG") echo "selected";?>>Estética Getafe</option>
                         </select>
                         <label for="role">Role</label>
                     </div>

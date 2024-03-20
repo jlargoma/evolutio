@@ -141,6 +141,7 @@ class UsersController extends Controller {
             break;
           case 'teach';
           case 'nutri';
+          case 'nutriG';
           case 'fisio';
           case 'fisioG';
           case 'teach_nutri';
@@ -342,7 +343,7 @@ class UsersController extends Controller {
       if (!$oldFidelity && $request->input('fidelity') == 'fidelity'){
         $userToUpdate->setMetaContent('has_fidelity',1);
         $sBono = new \App\Services\BonoService();
-        $rateBonos = \App\Models\TypesRate::whereIn('type',['fisio','fisioG','nutri'])->pluck('id');
+        $rateBonos = \App\Models\TypesRate::whereIn('type',['fisio','fisioG','nutri','nutriG'])->pluck('id');
         foreach ($rateBonos as $rTypeID){
           $sBono->fidelityADD($userToUpdate->id, $rTypeID);
         }
@@ -426,7 +427,7 @@ class UsersController extends Controller {
       /*       * ************************************ */
     }
 
-    if (in_array($userToUpdate->role,['teach','fisio','fisioG','nutri','empl','teach_nutri','teach_fisio','fisioG'])) {
+    if (in_array($userToUpdate->role,['teach','fisio','fisioG','nutri','nutriG','empl','teach_nutri','teach_fisio','fisioG'])) {
       $userToUpdate->iban = $request->input('iban');
       $userToUpdate->ss = $request->input('ss');
       $userToUpdate->priority = $request->input('priority');

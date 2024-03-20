@@ -150,6 +150,9 @@ class HorasExtrasController extends Controller {
               case 'nutri':
                 $user->rol = 'Nutricionista';
                 break;
+              case 'nutriG':
+                $user->rol = 'Nutricionista Getafe';
+                break;
               case 'teach_nutri':
                 $user->rol = 'Entrenador / Nutricionista';
                 break;
@@ -161,6 +164,9 @@ class HorasExtrasController extends Controller {
                 break;
               case 'esthetic':
                 $user->rol = 'Estética';
+                break;
+              case 'estheticG':
+                $user->rol = 'Estética Getafe';
                 break;
             }
 

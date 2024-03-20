@@ -105,6 +105,9 @@
                   case 'nutri';
                     echo 'Nutricionista';
                     break;
+                  case 'nutriG';
+                    echo 'Nutricionista Getafe';
+                    break;
                   case 'fisio';
                     echo 'Fisioterapeuta';
                     break;
@@ -113,6 +116,9 @@
                     break;
                   case 'esthetic';
                     echo 'Estética';
+                    break;
+                  case 'estheticG';
+                    echo 'Estética Getafe';
                     break;
                 }
                 ?>

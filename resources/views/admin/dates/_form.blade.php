@@ -17,7 +17,7 @@
 						<label for="id_type_rate">Servicio</label>
 						<select class="js-select2 form-control" id="id_type_rate" name="id_type_rate" style="width: 100%;" data-placeholder="Seleccione un servicio" required >
 			                <option></option>
-			                <?php if (Auth::user()->role == 'nutri'): ?> 
+			                <?php if (Auth::user()->role == 'nutri' || Auth::user()->role == 'nutriG'): ?> 
 			                	<option value="5">Nutricion</option>
 			                <?php elseif(Auth::user()->role == 'fisio' || Auth::user()->role == 'fisioG'): ?>
 								<option value="6">Fisioterapia</option>
@@ -73,7 +73,7 @@
 
 						<select class="js-select2 form-control" id="id_coach" name="id_coach" style="width: 100%; cursor: pointer" data-placeholder="Seleccione coach.." multiple >
 							<option></option>
-								<?php if (Auth::user()->role == 'nutri'): ?>
+								<?php if (Auth::user()->role == 'nutri' || Auth::user()->role == 'nutriG'): ?>
 									<?php foreach ($nutris as $nutri): ?>
 										<option value="<?php echo $nutri->id; ?>">
 											<?php echo $nutri->name; ?>
@@ -98,7 +98,7 @@
 						
 						<!-- <select class="js-select2 form-control" id="id_coach" name="id_coach" style="width: 100%;" data-placeholder="Seleccione un coach" required >
 			                <option></option>
-			                <?php if (Auth::user()->role == 'nutri'): ?>
+			                <?php if (Auth::user()->role == 'nutri' || Auth::user()->role == 'nutriG'): ?>
 			                	<?php foreach ($nutris as $nutri): ?>
 			                		<option value="<?php echo $nutri->id; ?>">
 			                			<?php echo $nutri->name; ?>

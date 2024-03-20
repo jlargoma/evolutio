@@ -115,7 +115,7 @@ class RememberAppointment extends Command {
               /***********************************************************/
               $helpCitaCont = new \App\Helps\CitasMailsContent();
               //BEGIN: entrevista nutrición
-              if ($type == 'nutri'){
+              if ($type == 'nutri' || $type == 'nutriG'){
                 $mailData['urlEntr'] = $helpCitaCont->get_urlEntrevista($oUser);
               }
               //BEGIN: entrevista Fisioterapia
@@ -125,7 +125,7 @@ class RememberAppointment extends Command {
               }
               /***********************************************************/
               $pStripe = null;
-              if ($type == 'nutri' || $type == 'fisio'|| $type == 'fisioG'){
+              if ($type == 'nutri' || $type == 'nutriG' || $type == 'fisio'|| $type == 'fisioG'){
                 $uRate = $oDate->uRates;
                 $charge = ($uRate) ? $uRate->charges : null;
                 if (!$charge) {

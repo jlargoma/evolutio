@@ -303,12 +303,16 @@ class DatesController extends Controller {
         return redirect('/admin/citas-pt/edit/' . $oObj->id)->with(['success'=>'Registro guardado']);
       if ($type == 'nutri')
         return redirect('/admin/citas-nutricion/edit/' . $oObj->id)->with(['success'=>'Registro guardado']);
+      if ($type == 'nutriG')
+        return redirect('/admin/citas-nutricion-getafe/edit/' . $oObj->id)->with(['success'=>'Registro guardado']);
       if ($type == 'fisio')
         return redirect('/admin/citas-fisioterapia/edit/' . $oObj->id)->with(['success'=>'Registro guardado']);
       if ($type == 'fisioG')
         return redirect('/admin/citas-fisioterapia-getafe/edit/' . $oObj->id)->with(['success'=>'Registro guardado']);
       if ($type == 'esthetic')
         return redirect('/admin/citas-estetica/edit/' . $oObj->id)->with(['success'=>'Registro guardado']);
+      if ($type == 'estheticG')
+        return redirect('/admin/citas-estetica-getafe/edit/' . $oObj->id)->with(['success'=>'Registro guardado']);
     }
 
 
@@ -342,6 +346,9 @@ class DatesController extends Controller {
         case 'nutri':
           $icsDetail .= 'Nutricionista ';
           break;
+        case 'nutriG':
+          $icsDetail .= 'Nutricionista ';
+        break;
         case 'fisio':
           $icsDetail .= 'Fisioterapeuta ';
           break;
@@ -351,6 +358,7 @@ class DatesController extends Controller {
         case 'pt':
           $icsDetail .= 'Entrenador ';
           break;
+        case 'estheticG':
         case 'esthetic':
           $icsDetail .= 'Estética ';
           break;
@@ -409,12 +417,16 @@ class DatesController extends Controller {
 
       if ($type == 'nutri')
         return redirect('/admin/citas-nutricion/edit/' . $oObj->id)->with(['success'=>'Registro guardado']);
+      if ($type == 'nutriG')
+        return redirect('/admin/citas-nutricion-getafe/edit/' . $oObj->id)->with(['success'=>'Registro guardado']);
       if ($type == 'fisio')
         return redirect('/admin/citas-fisioterapia/edit/' . $oObj->id)->with(['success'=>'Registro guardado']);
       if ($type == 'fisioG')
         return redirect('/admin/citas-fisioterapia-getafe/edit/' . $oObj->id)->with(['success'=>'Registro guardado']);
       if ($type == 'esthetic')
         return redirect('/admin/citas-estetica/edit/' . $oObj->id)->with(['success'=>'Registro guardado']);
+      if ($type == 'estheticG')
+        return redirect('/admin/citas-estetica-getafe/edit/' . $oObj->id)->with(['success'=>'Registro guardado']);
     }
   }
 
@@ -507,6 +519,10 @@ class DatesController extends Controller {
           header('Location: /admin/citas-nutricion/edit/' . $id);
           exit();
           break;
+        case 'nutriG':
+          header('Location: /admin/citas-nutricion-getafe/edit/' . $id);
+          exit();
+          break;
         case 'fisio':
           header('Location: /admin/citas-fisioterapia/edit/' . $id);
           exit();
@@ -517,6 +533,10 @@ class DatesController extends Controller {
           break;
         case 'esthetic':
           header('Location: /admin/citas-estetica/edit/' . $id);
+          exit();
+          break;
+        case 'estheticG':
+          header('Location: /admin/citas-estetica-getafe/edit/' . $id);
           exit();
           break;
       }

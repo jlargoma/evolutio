@@ -12,7 +12,7 @@ $tit = 'Su cita en Evolutio';
 <p style="color: black;font-size: 18px;">
     - Nombre: <?php echo $user->name ?><br>
     <?php 
-    if ($date_type == 'nutri')
+    if ($date_type == 'nutri' || $date_type == 'nutriG')
       echo '- Nutricionista: '.$oCoach->name.'<br>';    
     if ($date_type == 'fisio' || $date_type == 'fisioG')
       echo '- Fisioterapeuta: '.$oCoach->name.'<br>';  

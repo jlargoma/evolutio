@@ -1,12 +1,12 @@
 @extends('layouts.admin-master')
 
-@section('title') Citas estetica Evolutio HTS @endsection
-@section('headerTitle') Citas estetica @endsection
+@section('title') Citas estetica Getafe Evolutio HTS @endsection
+@section('headerTitle') Citas estetica Getafe @endsection
 @section('headerButtoms')
 <button type="button" class="btn btn-success addDate" data-date="{{time()}}" data-time="8">
     <i class="fa fa-plus-circle"></i></button>
-    <a href="/admin/citas-estetica/listado/" class="btn btn-success" style="float: right; margin-left: 3px;">Listado</a>
-    <a href="/admin/citas-estetica-week/" class="btn btn-success" style="float: right; margin-left: 3px;">Semana</a>
+    <a href="/admin/citas-estetica-getafe/listado/" class="btn btn-success" style="float: right; margin-left: 3px;">Listado</a>
+    <a href="/admin/citas-estetica-getafe-week/" class="btn btn-success" style="float: right; margin-left: 3px;">Semana</a>
 
 @endsection
 @section('content')
@@ -18,8 +18,8 @@
                 <div class="row">
                   <div class="col-md-12">
                     <div class="text-center">
-                      <a href="/admin/citas-estetica" class="btn btn-lg btn-success">VILLAVICIOSA</a>
-                      <a href="/admin/citas-estetica-getafe" class="btn btn-lg btn-dark">GETAFE</a>
+                      <a href="/admin/citas-estetica" class="btn btn-lg btn-dark">VILLAVICIOSA</a>
+                      <a href="/admin/citas-estetica-getafe" class="btn btn-lg btn-success">GETAFE</a>
                       <hr>
                     </div>
                   </div>
@@ -82,7 +82,7 @@
             </div>
 	</div>
 </div>
-    @include('esthetic.modals')
+    @include('estheticGetafe.modals')
 @endsection
 
 @section('scripts')
@@ -123,6 +123,6 @@
       echo 'var countByCoah = []';
   ?>;  
 </script>
-<script src="{{assetv('/js/calendar/esthetic.js')}}"></script>
+<script src="{{assetv('/js/calendar/estheticGetafe.js')}}"></script>
 <script src="{{assetv('/admin-css/assets/js/toltip.js')}}"></script>
 @endsection

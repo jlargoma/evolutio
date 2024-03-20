@@ -1,28 +1,21 @@
 @extends('layouts.admin-master')
 
-@section('title') Citas Nutrición Evolutio HTS @endsection
-@section('headerTitle') Citas Nutrición @endsection
+@section('title') Citas Nutrición Getafe Evolutio HTS @endsection
+@section('headerTitle') Citas Nutrición Getafe @endsection
 @section('headerButtoms')
 <button type="button" class="btn btn-success addDate" data-date="{{time()}}" data-time="8">
   <i class="fa fa-plus-circle"></i></button>
-<a href="/admin/citas-nutricion/listado/" class="btn btn-success" style="float: right; margin-left: 3px;">Listado</a>
-<a href="/admin/citas-nutricion-week/" class="btn btn-success" style="float: right; margin-left: 3px;">Semana</a>
+  <a href="/admin/citas-nutricion-getafe/" class="btn btn-success" style="float: right; margin-left: 3px;">Calendario</a>
+  <a href="/admin/citas-nutricion-getafe/listado/" class="btn btn-success" style="float: right; margin-left: 3px;">Listado</a>
 @endsection
 @section('content')
 <div class="content content-full bg-white">
   <div class="row">
     <div class="col-md-12">
       <input type="hidden" id="coachsFilter" value="{{$coach}}">
-      <input type="hidden" id="selectMonth" value="{{$month}}">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="text-center">
-            <a href="/admin/citas-nutricion" class="btn btn-lg btn-success">VILLAVICIOSA</a>
-            <a href="/admin/citas-nutricion-getafe" class="btn btn-lg btn-dark">GETAFE</a>
-            <hr>
-          </div>
-        </div>
-      </div>
+      <input type="hidden" id="selectWeek" value="{{$week}}">
+      <input type="hidden" id="currentWeek" value="{{date('W')}}">
+      <input type="hidden" id="typeCalend" value="week">
       <div class="row">
         <div class="col-md-10">
           <div class="mbl-tabs">
@@ -49,14 +42,9 @@
         </div>
         <div class="col-md-8 col-xs-12">
           <div class="mbl-tabs">
-            <!--<button class="btn btn-success btnAvails" type="button">DISPONIBLES</button>-->
-            <ul class="selectDate">
-              @foreach($aMonths as $k=>$v)
-              <li data-val="{{$k}}" class="<?php echo ($month == $k) ? 'active' : '' ?>">
-                {{$v}}
-              </li>
-              @endforeach
-            </ul>
+            <span class="btn btn-success prevWeek"> << </span>
+            <span class="btn btn-success currentWeek">Semana Actual</span>
+            <span class="btn btn-success nextWeek"> >> </span>
           </div>
         </div>
         <div class="col-md-2 col-xs-12 mx-1em">
@@ -74,17 +62,16 @@
 
         </div>
       </div>
-      <div class="contentCalendar">
+
       @include('calendars.calendar')
-      </div>
     </div>
   </div>
 </div>
-@include('nutricion.modals')
+@include('nutricionGetafe.modals')
 @endsection
 
 @section('scripts')
-<link rel="stylesheet" href="{{ assetV('css/calendars.css')}}">
+<link rel="stylesheet" href="{{ assetV('css/calendars.css') }}">
 
 <style>
     @foreach($tColors as $k=>$v)
@@ -111,17 +98,14 @@
   @if($detail)
     var details = {!!$detail!!};
   @endif
-  var typeCalend = 'month';
-  
-
+  var typeCalend = 'week';
   <?php 
-    if (isset($countByCoah[$month]))
-      echo 'var countByCoah = '.json_encode($countByCoah[$month]);
+    if (isset($countByCoah['w']))
+      echo 'var countByCoah = '.json_encode($countByCoah['w']);
     else 
       echo 'var countByCoah = []';
   ?>; 
-  
 </script>
-<script src="{{assetv('/js/calendar/nutri.js')}}"></script>
+<script src="{{assetv('/js/calendar/nutriGetafe.js')}}"></script>
 <script src="{{assetV('/admin-css/assets/js/toltip.js')}}"></script>
 @endsection

@@ -52,7 +52,7 @@ class MailController extends Controller
         
         $rType = \App\Models\TypesRate::find($oRate->type);
         $type = 'Nuevo Servicio';
-        if ($rType->type == 'fisio' || $rType->type == 'fisioG' || $rType->type == 'nutri'){
+        if ($rType->type == 'fisio' || $rType->type == 'fisioG' || $rType->type == 'nutri' || $rType->type == 'nutriG'){
           $type = 'Nueva Cita';
         }
         try{
@@ -138,7 +138,7 @@ class MailController extends Controller
             /***********************************************************/
             $helpCitaCont = new \App\Helps\CitasMailsContent();
             //BEGIN: entrevista nutrición
-            if ($type == 'nutri'){
+            if ($type == 'nutri' || $type == 'nutriG'){
               $mailData['urlEntr'] = $helpCitaCont->get_urlEntrevista($oUser);
             }
             //BEGIN: entrevista Fisioterapia

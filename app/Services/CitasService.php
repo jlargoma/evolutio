@@ -50,7 +50,7 @@ class CitasService {
       $observ = $oDate->getMetaContent('observ');
       $has_senial = $oDate->getMetaContent('senial_date');
       $equip_a = $equip_b = $equip_c = null;
-      if ($oDate->date_type == 'esthetic'){
+      if ($oDate->date_type == 'esthetic' || $oDate->date_type == 'estheticG'){
         $equip_a = $oDate->getMetaContent('equip_a');
         $equip_b = $oDate->getMetaContent('equip_b');
         $equip_c = $oDate->getMetaContent('equip_c');
@@ -508,6 +508,9 @@ class CitasService {
         case 'nutri':
           $urlBack = '/admin/citas-nutricion-week/';
           break;
+        case 'nutriG':
+          $urlBack = '/admin/citas-nutricion-getafe-week/';
+          break;
         case 'fisio':
           $urlBack = '/admin/citas-fisioterapia-week/';
           break;
@@ -516,6 +519,9 @@ class CitasService {
           break;
         case 'esthetic':
           $urlBack = '/admin/citas-estetica-week/';
+          break;
+        case 'estheticG':
+          $urlBack = '/admin/citas-estetica-getafe-week/';
           break;
         case 'pt':
           $urlBack = '/admin/citas-pt-week/';
@@ -536,6 +542,9 @@ class CitasService {
       case 'nutri':
         $urlBack = '/admin/citas-nutricion/';
         break;
+      case 'nutriG':
+        $urlBack = '/admin/citas-nutricion-getafe/';
+        break;
       case 'fisio':
         $urlBack = '/admin/citas-fisioterapia/';
         break;
@@ -544,6 +553,9 @@ class CitasService {
         break;
       case 'esthetic':
         $urlBack = '/admin/citas-estetica/';
+        break;
+      case 'estheticG':
+        $urlBack = '/admin/citas-estetica-getafe/';
         break;
       case 'pt':
         $urlBack = '/admin/citas-pt/';

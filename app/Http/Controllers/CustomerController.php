@@ -50,9 +50,11 @@ class CustomerController extends Controller {
           $id_coach = isset($data[6]) ? $data[6] : null;
           break;
         case 'nutri': //$dID,$oUser->id,$importe*100,$oRate->id;
+        case 'nutriG':
         case 'fisio': //$dID,$oUser->id,$importe*100,$oRate->id;
         case 'fisioG': //$dID,$oUser->id,$importe*100,$oRate->id;
         case 'esthetic': //$dID,$oUser->id,$importe*100,$oRate->id;
+        case 'estheticG':
           $oDate = \App\Models\Dates::find($data[0]);
           if (!$oDate){
             die('Cita eliminada');
@@ -77,11 +79,11 @@ class CustomerController extends Controller {
           /** @Todo Controlar si ya está pagado */
           $name = 'Pago de su cita de ';
           $items = [];
-          if ($oDate->date_type == 'nutri') {
+          if ($oDate->date_type == 'nutri' || $oDate->date_type == 'nutriG') {
             $name .= ' Nutrición ';
             $items[] = '<b>Nutricionista:</b> ' . $oCoach->name;
           }
-          if ($oDate->date_type == 'esthetic') {
+          if ($oDate->date_type == 'esthetic' || $oDate->date_type == 'estheticG') {
             $name .= ' Estética ';
             $items[] = '<b>Profesional:</b> ' . $oCoach->name;
           }
@@ -123,7 +125,9 @@ class CustomerController extends Controller {
               );
               break;
             case 'nutri':
+            case 'nutriG':
             case 'esthetic':
+            case 'estheticG':
             case 'fisio':
             case 'fisioG':
               \App\Models\Stripe3DS::addNew($oUser->id,$iStripe,$cStripe,'cita',['dID'=>$oDate->id]);
@@ -847,11 +851,11 @@ return [
             /** @Todo Controlar si ya está pagado */
             $name = 'Pago de la señal para su cita de ';
             $items = [];
-            if ($oDate->date_type == 'nutri') {
+            if ($oDate->date_type == 'nutri' || $oDate->date_type == 'nutriG') {
               $name .= ' Nutrición ';
               $items[] = '<b>Nutricionista:</b> ' . $oCoach->name;
             }
-            if ($oDate->date_type == 'esthetic') {
+            if ($oDate->date_type == 'esthetic' || $oDate->date_type == 'estheticG') {
               $name .= ' Estética ';
               $items[] = '<b>Profesional:</b> ' . $oCoach->name;
             }

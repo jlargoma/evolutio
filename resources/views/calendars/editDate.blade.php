@@ -149,7 +149,7 @@
       </div>
       @endif
 
-      @if($date_type=='esthetic' )
+      @if($date_type=='esthetic' || $date_type=='estheticG' )
       <div class=" checkbox_equip_a  <?php echo (isset($equip_a) && $equip_a == 1) ? "active" : ''; ?>">
         <input type="checkbox" id="equipments[]" name="equipments[]" value="equip_a" <?php echo (isset($equip_a) && $equip_a == 1) ? "checked" : ''; ?>>
         <img src="/img/maq-estetica-a-gris.png" class="grey" alt="">
@@ -231,7 +231,7 @@
     @endif
 
   </div>
-  @if($id>0 && $date_type == 'nutri')
+  @if($id>0 && ($date_type == 'nutri' || $date_type == 'nutriG'))
   <div class="col-xs-12 text-center">
     @if(isset($encNutr))
     <a href="/admin/ver-encuesta/{{$btnEncuesta}}" class="btn btn-lg btn-info" target="_black">

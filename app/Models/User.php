@@ -90,13 +90,25 @@ class User extends Authenticatable
         $query->where("rate_subf", $ubRsubfamily)
           ->orWhere('rate_type', $ubRateType);
         
-        //Fisio should also work for Fisio Getafe and viceversa
+        //Villaviciosa service promo codes should also work for Getafe and viceversa
         switch($ubRateType){
           case 14: //Is Fisio Getafe we include Fisio
             $query->orWhere('rate_type', 8);
           break;
           case 8: //Is Fisio we include Fisio Getafe
             $query->orWhere('rate_type', 14);
+          break;
+          case 10: //Is Nutri we include Nutri Getafe
+            $query->orWhere('rate_type', 15);
+          break;
+          case 15: //Is Nutri Getafe we include Nutri
+            $query->orWhere('rate_type', 10);
+          break;
+          case 12: //Is Estethic we include Estethic Getafe
+            $query->orWhere('rate_type', 16);
+          break;
+          case 16: //Is Estethic Getafe we include Estethic
+            $query->orWhere('rate_type', 12);
           break;
         }
         
@@ -129,6 +141,9 @@ class User extends Authenticatable
       case 'nutri':
         $roles = ['teach_nutri', 'nutri'];
         break;
+      case 'nutriG':
+        $roles = ['nutriG'];
+        break;
       case 'teach':
         $roles = ['teach', 'teach_nutri', 'teach_fisio'];
         break;
@@ -138,8 +153,11 @@ class User extends Authenticatable
       case 'esthetic':
         $roles = ['esthetic'];
         break;
+      case 'estheticG':
+        $roles = ['estheticG'];
+        break;
       default:
-        $roles = ['teach', 'fisio', 'nutri', 'empl', 'teach_nutri', 'teach_fisio', 'esthetic', 'fisioG'];
+        $roles = ['teach', 'fisio', 'nutri', 'nutriG', 'empl', 'teach_nutri', 'teach_fisio', 'esthetic', 'estheticG', 'fisioG'];
         break;
     }
     if ($includeAdmin) $roles[] = 'admin';

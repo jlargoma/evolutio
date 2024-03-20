@@ -761,9 +761,11 @@ trait ClientesTraits
       'u_current' => Auth::user()->id,
       'encNutr' => $sEncNutri->get_enc($user),
       'filesNutri' => $this->getFileLst($user->id, 'nutri'),
+      'filesNutriG' => $this->getFileLst($user->id, 'nutriG'),
       'filesFisio' => $this->getFileLst($user->id, 'fisio'),
       'filesFisioG' => $this->getFileLst($user->id, 'fisioG'),
       'filesEsthetic' => $this->getFileLst($user->id, 'esthetic'),
+      'filesEstheticG' => $this->getFileLst($user->id, 'estheticG'),
       'filesPT' => $this->getFileLst($user->id, 'pt'),
       'seeClinicalHistory' => $seeClinicalHistory,
       'seeClinicalHistorySP' => $seeClinicalHistorySP,
@@ -947,6 +949,9 @@ trait ClientesTraits
       case 'nutri':
         $urlBack = '/nutricion';
         break;
+      case 'nutriG':
+        $urlBack = '/nutricionG';
+        break;
       case 'fisio':
         $urlBack = '/fisio';
         break;
@@ -955,6 +960,9 @@ trait ClientesTraits
           break;
       case 'esthetic':
         $urlBack = '/esthetic';
+        break;
+      case 'estheticG':
+        $urlBack = '/estheticG';
         break;
       default:
         $urlBack = '/notes';
@@ -972,6 +980,7 @@ trait ClientesTraits
     if ($oNote) {
       //      $urlBack = ($oNote->type == 'nutri') ? '/nutricion' : '/notes';
       switch ($oNote->type) {
+        case 'nutriG':
         case 'nutri':
           $urlBack = '/nutricion';
           break;
@@ -981,6 +990,7 @@ trait ClientesTraits
         case 'fisioG':
           $urlBack = '/fisio';
           break;
+        case 'estheticG':
         case 'esthetic':
           $urlBack = '/esthetic';
           break;

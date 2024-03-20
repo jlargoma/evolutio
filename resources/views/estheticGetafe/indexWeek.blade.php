@@ -1,29 +1,21 @@
 @extends('layouts.admin-master')
 
-@section('title') Citas estetica Evolutio HTS @endsection
-@section('headerTitle') Citas estetica @endsection
+@section('title') Citas estetica Getafe Evolutio HTS @endsection
+@section('headerTitle') Citas estetica Getafe @endsection
 @section('headerButtoms')
 <button type="button" class="btn btn-success addDate" data-date="{{time()}}" data-time="8">
     <i class="fa fa-plus-circle"></i></button>
-    <a href="/admin/citas-estetica/listado/" class="btn btn-success" style="float: right; margin-left: 3px;">Listado</a>
-    <a href="/admin/citas-estetica-week/" class="btn btn-success" style="float: right; margin-left: 3px;">Semana</a>
-
+    <a href="/admin/citas-estetica-getafe/listado/" class="btn btn-success" style="float: right; margin-left: 3px;">Listado</a>
+    <a href="/admin/citas-estetica-getafe/" class="btn btn-success" style="float: right; margin-left: 3px;">Calendario</a>
 @endsection
 @section('content')
 <div class="content content-full bg-white">
 	<div class="row">
             <div class="col-md-12">
                 <input type="hidden" id="coachsFilter" value="{{$coach}}">
-                <input type="hidden" id="selectMonth" value="{{$month}}">
-                <div class="row">
-                  <div class="col-md-12">
-                    <div class="text-center">
-                      <a href="/admin/citas-estetica" class="btn btn-lg btn-success">VILLAVICIOSA</a>
-                      <a href="/admin/citas-estetica-getafe" class="btn btn-lg btn-dark">GETAFE</a>
-                      <hr>
-                    </div>
-                  </div>
-                </div>
+                <input type="hidden" id="selectWeek" value="{{$week}}">
+                <input type="hidden" id="currentWeek" value="{{date('W')}}">
+                <input type="hidden" id="typeCalend" value="week">
                 <div class="row">
                     <div class="col-md-10">
                       <div class="mbl-tabs">
@@ -33,7 +25,7 @@
                         </li>
                     @foreach($coachs as $item)
                     <li data-val="{{$item->id}}" class="select_<?php echo $item->id ?> <?php echo ($coach == $item->id) ? 'active' : ''?>">
-                      {{$item->name}} <span class="counter">0</span>
+                        {{$item->name}}<span class="counter">0</span>
                     </li>
                     @endforeach
                     </ul>
@@ -50,15 +42,10 @@
                 </div>
                 <div class="col-md-8 col-xs-12">
                   <div class="mbl-tabs">
-                 <!--<button class="btn btn-success btnAvails" type="button">DISPONIBLES</button>-->
-                <ul class="selectDate">
-                @foreach($aMonths as $k=>$v)
-                <li data-val="{{$k}}" class="<?php echo ($month == $k) ? 'active' : ''?>">
-                    {{$v}}
-                </li>
-                @endforeach
-                </ul>
-                </div>
+                    <span class="btn btn-success prevWeek"> << </span>
+                    <span class="btn btn-success currentWeek">Semana Actual</span>
+                    <span class="btn btn-success nextWeek"> >> </span>
+                    </div>
                 </div>
                 <div class="col-md-2 col-xs-12 mx-1em">
                     <select id="servSelect" class="form-control">
@@ -75,18 +62,16 @@
                     
                 </div>
                 </div>
-                <div class="contentCalendar">
+                
                 @include('calendars.calendar')
-                </div>
-
             </div>
 	</div>
 </div>
-    @include('esthetic.modals')
+    @include('estheticGetafe.modals')
 @endsection
 
 @section('scripts')
-<link rel="stylesheet" href="{{ assetV('css/calendars.css') }}">
+<link rel="stylesheet" href="{{ assetV('css/calendars.css?v1') }}">
 
 <style>
 
@@ -114,15 +99,14 @@
   @if($detail)
     var details = {!!$detail!!};
   @endif
-  var typeCalend = 'month';
-
-  <?php 
-    if (isset($countByCoah[$month]))
-      echo 'var countByCoah = '.json_encode($countByCoah[$month]);
+   var typeCalend = 'week';
+ <?php 
+    if (isset($countByCoah['w']))
+      echo 'var countByCoah = '.json_encode($countByCoah['w']);
     else 
       echo 'var countByCoah = []';
-  ?>;  
+  ?>; 
 </script>
-<script src="{{assetv('/js/calendar/esthetic.js')}}"></script>
+<script src="{{assetv('/js/calendar/estheticGetafe.js')}}"></script>
 <script src="{{assetv('/admin-css/assets/js/toltip.js')}}"></script>
 @endsection

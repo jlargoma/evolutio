@@ -58,6 +58,7 @@ use \Carbon\Carbon; ?>
                   <th class="t-bg jsRt td2 b-r1">Salario</th>
                   <th class="t-bg jsRt td3 b-r1">Ingreso</th>
                   <th class="t-bg jsRt td4">Nutri</th>
+                  <th class="t-bg jsRt td4">Nutri GETAFE</th>
                   <th class="t-bg jsRt td5">Fisio</th>
                   <th class="t-bg jsRt td5">Fisio GETAFE</th>
                   <th class="t-bg jsRt td6">Suscrip</th>
@@ -68,12 +69,13 @@ use \Carbon\Carbon; ?>
               </thead>
               <tbody>
                 <?php 
-                  $total = ['nutri' => 0, 'fisio' => 0, 'fisioG' => 0, 'suscrip' => 0, 'bonos' => 0]; 
+                  $total = ['nutri' => 0, 'nutriG' => 0, 'fisio' => 0, 'fisioG' => 0, 'suscrip' => 0, 'bonos' => 0]; 
                 ?>
                 @foreach($aCoachs as $cID=>$cname)
                 <?php
-                $data = isset($countCoachs[$cID]) ? $countCoachs[$cID] : ['nutri'=>0, 'fisio' => 0,'fisioG' => 0, 'suscrip' => 0, 'bonos' => 0];
+                $data = isset($countCoachs[$cID]) ? $countCoachs[$cID] : ['nutri'=>0, 'nutriG'=>0, 'fisio' => 0,'fisioG' => 0, 'suscrip' => 0, 'bonos' => 0];
                 $total['nutri'] += $data['nutri'];
+                $total['nutriG'] += $data['nutriG'];
                 $total['fisio'] += $data['fisio'];
                 $total['fisioG'] += $data['fisioG'];
                 $total['suscrip'] += $data['suscrip'];
@@ -88,6 +90,7 @@ use \Carbon\Carbon; ?>
                   <td class="text-center b-r1" data-order="{{$liquid}}">{{moneda($liquid,false)}}</td>
                   <td class="text-center b-r1" data-order="{{$amount}}">{{moneda($amount,false)}}</td>
                   <td class="text-center">{{$data['nutri']}}</td>
+                  <td class="text-center">{{$data['nutriG']}}</td>
                   <td class="text-center">{{$data['fisio']}}</td>
                   <td class="text-center">{{$data['fisioG']}}</td>
                   <td class="text-center">{{$data['suscrip']}}</td>
@@ -104,6 +107,7 @@ use \Carbon\Carbon; ?>
                   <th class="t-bg jsRt td2 b-r1">{{moneda(array_sum($cLiq))}}</th>
                   <th class="t-bg jsRt td3 b-r1">{{moneda(array_sum($tCoachs))}}</th>
                   <th class="t-bg jsRt td4">{{$total['nutri']}}</th>
+                  <th class="t-bg jsRt td4">{{$total['nutriG']}}</th>
                   <th class="t-bg jsRt td5">{{$total['fisio']}}</th>
                   <th class="t-bg jsRt td5">{{$total['fisioG']}}</th>
                   <th class="t-bg jsRt td6">{{$total['suscrip']}}</th>

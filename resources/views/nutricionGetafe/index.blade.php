@@ -1,12 +1,12 @@
 @extends('layouts.admin-master')
 
 @section('title') Citas Nutrición Evolutio HTS @endsection
-@section('headerTitle') Citas Nutrición @endsection
+@section('headerTitle') Citas Nutrición Getafe @endsection
 @section('headerButtoms')
 <button type="button" class="btn btn-success addDate" data-date="{{time()}}" data-time="8">
   <i class="fa fa-plus-circle"></i></button>
-<a href="/admin/citas-nutricion/listado/" class="btn btn-success" style="float: right; margin-left: 3px;">Listado</a>
-<a href="/admin/citas-nutricion-week/" class="btn btn-success" style="float: right; margin-left: 3px;">Semana</a>
+<a href="/admin/citas-nutricion-getafe/listado/" class="btn btn-success" style="float: right; margin-left: 3px;">Listado</a>
+<a href="/admin/citas-nutricion-getafe-week/" class="btn btn-success" style="float: right; margin-left: 3px;">Semana</a>
 @endsection
 @section('content')
 <div class="content content-full bg-white">
@@ -17,8 +17,8 @@
       <div class="row">
         <div class="col-md-12">
           <div class="text-center">
-            <a href="/admin/citas-nutricion" class="btn btn-lg btn-success">VILLAVICIOSA</a>
-            <a href="/admin/citas-nutricion-getafe" class="btn btn-lg btn-dark">GETAFE</a>
+            <a href="/admin/citas-nutricion" class="btn btn-lg btn-dark">VILLAVICIOSA</a>
+            <a href="/admin/citas-nutricion-getafe" class="btn btn-lg btn-success">GETAFE</a>
             <hr>
           </div>
         </div>
@@ -80,7 +80,7 @@
     </div>
   </div>
 </div>
-@include('nutricion.modals')
+@include('nutricionGetafe.modals')
 @endsection
 
 @section('scripts')
@@ -122,6 +122,6 @@
   ?>; 
   
 </script>
-<script src="{{assetv('/js/calendar/nutri.js')}}"></script>
+<script src="{{assetv('/js/calendar/nutriGetafe.js')}}"></script>
 <script src="{{assetV('/admin-css/assets/js/toltip.js')}}"></script>
 @endsection

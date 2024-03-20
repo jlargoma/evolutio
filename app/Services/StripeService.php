@@ -10,7 +10,7 @@ class StripeService {
     private  $sKey;
     private  $sPRivKey;
     private   $aTypes = [
-      '','rate','sucrip','nutri','fisio','fisioG','bono','esthetic'
+      '','rate','sucrip','nutri','nutriG','fisio','fisioG','bono','esthetic','estheticG'
     ];
     public function __construct()
     {

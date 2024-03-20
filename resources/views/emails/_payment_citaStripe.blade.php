@@ -17,7 +17,7 @@ $tit = 'Su cita en Evolutio';
     - Nombre: <?php echo $user->name ?><br>
     <?php 
     
-    if ($obj->date_type == 'nutri')
+    if ($obj->date_type == 'nutri' || $obj->date_type == 'nutriG')
       echo '- Nutricionista: '.$oCoach->name.'<br>';    
     if ($obj->date_type == 'fisio' || $obj->date_type == 'fisioG')
       echo '- Fisioterapeuta: '.$oCoach->name.'<br>';  

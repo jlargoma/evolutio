@@ -9,7 +9,7 @@
 @section('content')
 
 @section('headerButtoms')
-<?php if (Auth::user()->role == 'nutri' || Auth::user()->role == 'admin'): ?>
+<?php if (Auth::user()->role == 'nutri' || Auth::user()->role == 'admin'  || Auth::user()->role == 'nutriG'): ?>
 	<li class="text-center">
 		<a href="{{url('admin/nutricion')}}" class="text-white btn btn-sm btn-success font-s16 font-w300" style="padding: 10px 15px;line-height: 15px;">
 		    Listado NUTRICIÓN
@@ -23,7 +23,7 @@
 	    </a>
 	</li>
 <?php endif ?>
-<?php if (Auth::user()->role == 'admin' || Auth::user()->role == 'nutri'): ?>
+<?php if (Auth::user()->role == 'admin' || Auth::user()->role == 'nutri' || Auth::user()->role == 'nutriG'): ?>
 	<li class="text-center">
 		<a href="{{url('admin/informe-forma')}}" class="text-white btn btn-sm btn-warning font-s16 font-w300" style="padding: 10px 15px;line-height: 15px;">
 		    Listado INFORMES

@@ -31,6 +31,9 @@
             case 'nutri';
               echo 'Nutri';
               break;
+            case 'nutriG';
+              echo 'Nutri';
+              break;
             case 'fisio';
               echo 'Fisio';
               break;

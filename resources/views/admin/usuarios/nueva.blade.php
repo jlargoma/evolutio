@@ -58,10 +58,12 @@
                             <option value="fisio">Fisioterapia</option>
                             <option value="fisioG">Fisioterapia Getafe</option>
                             <option value="nutri">Nutricionista</option>
+                            <option value="nutriG">Nutricionista Getafe</option>
                             <option value="teach_nutri">Entrenador / Nutricionista</option>
                             <option value="teach_fisio">Entrenador / Fisioterapia</option>
                             <option value="empl">Empleado</option>
                             <option value="esthetic">Estética</option>
+                            <option value="estheticG">Estética Getafe</option>
                         </select>
                     </div>
                 </div>

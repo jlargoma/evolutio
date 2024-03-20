@@ -118,6 +118,14 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
   Route::get('/citas-nutricion/edit/{id}', 'NutriController@edit');
   Route::get('/citas-nutricion/{month?}/{coach?}/{type?}', 'NutriController@index');
   Route::get('/citas-nutricion-week/{week?}/{coach?}/{type?}', 'NutriController@indexWeek');
+
+  Route::get('/citas-nutricion-getafe/listado/{coach?}/{type?}', 'NutriGController@listado');
+  Route::get('/citas-nutricion-getafe/create/{date?}/{time?}', 'NutriGController@create');
+  Route::get('/citas-nutricion-getafe/informe-nutricion/{id}', 'NutriGController@informe');
+  Route::post('/nutricion-getafe/nutri/upload', 'NutriGController@uploadFile');
+  Route::get('/citas-nutricion-getafe/edit/{id}', 'NutriGController@edit');
+  Route::get('/citas-nutricion-getafe/{month?}/{coach?}/{type?}', 'NutriGController@index');
+  Route::get('/citas-nutricion-getafe-week/{week?}/{coach?}/{type?}', 'NutriGController@indexWeek');
   /* Citas personalTrainer */
   Route::get('/citas-pt/listado/{coach?}/{type?}', 'PTController@listado');
   Route::get('/citas-pt/create/{date?}/{time?}', 'PTController@create');
@@ -132,6 +140,14 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
    Route::get('/citas-estetica/{month?}/{coach?}/{type?}', 'EstheticController@index');
    Route::get('/citas-estetica-week/{week?}/{coach?}/{type?}', 'EstheticController@indexWeek');
    Route::post('/toggle/esthetic', 'EstheticController@toggleEquipment');
+
+   Route::get('/citas-estetica-getafe/listado/{coach?}/{type?}', 'EstheticGController@listado');
+   Route::get('/citas-estetica-getafe/create/{date?}/{time?}', 'EstheticGController@create');
+   Route::get('/citas-estetica-getafe/informe/{id}', 'EstheticGController@informe');
+   Route::get('/citas-estetica-getafe/edit/{id}', 'EstheticGController@edit');
+   Route::get('/citas-estetica-getafe/{month?}/{coach?}/{type?}', 'EstheticGController@index');
+   Route::get('/citas-estetica-getafe-week/{week?}/{coach?}/{type?}', 'EstheticGController@indexWeek');
+   Route::post('/toggle/estheticG', 'EstheticGController@toggleEquipment');
 
   //Facturas
   Route::get('/facturas/ver/{id}', 'InvoicesController@view')->name('invoice.view');

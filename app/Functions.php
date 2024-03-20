@@ -28,10 +28,12 @@ function getRoles(){
     'fisio' => 'Fisioterapia',
     'fisioG'  => 'Fisioterapia Getafe',
     'nutri'   => 'Nutricionista',
+    'nutriG'   => 'Nutricionista Getafe',
     'teach_nutri' => 'Entrenador / Nutricionista',
     'teach_fisio' => 'Entrenador / Fisioterapia',
     'empl'        => 'Empleado',
-    'esthetic'    => 'Estética'
+    'esthetic'    => 'Estética',
+    'estheticG'    => 'Estética Getafe'
   ];
 }
 

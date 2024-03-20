@@ -102,8 +102,10 @@ class Expenses extends Model
       'fisio'=>'FISIOTERAPIA',
       'fisioG'=>'FISIOTERAPIA',
       'esthetic'=>'ESTETICA',
+      'estheticG'=>'ESTETICA',
       'pt'=>'ENTRENAMIENTO',
       'nutri'=>'NUTRICIÓN',
+      'nutriG'=>'NUTRICIÓN',
       'podol'=>'PODOLOGIA',
     ];
 
