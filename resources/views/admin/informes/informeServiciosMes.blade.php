@@ -44,7 +44,9 @@ tr.payType_PENDIENTE td.typePay {
 @section('content')
 <div class="content content-boxed bg-gray-lighter">
   <h2 class="text-center">INFORME DE SERVICIOS CLIENTES</h2>
-  <div class="text-center">Listado de SERVICIOS realizados por fecha</div>
+  <div class="text-center">Listado de SERVICIOS realizados por fecha. Se contabilizan los ingresos por todos 
+    los servicios prestados en el mes sin importar cuando se realizo el pago.</br>
+    <b><h4>Los valores son actualizados a cada hora</h4></b>.</div>
   
   <input type="hidden" id="_token" name="_token" value="<?php echo csrf_token(); ?>">
   

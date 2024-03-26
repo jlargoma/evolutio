@@ -136,7 +136,7 @@ function sumMonthValue($m) {
         <canvas id="myChart" width="400" height="130"></canvas>
       </div>
     </div>
-    <div class="col-xs-12">
+    <div class="col-xs-12 tables-fixed-width">
       @include('admin.contabilidad.pyg.table')
       @include('admin.contabilidad.pyg.table2')
     </div>

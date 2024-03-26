@@ -48,7 +48,7 @@ class PyGController extends Controller {
     //---------------------------------------------------------//
     for ($i = 2; $i >= 0; $i--) {
       $yAux = $year - $i;
-//      $incomesYear[$yAux] = Charges::getSumYear($yAux);
+      //      $incomesYear[$yAux] = Charges::getSumYear($yAux);
       $incomesYear[$yAux] = UserRates::getSumYear($yAux);
       
     }

@@ -42,7 +42,7 @@ class DptoController extends Controller {
     if ($uID == 2858 || $dpto == 'fisio'){ // fisio
       $expensesLst = ['gto_mat._fisio','renting_fisioterapia'];
       $coachRole = 'fisio';
-      $rType = [8,3];
+      $rType = [8,3,14];
       $rIDs = \App\Models\Rates::whereIn('type',$rType)->orderBy('name')->pluck('id'); 
       $bIDs = Bonos::whereIn('rate_type',$rType)->orWhereIn('rate_id',$rIDs)->orWhere('rate_subf', 'LIKE', "%f%")->pluck('id');
       $type = ' Fisioterapia';
@@ -127,7 +127,7 @@ class DptoController extends Controller {
     //---------------------------------------------------------//
     for ($i = 2; $i >= 0; $i--) {
       $yAux = $year - $i;
-//      $incomesYear[$yAux] = Charges::getSumYear($yAux);
+      //      $incomesYear[$yAux] = Charges::getSumYear($yAux);
       $incomesYear[$yAux] = UserRates::getSumYear($yAux,$rIDs,$bIDs);
     }
     //----------------------------------------------------------//
@@ -145,6 +145,7 @@ class DptoController extends Controller {
         switch ($item->ch_type_payment){
           case 'cash':
             $pay_method['c'][$m] += $price;
+            break;
           case 'card':
             $pay_method['v'][$m] += $price;
             break;
@@ -223,14 +224,29 @@ class DptoController extends Controller {
       $yAux = $year - $i;
       $expensesYear[$yAux] = Expenses::whereYear('date', '=', $yAux)
                             ->where(function($query) use ($expensesLst, $coachRole) {
+                              if($coachRole == 'fisio'){
+                                $query->whereIn('type', $expensesLst)->orWhereIn('dpto',['fisio', 'fisioG']);
+                              }else{
                                 $query->whereIn('type', $expensesLst)->orWhere('dpto',$coachRole);
+                              }
                             })->sum('import');
-      $expensesYear[$yAux] += Expenses::whereYear('date', '=', $yAux)->where('type', 'seguros_soc')->orWhere('dpto',$coachRole)->sum('import');
+      
+      
+      if($coachRole == 'fisio'){
+        $expensesYear[$yAux] += Expenses::whereYear('date', '=', $yAux)->where('type', 'seguros_soc')->orWhereIn('dpto', ['fisio', 'fisioG'])->sum('import');
+      }else{
+        $expensesYear[$yAux] += Expenses::whereYear('date', '=', $yAux)->where('type', 'seguros_soc')->orWhere('dpto',$coachRole)->sum('import');
+      }
+      
     }
     //---------------------------------------------------------//
 
     $oExpenses = Expenses::whereYear('date', '=', $year)->where(function($query) use ($expensesLst, $coachRole) {
-                      $query->whereIn('type', $expensesLst)->orWhere('dpto',$coachRole);
+                      if($coachRole == 'fisio'){
+                        $query->whereIn('type', $expensesLst)->orWhereIn('dpto',['fisio', 'fisioG']);
+                      }else{
+                        $query->whereIn('type', $expensesLst)->orWhere('dpto',$coachRole);
+                      }
                   })->where('type','!=','seguros_soc')->get();
     $aux = $months_empty;
     $expensesYear[$year] = 0;
@@ -256,7 +272,7 @@ class DptoController extends Controller {
     $CoachLiqService = new \App\Services\CoachLiqService();
     for ($i = 0; $i < 3; $i++) {
       $auxYear = $year - $i;
-      $sCoachLiq = $CoachLiqService->liqByMonths($auxYear,null,$coachRole);
+      $sCoachLiq = $CoachLiqService->liqByMonths($auxYear,null,$coachRole == 'fisio' ? ['fisio', 'fisioG'] : $coachRole);
 
       foreach ($sCoachLiq['aLiq'] as $liq) {
         foreach ($liq as $m => $t) {
@@ -272,7 +288,13 @@ class DptoController extends Controller {
     //---------------------------------------------------------//
     $ggMonth['seguros_soc'] = $months_empty;
     $gTypeGroup['names']['seguros_soc'] = 'SEGUROS SOCIALES';
-    $oExpenses2 = Expenses::whereYear('date', '=', $year)->where('type', 'seguros_soc')->where('dpto',$coachRole)->get();
+    $oExpenses2 = [];
+    if($coachRole == 'fisio'){
+      $oExpenses2 = Expenses::whereYear('date', '=', $year)->where('type', 'seguros_soc')->orWhereIn('dpto',['fisio', 'fisioG'])->get();
+    }else{
+      $oExpenses2 = Expenses::whereYear('date', '=', $year)->where('type', 'seguros_soc')->where('dpto',$coachRole)->get();
+    }
+    
     if ($oExpenses2) {
       foreach ($oExpenses2 as $e) {
         $m = intval(substr($e->date, 5, 2));

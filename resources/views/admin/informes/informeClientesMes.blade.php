@@ -28,7 +28,9 @@ $filt_month = intVal($month);
 @section('content')
 <div class="content content-boxed bg-gray-lighter">
   <h2 class="text-center">INFORME DE COBROS CLIENTES</h2>
-  <div class="text-center">Listado de cobros realizados por fecha</div>
+  <div class="text-center">Listado de cobros realizados por fecha. Se contabilizan todos los pagos realizados 
+  en el mes, incluyendo aquellos que corresponden a citas de meses siguiente pero que el pago ya se ha realizado. 
+    También se contabilizan las compras de bonos efectuadas en el mes. </div>
   
   <input type="hidden" id="_token" name="_token" value="<?php echo csrf_token(); ?>">
   

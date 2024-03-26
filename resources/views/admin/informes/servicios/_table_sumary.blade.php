@@ -2,7 +2,7 @@
     <table class="table table-striped table-header-bg">
         <tbody>
         <tr>
-            <td class="text-center bg-complete font-w800" rowspan="2">RESUMEN</td>
+            <td class="text-center bg-complete font-w800" rowspan="2">RESUMEN<br> (sin bonos)</td>
             <td class="text-center bg-complete font-w800">Nº Clientes</td>
             <td class="text-center bg-complete font-w800">METALICO</td>
             <td class="text-center bg-complete font-w800">BANCO</td>

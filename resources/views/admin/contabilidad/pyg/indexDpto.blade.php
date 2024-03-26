@@ -11,7 +11,7 @@ function sumMonthValue($m){
   return ($t);
 }?>
 @section('content')
-<div class="content">
+<div class="content tables-fixed-width">
   <h2>Perdidas & Ganancias {{$typeTit}}</h2>
 
   <div class="row">

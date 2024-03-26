@@ -19,8 +19,13 @@ class CoachLiqService {
       $sql->where('status', 1);
     if ($type == 'desactivados')
       $sql->where('status', 0);
-    if ($role)
-      $sql->where('role',$role);
+    if ($role){
+      if(is_array($role)){
+        $sql->whereIn('role',$role);
+      }else{
+        $sql->where('role',$role);
+      }
+    }
       
 
     $users = $sql->orderBy('status', 'DESC')->get();
