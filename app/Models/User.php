@@ -386,18 +386,56 @@ class User extends Authenticatable
 
 
 
-  static function altaBajas($year, $month)
+  static function altaBajas($year, $month, $family = null)
   {
 
     // $sql = User::select('users.*','user_alta_baja.rate_type','user_alta_baja.active')->join('user_alta_baja', function ($join) {
     //   $join->on('users.id', '=', 'user_alta_baja.user_id');
     // })->where('year_month', $year . '-' . $month)->whereIn('rate_type', [1,2]);
 
-    $lstAltBaj = UsersSuscriptions::where(function($query) use ($year, $month) {
+    $lstAltBaj = [];
+
+    if(!is_null($family)){
+
+      if($family == -1){
+
+        $sueloPelvico  = Rates::where('name', 'like', '%pelvico%')->pluck('id')->toArray();
+        
+        $lstAltBaj = UsersSuscriptions::where(function($query) use ($year, $month, $sueloPelvico) {
+            $query->whereYear('deleted_at', $year)
+            ->whereMonth('deleted_at',$month)
+            ->whereIn('id_rate', $sueloPelvico);
+        })->orWhere(function($query) use ($year, $month, $sueloPelvico) {
+          $query->whereYear('created_at', $year)
+          ->whereMonth('created_at',$month)
+          ->whereIn('id_rate', $sueloPelvico);
+        })->withTrashed()->get();
+
+      } else {
+
+        $lstAltBaj = UsersSuscriptions::leftjoin('rates', 'rates.id', 'users_suscriptions.id_rate')
+        ->where(function($query) use ($year, $month, $family) {
+            $query->whereYear('users_suscriptions.deleted_at', $year)
+            ->whereMonth('users_suscriptions.deleted_at',$month)
+            ->where('rates.type', $family);
+        })->orWhere(function($query) use ($year, $month, $family) {
+          $query->whereYear('users_suscriptions.created_at', $year)
+          ->whereMonth('users_suscriptions.created_at',$month)
+          ->where('rates.type', $family);
+        })->withTrashed()->get();
+
+      }
+
+    } else {
+
+      $lstAltBaj = UsersSuscriptions::where(function($query) use ($year, $month) {
           $query->whereYear('deleted_at', $year)->whereMonth('deleted_at',$month);
       })->orWhere(function($query) use ($year, $month) {
-        $query->whereYear('created_at', $year)->whereMonth('created_at',$month);
-    })->withTrashed()->get();
+          $query->whereYear('created_at', $year)->whereMonth('created_at',$month);
+      })->withTrashed()->get();
+
+    }
+    
     $uIDs = [];
     if ($lstAltBaj){
       foreach ($lstAltBaj as $item) {
@@ -412,6 +450,63 @@ class User extends Authenticatable
 
 
     return $sql;
+
+  }
+
+  static function altaBajasData($year, $month, $family = null)
+  {
+
+    $lstAltBaj = [];
+
+    if(!is_null($family)){
+
+      if($family == -1){
+
+        $sueloPelvico  = Rates::where('name', 'like', '%pelvico%')->pluck('id')->toArray();
+        
+        $lstAltBaj = UsersSuscriptions::where(function($query) use ($year, $month, $sueloPelvico) {
+            $query->whereYear('deleted_at', $year)
+            ->whereMonth('deleted_at',$month)
+            ->whereIn('id_rate', $sueloPelvico);
+        })->orWhere(function($query) use ($year, $month, $sueloPelvico) {
+          $query->whereYear('created_at', $year)
+          ->whereMonth('created_at',$month)
+          ->whereIn('id_rate', $sueloPelvico);
+        })->withTrashed()->get();
+
+      } else {
+
+        $lstAltBaj = UsersSuscriptions::leftjoin('rates', 'rates.id', 'users_suscriptions.id_rate')
+        ->where(function($query) use ($year, $month, $family) {
+            $query->whereYear('users_suscriptions.deleted_at', $year)
+            ->whereMonth('users_suscriptions.deleted_at',$month)
+            ->where('rates.type', $family);
+        })->orWhere(function($query) use ($year, $month, $family) {
+          $query->whereYear('users_suscriptions.created_at', $year)
+          ->whereMonth('users_suscriptions.created_at',$month)
+          ->where('rates.type', $family);
+        })->withTrashed()->get();
+
+      }
+
+    } else {
+
+      $lstAltBaj = UsersSuscriptions::where(function($query) use ($year, $month) {
+          $query->whereYear('deleted_at', $year)->whereMonth('deleted_at',$month);
+      })->orWhere(function($query) use ($year, $month) {
+          $query->whereYear('created_at', $year)->whereMonth('created_at',$month);
+      })->withTrashed()->get();
+
+    }
+    
+    /*$uIDs = [];
+    if ($lstAltBaj){
+      foreach ($lstAltBaj as $item) {
+        $uIDs[$item->id_user] = $item;
+      }
+    }*/
+
+    return $lstAltBaj;
 
   }
 

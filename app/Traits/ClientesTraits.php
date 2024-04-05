@@ -66,7 +66,7 @@ trait ClientesTraits
         break;
       case 'new_unsubscribeds':
         $tit = 'Usuarios Nuevos ó Dados de Baja ' . $month . '/' . $year;
-        $sqlUsers = User::altaBajas($year, $month);
+        $sqlUsers = User::altaBajas($year, $month, $fFamily);
         break;
       case 2:
         $tit = 'Usuarios fidelity';
@@ -98,11 +98,11 @@ trait ClientesTraits
         ->select('users.*');
     }
 
-    if ($fFamily) {
+    if ($fFamily && $status != 'new_unsubscribeds') {
 
       $lstIDs = User::usersRatesFamilyMonths($year, $month, $fFamily);
       $sqlUsers->whereIN('users.id', $lstIDs);
-    }
+    } 
 
     $users = $sqlUsers->orderBy('name', 'asc')->get();
     $userIDs =  $sqlUsers->pluck('users.id');
@@ -173,9 +173,13 @@ trait ClientesTraits
       -1 => 'Suelo Pélvico',
       1 => 'Membresias',
       2 => 'PT',
+      4 => 'Bungee',
       8 => 'Fisioterapia',
+      14 => 'Fisio Getafe',
       10 => 'Nutrición',
+      15 => 'Nutrición Getafe',
       12 => 'Estetica',
+      16 => 'Estetica Getafe',
     ];
     $unsubscribeds = 0;
     $selectYear = $year;
@@ -196,23 +200,62 @@ trait ClientesTraits
 
     $newUsers = 0;
     //$lstAltBaj = DB::select('SELECT rate_type, active, user_id FROM `user_alta_baja` WHERE rate_type IN (1,2) AND `year_month` ="'.$year . '-' . $month.'" ORDER BY active');
+    $lstAltBaj = [];
 
-    $lstAltBaj = UsersSuscriptions::where(function($query) use ($year, $month) {
-            $query->whereYear('deleted_at', $year)->whereMonth('deleted_at',$month);
-        })->orWhere(function($query) use ($year, $month) {
-          $query->whereYear('created_at', $year)->whereMonth('created_at',$month);
+    if($fFamily) {
+
+
+      if($fFamily == -1){
+
+        $sueloPelvico  = Rates::where('name', 'like', '%pelvico%')->pluck('id')->toArray();
+
+        $lstAltBaj = UsersSuscriptions::where(function($query) use ($year, $month, $sueloPelvico) {
+          $query->whereYear('deleted_at', $year)
+          ->whereMonth('deleted_at',$month)
+          ->whereIn('id_rate', $sueloPelvico);
+        })->orWhere(function($query) use ($year, $month, $sueloPelvico) {
+          $query->whereYear('created_at', $year)
+          ->whereMonth('created_at',$month)
+          ->whereIn('id_rate', $sueloPelvico);
+        })->withTrashed()->get();
+
+      } else {
+
+        $lstAltBaj = UsersSuscriptions::leftjoin('rates', 'rates.id', 'users_suscriptions.id_rate')
+        ->where(function($query) use ($year, $month, $fFamily) {
+          $query->whereYear('users_suscriptions.deleted_at', $year)
+          ->whereMonth('users_suscriptions.deleted_at',$month)
+          ->where('rates.type', $fFamily);
+        })->orWhere(function($query) use ($year, $month, $fFamily) {
+          $query->whereYear('users_suscriptions.created_at', $year)
+          ->whereMonth('users_suscriptions.created_at',$month)
+          ->where('rates.type', $fFamily);
+        })->withTrashed()->get();
+
+      }      
+      
+      
+    } else {
+
+      $lstAltBaj = UsersSuscriptions::where(function($query) use ($year, $month) {
+        $query->whereYear('deleted_at', $year)->whereMonth('deleted_at',$month);
+      })->orWhere(function($query) use ($year, $month) {
+        $query->whereYear('created_at', $year)->whereMonth('created_at',$month);
       })->withTrashed()->get();
+
+    }
+
     $aLstAltBaj = [];
     foreach ($lstAltBaj as $item) {
       if (isset($aRateType[$item->id_rate])){
         $auxRate = $aRateType[$item->id_rate];
         if (!array_key_exists($item->id_user,$aLstAltBaj)) $aLstAltBaj[$item->id_user] = [];
-        $aLstAltBaj[$item->id_user][$auxRate] = [
+        $aLstAltBaj[$item->id_user][] = [
           'rt'=>$auxRate,
           'active'=>($item->deleted_at ? 0 : 1 )];
         }
     }
-    $newUsers = count($aLstAltBaj);
+    $newUsers = count($lstAltBaj);
 
 
     return view('/admin/usuarios/clientes/index', [
@@ -887,11 +930,24 @@ trait ClientesTraits
     return redirect()->action('UsersController@clientes')->withErrors(['No se ha podido desuscribir']);
   }
 
-  public function exportClients($status = 'all')
+  public function exportClients($status = 'all', Request $request)
   {
     global $filterStatus;
+    global $filterFamily;
+    global $filterMonth;
+
+    $year = getYearActive();
+
+    $month = date('n');
+    if($request->month){
+      $month = $request->month;
+    }
+
+    $filterMonth = $month;
     $filterStatus = $status;
-    return Excel::download(new UsersExport, 'clientes_' . date('Y_m_d') . '.xlsx');
+    $filterFamily = $request->family;
+
+    return Excel::download(new UsersExport, 'clientes_' . $year . '_' . $month . '_' . date('d') . '.xlsx');
   }
 
   public function rateCharge(Request $request)

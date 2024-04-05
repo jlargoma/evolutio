@@ -56,34 +56,34 @@ th label.text-danger{display: block}
 @endsection
 
 <?php 
-$b_aux = ['btn-primary','btn-primary','btn-primary','all'=>'btn-primary','new'=>'btn-primary','unsubscribeds'=>'btn-primary'];
+$b_aux = ['btn-primary','btn-primary','btn-primary','all'=>'btn-primary','new'=>'btn-primary','unsubscribeds'=>'btn-primary','new_unsubscribeds'=>'btn-primary'];
 if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
 ?>
 @section('content')
 <div class="content content-full bg-gray-lighter">
   <div class="row ">
     <div class="col-md-9 col-xs-12 mb-1em">
-      <a href="{{url('/admin/clientes/'.$month)}}?status=all" class="inline">
+      <a href="{{url('/admin/clientes/'.$month)}}?status=all{{$fFamily? '&fFamily='.$fFamily : ''}}" class="inline">
         <button class="btn btn-md {{$b_aux['all']}}">
           Todos
         </button>
       </a>
-      <a href="{{url('/admin/clientes/'.$month)}}?status=1" class="inline">
+      <a href="{{url('/admin/clientes/'.$month)}}?status=1{{$fFamily? '&fFamily='.$fFamily : ''}}" class="inline">
         <button class="btn btn-md {{$b_aux[1]}}">
           Activos
         </button>
       </a>
-      <a href="{{url('/admin/clientes/'.$month)}}?status=0" class="inline">
+      <a href="{{url('/admin/clientes/'.$month)}}?status=0{{$fFamily? '&fFamily='.$fFamily : ''}}" class="inline">
         <button class="btn btn-md {{$b_aux[0]}}">
           Inactivos
         </button>
       </a>
-      <a href="{{url('/admin/clientes/'.$month)}}?status=2" class="inline">
+      <a href="{{url('/admin/clientes/'.$month)}}?status=2{{$fFamily? '&fFamily='.$fFamily : ''}}" class="inline">
         <button class="btn btn-md {{$b_aux[2]}}">
           FIDELITY
         </button>
       </a>
-      <a href="{{url('/admin/clientes-export/'.$status)}}" class="inline">
+      <a href="{{url('/admin/clientes-export/'.$status)}}?month={{$month}}{{$fFamily? '&family='.$fFamily : ''}}" class="inline">
         <button class="btn btn-md">
           EXPORT EXCEL
         </button>
@@ -93,8 +93,8 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
           Listado x Bonos
         </button>
       </a>
-      <a href="{{url('/admin/clientes/'.$month)}}?status=new_unsubscribeds" class="inline">
-        <button class="btn btn-md btn-primary">
+      <a href="{{url('/admin/clientes/'.$month)}}?status=new_unsubscribeds{{$fFamily? '&fFamily='.$fFamily : ''}}" class="inline">
+        <button class="btn btn-md {{$b_aux['new_unsubscribeds']}}">
         alta/bajas ({{$newUsers}})
         </button>
       </a>

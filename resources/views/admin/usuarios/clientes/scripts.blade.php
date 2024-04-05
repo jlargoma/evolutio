@@ -81,7 +81,7 @@ $('.openEditCobro').on('click', function (e) {
   $('#date').change(function (event) {
 
     var month = $(this).val();
-    window.location = '/admin/clientes/' + month;
+    window.location = '/admin/clientes/' + month + window.location.search;
   });
 
   $('#containerTableResult').on('change', '.switchStatus', function (event) {
