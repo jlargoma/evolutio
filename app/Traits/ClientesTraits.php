@@ -947,7 +947,8 @@ trait ClientesTraits
     $filterStatus = $status;
     $filterFamily = $request->family;
 
-    return Excel::download(new UsersExport, 'clientes_' . $year . '_' . $month . '_' . date('d') . '.xlsx');
+    //return Excel::download(new UsersExport, 'clientes_' . $year . '_' . $month . '_' . date('d') . '.xlsx');
+    return Excel::download(new UsersExport, 'clientes_' . date('Y_m_d_H_i_s') . '.xlsx');
   }
 
   public function rateCharge(Request $request)
