@@ -242,7 +242,7 @@ trait ClientesTraits
       })->orWhere(function($query) use ($year, $month) {
         $query->whereYear('created_at', $year)->whereMonth('created_at',$month);
       })->withTrashed()->get();
-
+      
     }
 
     $aLstAltBaj = [];
@@ -255,9 +255,21 @@ trait ClientesTraits
           'active'=>($item->deleted_at ? 0 : 1 )];
         }
     }
+
     $newUsers = count($lstAltBaj);
 
 
+    if(is_null($fFamily)){
+      $createdUsers = User::whereYear('created_at', $year)->whereMonth('created_at',$month)->where('role', 'user')->get();
+
+      foreach($createdUsers as $createdUser) {
+        if(!isset($aLstAltBaj[$createdUser->id])) {
+          $newUsers++;
+        }
+      }
+    }
+
+    
     return view('/admin/usuarios/clientes/index', [
       'users' => $users,
       'month' => $month,
