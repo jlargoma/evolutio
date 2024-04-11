@@ -20,6 +20,7 @@ use \App\Traits\EntrenadoresTraits;
 use \App\Traits\ClientesTraits;
 use \App\Traits\ValoracionTraits;
 use \App\Traits\ClientesFilesTraits;
+use Exception;
 
 class UsersController extends Controller {
 
@@ -454,6 +455,54 @@ class UsersController extends Controller {
       return redirect()->back()->with('success', 'Registro actualizado');
       
     }
+  }
+
+
+  public function updateSalary(Request $request) {
+
+    try{
+      $id     = $request->input('id');
+      $salary = $request->input('salary');
+
+      if(is_null($id) || is_null($salary)){
+        throw new Exception('Faltan datos requeridos.', 400);
+      }
+
+      $userToUpdate = User::find($id);
+  
+      if (in_array($userToUpdate->role,['teach','fisio','fisioG','nutri','nutriG','empl','teach_nutri','teach_fisio','fisioG'])) {
+  
+        $CoachRates = \App\Models\CoachRates::where('id_user', $userToUpdate->id)->first();
+  
+        if (!$CoachRates) {
+          $CoachRates = new \App\Models\CoachRates();
+          $CoachRates->id_user = $userToUpdate->id;
+        }
+        $CoachRates->salary = intval($salary);
+
+        if($CoachRates->save()){
+
+          return response()->json(['status' => 'OK', 'details' => [
+            'message'    => "Salario actualizado."
+          ]], 200);
+
+        } else {
+
+          throw new Exception('No se pudo actualizar el salario.', 500);
+
+        }
+      } else {
+
+        throw new Exception('Usuario incorrecto.', 400);
+
+      }
+
+    } catch (Exception $e) {
+
+      return response()->json(['status' => 'error', 'details' => $e->getMessage()], $e->getCode());
+      
+    }
+    
   }
 
   public function disable($id) {

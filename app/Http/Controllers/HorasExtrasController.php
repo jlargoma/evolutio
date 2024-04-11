@@ -333,16 +333,17 @@ class HorasExtrasController extends Controller {
 
       $qryBuilder = ExtraHoursRequestItems::leftjoin('extra_hours_requests','extra_hours_requests.id','extra_hours_request_items.request_id')
                     ->leftjoin('users', 'users.id', 'extra_hours_requests.user_id')
-                    ->select('extra_hours_request_items.*', 'users.id as user_id', 'users.name', 'users.role')
+                    ->select('extra_hours_request_items.*', 'users.id as user_id', 'users.name', 'users.role', 'extra_hours_requests.id as request_id')
                     ->where('extra_hours_request_items.year', $year)
                     ->where('extra_hours_request_items.month', $month);
 
       $items = $qryBuilder->get();
 
       $coachs = User::whereCoachs()->leftjoin('coach_rates', 'users.id', 'coach_rates.id_user')
-      ->select('users.*', 'coach_rates.salary')
+      ->leftjoin('extra_hours_requests', 'users.id', 'extra_hours_requests.user_id')
+      ->select('users.*', 'coach_rates.salary', 'extra_hours_requests.id as request_id')
       ->where('status', 1)->get();
-      
+    
       $roles = getRoles();
       
       foreach($roles as $i => $val){
@@ -375,6 +376,7 @@ class HorasExtrasController extends Controller {
             'role'        => $data->role,
             'request_id'  => $data->request_id,
             'total'       => $data->amount,
+            'request'     => $data->request_id,
             'request_items' => [[
               'id'          => $data->id,
               'request_id'  => $data->request_id,
@@ -409,6 +411,7 @@ class HorasExtrasController extends Controller {
               'role'        => $coach->role,
               'salary'      => $coach->salary * 100,
               'total'       => $coach->salary * 100,
+              'request'     => $coach->request_id,
               'request_items' => []
           ];
         } else {
@@ -433,19 +436,23 @@ class HorasExtrasController extends Controller {
         }
       }
 
-      $review = ExtraHoursRequestReviews::where('month', $month)->where('year', $year)->first();
+      $reviews  = ExtraHoursRequestReviews::where('month', $month)->where('year', $year)->get();
+      $aReviews = [];
+      foreach($reviews as $review) {
+        $aReviews[$review->request_id] = true;
+      }
 
-      $allowCRUD = true;
+      /*$allowCRUD = true;
       if($review){
         $allowCRUD = false;
-      }
+      }*/
       
       return view('horasExtras.index',[
         'roles'       => $roles,
         'year'        => $year,
         'lstMonths'   => $months,
         'month'       => $month,
-        'allowCRUD'   => $allowCRUD
+        'aReviews'    => $aReviews
       ]);
 
     } catch (\Exception $e) {
@@ -470,7 +477,9 @@ class HorasExtrasController extends Controller {
       
       if($item) {
 
-        $review = ExtraHoursRequestReviews::where('month', $item->month)->where('year', $item->year)->first();
+        $review = ExtraHoursRequestReviews::where('month', $item->month)
+        ->where('year', $item->year)
+        ->where('request_id', $item->request_id)->first();
 
         if($review){
           throw new \Exception('No se puede eliminar el registro, ya se ha enviado a salarios.', 400);
@@ -521,10 +530,12 @@ class HorasExtrasController extends Controller {
       
       if($item) {
 
-        $review = ExtraHoursRequestReviews::where('month', $item->month)->where('year', $item->year)->first();
+        $review = ExtraHoursRequestReviews::where('month', $item->month)
+        ->where('year', $item->year)
+        ->where('request_id', $item->request_id)->first();
 
         if($review){
-          throw new \Exception('No se puede eliminar el registro, ya se ha enviado a salarios.', 400);
+          throw new \Exception('No se puede editar el registro, ya se ha enviado a salarios.', 400);
         }
         
         /**
@@ -580,13 +591,6 @@ class HorasExtrasController extends Controller {
 
       $year = getYearActive();
 
-      $review = ExtraHoursRequestReviews::where('month', $request->month)->where('year', $year)->first();
-
-      if($review){
-        throw new \Exception('No se puede agregar el registro, ya se ha enviado a salarios.', 400);
-      }
-
-
       $user = User::find($request->user);
       
       if($user) {
@@ -610,6 +614,12 @@ class HorasExtrasController extends Controller {
       } else {
         throw new \Exception('Usuario inexistente', 400);
       }
+
+      $review = ExtraHoursRequestReviews::where('month', $request->month)->where('year', $year)->where('request_id',$horasExtrasLink->id)->first();
+
+      if($review){
+        throw new \Exception('No se puede agregar el registro, ya se ha enviado a salarios.', 400);
+      }
       
       $item = new ExtraHoursRequestItems();
       $item->request_id   = $horasExtrasLink->id;
@@ -625,7 +635,8 @@ class HorasExtrasController extends Controller {
       }
 
       return response()->json(['status' => 'OK', 'details' => [
-        'id'    => $item->id
+        'id'    => $item->id,
+        'request_id' => $horasExtrasLink->id
       ]], 200);
 
       
@@ -636,7 +647,7 @@ class HorasExtrasController extends Controller {
     }
   }
 
-  public function review(Request $request) {
+  public function reviewOld(Request $request) {
 
     try {
 
@@ -728,6 +739,157 @@ class HorasExtrasController extends Controller {
         $review->month      = $request->month;
         $review->year       = $year;
         $review->creator_id = Auth::user()->id;
+
+        if (!$review->save()){
+          throw new \Exception('Hubo un error al guardar los datos.');
+        }
+
+        DB::commit();
+
+      } catch (\Exception $e) {
+
+        DB::rollback();
+
+        throw new \Exception('No se pudo procesar la solicitud.');
+      }
+      
+      return redirect()->back()->with('message', 'La información ha sido procesada exitosamente.');
+      
+    } catch (\Exception $e) {
+      return redirect()->back()->withErrors([
+        $e->getMessage()
+      ]);
+    }
+  }
+
+  public function review(Request $request) {
+
+    try {
+
+      $year = getYearActive();
+
+      $messages = [
+        'month.required'    => 'El mes es requerido.',
+        'month.numeric'     => 'El mes es inválido.',
+        'month.between'     => 'El mes es inválido.',
+        'user.required'    => 'El usuario es requerido.',
+        'user.numeric'     => 'El usuario es inválido.',
+      ];
+
+      $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+        'month'             => 'required|numeric|between:1,12',
+        'user_id'           => 'required|numeric',
+      ], $messages);
+
+      if ($validator->fails()) {
+        throw new \Exception('Datos incorrectos.');
+      }
+
+      $horasExtrasLink = null;
+
+      $user = User::find($request->user_id);
+      
+      if($user) {
+
+        $horasExtrasLink = ExtraHoursRequests::where('user_id', $request->user_id)->first();
+        
+        if(!$horasExtrasLink){
+          
+          $horasExtrasLink = new ExtraHoursRequests();
+          $horasExtrasLink->token = Str::uuid()->toString();
+          $horasExtrasLink->user_id = $request->user_id;
+          $horasExtrasLink->creator_id = Auth::user()->id;
+          
+          if(!$horasExtrasLink->save()){
+
+            throw new \Exception('No se pudo guardar el registro', 500);
+
+          }
+        } else if($horasExtrasLink->id != $request->request_id || is_null($request->request_id)) {
+          throw new \Exception('Datos incorrectos.');
+        }
+
+      } else {
+        throw new \Exception('Usuario inexistente', 400);
+      }
+
+      $review = ExtraHoursRequestReviews::where('month', $request->month)
+      ->where('year', $year)
+      ->where('request_id', $horasExtrasLink->id)->first();
+
+      if($review){
+        throw new \Exception('No se puede volver a enviar, ya se ha enviado a sueldos y salarios.');
+      }
+
+      try {
+
+        $qryBuilder = ExtraHoursRequestItems::leftjoin('extra_hours_requests','extra_hours_requests.id','extra_hours_request_items.request_id')
+        ->leftjoin('users', 'users.id', 'extra_hours_requests.user_id')
+        ->leftjoin('coach_rates', 'users.id', 'coach_rates.id_user')
+        ->select('extra_hours_request_items.*', 'users.id as user_id', 'coach_rates.salary')
+        ->where('extra_hours_request_items.year', $year)
+        ->where('extra_hours_request_items.month', $request->month)
+        ->where('extra_hours_request_items.request_id', $horasExtrasLink->id);
+
+        $items = $qryBuilder->get();
+
+        $users = [];
+        foreach($items as $item){
+          if(isset($users[$item->user_id])){
+            $users[$item->user_id]['amount'] += $item->amount / 100;
+          } else {
+            $users[$item->user_id] = [
+              'salary' => $item->salary,
+              'amount'  => $item->amount / 100
+            ];
+          }
+        }
+
+        $coachs = User::whereCoachs()->leftjoin('coach_rates', 'users.id', 'coach_rates.id_user')
+        ->select('users.*', 'coach_rates.salary')
+        ->where('users.id', $request->user_id)
+        ->where('status', 1)->get();
+
+        foreach($coachs as $coach) {
+          if(!isset($users[$coach->id])) {
+            $users[$coach->id] = [
+              'salary' => $coach->salary,
+              'amount'  => null
+            ];
+          }
+        }
+
+        DB::beginTransaction();
+        $date = date('Y-m-d 00:00:00', strtotime($year.'-'.$request->month));
+        
+        foreach($users as $id => $user) {
+          $oLiq = CoachLiquidation::where('id_coach',$id)
+          ->where('date_liquidation',$date)->first();
+
+          if (!$oLiq){
+            $oLiq = new CoachLiquidation();
+            $oLiq->id_coach = $id;
+            $oLiq->date_liquidation = $date;
+          }
+
+          if($user['salary']){
+            $oLiq->salary = intval($user['salary']);
+          }
+
+          if($user['amount']){
+            $oLiq->commision = intval($user['amount']);
+          }
+          
+          if (!$oLiq->save()){
+            throw new \Exception('Hubo un error al guardar los datos.');
+          }
+        }
+
+        $review = new ExtraHoursRequestReviews();
+        $review->month      = $request->month;
+        $review->year       = $year;
+        $review->creator_id = Auth::user()->id;
+        $review->request_id = $horasExtrasLink->id;
 
         if (!$review->save()){
           throw new \Exception('Hubo un error al guardar los datos.');

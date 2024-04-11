@@ -42,7 +42,7 @@
     <div class="col-xs-12 mb-3">
       @include('horasExtras.table')
     </div>
-    @if($allowCRUD)
+    @if(false)
     <div class="col-xs-12">
       <form action="/admin/horas-extras/review" method="POST">
         <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
@@ -362,6 +362,9 @@
           $('#amountAddItem').val('');
           
           $('#modalAddNew').modal('hide');
+
+          
+          $('#request_id_user_' + user).val(data.details.request_id);
           window.show_notif('success', 'Registro agregado.');
 
         } else {
@@ -371,6 +374,77 @@
       });
     });
 
+
+    /**
+     * Salary edit buttons
+     */
+    $('#extra-hours-table-acc').on('click', '.btn-edit-salary-item', function(){
+      let id = $(this).data('id');
+      $('#action_salary_' + id + '_item').hide();
+      $('#edit_salary_' + id + '_item').show();
+
+      $('#salary_' + id + '_amount').hide();
+      $('#salary_' + id + '_amount_edit').show();
+    });
+
+
+
+    $('#extra-hours-table-acc').on('click', '.btn-cancel-edit-salary-item', function(){
+      let id = $(this).data('id');
+      $('#action_salary_' + id + '_item').show();
+      $('#edit_salary_' + id + '_item').hide();
+
+      $('#salary_' + id + '_amount').show();
+      $('#salary_' + id + '_amount_edit').hide();
+    });
+
+
+    $('#extra-hours-table-acc').on('click', '.btn-approve-edit-salary-item', function(){
+      let $this = $(this);
+      let id = $this.data('id');
+      let dept = $this.data('dept');
+
+      let amount = $('#item_' + id + '_salary').data('amount');
+      let userTotal = $('#user_' + id + '_total');
+      let userTotalValue = userTotal.data('total');
+      let roleTotal = $('#role_' + dept + '_total');
+      let roleTotalValue = roleTotal.data('total');
+
+      let newAmount = $('#salary_' + id + '_amount_edit_input').val();
+
+      $.post( '/admin/usuarios/updateSalary', { 
+        _token: '{{csrf_token()}}',
+        id: id,
+        salary: newAmount
+      }).done(function (data) {
+        if (data.status == 'OK') {
+
+          userNewTotal = userTotalValue - amount + parseFloat(newAmount);
+          userTotal.data('total', userNewTotal)
+          userTotal.text((''+userNewTotal.toFixed(2)).replace(/\./g, ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".")+' €');
+
+          roleNewTotal = roleTotalValue - amount + parseFloat(newAmount);
+          roleTotal.data('total', roleNewTotal)
+          roleTotal.text((''+roleNewTotal.toFixed(2)).replace(/\./g, ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".")+' €');
+
+          $('#item_' + id + '_salary').data('amount',newAmount);
+           
+          $('#salary_' + id + '_amount').text((''+parseFloat(newAmount).toFixed(2)).replace(/\./g, ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".")+' €');
+          
+
+          $('#action_salary_' + id + '_item').show();
+          $('#edit_salary_' + id + '_item').hide();
+
+          $('#salary_' + id + '_amount').show();
+          $('#salary_' + id + '_amount_edit').hide();
+          
+          window.show_notif('success', 'Salario base actualizado.');
+
+        } else {
+          window.show_notif('error', 'No se pudo actualizar el salario base.');
+        }
+      });
+    });
   });
 </script>
 <style>
