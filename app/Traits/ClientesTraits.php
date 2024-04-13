@@ -1400,6 +1400,27 @@ trait ClientesTraits
 
   public function cuotasPendientes(Request $request)
   {
+
+    if (is_numeric($request->year)){
+      $current = date('Y')+3;
+      if ($request->year<=$current && $request->year>($current-6)){
+          setcookie('ActiveYear', $request->year, time() + (86400 * 30), "/"); // 86400 = 1 day
+
+          $urlRedirect = url()->current();
+          if($request->fFamily){
+            $urlRedirect .= '?fFamily=' . $request->fFamily;
+          }
+
+          return redirect($urlRedirect);
+      }
+    }
+
+    $fFamily = null;
+
+    if($request->fFamily){
+      $fFamily = $request->fFamily;
+    }
+
     $year = getYearActive();
     $month = date('n');
 
@@ -1407,7 +1428,14 @@ trait ClientesTraits
     unset($months[0]);
     $oUser = new User();
     $oUser->create_altaBajas($year, $month);
-    $oRates = Rates::orderBy('type', 'desc')->orderBy('name', 'desc')->get();
+    $qryRates = Rates::orderBy('name', 'desc');
+
+    if(!is_null($fFamily)) {
+      $qryRates->where('type', $fFamily);
+    }
+
+    $oRates = $qryRates->get();
+
     $detail = [];
     $noPay = 0;
     
@@ -1499,9 +1527,12 @@ trait ClientesTraits
       $yearAux = date('Y', $next);
     }
     
+    
     return view('/admin/usuarios/clientes/indexCuotasPendientes', [
-      'year'  => $year,
-      'data'  => $data
+      'fFamily'   => $fFamily,
+      'typeRates' => $typeRates,
+      'year'      => $year,
+      'data'      => $data
     ]);
   }
 }

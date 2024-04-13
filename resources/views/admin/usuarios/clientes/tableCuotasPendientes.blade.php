@@ -1,7 +1,22 @@
 <!--    TABLA                                  -->
 <h2 class="font-w600">
-  Listado de cuotas pendientes año {{$year}}</b>
+  Listado de cuotas pendientes año {{$year}}</b> &nbsp; <small><i id="copyCuotasPendientesLink" class="fa fa-link"></i></small>
 </h2>
+
+<div style="display: inline-block; margin-bottom: 20px;">
+  <select id="filterByRateCuotasPendientes" class="form-control mt-1" >
+    <option value="">Filtrar Por Familia</option>
+    <?php 
+    
+    foreach ($typeRates as $rID => $rName): 
+     
+    ?>
+      <option value="<?= $rID ?>" <?= ($fFamily == $rID) ? 'selected' : '' ?>><?php echo str_replace('<br>', ': ',$rName);?></option>
+    <?php
+    endforeach;?>
+  </select>
+</div>
+
 <div id="extra-hours-table-acc" class="table-responsive">
   <table class="table ticomes">
     <thead>

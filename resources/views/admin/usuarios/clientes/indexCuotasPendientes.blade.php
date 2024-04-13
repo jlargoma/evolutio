@@ -99,6 +99,38 @@
     });
 
   });
+
+  $('#copyCuotasPendientesLink').on('click', function () {
+
+    const urlPieces = [location.protocol, '//', location.host, location.pathname]
+    let url = urlPieces.join('')
+
+    if(window.location.search){
+      url += window.location.search + '&year={{$year}}';
+    } else {
+      url +='?year={{$year}}';
+    }
+
+    navigator.clipboard.writeText(url);
+    window.show_notif('success', 'Link copiado al portapapeles!');
+
+  });
+
+  $('#filterByRateCuotasPendientes').on('change', function () {
+    let $this = $(this);
+    
+    const urlPieces = [location.protocol, '//', location.host, location.pathname]
+    let url = urlPieces.join('');;
+
+    $filterFamily = $this.val();
+
+    if($filterFamily) {
+      url += "?fFamily=" + $filterFamily;
+    } 
+
+    window.location.href = url;
+
+  });
 </script>
 <style>
   .filtIncome {
@@ -108,6 +140,11 @@
   .filtIncome.active {
     border: 1px solid #0046a0;
     background-color: #0067ea !important;
+  }
+
+  #copyCuotasPendientesLink {
+    cursor: pointer;
+    font-size: 2rem;
   }
 </style>
 @endsection
