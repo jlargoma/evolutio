@@ -183,7 +183,6 @@ trait ClientesTraits
     ];
     $unsubscribeds = 0;
     $selectYear = $year;
-    $year = getYearActive();
 
     global $cFRates;
     $customFamilyRates = Settings::getContent('customFamilyRates');
@@ -192,10 +191,10 @@ trait ClientesTraits
       $cFRates[$k]->ids = explode(',',$item->ids);
     }
 
-    ob_start();
+    /*ob_start();
     $this->getAltasBajas($month);
     $altasBajas = ob_get_contents();
-    ob_clean();
+    ob_clean();*/
 
 
     $newUsers = 0;
@@ -255,9 +254,12 @@ trait ClientesTraits
           'active'=>($item->deleted_at ? 0 : 1 )];
         }
     }
-    //dd($aRates[265]);
-//dd($lstAltBaj);
+    
     $newUsers = count($lstAltBaj);
+
+    $altaBajasDetails = $this->getAltaBajaDetails($year, $month);
+
+    $citasDetails = $this->getCitasDetails($year, $month);
     
     return view('/admin/usuarios/clientes/index', [
       'users' => $users,
@@ -282,9 +284,181 @@ trait ClientesTraits
       'unsubscribeds' => $unsubscribeds,
       'tit' => $tit,
       'total_pending' => array_sum($arrayPaymentMonthByUser),
-      'altasBajas' => $altasBajas,
+      //'altasBajas' => $altasBajas,
+      'altaBajasDetails' => $altaBajasDetails,
+      'citasDetails' => $citasDetails,
       'aLstAltBaj' => $aLstAltBaj,
     ]);
+  }
+
+  public function getCitasDetails($year, $month) {
+
+    $sueloPelvico  = Rates::where('name', 'like', '%pelvico%')->pluck('id')->toArray();
+
+    $rFamilyCitas = [
+      -1 => ['primeras' => 0, 'total' => 0],//'Suelo Pélvico',
+      1 => ['primeras' => 0, 'total' => 0],//'Membresias',
+      2 => ['primeras' => 0, 'total' => 0],//'PT',
+      4 => ['primeras' => 0, 'total' => 0],//'Bungee',
+      8 => ['primeras' => 0, 'total' => 0],//'Fisioterapia',
+      14 => ['primeras' => 0, 'total' => 0],//'Fisio Getafe',
+      10 => ['primeras' => 0, 'total' => 0],//'Nutrición',
+      15 => ['primeras' => 0, 'total' => 0],//'Nutrición Getafe',
+      12 => ['primeras' => 0, 'total' => 0],//'Estetica',
+      16 => ['primeras' => 0, 'total' => 0],//'Estetica Getafe',
+    ];
+    
+
+    $allAppointmentsByType = Dates::select(DB::raw('count(1) as count'), 'rates.type')
+    ->leftjoin('rates', 'rates.id', 'appointment.id_rate')
+    ->whereNotIn('appointment.id_rate', $sueloPelvico)//Not suelo pelvico
+    ->whereYear('appointment.date', $year)
+    ->whereMonth('appointment.date',$month)
+    ->groupBy('rates.type')->get();
+
+    foreach($allAppointmentsByType as $type) {
+      if(isset($rFamilyCitas[$type->type])){
+        $rFamilyCitas[$type->type]['total'] = $type->count;
+      }
+    }
+
+    $allAppointmentsSueloPelvico = Dates::select(DB::raw('count(1) as count'))
+    ->whereIn('id_rate', $sueloPelvico)//Not suelo pelvico
+    ->whereYear('date', $year)
+    ->whereMonth('date',$month)->get();
+
+    if($allAppointmentsSueloPelvico->isNotEmpty()) {
+      $rFamilyCitas[-1]['total'] = $allAppointmentsSueloPelvico[0]->count;
+    }
+
+
+    $primerasCitasByType = DB::table('appointment as main')
+    ->leftjoin('rates as rate1', 'rate1.id', 'main.id_rate')
+    ->select(DB::raw('count(1) as count'), 'rate1.type')
+    ->whereNotIn('main.id_rate', $sueloPelvico)
+    ->whereYear('main.date', $year)
+    ->whereMonth('main.date',$month)
+    ->whereNull('main.deleted_at')
+    ->whereNotExists(function ($query) {
+        $query->select(DB::raw(1))
+              ->from('appointment as a')
+              ->whereRaw('a.id_user = main.id_user')
+              ->whereRaw('a.id_rate = main.id_rate')
+              ->whereRaw('a.deleted_at IS NULL')
+              ->whereRaw('a.date < main.date');
+    })
+    ->groupBy('rate1.type')
+    ->get();
+
+    foreach($primerasCitasByType as $pCtype){
+      if(isset($rFamilyCitas[$pCtype->type])){
+        $rFamilyCitas[$pCtype->type]['primeras'] = $pCtype->count;
+      }
+    }
+
+
+    $primerasSueloPelvico = DB::table('appointment as main')
+    ->select(DB::raw('count(1) as count'))
+    ->whereIn('main.id_rate', $sueloPelvico)
+    ->whereYear('main.date', $year)
+    ->whereMonth('main.date',$month)
+    ->whereNull('main.deleted_at')
+    ->whereNotExists(function ($query) {
+        $query->select(DB::raw(1))
+              ->from('appointment as a')
+              ->whereRaw('a.id_user = main.id_user')
+              ->whereRaw('a.id_rate = main.id_rate')
+              ->whereRaw('a.deleted_at IS NULL')
+              ->whereRaw('a.date < main.date');
+    })
+    ->get();
+
+
+    if($primerasSueloPelvico->isNotEmpty()) {
+      $rFamilyCitas[-1]['primeras'] = $primerasSueloPelvico[0]->count;
+    }
+
+    return $rFamilyCitas;
+  }
+
+  public function getAltaBajaDetails($year, $month) {
+
+    $sueloPelvico  = Rates::where('name', 'like', '%pelvico%')->pluck('id')->toArray();
+
+    $rFamilyAltaBajaActivos = [
+      -1 => ['activos' => 0, 'alta' => 0, 'baja' => 0],//'Suelo Pélvico',
+      1 => ['activos' => 0, 'alta' => 0, 'baja' => 0],//'Membresias',
+      2 => ['activos' => 0, 'alta' => 0, 'baja' => 0],//'PT',
+      4 => ['activos' => 0, 'alta' => 0, 'baja' => 0],//'Bungee',
+      8 => ['activos' => 0, 'alta' => 0, 'baja' => 0],//'Fisioterapia',
+      14 => ['activos' => 0, 'alta' => 0, 'baja' => 0],//'Fisio Getafe',
+      10 => ['activos' => 0, 'alta' => 0, 'baja' => 0],//'Nutrición',
+      15 => ['activos' => 0, 'alta' => 0, 'baja' => 0],//'Nutrición Getafe',
+      12 => ['activos' => 0, 'alta' => 0, 'baja' => 0],//'Estetica',
+      16 => ['activos' => 0, 'alta' => 0, 'baja' => 0],//'Estetica Getafe',
+    ];
+    //27, 37, 39, 55, 56, 57, 173, 178, 180, 187, 188, 189
+    $listAltaBajaByTypeRates = UsersSuscriptions::select('users_suscriptions.deleted_at', 'rates.type')
+    ->leftjoin('rates', 'rates.id', 'users_suscriptions.id_rate')
+    ->whereNotIn('users_suscriptions.id_rate', $sueloPelvico)//Not suelo pelvico
+    ->where(function($query) use ($year, $month) {
+      $query->where(function($query) use ($year, $month) {
+        $query->whereYear('users_suscriptions.deleted_at', $year)->whereMonth('users_suscriptions.deleted_at',$month);
+      })->orWhere(function($query) use ($year, $month) {
+        $query->whereYear('users_suscriptions.created_at', $year)->whereMonth('users_suscriptions.created_at',$month);
+      });
+    })->withTrashed()->get();
+    
+    foreach($listAltaBajaByTypeRates as $lstItem) {
+      if(isset($rFamilyAltaBajaActivos[$lstItem->type])){
+        if($lstItem->deleted_at) {
+          $rFamilyAltaBajaActivos[$lstItem->type]['baja']++;
+        }else{
+          $rFamilyAltaBajaActivos[$lstItem->type]['alta']++;
+        }
+      }
+    }
+
+    $listAltaBajaBySueloPelvico = UsersSuscriptions::select('id_rate','deleted_at')
+    ->whereIn('id_rate', $sueloPelvico)//Is suelo pelvico
+    ->where(function($query) use ($year, $month) {
+      $query->where(function($query) use ($year, $month) {
+          $query->whereYear('deleted_at', $year)->whereMonth('deleted_at',$month);
+        })->orWhere(function($query) use ($year, $month) {
+          $query->whereYear('created_at', $year)->whereMonth('created_at',$month);
+      });
+    })->withTrashed()->get();
+    
+    foreach($listAltaBajaBySueloPelvico as $lstItem) {
+      if($lstItem->deleted_at) {
+        $rFamilyAltaBajaActivos[-1]['baja']++;
+      }else{
+        $rFamilyAltaBajaActivos[-1]['alta']++;
+      }
+    }
+
+    //Total actives suscriptions by type
+    $allActiveByType = UsersSuscriptions::select(DB::raw('count(1) as count'), 'rates.type')
+    ->leftjoin('rates', 'rates.id', 'users_suscriptions.id_rate')
+    ->whereNotIn('users_suscriptions.id_rate', $sueloPelvico)//Not suelo pelvico
+    ->groupBy('rates.type')
+    ->get();
+
+    foreach($allActiveByType as $lstItem) {
+      if(isset($rFamilyAltaBajaActivos[$lstItem->type]))
+        $rFamilyAltaBajaActivos[$lstItem->type]['activos'] = $lstItem->count;
+    }
+
+    //Total actives suscriptions by type
+    $sueloPelvicoActive = UsersSuscriptions::select(DB::raw('count(1) as count'))
+    ->whereIn('users_suscriptions.id_rate', $sueloPelvico)//Not suelo pelvico
+    ->get();
+    
+    foreach($sueloPelvicoActive as $lstItem) {
+        $rFamilyAltaBajaActivos[-1]['activos'] = $lstItem->count;
+    }
+
+    return $rFamilyAltaBajaActivos;
   }
 
   public function clientesConvenio(Request $request, $month = false)

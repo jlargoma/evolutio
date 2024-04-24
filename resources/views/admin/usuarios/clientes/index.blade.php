@@ -5,45 +5,67 @@
 @section('externalScripts')
 <!--<link rel="stylesheet" href="{{ asset('admin-css/assets/js/plugins/datatables/jquery.dataTables.min.css') }}">-->
 <style type="text/css">
-  #DataTables_Table_0_wrapper .row > .col-sm-6:first-child{
+  #DataTables_Table_0_wrapper .row>.col-sm-6:first-child {
     display: none;
   }
-  #DataTables_Table_0_wrapper .row > .col-sm-6 #DataTables_Table_0_filter{
-    text-align: left!important;
+
+  #DataTables_Table_0_wrapper .row>.col-sm-6 #DataTables_Table_0_filter {
+    text-align: left !important;
   }
-  input[type="search"], ::-webkit-input-placeholder, :-moz-placeholder, :-ms-input-placeholder{
+
+  input[type="search"],
+  ::-webkit-input-placeholder,
+  :-moz-placeholder,
+  :-ms-input-placeholder {
     color: black;
   }
-  .header-navbar-fixed #main-container{
-    padding-top: 0; 
+
+  .header-navbar-fixed #main-container {
+    padding-top: 0;
   }
-  .btn-user{cursor: pointer}
-  .js-dataTable-full-clients .label{
+
+  .btn-user {
+    cursor: pointer
+  }
+
+  .js-dataTable-full-clients .label {
     padding: 6px;
     display: inline-block;
     cursor: pointer;
   }
 
-  .openUser{cursor: pointer}
-  .no-pay{
+  .openUser {
+    cursor: pointer
+  }
+
+  .no-pay {
     color: #c54b4b;
     font-weight: bold;
   }
+
   .openEditCobro,
-  .open-cobro{ cursor: pointer;}
+  .open-cobro {
+    cursor: pointer;
+  }
+
   a.inline {
     display: inline-block;
     margin-right: 2px;
   }
+
   .text-center.tc1 {
     min-width: 120px;
-}
-th label.text-danger{display: block}
-.boxAddServBono {
+  }
+
+  th label.text-danger {
+    display: block
+  }
+
+  .boxAddServBono {
     position: absolute;
     background-color: #9a9a9a;
     padding: 5px;
-}
+  }
 </style>
 @endsection
 
@@ -55,8 +77,8 @@ th label.text-danger{display: block}
 </li>
 @endsection
 
-<?php 
-$b_aux = ['btn-primary','btn-primary','btn-primary','all'=>'btn-primary','new'=>'btn-primary','unsubscribeds'=>'btn-primary','new_unsubscribeds'=>'btn-primary'];
+<?php
+$b_aux = ['btn-primary', 'btn-primary', 'btn-primary', 'all' => 'btn-primary', 'new' => 'btn-primary', 'unsubscribeds' => 'btn-primary', 'new_unsubscribeds' => 'btn-primary'];
 if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
 ?>
 @section('content')
@@ -95,23 +117,23 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
       </a>
       <a href="{{url('/admin/clientes/'.$month)}}?status=new_unsubscribeds{{$fFamily? '&fFamily='.$fFamily : ''}}" class="inline">
         <button class="btn btn-md {{$b_aux['new_unsubscribeds']}}">
-        alta/bajas ({{$newUsers}})
+          alta/bajas ({{$newUsers}})
         </button>
       </a>
       <div style="display: inline-block;">
-          <select id="filterByRate" class="form-control mt-1" data-url="{{url('/admin/clientes/'.$month)}}">
-            <option value="">Filtrar Por Familia</option>
-          <?php 
-          
-          foreach ($rFamilyName as $rID => $rName): 
+        <select id="filterByRate" class="form-control mt-1" data-url="{{url('/admin/clientes/'.$month)}}">
+          <option value="">Filtrar Por Familia</option>
+          <?php
+
+          foreach ($rFamilyName as $rID => $rName) :
             $cant = isset($rFamilyQty[$rID]) ? $rFamilyQty[$rID] : 0;
           ?>
-          <option value="<?= $rID ?>" <?= ($fFamily == $rID) ? 'selected' : '' ?>><?php echo str_replace('<br>', ': ',$rName);?></option>
-            <?php
-            endforeach;?>
-          </select>
-        </div>
-    </div> 
+            <option value="<?= $rID ?>" <?= ($fFamily == $rID) ? 'selected' : '' ?>><?php echo str_replace('<br>', ': ', $rName); ?></option>
+          <?php
+          endforeach; ?>
+        </select>
+      </div>
+    </div>
     <div class="col-xs-8 col-md-2 pull-right">
       @if ($noPay > 0)
       <button id="cuotas-pendientes" class="btn btn-danger right">
@@ -122,19 +144,19 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
     <div class="col-xs-4 col-md-1 pull-right">
       <select id="date" class="form-control">
         <?php
-        $oldYear = $year-1;
-        if ( $month < 3 || $selectYear==$oldYear){
-          
+        $oldYear = $year - 1;
+        if ($month < 3 || $selectYear == $oldYear) {
+
           $selected = ($month == '10' && $selectYear == $oldYear) ? "selected" : "";
-          echo '<option value="'.$oldYear.'-10" '.$selected.'>Oct '.$oldYear.'</option>';
+          echo '<option value="' . $oldYear . '-10" ' . $selected . '>Oct ' . $oldYear . '</option>';
           $selected = ($month == '11' && $selectYear == $oldYear) ? "selected" : "";
-          echo '<option value="'.$oldYear.'-11" '.$selected.'>Nov '.$oldYear.'</option>';
+          echo '<option value="' . $oldYear . '-11" ' . $selected . '>Nov ' . $oldYear . '</option>';
           $selected = ($month == '12' && $selectYear == $oldYear) ? "selected" : "";
-          echo '<option value="'.$oldYear.'-12" '.$selected.'>Dic '.$oldYear.'</option>';
+          echo '<option value="' . $oldYear . '-12" ' . $selected . '>Dic ' . $oldYear . '</option>';
         }
-        foreach ($months as $k => $v):
+        foreach ($months as $k => $v) :
           $selected = ($k == $month && $selectYear != $oldYear) ? "selected" : "";
-          ?>
+        ?>
           <option value="<?php echo $k; ?>" <?php echo $selected ?>>
             <?php echo $v . ' ' . $year; ?>
           </option>
@@ -142,8 +164,66 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
       </select>
     </div>
   </div>
-  <div style="max-width: 40em;"><?= $altasBajas; ?></div>
-<h1 class="tit-primary">{{$tit}}</h1>
+  <div class="row">
+    <div class="col-xs-6">
+      <h2>Altas y Bajas por Familia: <?= $month . '/' . $year ?></h2>
+
+      <table class="table">
+        <thead>
+          <th>Familias</th>
+          <th>Altas <small>(este mes)</small></th>
+          <th>Bajas <small>(este mes)</small></th>
+          <th>Activos <small>total</small></th>
+        </thead>
+        <tbody>
+          <?php
+          
+          foreach ($rFamilyName as $k => $v) :
+          ?>
+
+            <tr>
+              <td><?= $v ?></td>
+              <td><?= $altaBajasDetails[$k]['alta']; ?></td>
+              <td><?= $altaBajasDetails[$k]['baja']; ?></td>
+              <td><?= $altaBajasDetails[$k]['activos']; ?></td>
+            </tr>
+          <?php
+          endforeach;
+          ?>
+        </tbody>
+      </table>
+    </div>
+    
+
+    <div class="col-xs-6">
+      <h2>Citas por Familia: <?= $month . '/' . $year ?></h2>
+
+      <table class="table">
+        <thead>
+          <th>Familias</th>
+          <th>Primeras citas <small>(este mes)</small></th>
+          <th>Total citas <small>(este mes)</small></th>
+        </thead>
+        <tbody>
+          <?php
+          
+          foreach ($rFamilyName as $k => $v) :
+          ?>
+
+            <tr>
+              <td><?= $v ?></td>
+              <td><?= $citasDetails[$k]['primeras']; ?></td>
+              <td><?= $citasDetails[$k]['total']; ?></td>
+            </tr>
+          <?php
+          endforeach;
+          ?>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+  <h1 class="tit-primary">{{$tit}}</h1>
   <div class="row mt-1">
     <div class="loading text-center" style="padding: 150px 0;">
       <i class="fa fa-5x fa-circle-o-notch fa-spin"></i><br><span class="font-s36">CARGANDO</span>
@@ -157,60 +237,59 @@ if (isset($b_aux[$status])) $b_aux[$status] = 'btn-success';
 @endsection
 
 @section('scripts')
-  <script type="text/javascript">
-    var dataTableClient = 1
-    $(document).ready(function () {
+<script type="text/javascript">
+  var dataTableClient = 1
+  $(document).ready(function() {
 
-      $('#cuotas-pendientes').click(function () {
+    $('#cuotas-pendientes').click(function() {
       location.href = "/admin/clientes/cuotas-pendientes";
     });
 
-      $('#filterByRate').on('change',function(){
-        var url = $(this).data('url');
-        var val = $(this).val();
-        
-        var urlAux = document.location.href;
-        var urlParams = urlAux.substring(urlAux.indexOf('?') + 1);
-        var searchParams = null;
-        if (urlAux.indexOf('?')>1) searchParams = new URLSearchParams(urlParams);
-        else searchParams = new URLSearchParams();
-        
-        if (searchParams.has("fFamily")){
-          searchParams.delete("fFamily");
-        }
-        if (val != ''){
-          searchParams.set("fFamily", val)
-        }
-        window.location.href = url+'?'+searchParams.toString();
-       
-      });
+    $('#filterByRate').on('change', function() {
+      var url = $(this).data('url');
+      var val = $(this).val();
 
+      var urlAux = document.location.href;
+      var urlParams = urlAux.substring(urlAux.indexOf('?') + 1);
+      var searchParams = null;
+      if (urlAux.indexOf('?') > 1) searchParams = new URLSearchParams(urlParams);
+      else searchParams = new URLSearchParams();
 
-      $('.show_alta_bajas').on('click',function(){
-        $('#modal-alta_bajas').modal();
-        $('#modal-alta_bajas').find('.data_content').html('Cargando...').load('/admin/usuarios/getAltasBajasTarifas/{{$month}}');
-      });
-      $('.show_all_family').on('click',function(){
-        $('#modal-alta_bajas').modal();
-        $('#modal-alta_bajas').find('.data_content').html('Cargando...').load('/admin/usuarios/getFamilyCount/{{$month}}/{{$status}}');
-      });
-
-      $('#filterByStatus').on('change',function(){
-        var val = $(this).val();
-        var url = "{{url('/admin/clientes/'.$month)}}?status=new_unsubscribeds";
-        if(val == 'new') url = "{{url('/admin/clientes/'.$month)}}?status=new";
-        if(val == 'unsuscr') url = "{{url('/admin/clientes/'.$month)}}?status=unsubscribeds";
-        window.location.href = url;
-      });
+      if (searchParams.has("fFamily")) {
+        searchParams.delete("fFamily");
+      }
+      if (val != '') {
+        searchParams.set("fFamily", val)
+      }
+      window.location.href = url + '?' + searchParams.toString();
 
     });
-    
-  </script>
-    
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
-  <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.20/datatables.min.js"></script>
-  <script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
-  <script type="text/javascript" src="https://cdn.datatables.net/fixedcolumns/3.3.0/js/dataTables.fixedColumns.min.js"></script>
+
+
+    $('.show_alta_bajas').on('click', function() {
+      $('#modal-alta_bajas').modal();
+      $('#modal-alta_bajas').find('.data_content').html('Cargando...').load('/admin/usuarios/getAltasBajasTarifas/{{$month}}');
+    });
+    $('.show_all_family').on('click', function() {
+      $('#modal-alta_bajas').modal();
+      $('#modal-alta_bajas').find('.data_content').html('Cargando...').load('/admin/usuarios/getFamilyCount/{{$month}}/{{$status}}');
+    });
+
+    $('#filterByStatus').on('change', function() {
+      var val = $(this).val();
+      var url = "{{url('/admin/clientes/'.$month)}}?status=new_unsubscribeds";
+      if (val == 'new') url = "{{url('/admin/clientes/'.$month)}}?status=new";
+      if (val == 'unsuscr') url = "{{url('/admin/clientes/'.$month)}}?status=unsubscribeds";
+      window.location.href = url;
+    });
+
+  });
+</script>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.20/datatables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/fixedcolumns/3.3.0/js/dataTables.fixedColumns.min.js"></script>
 <script src="{{ asset('admin-css/assets/js/pages/base_tables_datatables.js')}}"></script>
 
 @include('/admin/usuarios/clientes/scripts')
