@@ -124,9 +124,7 @@ class UsersExport implements FromCollection {
           'Alta/Baja'
         ];  
   
-        $processed = [];
         foreach ($userData as $userD) {
-            $processed[$userD->id_user] = $userD->id_user;
             $array_excel[] = [
               $aUsers[$userD->id_user]->name,
               $aUsers[$userD->id_user]->email,
@@ -136,22 +134,6 @@ class UsersExport implements FromCollection {
               $rateTypes[$ratesRateType[$userD->id_rate]],
               isset($userD->deleted_at) ? 'BAJA' : 'ALTA'
             ];
-        }
-
-        foreach($users as $user){
-          if(!isset($processed[$user->id])){
-            $array_excel[] = [
-              $user->name,
-              $user->email,
-              $user->telefono,
-              $user->status ? 'ACTIVO' : 'NO ACTIVO',
-              '-',
-              '-',
-              'ALTA'
-            ];
-
-            $processed[$user->id] = $user->id;
-          }
         }
       }
 

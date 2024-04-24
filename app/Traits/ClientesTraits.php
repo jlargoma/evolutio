@@ -255,20 +255,9 @@ trait ClientesTraits
           'active'=>($item->deleted_at ? 0 : 1 )];
         }
     }
-
+    //dd($aRates[265]);
+//dd($lstAltBaj);
     $newUsers = count($lstAltBaj);
-
-
-    if(is_null($fFamily)){
-      $createdUsers = User::whereYear('created_at', $year)->whereMonth('created_at',$month)->where('role', 'user')->get();
-
-      foreach($createdUsers as $createdUser) {
-        if(!isset($aLstAltBaj[$createdUser->id])) {
-          $newUsers++;
-        }
-      }
-    }
-
     
     return view('/admin/usuarios/clientes/index', [
       'users' => $users,

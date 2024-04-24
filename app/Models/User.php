@@ -446,14 +446,7 @@ class User extends Authenticatable
 
     $sql = User::whereIn('id',$uIDs);
 
-    /**
-     * Additionally show new users in counting
-     */
-    if(is_null($family)){
-      $sql->orWhere(function($query) use ($year, $month) {
-        $query->whereYear('created_at', $year)->whereMonth('created_at',$month)->where('role', 'user');
-      });
-    }
+
 
 
     return $sql;
